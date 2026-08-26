@@ -25,6 +25,10 @@
     "nav": {
       "newContent": "Contenido nuevo"
     },
+    "tray": {
+      "show": "Mostrar la ventana",
+      "quit": "Salir"
+    },
     "error": {
       "title": "La interfaz ha fallado",
       "hint": "Puedes enviarnos los detalles que aparecen abajo."
@@ -58,6 +62,15 @@
       "system": "Seguir al sistema",
       "light": "Claro",
       "dark": "Oscuro"
+    },
+    "shell": {
+      "title": "Shell de escritorio",
+      "web": "Esto es la vista previa web. Los botones de ventana, la bandeja y la configuración en disco necesitan el shell; en un navegador se degradan en silencio: no se dibujan, no fallan y no fingen funcionar.",
+      "host": "Ejecutándose dentro del shell de escritorio.",
+      "source": "Origen de la interfaz",
+      "sourceTip": "La interfaz se sirve por un protocolo propio, así que un directorio frontend/ junto al ejecutable puede sustituir la copia incluida. Sin mostrar esto, un parche mal aplicado es invisible: el usuario solo podrá decir «se estropeó tras la actualización».",
+      "autostart": "Iniciar con el sistema",
+      "autostartTip": "El registro es la fuente de verdad, no el archivo de configuración: la configuración lleva significado del producto, el arranque automático es un hecho de esta máquina. Mezclarlos hace que copiar la configuración a otro equipo muestre el interruptor activado sin que nada arranque. Solo Windows."
     },
     "components": {
       "sub": "Todo lo de abajo es un control real, no una captura.",

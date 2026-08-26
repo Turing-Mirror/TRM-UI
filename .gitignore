@@ -9,3 +9,8 @@ coverage/
 *.tsbuildinfo
 .idea/
 .vscode/
+src-tauri/target/
+src-tauri/gen/
+
+# 用户数据：跑一次就会生成，不入库
+User_Data/

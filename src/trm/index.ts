@@ -18,6 +18,17 @@ export { ErrorBoundary } from "./components/ErrorBoundary";
 export { createNav, type Nav, type NavDef } from "./lib/nav";
 export { copyText } from "./lib/clipboard";
 export {
+  inHost,
+  call as hostCall,
+  configGet,
+  configSet,
+  hostLocaleStore,
+  hostWindowControls,
+  logToHost,
+  markReady,
+  type HostConfig,
+} from "./lib/host";
+export {
   applyAppearance,
   type Appearance,
   type ThemeMode,

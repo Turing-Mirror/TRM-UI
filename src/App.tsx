@@ -5,6 +5,8 @@ import {
   createNav,
   applyAppearance,
   useI18n,
+  hostWindowControls,
+  markReady,
   type ThemeMode,
 } from "./trm";
 import { OverviewPage } from "./pages/OverviewPage";
@@ -28,6 +30,9 @@ const nav = createNav([
 
 type PageId = (typeof nav.defs)[number]["id"];
 
+/** 窗口按钮解析一次就够 —— 它不会在运行期间从「有壳」变成「没壳」。 */
+const windowControls = hostWindowControls();
+
 export function App() {
   const { ready } = useI18n();
   const [page, setPage] = useState<PageId>("overview");
@@ -36,6 +41,10 @@ export function App() {
   useEffect(() => {
     applyAppearance({ themeMode: theme });
   }, [theme]);
+
+  // 告诉壳界面活着。壳的白窗看门狗等的就是这一句 —— 12 秒内没等到，
+  // 它会把「UI 从哪儿来的、处理了几个资源请求、404 了几次」写进日志。
+  useEffect(markReady, []);
 
   // 语言还没从存储里读出来时先不画正文，免得闪一下默认语言。
   // 标题栏照画：窗口框架先出来，观感上比整屏空白好。
@@ -47,6 +56,7 @@ export function App() {
         page={page}
         onPage={setPage}
         badges={{ motion: true }}
+        windowControls={windowControls}
       />
       {ready ? (
         <PageHost nav={nav} page={page}>

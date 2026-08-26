@@ -25,6 +25,10 @@
     "nav": {
       "newContent": "New content"
     },
+    "tray": {
+      "show": "Show window",
+      "quit": "Quit"
+    },
     "error": {
       "title": "The interface hit an error",
       "hint": "You can send us the details below."
@@ -58,6 +62,15 @@
       "system": "Follow system",
       "light": "Light",
       "dark": "Dark"
+    },
+    "shell": {
+      "title": "Desktop shell",
+      "web": "This is the plain web preview. Window buttons, the tray and on-disk config all need the shell; in a browser they degrade quietly — not drawn, no errors, and never pretending to work.",
+      "host": "Running inside the desktop shell.",
+      "source": "UI source",
+      "sourceTip": "The UI is served over a custom protocol, so a frontend/ directory next to the exe can replace the shipped copy. Without showing this, a misapplied UI patch is invisible — all the user can say is “it went wrong after the update”.",
+      "autostart": "Start with the system",
+      "autostartTip": "The registry is the source of truth, not the config file — config carries product meaning, autostart is a fact about this machine. Mixing them means copying your config to another machine shows the switch on while nothing actually starts. Windows only."
     },
     "components": {
       "sub": "Everything below is a live control, not a screenshot.",

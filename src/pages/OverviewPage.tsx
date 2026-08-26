@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   PagePad,
   PageHead,
@@ -5,12 +6,17 @@ import {
   Group,
   Field,
   Select,
+  Toggle,
   ListItem,
   useI18n,
   LOCALES,
+  inHost,
+  hostCall,
   type LocaleCode,
   type ThemeMode,
 } from "../trm";
+
+type AutostartStatus = { enabled: boolean; path: string };
 
 export function OverviewPage({
   theme,
@@ -20,6 +26,16 @@ export function OverviewPage({
   onTheme: (v: ThemeMode) => void;
 }) {
   const { t, locale, setLocale } = useI18n();
+  const [uiSource, setUiSource] = useState("");
+  const [autostart, setAutostart] = useState(false);
+
+  // 没有壳时 hostCall 返回 null，这两句就是空转 —— 不需要在调用点再判一次。
+  useEffect(() => {
+    void hostCall<string>("ui_source").then((v) => setUiSource(v ?? ""));
+    void hostCall<AutostartStatus>("autostart_get").then((v) =>
+      setAutostart(Boolean(v?.enabled)),
+    );
+  }, []);
 
   return (
     <PagePad>
@@ -42,6 +58,45 @@ export function OverviewPage({
           <ListItem title="1" desc={t("demo.overview.rule1")} />
           <ListItem title="2" desc={t("demo.overview.rule2")} />
           <ListItem title="3" desc={t("demo.overview.rule3")} />
+        </Group>
+      </Block>
+
+      <Block title={t("demo.shell.title")}>
+        <Group>
+          <div className="py-3 flex flex-col gap-5">
+            <div className="text-[12.5px] text-[var(--help)] leading-relaxed">
+              {inHost ? t("demo.shell.host") : t("demo.shell.web")}
+            </div>
+            {inHost ? (
+              <>
+                <Field
+                  inline
+                  label={t("demo.shell.source")}
+                  tip={t("demo.shell.sourceTip")}
+                  control={
+                    <span className="text-[13px] text-[var(--ink-muted)] select-text">
+                      {uiSource || "—"}
+                    </span>
+                  }
+                />
+                <Toggle
+                  checked={autostart}
+                  tip={t("demo.shell.autostartTip")}
+                  label={t("demo.shell.autostart")}
+                  onChange={(v) => {
+                    // 先乐观置位，再按壳返回的真实状态回正 —— 非 Windows 上
+                    // autostart_set 会明确报错，开关必须弹回去而不是停在错的位置。
+                    setAutostart(v);
+                    void hostCall("autostart_set", { enabled: v }).then(() =>
+                      hostCall<AutostartStatus>("autostart_get").then((st) =>
+                        setAutostart(Boolean(st?.enabled)),
+                      ),
+                    );
+                  }}
+                />
+              </>
+            ) : null}
+          </div>
         </Group>
       </Block>
 

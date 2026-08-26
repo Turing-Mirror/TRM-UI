@@ -25,6 +25,10 @@
     "nav": {
       "newContent": "Nouveau contenu"
     },
+    "tray": {
+      "show": "Afficher la fenêtre",
+      "quit": "Quitter"
+    },
     "error": {
       "title": "L’interface a rencontré une erreur",
       "hint": "Vous pouvez nous envoyer les détails ci-dessous."
@@ -58,6 +62,15 @@
       "system": "Suivre le système",
       "light": "Clair",
       "dark": "Sombre"
+    },
+    "shell": {
+      "title": "Shell de bureau",
+      "web": "Ceci est l’aperçu web. Les boutons de fenêtre, la zone de notification et la configuration sur disque exigent le shell ; dans un navigateur ils se dégradent en silence : non dessinés, sans erreur, et sans faire semblant de fonctionner.",
+      "host": "En cours d’exécution dans le shell de bureau.",
+      "source": "Source de l’interface",
+      "sourceTip": "L’interface est servie par un protocole dédié : un dossier frontend/ à côté de l’exécutable peut remplacer la copie livrée. Sans cet affichage, un correctif mal appliqué est invisible — l’utilisateur ne peut que dire « ça a cassé après la mise à jour ».",
+      "autostart": "Démarrer avec le système",
+      "autostartTip": "La source de vérité est le registre, pas le fichier de configuration : la configuration porte le sens du produit, le démarrage automatique est un fait propre à cette machine. Les mélanger fait qu’en copiant la configuration ailleurs, l’interrupteur paraît actif sans que rien ne démarre. Windows uniquement."
     },
     "components": {
       "sub": "Tout ce qui suit est un contrôle réel, pas une capture d’écran.",
