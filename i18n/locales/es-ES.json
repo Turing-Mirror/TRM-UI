@@ -1,0 +1,122 @@
+{
+  "locale": {
+    "zh-CN": "简体中文",
+    "zh-TW": "繁體中文",
+    "en-US": "English",
+    "ja-JP": "日本語",
+    "ko-KR": "한국어",
+    "es-ES": "Español",
+    "fr-FR": "Français",
+    "ru-RU": "Русский"
+  },
+  "ui": {
+    "select": {
+      "empty": "Sin opciones disponibles",
+      "missing": " (no disponible)"
+    },
+    "range": {
+      "defaultMark": "Valor inicial"
+    },
+    "window": {
+      "minimize": "Minimizar",
+      "maximize": "Maximizar",
+      "close": "Cerrar"
+    },
+    "nav": {
+      "newContent": "Contenido nuevo"
+    },
+    "error": {
+      "title": "La interfaz ha fallado",
+      "hint": "Puedes enviarnos los detalles que aparecen abajo."
+    }
+  },
+  "nav": {
+    "overview": "Resumen",
+    "components": "Componentes",
+    "type": "Tipografía",
+    "color": "Color",
+    "motion": "Movimiento"
+  },
+  "demo": {
+    "overview": {
+      "title": "TRM UI",
+      "sub": "El sistema de diseño y la biblioteca de componentes de los productos de escritorio de Turing Mirror",
+      "whatTitle": "Qué es esto",
+      "whatBody": "Un conjunto de tokens de diseño, una biblioteca de componentes, i18n en ocho idiomas y una configuración de compilación lista para usar.\nSe extrajo de RVC Fabric, pero no depende de ningún código del producto: puedes copiar el directorio src/trm/ entero.",
+      "whyTitle": "Por qué existe",
+      "whyBody": "«Copia la interfaz de RVC Fabric» acababa siendo siempre «duplica el repositorio entero y modifícalo», así que cada producto nuevo partía de un montón de código que no necesitaba, y el sistema de diseño se sincronizaba a mano, desviándose un poco más en cada pasada.\nAl separar la capa de interfaz, los productos nuevos parten de aquí y las mejoras vuelven aquí, en lugar de repartirse entre cinco copias divergentes.",
+      "ruleTitle": "Tres reglas firmes",
+      "rule1": "Todo color sale de un token. Un color escrito a mano siempre estará mal en el otro tema, y solo se nota cuando alguien lo cambia.",
+      "rule2": "Todo texto sale de un paquete de idioma. Los ocho se mantienen idénticos gracias a una comprobación en la compilación, no a la buena voluntad.",
+      "rule3": "src/trm/ no importa nada de fuera de sí mismo. En cuanto toca código del producto, la plantilla se degrada a «parte de un producto».",
+      "themeLabel": "Tema",
+      "themeTip": "«Seguir al sistema» no escribe data-theme y se apoya en prefers-color-scheme; elegir claro u oscuro fija el atributo en <html>.",
+      "langLabel": "Idioma",
+      "langTip": "Los ocho paquetes se incluyen en la compilación, así que cambiar de idioma es un intercambio síncrono: no se ven las claves antes del texto."
+    },
+    "theme": {
+      "system": "Seguir al sistema",
+      "light": "Claro",
+      "dark": "Oscuro"
+    },
+    "components": {
+      "sub": "Todo lo de abajo es un control real, no una captura.",
+      "buttons": "Botones",
+      "buttonsNote": "Un botón ocupado no puede limitarse a ponerse gris: el gris es un estado, los puntos en movimiento son el acuse de recibo. Sin ellos, «trabajando» y «no registró mi clic» se ven igual.",
+      "fields": "Campos",
+      "list": "Filas de lista",
+      "segment": "Control segmentado",
+      "segmentNote": "Un solo tirador que se desliza, no un fondo distinto bajo cada botón. La diferencia está entre «el mismo objeto se movió» y «este se apagó y aquel se encendió»: lo segundo son dos parpadeos."
+    },
+    "btn": {
+      "normal": "Normal",
+      "primary": "Principal",
+      "on": "Seleccionado",
+      "busy": "Trabajando",
+      "disabled": "Deshabilitado"
+    },
+    "field": {
+      "name": "Nombre visible",
+      "nameTip": "La marca de ayuda debe ser un botón que se trague su propio clic: suele vivir dentro de una etiqueta, y una etiqueta reenvía los clics al control que gobierna.",
+      "device": "Dispositivo de salida",
+      "deviceDesc": "Una opción guardada que ya no está en la lista permanece visible y lo indica: dibujar un cuadro vacío sería fingir que nunca se configuró.",
+      "volume": "Volumen",
+      "volumeNote": "Mientras arrastras, el tirador se dibuja en la posición real del puntero sin transición; solo al soltar se desliza hasta el paso. Ese ajuste final es lo que te dice qué valor obtuviste.",
+      "enable": "Iniciar con el sistema"
+    },
+    "list": {
+      "meta": "Agosto de 2026",
+      "item1": "Una fila desplegable",
+      "item1Desc": "Haz clic.",
+      "item1Body": "«Parece pulsable» y «es pulsable» deben coincidir. Esta fila solo tenía el estilo; nunca se conectó un onClick. La gente hizo clic cuatro veces, no pasó nada y concluyó que la aplicación estaba rota.\n\nAhora el estilo depende de si existe un onClick, no de un indicador clickable aparte.",
+      "item2": "A la derecha cabe cualquier cosa",
+      "item2Desc": "Botones, interruptores, indicadores de estado."
+    },
+    "seg": {
+      "a": "Primero",
+      "b": "Segundo",
+      "c": "Tercero"
+    },
+    "type": {
+      "sub": "El cuerpo es de 15px con interlineado 1,65. Los escalones de tamaño son fijos: no metas valores intermedios.",
+      "sample": "El azul claro de Schale, llevado al software de escritorio.",
+      "roleBody": "Cuerpo",
+      "roleHelp": "Ayuda",
+      "roleMeta": "Meta"
+    },
+    "color": {
+      "sub": "Cambia a oscuro y míralo otra vez: cada muestra debe funcionar en ambos temas.",
+      "groupCore": "Base",
+      "groupInk": "Texto",
+      "groupAccent": "Acento y estado"
+    },
+    "motion": {
+      "sub": "La dirección del cambio de página sigue el orden de navegación. Pulsa algunas pestañas arriba y lo verás.",
+      "curves": "Cuatro curvas",
+      "easeNav": "Solo para cambios de página. Arranca rápido, termina largo y nunca se pasa: la capa de página va al ras del borde de la ventana, y pasarse deja una costura visible.",
+      "spring": "Para elementos pequeños. Se pasa de largo, así que solo va en cosas que no tocan el borde de la ventana: el tirador del control segmentado, los paneles flotantes.",
+      "ease": "La transición de uso general. Hover, pulsación, cambios de color.",
+      "reduce": "Si el sistema pide movimiento reducido, todo lo anterior se apaga. No es opcional: las animaciones de desplazamiento amplio marean a quienes tienen sensibilidad vestibular."
+    }
+  }
+}

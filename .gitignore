@@ -1,0 +1,11 @@
+node_modules/
+dist/
+frontend/
+.tsbuild/
+*.local
+.DS_Store
+.vite/
+coverage/
+*.tsbuildinfo
+.idea/
+.vscode/

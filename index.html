@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TRM UI</title>
+    <style>
+      /* 引导屏。故意不依赖任何外部样式：如果坏掉的正好是打包出来的 CSS，
+         这一屏仍然要能读。 */
+      #boot {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+        padding: 0 56px;
+        font:
+          14px/1.7 -apple-system,
+          "Segoe UI",
+          "Microsoft YaHei UI",
+          sans-serif;
+        color: #5d6874;
+        background: #f4f6f8;
+        -webkit-user-select: text;
+        user-select: text;
+      }
+      #boot-title {
+        font-size: 17px;
+        color: #1e242b;
+      }
+      #boot-detail {
+        display: none;
+        white-space: pre-wrap;
+        word-break: break-all;
+        max-height: 46vh;
+        overflow: auto;
+        font-family: ui-monospace, Consolas, "Courier New", monospace;
+        font-size: 12px;
+        color: #8a949e;
+      }
+      @media (prefers-color-scheme: dark) {
+        #boot {
+          color: #a9b3be;
+          background: #171b22;
+        }
+        #boot-title {
+          color: #e4e9ef;
+        }
+      }
+    </style>
+    <script>
+      /* 白窗兜底。
+       *
+       * 故意写成 <head> 里的普通内联脚本，不是 module：
+       *   - 不是 module，所以打包产物 404 或者一加载就抛的时候它照样会跑 ——
+       *     而那正是「包里的任何代码（包括 React 的 error boundary）都没机会
+       *     执行」的情况：用户看到的是一片白，且无从告诉我们为什么。
+       *   - 排在 Vite 注入的 <script>/<link> 前面，所以它们的加载错误触发时，
+       *     捕获阶段的监听已经装好了。
+       * 因此 DOM 查找都是懒的：跑到这里时 <body> 还不存在。
+       *
+       * `ui_log` 是 Tauri 侧的日志命令；纯网页预览下 __TAURI_INTERNALS__ 不存在，
+       * 这一步会被安静跳过，屏幕上的提示照旧。 */
+      (function () {
+        var reported = false;
+
+        function el(id) {
+          return document.getElementById(id);
+        }
+
+        function toShellLog(line) {
+          try {
+            var internals = window.__TAURI_INTERNALS__;
+            if (internals && internals.invoke) {
+              internals.invoke("ui_log", { line: String(line) });
+            }
+          } catch (e) {
+            /* 记日志本身永远不许成为出错的那一环 */
+          }
+        }
+
+        function fail(headline, info) {
+          if (reported) return;
+          reported = true;
+          toShellLog(headline + " | " + info);
+          var boot = el("boot");
+          if (!boot) return; // React 已经接管，没地方可画了
+          el("boot-title").textContent = headline;
+          el("boot-msg").textContent = "界面没能载入。请把下面这段连同日志一起发给我们。";
+          var detail = el("boot-detail");
+          detail.textContent = info;
+          detail.style.display = "block";
+        }
+
+        /* 资源错误（比如 bundle 404）不冒泡，所以必须用捕获阶段。 */
+        window.addEventListener(
+          "error",
+          function (e) {
+            var node = e.target;
+            if (node && node !== window && (node.src || node.href)) {
+              fail("界面资源载入失败", (node.src || node.href) + " 未能载入");
+              return;
+            }
+            fail(
+              "界面脚本出错",
+              (e.message || "unknown") +
+                "\n" +
+                (e.filename || "") +
+                ":" +
+                (e.lineno || 0) +
+                "\n" +
+                ((e.error && e.error.stack) || ""),
+            );
+          },
+          true,
+        );
+
+        window.addEventListener("unhandledrejection", function (e) {
+          var r = e.reason;
+          /* 消息放前面：WebKit 的 stack 里不带 message，只有栈等于只知道在哪、
+             不知道是什么。 */
+          fail("界面出错", r && r.message ? r.message + "\n" + (r.stack || "") : String(r));
+        });
+
+        /* 没抛错、没 404，界面还是没出来 —— 上面两个监听抓不到的那一半
+         * （脚本解析通过了，但从没走到 render）。React 挂载时会清掉 #root，
+         * 所以 #boot 还在就说明它没走到。8 秒远超慢盘上的冷启动。 */
+        setTimeout(function () {
+          if (el("boot")) {
+            fail("界面载入超时", "8 秒内界面没有挂载；脚本没有报错。");
+          }
+        }, 8000);
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root">
+      <div id="boot">
+        <div id="boot-title">正在载入界面…</div>
+        <div id="boot-msg"></div>
+        <div id="boot-detail"></div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

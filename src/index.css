@@ -1,0 +1,421 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────────────
+   设计令牌 — Schale 浅蓝。没有 AI 味的蓝紫渐变，没有霓虹强调色。
+   界面里的每一处颜色都从这里取，不许在组件里写死颜色字面量：
+   写死的那一处在另一个主题下必然是错的，而且只有换主题时才看得出来。
+   ───────────────────────────────────────────────────────────────────────── */
+:root {
+  --bg: #f4f6f8;
+  --surface: #ffffff;
+  --group: rgba(255, 255, 255, 0.6);
+  --ink: #1e242b;
+  --ink-muted: #5d6874;
+  --help: #8a949e;
+  --meta: #a3acb6;
+  --hairline: rgba(30, 36, 43, 0.1);
+  --line: rgba(30, 36, 43, 0.14);
+  --accent: #1289f0;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(18, 137, 240, 0.1);
+  --stage: #e8f4fd;
+  --notify: #e8a91c;
+  --page-bg: #dfe4ea;
+  --ui:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei UI",
+    "PingFang SC", "Microsoft YaHei", sans-serif;
+  --r: 14px;
+  --rs: 8px;
+  --spring: cubic-bezier(0.34, 1.42, 0.64, 1);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* 换页专用曲线。起步快、收尾长，全程不冲过终点。
+     苹果自家的推入/面板动画就是这条形状：动作一开始就已经走掉一大半，
+     剩下的距离用很长的时间贴上去 —— 看着「快」，但停下来的那一刻没有硬边。
+     不要换成 --spring：那条会冲过终点，页面层贴着窗口边，冲过头就是一条缝。 */
+  --ease-nav: cubic-bezier(0.32, 0.72, 0, 1);
+  --glass:
+    0 2px 10px rgba(0, 0, 0, 0.1), inset 0 0 0 0.5px rgba(255, 255, 255, 0.6);
+  /* 深色底上要把近黑的字标压成白色剪影。用 invert 会把标志里的蓝色部分
+     拖成橙色，所以是 brightness(0) 打平之后再 invert。浅色下不处理。 */
+  --logo-filter: none;
+  /* 数值条把手的颜色。浅色下就是纸白 —— 比轨道亮，一眼看出是「能抓的那个」。 */
+  --knob: var(--surface);
+  /* 分段控件（顶部那排标签）滑块的底色。浅色下半透明的白就够亮了。 */
+  --seg-thumb: color-mix(in srgb, var(--surface) 86%, transparent);
+  /* 原生控件（<select> 展开的那张列表、右键菜单、日期选择器）的配色由这一项
+     决定，不由我们的 CSS 决定 —— 那张列表是系统画的，画在页面之外。
+     不声明的话 WebView2 一律按浅色画：深色模式下白底列表配我们设的浅色文字，
+     等于白底白字。data-theme 切换时下面两块会跟着改。 */
+  color-scheme: light;
+}
+
+/* 主题有三种状态，不是两种：
+     - 明确选了浅色/深色 → <html data-theme="light|dark">
+     - 跟随系统（默认）  → 没有 data-theme，只能靠 prefers-color-scheme 区分
+   所以深色要写两遍：一遍在媒体查询里（并且用 :not([data-theme="light"])
+   排除掉「系统深色但用户选了浅色」），一遍在 [data-theme="dark"] 里。
+   缺任何一遍，都会出现某一种状态下拿另一套配色画字的经典可读性事故。 */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #171b22;
+    --surface: #1f242d;
+    /* 卡片/分组底色。0.045 在深色底上几乎和背景一样，一屏设置看下来分不出
+       哪些项是一组的。抬到 0.075 刚好能看出边界，又不至于变成一块块灰砖。 */
+    --group: rgba(232, 240, 248, 0.075);
+    --stage: #1e2837;
+    --ink: #e4e9ef;
+    --ink-muted: #a9b3be;
+    --help: #828c96;
+    --meta: #6e7883;
+    --hairline: rgba(232, 240, 248, 0.14);
+    --line: rgba(232, 240, 248, 0.22);
+    --accent: #4aa3f0;
+    --accent-ink: #0f1319;
+    --accent-soft: rgba(74, 163, 240, 0.14);
+    --notify: #e0ae3d;
+    --page-bg: #0c0f13;
+    --glass:
+      0 2px 12px rgba(0, 0, 0, 0.4), inset 0 0 0 0.5px rgba(255, 255, 255, 0.1);
+    --logo-filter: brightness(0) invert(1);
+    /* 深色下不能照抄 --surface：#1f242d 比轨道(≈#2b2f36)还暗，把手看着
+       不像把手，像轨道上破了个洞。要比轨道亮才抓得住。 */
+    --knob: #7c8794;
+    /* 深色下 --surface(#1f242d) 和 --bg(#171b22) 只差一点点，半透明之后滑块
+       几乎看不见 —— 选中的是哪个标签得靠猜。抬一档并且不再透。 */
+    --seg-thumb: #2b323e;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #171b22;
+  --surface: #1f242d;
+  --group: rgba(232, 240, 248, 0.075);
+  --stage: #1e2837;
+  --ink: #e4e9ef;
+  --ink-muted: #a9b3be;
+  --help: #828c96;
+  --meta: #6e7883;
+  --hairline: rgba(232, 240, 248, 0.14);
+  --line: rgba(232, 240, 248, 0.22);
+  --accent: #4aa3f0;
+  --accent-ink: #0f1319;
+  --accent-soft: rgba(74, 163, 240, 0.14);
+  --notify: #e0ae3d;
+  --page-bg: #0c0f13;
+  --glass:
+    0 2px 12px rgba(0, 0, 0, 0.4), inset 0 0 0 0.5px rgba(255, 255, 255, 0.1);
+  --logo-filter: brightness(0) invert(1);
+  --knob: #7c8794;
+  --seg-thumb: #2b323e;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+/* 底色画在 html 上，不画在 body 上。
+ *
+ * 壁纸是 `body::before` 加 `z-index: -1`：负层级只能画在**画布背景**之上、
+ * 正常内容之下。如果 body 自己带着不透明的 --bg，壁纸就被压在 body 的底色
+ * 底下，画了等于没画 —— 磨砂和不透明度自然也跟着一起没反应，因为那三个
+ * 设置改的是同一个看不见的图层。
+ *
+ * 底色搬到 html（会传播成画布背景），body 透明，壁纸这一层才有地方待。
+ * 没设壁纸时 --wp-opacity 是 0，这一层完全透明，观感和没有它时一模一样。 */
+html {
+  background: var(--bg);
+  /* 根元素自己也不许滚。只把 body 设成 overflow:hidden 是不够的：根滚动容器
+     是视口（html），不是 body —— 只要有任何一个元素撑出视口，画出来的就是
+     **根**滚动条，body 上那句管不着。桌面软件是定高布局，不该有根滚动。 */
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  /* 桌面软件的默认观感：文字不可随手框选。需要可选的地方（错误详情、
+     日志、可复制的 ID）自己写 select-text。 */
+  user-select: none;
+}
+
+button {
+  font: inherit;
+}
+
+/* <select> 展开的那张列表由浏览器画，不继承 select 上的 class。
+   深色下如果只有 color-scheme 而没有这两行，某些 WebView2 版本仍按浅底画，
+   配上我们设的浅色文字就是白底白字。写死一份和主题一致的底色兜底。 */
+option {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+/* 滚动条一条都不留 —— 滚动本身照旧，只是不画那根轨道。
+ *
+ * 为什么是全局而不是逐个容器：可滚的容器不止一个（页面容器、弹窗、横向
+ * 标签条），漏掉一个就多一根条子。而且页面切换的那 0.42 秒里，离场页和入场页
+ * 是两个各自可滚的图层叠在一起，会同时画出两根 —— 离场页那根因为整层在做
+ * 位移，看上去就是「左边也冒出一根上下滚动条」。
+ *
+ * 键盘、滚轮、触控板、拖动全部不受影响；被隐藏的只有那根指示条。 */
+* {
+  scrollbar-width: none; /* Firefox / 新版 Chromium */
+  -ms-overflow-style: none; /* 老 Edge */
+}
+
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* 分段控件滑块移动时的挤压。液态玻璃的那一下「软」。 */
+@keyframes squish {
+  0% {
+    scale: 1 1;
+  }
+  34% {
+    scale: 1.05 0.88;
+  }
+  100% {
+    scale: 1 1;
+  }
+}
+
+.seg-thumb-move {
+  animation: squish 0.52s var(--spring);
+}
+
+/* 不确定进度条：不知道要多久，只表示「在动」。 */
+@keyframes trm-bar-indeterminate {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(360%);
+  }
+}
+
+.trm-bar-indeterminate {
+  animation: trm-bar-indeterminate 1.1s ease-in-out infinite;
+}
+
+/* 按钮上的「正在做」回执。
+ *
+ * 只把按钮变灰是不够的：用户点了一下，按钮灰了，界面别的地方没有任何变化 ——
+ * 他分不出「正在做」和「点了没反应」，于是再点一次，或者来群里问。灰是状态，
+ * 动的这三个点才是回执。
+ *
+ * 不用转圈也不用强调色：它出现在按钮文字前面，只需要「在动」这一件事。 */
+.btn-dots {
+  width: 1.1em;
+  height: 1em;
+  background-image: radial-gradient(currentColor 42%, transparent 45%);
+  background-size: 0.36em 0.36em;
+  background-repeat: repeat-x;
+  background-position: 0 center;
+  animation: btn-dots 0.9s linear infinite;
+  opacity: 0.7;
+}
+
+@keyframes btn-dots {
+  from {
+    background-position: 0 center;
+  }
+  to {
+    /* 走满一个点距，循环处接得上，看着就是一串点在往前挪。 */
+    background-position: 0.36em center;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* ─── 换页的四条动画 ────────────────────────────────────────────────────
+ *
+ * 两层同时在动：离场的旧页往「后面」退，入场的新页从边上推进来。做法上抄的是
+ * 苹果那套推入动画的三个要点：
+ *
+ * 1. **两层走的距离不一样。** 新页走 6%，旧页只走 2.5%，而且带一点缩小。
+ *    等距离平移是一张纸横着拖过去，差速才有前后关系 —— 旧的退到后面去了，
+ *    新的盖上来。这是「耐看」的来源，不是速度也不是缓动。
+ * 2. **两层时长一样（0.42s）。** 曾经是入场 0.46s、离场 0.3s，中间那 0.16s
+ *    旧页已经没了、新页还在走，画面上是一层孤零零地滑 —— 动作断成两截。
+ * 3. **曲线不冲过终点。** --ease-nav 起步快收尾长；--spring 那种冲过头的
+ *    曲线放在整页平移上会在窗口边露出一条缝（见下面的说明）。
+ *
+ * 位移只有 6%，不是整屏：这是同级页签之间的切换，不是层级推进。整屏推拉会让
+ * 平级的两页显得像进了下一层。
+ * ─────────────────────────────────────────────────────────────────────── */
+@keyframes leaveL {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-2.5%) scale(0.985);
+  }
+}
+@keyframes enterL {
+  from {
+    opacity: 0;
+    transform: translateX(6%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes leaveR {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(2.5%) scale(0.985);
+  }
+}
+@keyframes enterR {
+  from {
+    opacity: 0;
+    transform: translateX(-6%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 切页的四条动画一律用 --ease-nav，**不要**换成 --spring。
+ *
+ * --spring 是 cubic-bezier(0.34, 1.42, 0.64, 1)，控制点 y=1.42 会冲过终点：
+ * 采样下来在 62% 处进度到 1.058，也就是整个页面层会越过静止位置约
+ * 6% × 5.8% ≈ 0.35% 宽。1185px 的窗口下就是 4px，窗口越大越宽。
+ *
+ * 页面层是 absolute inset-0 的透明层，冲过头的那几个像素等于在窗口边上开了
+ * 一条缝：往左翻页时缝在左边，往右翻页时在右边，缝里露出的是底下正在淡出的
+ * 上一页 —— 一条竖直的细线，里面还带着上一页的字。看上去就像「滚动条没删干净」。
+ *
+ * 小元件（分段控件的滑块、浮层）可以继续用 --spring：它们不贴着窗口边，
+ * 冲过头也没有边可露。 */
+.page-leave-l {
+  animation: leaveL 0.42s var(--ease-nav) forwards;
+}
+.page-enter-l {
+  animation: enterL 0.42s var(--ease-nav);
+}
+.page-leave-r {
+  animation: leaveR 0.42s var(--ease-nav) forwards;
+}
+.page-enter-r {
+  animation: enterR 0.42s var(--ease-nav);
+}
+
+/* 落点高亮：从别处跳过来时，目标那一条亮一下。
+   亮的是一圈线和一层很淡的底，不是强调色铺满 —— 这是「你点的是这条」，
+   不是警告。动画结束后组件自己把 class 摘掉，不会留成选中态。 */
+@keyframes spotlight {
+  0% {
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+  70% {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  100% {
+    background: transparent;
+    box-shadow: inset 0 0 0 1px transparent;
+  }
+}
+.spotlight {
+  animation: spotlight 1.6s var(--ease) both;
+}
+
+/* 提示框入场。很短很轻 —— 提示是用户移过去就要看到的东西，
+   动画只是让它「浮上来」而不是「啪一下出现」，不能变成等待。 */
+@keyframes tooltip-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.tooltip-in {
+  animation: tooltip-in 0.13s var(--ease) both;
+}
+
+/* 邀请式提示的入场：从底下托上来，带一点点回弹。
+   页面上别的东西都是静的，一个动起来的东西自然会被看到 —— 靠这个吸引注意，
+   不靠颜色。放一次就停，不循环、不闪。 */
+@keyframes nudge-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.nudge-in {
+  animation: nudge-in 0.44s var(--spring) both;
+}
+
+/* 有人在系统里勾了「减少动态效果」，就照办。这不是可选项：前庭功能敏感的
+   用户会因为大面积位移动画产生眩晕和恶心。 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* 壁纸层。由 lib/appearance.ts 往 <html> 上写变量来控制；没设壁纸时
+   --wp-opacity 为 0，这一层完全透明。 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--wp-image, none);
+  background-size: cover;
+  background-position: center;
+  filter: blur(var(--wp-blur, 0px));
+  opacity: var(--wp-opacity, 0);
+  transform: scale(1.06); /* 盖住模糊产生的边 */
+}

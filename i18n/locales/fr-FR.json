@@ -1,0 +1,122 @@
+{
+  "locale": {
+    "zh-CN": "简体中文",
+    "zh-TW": "繁體中文",
+    "en-US": "English",
+    "ja-JP": "日本語",
+    "ko-KR": "한국어",
+    "es-ES": "Español",
+    "fr-FR": "Français",
+    "ru-RU": "Русский"
+  },
+  "ui": {
+    "select": {
+      "empty": "Aucune option disponible",
+      "missing": " (indisponible)"
+    },
+    "range": {
+      "defaultMark": "Valeur par défaut"
+    },
+    "window": {
+      "minimize": "Réduire",
+      "maximize": "Agrandir",
+      "close": "Fermer"
+    },
+    "nav": {
+      "newContent": "Nouveau contenu"
+    },
+    "error": {
+      "title": "L’interface a rencontré une erreur",
+      "hint": "Vous pouvez nous envoyer les détails ci-dessous."
+    }
+  },
+  "nav": {
+    "overview": "Aperçu",
+    "components": "Composants",
+    "type": "Typographie",
+    "color": "Couleurs",
+    "motion": "Animation"
+  },
+  "demo": {
+    "overview": {
+      "title": "TRM UI",
+      "sub": "Le système de design et la bibliothèque de composants des logiciels Turing Mirror",
+      "whatTitle": "De quoi s’agit-il",
+      "whatBody": "Un jeu de tokens de design, une bibliothèque de composants, une i18n en huit langues et une configuration de build prête à l’emploi.\nExtrait de RVC Fabric, sans aucune dépendance au code produit : le dossier src/trm/ se copie tel quel.",
+      "whyTitle": "Pourquoi il existe",
+      "whyBody": "« Copie l’interface de RVC Fabric » se transformait invariablement en « duplique tout le dépôt et bricole dedans » : chaque nouveau produit démarrait sur une pile de code inutile, et le système de design était synchronisé à la main, dérivant un peu plus à chaque fois.\nEn isolant la couche interface, les nouveaux produits partent d’ici et les améliorations y reviennent — au lieu de se disperser dans cinq copies divergentes.",
+      "ruleTitle": "Trois règles fermes",
+      "rule1": "Toute couleur vient d’un token. Une couleur codée en dur est forcément fausse dans l’autre thème — et ne se voit qu’au moment où l’on bascule.",
+      "rule2": "Tout texte vient d’un paquet de langue. Les huit sont alignés par une vérification au build, pas par bonne volonté.",
+      "rule3": "src/trm/ n’importe rien d’extérieur. Dès qu’il touche au code produit, le template se dégrade en « morceau d’un produit ».",
+      "themeLabel": "Thème",
+      "themeTip": "« Suivre le système » n’écrit pas data-theme et se fie à prefers-color-scheme ; choisir clair ou sombre pose l’attribut sur <html>.",
+      "langLabel": "Langue",
+      "langTip": "Les huit paquets sont inclus au build : changer de langue est un échange synchrone, sans affichage fugace des clés."
+    },
+    "theme": {
+      "system": "Suivre le système",
+      "light": "Clair",
+      "dark": "Sombre"
+    },
+    "components": {
+      "sub": "Tout ce qui suit est un contrôle réel, pas une capture d’écran.",
+      "buttons": "Boutons",
+      "buttonsNote": "Un bouton occupé ne peut pas se contenter de griser : le gris est un état, les points animés sont l’accusé de réception. Sans eux, « en cours » et « mon clic n’a rien fait » se ressemblent.",
+      "fields": "Champs",
+      "list": "Lignes de liste",
+      "segment": "Contrôle segmenté",
+      "segmentNote": "Une seule pastille qui glisse, et non un fond dessiné sous chaque bouton. La différence : « le même objet s’est déplacé » contre « celui-ci s’est éteint et celui-là s’est allumé » — le second, ce sont deux clignotements."
+    },
+    "btn": {
+      "normal": "Normal",
+      "primary": "Principal",
+      "on": "Sélectionné",
+      "busy": "En cours",
+      "disabled": "Désactivé"
+    },
+    "field": {
+      "name": "Nom affiché",
+      "nameTip": "Le point d’interrogation doit être un bouton qui absorbe son propre clic : il vit souvent dans un label, et un label transmet les clics au contrôle qu’il pilote.",
+      "device": "Périphérique de sortie",
+      "deviceDesc": "Une option enregistrée qui a disparu de la liste reste visible et le signale : afficher une case vide reviendrait à prétendre qu’elle n’a jamais été définie.",
+      "volume": "Volume",
+      "volumeNote": "Pendant le glissement, la poignée est dessinée à la position réelle du curseur, sans transition ; elle ne rejoint le cran qu’au relâchement. Ce recalage indique la valeur réellement retenue.",
+      "enable": "Démarrer avec le système"
+    },
+    "list": {
+      "meta": "Août 2026",
+      "item1": "Une ligne dépliable",
+      "item1Desc": "Cliquez dessus.",
+      "item1Body": "« Semble cliquable » et « est cliquable » doivent coïncider. Cette ligne n’avait que le style ; aucun onClick n’était branché. Les gens ont cliqué quatre fois, rien ne s’est passé, et ils en ont conclu que le logiciel était cassé.\n\nDésormais le style suit la présence d’un onClick, et non un drapeau clickable distinct.",
+      "item2": "N’importe quoi peut aller à droite",
+      "item2Desc": "Boutons, interrupteurs, indicateurs d’état."
+    },
+    "seg": {
+      "a": "Premier",
+      "b": "Deuxième",
+      "c": "Troisième"
+    },
+    "type": {
+      "sub": "Le corps de texte est à 15px, interligne 1,65. Les paliers de taille sont fixes : n’insérez pas de valeur intermédiaire.",
+      "sample": "Le bleu clair de Schale, transposé au logiciel de bureau.",
+      "roleBody": "Corps",
+      "roleHelp": "Aide",
+      "roleMeta": "Méta"
+    },
+    "color": {
+      "sub": "Passez en sombre et regardez à nouveau : chaque échantillon doit tenir dans les deux thèmes.",
+      "groupCore": "Base",
+      "groupInk": "Texte",
+      "groupAccent": "Accent et état"
+    },
+    "motion": {
+      "sub": "Le sens de transition suit l’ordre de navigation. Cliquez sur quelques onglets en haut pour le voir.",
+      "curves": "Quatre courbes",
+      "easeNav": "Réservée aux transitions de page. Départ rapide, fin longue, et jamais de dépassement : la couche de page affleure le bord de la fenêtre, et un dépassement laisse une couture visible.",
+      "spring": "Pour les petits éléments. Elle dépasse, donc réservée à ce qui ne touche pas le bord de la fenêtre : la pastille du contrôle segmenté, les panneaux flottants.",
+      "ease": "La transition polyvalente. Survol, appui, changements de couleur.",
+      "reduce": "Si le système demande de réduire les animations, tout ce qui précède est désactivé. Ce n’est pas facultatif : les grands mouvements donnent le vertige aux personnes sensibles sur le plan vestibulaire."
+    }
+  }
+}

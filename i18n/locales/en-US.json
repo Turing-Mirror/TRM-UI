@@ -1,0 +1,122 @@
+{
+  "locale": {
+    "zh-CN": "简体中文",
+    "zh-TW": "繁體中文",
+    "en-US": "English",
+    "ja-JP": "日本語",
+    "ko-KR": "한국어",
+    "es-ES": "Español",
+    "fr-FR": "Français",
+    "ru-RU": "Русский"
+  },
+  "ui": {
+    "select": {
+      "empty": "No options available",
+      "missing": " (unavailable)"
+    },
+    "range": {
+      "defaultMark": "Default value"
+    },
+    "window": {
+      "minimize": "Minimize",
+      "maximize": "Maximize",
+      "close": "Close"
+    },
+    "nav": {
+      "newContent": "New content"
+    },
+    "error": {
+      "title": "The interface hit an error",
+      "hint": "You can send us the details below."
+    }
+  },
+  "nav": {
+    "overview": "Overview",
+    "components": "Components",
+    "type": "Typography",
+    "color": "Color",
+    "motion": "Motion"
+  },
+  "demo": {
+    "overview": {
+      "title": "TRM UI",
+      "sub": "The design system and component library behind Turing Mirror desktop products",
+      "whatTitle": "What this is",
+      "whatBody": "A set of design tokens, a component library, eight-language i18n, and a build setup that runs as-is.\nExtracted from RVC Fabric, but it depends on no product code — the whole src/trm/ directory can be copied out.",
+      "whyTitle": "Why it exists",
+      "whyBody": "“Copy RVC Fabric’s UI” kept turning into “fork the whole repository and hack on it”, so every new product started from a pile of code it never needed, and the design system was kept in sync by hand — drifting a little further with every pass.\nPulling the interface layer out on its own means new products start here, and improvements flow back here — instead of into five diverging copies.",
+      "ruleTitle": "Three hard rules",
+      "rule1": "Every colour comes from a token. A hard-coded colour is guaranteed wrong in the other theme — and only visible when someone switches.",
+      "rule2": "Every string comes from a locale pack. All eight are forced into the same shape by a build-time check, not by good intentions.",
+      "rule3": "src/trm/ imports nothing outside itself. The moment it reaches into product code, the template degrades into “part of one product”.",
+      "themeLabel": "Theme",
+      "themeTip": "“Follow system” writes no data-theme and relies on prefers-color-scheme; picking light or dark stamps the attribute onto <html>.",
+      "langLabel": "Language",
+      "langTip": "All eight packs are bundled at build time, so switching is a synchronous swap — no flash of raw keys before the text arrives."
+    },
+    "theme": {
+      "system": "Follow system",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "components": {
+      "sub": "Everything below is a live control, not a screenshot.",
+      "buttons": "Buttons",
+      "buttonsNote": "A busy button must not just go grey: grey is a state, the moving dots are the receipt. Without them, “working” and “didn’t register my click” look identical.",
+      "fields": "Fields",
+      "list": "List rows",
+      "segment": "Segment control",
+      "segmentNote": "One thumb that slides, not a separate background painted under each button. The difference is “the same object moved” versus “this one went out and that one came on” — the latter is two flickers."
+    },
+    "btn": {
+      "normal": "Default",
+      "primary": "Primary",
+      "on": "Selected",
+      "busy": "Working",
+      "disabled": "Disabled"
+    },
+    "field": {
+      "name": "Display name",
+      "nameTip": "The help mark has to be a button that swallows its own click — it often sits inside a label, and a label forwards clicks to the control it owns.",
+      "device": "Output device",
+      "deviceDesc": "A saved option that has left the list stays visible and says so — rendering an empty box would pretend it was never set.",
+      "volume": "Volume",
+      "volumeNote": "While dragging, the knob is drawn at the pointer’s real position with no transition; it glides onto the step only when you let go — and that snap is what tells you which step you actually got.",
+      "enable": "Start with the system"
+    },
+    "list": {
+      "meta": "August 2026",
+      "item1": "An expandable row",
+      "item1Desc": "Give it a click.",
+      "item1Body": "“Looks clickable” and “is clickable” have to agree. This row once had only the styling; no onClick was ever wired. People clicked it four times, nothing happened, and they concluded the app was broken.\n\nNow the styling follows whether an onClick exists — not a separate clickable flag.",
+      "item2": "Anything can go on the right",
+      "item2Desc": "Buttons, toggles, status marks."
+    },
+    "seg": {
+      "a": "First",
+      "b": "Second",
+      "c": "Third"
+    },
+    "type": {
+      "sub": "Body is 15px at 1.65 line-height. The size steps are fixed — don’t slip a new value in between them.",
+      "sample": "Schale’s light blue, brought over to desktop software.",
+      "roleBody": "Body",
+      "roleHelp": "Help",
+      "roleMeta": "Meta"
+    },
+    "color": {
+      "sub": "Switch to dark and look again: every swatch has to hold up in both themes.",
+      "groupCore": "Core",
+      "groupInk": "Text",
+      "groupAccent": "Accent and state"
+    },
+    "motion": {
+      "sub": "Page direction follows the nav order. Click a few tabs above and you’ll see it.",
+      "curves": "Four curves",
+      "easeNav": "Page transitions only. Fast off the mark, long on the tail, and it never overshoots — the page layer sits flush with the window edge, and an overshoot is a visible seam.",
+      "spring": "For small elements. It overshoots, so it only goes on things that don’t touch the window edge — the segment thumb, floating panels.",
+      "ease": "The general-purpose transition. Hover, press, colour changes.",
+      "reduce": "If the system asks for reduced motion, all of the above switches off. That is not optional — large sliding animations make people with vestibular sensitivity dizzy."
+    }
+  }
+}
