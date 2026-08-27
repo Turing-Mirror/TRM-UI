@@ -33,6 +33,14 @@ export {
   type Appearance,
   type ThemeMode,
 } from "./lib/appearance";
+// 壁纸色调：applyAppearance 自己会用，单独导出是给需要自己算一遍的地方
+// （比如设置页想在选图时先预览一下卡片会变多实）。
+export {
+  sampleWallpaper,
+  toneFromPixels,
+  NEUTRAL_TONE,
+  type WallpaperTone,
+} from "./lib/wallpaperTone";
 
 export {
   I18nProvider,

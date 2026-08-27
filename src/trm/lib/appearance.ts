@@ -1,3 +1,5 @@
+import { NEUTRAL_TONE, sampleWallpaper } from "./wallpaperTone";
+
 export type ThemeMode = "system" | "light" | "dark";
 
 export type Appearance = {
@@ -58,14 +60,45 @@ export function applyAppearance(
       const url = resolveAsset ? resolveAsset(path) : path;
       // 路径里可能有引号，转义掉，否则 url("…") 会被提前截断。
       el.style.setProperty("--wp-image", `url("${url.replace(/"/g, '\\"')}")`);
+      // 设了图就先把开关打上，别等采样。采样要解码一张几兆的图，慢的话是几十
+      // 毫秒；这中间卡片如果还是「没有壁纸」那一套，用户会看见界面闪一下。
+      // `--wp-detail` 有默认值 0.5，先按中庸那档画，采完再落到准确值。
+      el.setAttribute("data-wallpaper", "on");
+      void applyTone(el, path, url);
     } catch {
       // resolveAsset 在没有宿主环境时会抛。壁纸本来就只在装好的软件里
       // 有意义，抛了就当没设。
       el.style.removeProperty("--wp-image");
+      clearTone(el);
     }
   } else {
     el.style.removeProperty("--wp-image");
+    clearTone(el);
   }
+}
+
+/** 上一次采过的图。同一张图换个磨砂值不必重采。 */
+let sampledPath = "";
+
+function clearTone(el: HTMLElement): void {
+  sampledPath = "";
+  el.removeAttribute("data-wallpaper");
+  el.style.removeProperty("--wp-tint");
+  el.style.removeProperty("--wp-detail");
+}
+
+async function applyTone(
+  el: HTMLElement,
+  path: string,
+  url: string,
+): Promise<void> {
+  if (path === sampledPath) return;
+  sampledPath = path;
+  const tone = await sampleWallpaper(url).catch(() => NEUTRAL_TONE);
+  // 采样是异步的，这中间用户可能已经换了图甚至清空了。以最后一次为准。
+  if (sampledPath !== path) return;
+  el.style.setProperty("--wp-tint", `rgb(${tone.tint})`);
+  el.style.setProperty("--wp-detail", String(Math.round(tone.detail * 100) / 100));
 }
 
 function clamp(v: number, lo: number, hi: number): number {
