@@ -32,10 +32,15 @@ const MAX_BLUR_PX = 24;
  *
  * @param resolveAsset 本地文件路径 → 可用的 URL。Tauri 里传
  *   `convertFileSrc`；纯网页里不用传（壁纸直接给 URL 即可）。
+ * @param readWallpaperBytes 本地文件路径 → data URL。壁纸色调采样要把图画进
+ *   canvas 读像素，而 `resolveAsset` 给出的地址通常是另一个源，画上去 canvas
+ *   会被标成 tainted、`getImageData` 抛 SecurityError。传了这个就有退路。
+ *   不传也不会坏，只是遇到那种宿主时色调退回中庸值。
  */
 export function applyAppearance(
   a: Appearance,
   resolveAsset?: (path: string) => string,
+  readWallpaperBytes?: (path: string) => Promise<string>,
 ): void {
   const el = document.documentElement;
 
@@ -64,7 +69,7 @@ export function applyAppearance(
       // 毫秒；这中间卡片如果还是「没有壁纸」那一套，用户会看见界面闪一下。
       // `--wp-detail` 有默认值 0.5，先按中庸那档画，采完再落到准确值。
       el.setAttribute("data-wallpaper", "on");
-      void applyTone(el, path, url);
+      void applyTone(el, path, url, readWallpaperBytes);
     } catch {
       // resolveAsset 在没有宿主环境时会抛。壁纸本来就只在装好的软件里
       // 有意义，抛了就当没设。
@@ -91,10 +96,16 @@ async function applyTone(
   el: HTMLElement,
   path: string,
   url: string,
+  readBytes?: (path: string) => Promise<string>,
 ): Promise<void> {
   if (path === sampledPath) return;
   sampledPath = path;
-  const tone = await sampleWallpaper(url).catch(() => NEUTRAL_TONE);
+  // 直接采样多半会被 canvas 的同源策略挡下来（宿主给的 asset 地址是另一个
+  // 源）。挡下来就走宿主给的那条退路，把字节读成 data URL 再采一次。
+  const tone = await sampleWallpaper(
+    url,
+    readBytes ? () => readBytes(path) : undefined,
+  ).catch(() => NEUTRAL_TONE);
   // 采样是异步的，这中间用户可能已经换了图甚至清空了。以最后一次为准。
   if (sampledPath !== path) return;
   el.style.setProperty("--wp-tint", `rgb(${tone.tint})`);
