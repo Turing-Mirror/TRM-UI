@@ -154,54 +154,44 @@ export function ListItem({
   desc,
   meta,
   right,
+  rightInteractive = true,
   children,
   clickable = false,
   expanded,
   onClick,
 }: {
   title?: string;
+  /** 标题后面的小问号。专有名词的解释统一从 lib/glossary 取。 */
   titleTip?: string;
   desc?: string;
-  /** 标题上方那行更小的灰字（分类、时间戳这类）。 */
   meta?: string;
   right?: ReactNode;
-  /** 展开后画在行下面的正文，只有 `expanded` 时才渲染。 */
+  /** 仅含文字的右侧内容可设为 false，整行使用原生按钮。 */
+  rightInteractive?: boolean;
+  /** Body revealed under the row; only rendered when `expanded`. */
   children?: ReactNode;
   clickable?: boolean;
   expanded?: boolean;
   onClick?: () => void;
 }) {
-  // `clickable` 曾经只管样式：行看着能点，实际上完全是死的。
-  // 现在真正决定「能不能点」的是有没有 onClick，样式跟着它走。
+  // `clickable` used to be styling only — rows could look interactive and be
+  // completely inert, which is what the four 「展开」 rows on the help page were.
   const act = onClick;
   const isBtn = Boolean(act);
-  const body = (
-    <div
-      role={isBtn ? "button" : undefined}
-      tabIndex={isBtn ? 0 : undefined}
-      aria-expanded={isBtn && expanded !== undefined ? expanded : undefined}
-      onClick={act}
-      onKeyDown={
-        isBtn
-          ? (e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                act?.();
-              }
-            }
-          : undefined
-      }
-      className={[
-        "flex items-center gap-3.5 py-3.5 rounded-[var(--rs)]",
-        clickable || isBtn
-          ? "cursor-pointer -mx-3.5 px-3.5 hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)] transition-colors"
-          : "",
-        isBtn
-          ? "focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-[-2px]"
-          : "",
-      ].join(" ")}
-    >
-      <div className="min-w-0">
+  const rowClass = [
+    "flex items-center gap-3.5 py-3.5 rounded-[var(--rs)]",
+    clickable || isBtn
+      ? "cursor-pointer -mx-3.5 px-3.5 hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)] transition-colors"
+      : "",
+    isBtn
+      ? "focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-[-2px]"
+      : "",
+  ].join(" ");
+  // Use spans inside the native button: a button cannot contain divs, and the
+  // previous role=button wrapper also made keyboard support needlessly manual.
+  const content = (
+    <>
+      <span className="min-w-0">
         {meta ? (
           <span className="block text-[11.5px] text-[var(--meta)] mb-0.5">{meta}</span>
         ) : null}
@@ -216,28 +206,111 @@ export function ListItem({
             {desc}
           </span>
         ) : null}
-      </div>
+      </span>
       {right ? (
-        <div className="ml-auto flex-none flex items-center gap-2">{right}</div>
+        <span className="ml-auto flex-none flex items-center gap-2">{right}</span>
       ) : null}
+    </>
+  );
+  // The current expandable rows have text-only right content. Keep the
+  // fallback for a future clickable row with a tooltip, where nesting the
+  // HelpMark button inside another button would be invalid HTML.
+  const nativeButton = isBtn && !titleTip && (!right || !rightInteractive);
+  const body = nativeButton ? (
+    <button
+      type="button"
+      aria-expanded={expanded !== undefined ? expanded : undefined}
+      onClick={act}
+      className={[rowClass, "w-[calc(100%+1.75rem)] appearance-none border-0 bg-transparent text-left font-[inherit] text-[inherit]"].join(" ")}
+    >
+      {content}
+    </button>
+  ) : (
+    <div
+      role={isBtn ? "button" : undefined}
+      tabIndex={isBtn ? 0 : undefined}
+      aria-expanded={isBtn && expanded !== undefined ? expanded : undefined}
+      onClick={act}
+      onKeyDown={
+        isBtn
+          ? (e) => {
+              if (e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")) {
+                e.preventDefault();
+                act?.();
+              }
+            }
+          : undefined
+      }
+      className={rowClass}
+    >
+      {content}
     </div>
   );
   if (!children) return body;
   return (
     <div>
       {body}
-      {/* 正文和标题行之间要留气口。贴着的话，鼠标停在标题上时悬停灰底的下沿
-          和正文首行挨成一条，看着像文字被切了一刀。 */}
+      {/* 正文和标题行之间要留出气口。原来是 -mt-1，正文顶边正好压在标题行
+          悬停灰底的底边上 —— 鼠标停在标题上时，灰块下沿和文字挨成一条，
+          看着像文字被切了一刀。 */}
       {expanded ? (
-        // 别往这儿加 `max-w-[NNch]`：`ch` 是「0」字形的宽度（12.5px 字号下
+        // 别再往这儿加 `max-w-[NNch]`：`ch` 是「0」字形的宽度（12.5px 字号下
         // 实测 6.95px），只有一个汉字（12.5px）的一半。按拉丁文校准的 74ch
-        // 折成中文就只剩 41 字、约容器宽度的 47% —— 用户看到的是「一行话
-        // 没走到一半就断了」。中文排版里限制行宽要用别的办法。
+        // 折成中文就只剩 41 字、约容器宽度的 47% —— 用户看到的就是「一行话
+        // 没走到一半就断了」。DonateNote 早前是同一个毛病，改成 w-full
+        // min-w-0 治好的，这里跟它对齐。
         <div className="pt-2 pb-4 text-[12.5px] text-[var(--ink-muted)] leading-relaxed whitespace-pre-line w-full min-w-0">
           {children}
         </div>
       ) : null}
     </div>
+  );
+}
+
+export type AccordionItem = {
+  id: string;
+  title: string;
+  desc?: string;
+  content: ReactNode;
+};
+
+/** Shared grouped accordion rows used by the help sections. */
+export function AccordionGroup({
+  items,
+  openId,
+  onToggle,
+  openLabel,
+  closedLabel,
+}: {
+  items: readonly AccordionItem[];
+  openId: string;
+  onToggle: (id: string) => void;
+  openLabel: ReactNode;
+  closedLabel: ReactNode;
+}) {
+  return (
+    <Group>
+      {items.map((item) => {
+        const expanded = openId === item.id;
+        return (
+          <ListItem
+            key={item.id}
+            title={item.title}
+            desc={item.desc}
+            expanded={expanded}
+            onClick={() => onToggle(item.id)}
+            rightInteractive={false}
+            right={
+              <span className="text-[13.5px] text-[var(--ink-muted)]">
+                {expanded ? openLabel : closedLabel}
+              </span>
+            }
+          >
+            {item.content}
+          </ListItem>
+        );
+      })}
+    </Group>
   );
 }
 

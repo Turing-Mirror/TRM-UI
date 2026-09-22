@@ -6,6 +6,7 @@ import {
   Group,
   Btn,
   ListItem,
+  AccordionGroup,
   Field,
   Select,
   Slider,
@@ -103,6 +104,7 @@ export function ComponentsPage() {
               checked={autostart}
               onChange={setAutostart}
               label={t("demo.field.enable")}
+              tip={t("demo.field.nameTip")}
             />
           </div>
         </Group>
@@ -126,15 +128,13 @@ export function ComponentsPage() {
 
       <Block title={t("demo.components.list")}>
         <Group>
-          <ListItem
-            meta={t("demo.list.meta")}
-            title={t("demo.list.item1")}
-            desc={t("demo.list.item1Desc")}
-            expanded={expanded}
-            onClick={() => setExpanded((v) => !v)}
-          >
-            {t("demo.list.item1Body")}
-          </ListItem>
+          <AccordionGroup
+            items={[{ id: "example", title: t("demo.list.item1"), desc: t("demo.list.item1Desc"), content: t("demo.list.item1Body") }]}
+            openId={expanded ? "example" : ""}
+            onToggle={() => setExpanded((v) => !v)}
+            openLabel="−"
+            closedLabel="+"
+          />
           <ListItem
             title={t("demo.list.item2")}
             desc={t("demo.list.item2Desc")}

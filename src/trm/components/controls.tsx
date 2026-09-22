@@ -177,6 +177,7 @@ export function RangeBar({
   ticks = 5,
   defaultValue,
   ariaLabel,
+  disabled = false,
 }: {
   value: number;
   min: number;
@@ -188,6 +189,7 @@ export function RangeBar({
   /** 初始/中性值位置。画成竖线；与之重合的刻度小点会跳过不画。 */
   defaultValue?: number;
   ariaLabel?: string;
+  disabled?: boolean;
 }) {
   const span = max - min || 1;
   const pct = Math.min(100, Math.max(0, ((value - min) / span) * 100));
@@ -332,8 +334,9 @@ export function RangeBar({
         step={step}
         value={value}
         aria-label={ariaLabel}
+        disabled={disabled}
         onChange={(e) => onChange(Number(e.target.value))}
-        onPointerDown={(e) => setDragPct(pctFromClientX(e.clientX))}
+        onPointerDown={(e) => { if (!disabled) setDragPct(pctFromClientX(e.clientX)); }}
         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
       />
     </div>
@@ -350,6 +353,7 @@ export function Slider({
   format,
   defaultValue,
   ariaLabel,
+  disabled = false,
 }: {
   value: number;
   min: number;
@@ -360,6 +364,7 @@ export function Slider({
   format?: (v: number) => string;
   defaultValue?: number;
   ariaLabel?: string;
+  disabled?: boolean;
 }) {
   const shown = format ? format(value) : String(value);
   return (
@@ -376,6 +381,7 @@ export function Slider({
           onChange={onChange}
           defaultValue={defaultValue}
           ariaLabel={ariaLabel}
+          disabled={disabled}
         />
       </div>
       {/* tabular-nums：数字等宽，拖动时右边这一列不会因为 1 比 8 窄而抖。 */}
@@ -389,40 +395,46 @@ export function Toggle({
   onChange,
   label,
   tip,
+  disabled = false,
 }: {
   checked: boolean;
   onChange: (v: boolean) => void;
   label: string;
   tip?: string;
+  disabled?: boolean;
 }) {
   return (
-    <label className="flex items-center gap-[11px] cursor-pointer select-none">
+    // 问号不能待在 <label> 里：button 也是 labelable 元素，排在复选框前面
+    // 时它就成了这个 label 的 labeled control —— 悬停/按压整行都会把
+    // :hover/:active 转发到问号上（误触发动效），点文字被转发给问号吞掉
+    // （设置不切）。问号挪出去，label 的关联才只属于复选框。
+    <div className="flex items-center gap-[11px]">
       {tip ? <HelpMark title={tip} /> : null}
-      <span
-        role="checkbox"
-        aria-checked={checked}
-        onClick={(e) => {
-          e.preventDefault();
-          onChange(!checked);
-        }}
-        className={[
-          "w-[15px] h-[15px] rounded grid place-items-center flex-none transition-colors",
-          checked ? "bg-[var(--accent)]" : "shadow-[inset_0_0_0_1px_var(--line)]",
-        ].join(" ")}
-      >
-        {checked ? (
-          <span className="text-[10px] leading-none text-[var(--accent-ink)]">✓</span>
-        ) : null}
-      </span>
-      {/* 真正的 checkbox 藏起来但仍在无障碍树里：键盘和读屏走它，不走上面那个
-          画出来的方块。 */}
-      <input
-        type="checkbox"
-        className="sr-only"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-      />
-      <span className="text-sm">{label}</span>
-    </label>
+      <label className="flex items-center gap-[11px] cursor-pointer select-none">
+        {/* 纯视觉的框：点击由 label 转发给真正的 input，不再自己切一次 —
+            否则 label 激活会再点一下 input，一次点击切两回。 */}
+        <span
+          aria-hidden="true"
+          className={[
+            "w-[15px] h-[15px] rounded grid place-items-center flex-none transition-colors",
+            checked
+              ? "bg-[var(--accent)]"
+              : "shadow-[inset_0_0_0_1px_var(--line)]",
+          ].join(" ")}
+        >
+          {checked ? (
+            <span className="text-[10px] leading-none text-[var(--accent-ink)]">✓</span>
+          ) : null}
+        </span>
+        <input
+          type="checkbox"
+          className="sr-only"
+          checked={checked}
+          disabled={disabled}
+          onChange={(e) => onChange(e.target.checked)}
+        />
+        <span className="text-sm">{label}</span>
+      </label>
+    </div>
   );
 }

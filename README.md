@@ -6,6 +6,8 @@
 
 [English](./README_en.md)
 
+最新回流说明：[RVC Fabric 界面回流 v1](./docs/rvc-sync-v1.md)。包含问号与开关事件修复、切页生命周期、禁用控件、折叠列表和弹窗焦点工具；运行 `npm test` 验证交互回归。
+
 ---
 
 ## 为什么有它

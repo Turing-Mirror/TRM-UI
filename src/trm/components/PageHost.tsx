@@ -78,24 +78,24 @@ export function PageHost<T extends string>({ nav, page, children }: Props<T>) {
 
   return (
     <div className="relative flex-1 overflow-hidden">
-      {phase.leaving ? (
-        <div
-          key={`leave-${phase.leaving}`}
-          // 离场层不需要能滚：它是新挂上去的节点，scrollTop 本来就是 0，
-          // 一眨眼就卸载了。留着 overflow-y-auto 只是多一个滚动容器，
-          // 切页那一瞬间会跟着画出第二根滚动条。
-          className={`absolute inset-0 overflow-hidden pointer-events-none z-[1] ${leaveCls}`}
-        >
-          {children(phase.leaving)}
-        </div>
-      ) : null}
-      <div
-        key={`cur-${phase.page}`}
-        ref={paneRef}
-        className={`absolute inset-0 overflow-y-auto z-[2] ${enterCls}`}
-      >
-        {children(phase.page)}
-      </div>
+      {(phase.leaving && phase.leaving !== phase.page
+        ? [phase.leaving, phase.page]
+        : [phase.page]).map((id) => {
+        const leaving = id === phase.leaving;
+        return (
+          <div
+            key={id}
+            ref={leaving ? undefined : paneRef}
+            inert={leaving}
+            aria-hidden={leaving || undefined}
+            className={leaving
+              ? `absolute inset-0 overflow-hidden pointer-events-none z-[1] ${leaveCls}`
+              : `absolute inset-0 overflow-y-auto z-[2] ${enterCls}`}
+          >
+            {children(id)}
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -89,7 +89,7 @@ export function SegmentControl<T extends string>({
   //
   // 依赖用 id 拼出来的串而不是 `options` 本身：调用方多半每次渲染都现拼一个
   // 新数组，拿数组当依赖等于每渲染一次就重建一次观察器。
-  const ids = options.map((o) => o.id).join(" ");
+  const ids = JSON.stringify(options.map((o) => o.id));
   useEffect(() => {
     const root = rootRef.current;
     if (!root || typeof ResizeObserver === "undefined") return;

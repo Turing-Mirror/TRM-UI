@@ -57,3 +57,6 @@ export {
   type TranslateFn,
   type TVars,
 } from "./i18n";
+
+export { AccordionGroup, type AccordionItem } from "./components/ui";
+export { useModalKeys } from "./hooks/useModalKeys";
