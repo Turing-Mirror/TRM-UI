@@ -208,7 +208,9 @@ export function ListItem({
         ) : null}
       </span>
       {right ? (
-        <span className="ml-auto flex-none flex items-center gap-2">{right}</span>
+        <span className="ml-auto flex-none flex items-center gap-2"
+          onClick={rightInteractive ? (e) => e.stopPropagation() : undefined}
+        >{right}</span>
       ) : null}
     </>
   );

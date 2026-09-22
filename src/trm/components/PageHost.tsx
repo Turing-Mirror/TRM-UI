@@ -39,9 +39,18 @@ export function PageHost<T extends string>({ nav, page, children }: Props<T>) {
   const leaveTimer = useRef<number | null>(null);
 
   useEffect(() => {
+    if (reduce) {
+      if (leaveTimer.current !== null) window.clearTimeout(leaveTimer.current);
+      leaveTimer.current = null;
+      setPhase((p) => p.page === page && p.leaving === null && p.dir === 0
+        ? p : { page, leaving: null, dir: 0 });
+      return;
+    }
     if (page === phase.page) return;
+    if (leaveTimer.current !== null) window.clearTimeout(leaveTimer.current);
+    leaveTimer.current = null;
     const dir = nav.direction(phase.page, page);
-    if (reduce || dir === 0) {
+    if (dir === 0) {
       setPhase({ page, leaving: null, dir: 0 });
       return;
     }

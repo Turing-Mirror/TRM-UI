@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   PagePad,
   PageHead,
@@ -18,6 +18,10 @@ import {
 export function ComponentsPage() {
   const { t } = useI18n();
   const [busy, setBusy] = useState(false);
+  const busyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (busyTimer.current !== null) clearTimeout(busyTimer.current);
+  }, []);
   const [on, setOn] = useState(true);
   const [name, setName] = useState("device-01");
   const [volume, setVolume] = useState(60);
@@ -41,7 +45,7 @@ export function ComponentsPage() {
               busy={busy}
               onClick={() => {
                 setBusy(true);
-                window.setTimeout(() => setBusy(false), 2200);
+                busyTimer.current = setTimeout(() => setBusy(false), 2200);
               }}
             >
               {t("demo.btn.busy")}

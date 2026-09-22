@@ -1,5 +1,21 @@
 import { useEffect, useRef, type RefObject } from "react";
 
+const modalStack: { ref: RefObject<HTMLElement | null> }[] = [];
+const focusSelector = 'button, input, select, textarea, a[href], area[href], summary, [contenteditable="true"], [tabindex]';
+function available(el: HTMLElement): boolean {
+  if (el.matches(':disabled, input[type="hidden"]') || el.closest('[hidden], [inert]')) return false;
+  if (getComputedStyle(el).visibility === "hidden") return false;
+  for (let p: HTMLElement | null = el; p; p = p.parentElement) {
+    if (getComputedStyle(p).display === "none") return false;
+  }
+  return true;
+}
+function focusables(dlg: HTMLElement): HTMLElement[] {
+  return Array.from(dlg.querySelectorAll<HTMLElement>(focusSelector))
+    .filter(el => el.tabIndex >= 0 && available(el))
+    .sort((a, b) => (a.tabIndex || Infinity) - (b.tabIndex || Infinity));
+}
+
 /**
  * 弹层共用的一套键盘/焦点契约：打开时焦点收进弹层、Tab 在弹层里
  * 转圈、Escape 走「取消」语义、关掉时焦点还给打开前的控件。
@@ -25,20 +41,30 @@ export function useModalKeys(
 
   useEffect(() => {
     if (!open) return;
+    const token = { ref: dialogRef };
+    modalStack.push(token);
+    const isTop = () => {
+      let top = modalStack[modalStack.length - 1];
+      // React 先运行子级 effect：DOM 中更深的弹窗不能被父级抢走优先级。
+      for (const entry of [...modalStack].reverse()) {
+        if (entry !== top && entry.ref.current && top?.ref.current?.contains(entry.ref.current)) top = entry;
+      }
+      return top === token;
+    };
     const el = document.activeElement;
     prevFocusRef.current = el instanceof HTMLElement ? el : null;
     // 等一帧再聚焦：弹层刚挂进 DOM，同步 focus 会被浏览器丢掉。
     const id = window.setTimeout(() => {
       const dlg = dialogRef.current;
-      const first = dlg?.querySelector<HTMLElement>(
-        "button, input, [tabindex]:not([tabindex='-1'])",
-      );
-      (optsRef.current.focus?.() ?? first ?? dlg)?.focus();
+      if (!dlg || !isTop()) return;
+      const preferred = optsRef.current.focus?.();
+      (preferred && dlg.contains(preferred) && available(preferred)
+        ? preferred : focusables(dlg)[0] ?? dlg).focus();
     }, 0);
     const onKey = (e: KeyboardEvent) => {
       // 这按键已经回答过别的东西（比如弹窗输入框的 Enter 就地截停），
       // 或者还在 IME 组词 —— 都不算对弹层的回答。
-      if (e.defaultPrevented || e.isComposing) return;
+      if (!isTop() || e.defaultPrevented || e.isComposing) return;
       if (e.key === "Escape") {
         // 长按不连关。
         if (e.repeat) return;
@@ -50,16 +76,16 @@ export function useModalKeys(
       // 焦点圈在弹层里：遮罩后的页面不参与 Tab 序。
       const dlg = dialogRef.current;
       if (!dlg) return;
-      const focusables = Array.from(
-        dlg.querySelectorAll<HTMLElement>(
-          "button, input, [tabindex]:not([tabindex='-1'])",
-        ),
-      ).filter((x) => !x.hasAttribute("disabled"));
-      if (!focusables.length) return;
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
+      const targets = focusables(dlg);
+      if (!targets.length) {
+        e.preventDefault();
+        dlg.focus();
+        return;
+      }
+      const first = targets[0];
+      const last = targets[targets.length - 1];
       const active = document.activeElement;
-      const inside = active instanceof HTMLElement && dlg.contains(active);
+      const inside = active instanceof HTMLElement && targets.includes(active);
       if (!e.shiftKey && (!inside || active === last)) {
         e.preventDefault();
         first.focus();
@@ -72,7 +98,9 @@ export function useModalKeys(
     return () => {
       window.clearTimeout(id);
       window.removeEventListener("keydown", onKey);
-      prevFocusRef.current?.focus();
+      const wasTop = isTop();
+      modalStack.splice(modalStack.indexOf(token), 1);
+      if (wasTop && prevFocusRef.current?.isConnected) prevFocusRef.current.focus();
       prevFocusRef.current = null;
     };
   }, [open, dialogRef]);

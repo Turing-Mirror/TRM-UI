@@ -13,8 +13,20 @@ function Page({id}: {id: "a" | "b"}) {
 }
 const host = (page: "a" | "b") => <PageHost nav={nav} page={page}>{id => <Page id={id} />}</PageHost>;
 let m: Mounted;
-afterEach(() => { m?.unmount(); vi.useRealTimers(); vi.clearAllMocks(); });
+afterEach(() => { m?.unmount(); vi.useRealTimers(); vi.clearAllMocks(); vi.restoreAllMocks(); });
 describe("PageHost", () => {
+  it("enabling reduced motion clears the outgoing layer immediately", () => {
+    const media=window.matchMedia("(prefers-reduced-motion: reduce)");
+    let reduce=false;
+    Object.defineProperty(media,"matches",{get:()=>reduce,configurable:true});
+    vi.spyOn(window,"matchMedia").mockReturnValue(media);
+    m=mount(host("a"));
+    act(() => m.root.render(host("b")));
+    expect(m.container.querySelectorAll("input")).toHaveLength(2);
+    act(() => { reduce=true; media.dispatchEvent(new Event("change")); });
+    expect(m.container.querySelectorAll("input")).toHaveLength(1);
+    expect(m.container.querySelector(".page-enter-l")).toBeNull();
+  });
   it("keeps the outgoing subtree and its state during a quick return", () => {
     vi.useFakeTimers();
     m = mount(host("a"));

@@ -40,7 +40,7 @@ export function SegmentControl<T extends string>({
   const rootRef = useRef<HTMLDivElement>(null);
   const btnRefs = useRef<Map<T, HTMLButtonElement>>(new Map());
   const [thumb, setThumb] = useState({ x: 0, w: 0 });
-  const [squish, setSquish] = useState(false);
+  const [motionKey, setMotionKey] = useState(0);
   const first = useRef(true);
 
   const place = useCallback(
@@ -57,10 +57,7 @@ export function SegmentControl<T extends string>({
       // 才不会把自己转起来。
       setThumb((cur) => (cur.x === x && cur.w === w ? cur : { x, w }));
       if (animate && !first.current) {
-        setSquish(false);
-        // 强制回流，好让动画能被重新触发
-        void root.offsetWidth;
-        setSquish(true);
+        setMotionKey((n) => n + 1);
       }
       first.current = false;
     },
@@ -122,17 +119,15 @@ export function SegmentControl<T extends string>({
           aria-hidden
           className={[
             "absolute top-[3px] bottom-[3px] left-0 rounded-full pointer-events-none",
-            "bg-[var(--seg-thumb)]",
-            "backdrop-blur-[10px] backdrop-saturate-150",
-            "shadow-[var(--glass)]",
             "transition-[transform,width] duration-[520ms] ease-[var(--spring)]",
-            squish ? "seg-thumb-move" : "",
           ].join(" ")}
           style={{
             width: thumb.w,
             transform: `translateX(${thumb.x}px)`,
           }}
-        />
+        >
+          <span key={motionKey} className={`absolute inset-0 rounded-full bg-[var(--seg-thumb)] backdrop-blur-[10px] backdrop-saturate-150 shadow-[var(--glass)] ${motionKey ? "seg-thumb-move" : ""}`} />
+        </span>
       )}
       {options.map((opt) => {
         const on = opt.id === value;
@@ -142,6 +137,20 @@ export function SegmentControl<T extends string>({
             type="button"
             role={role === "tablist" ? "tab" : undefined}
             aria-selected={role === "tablist" ? on : undefined}
+            aria-pressed={role === "group" ? on : undefined}
+            tabIndex={role === "tablist" ? (on || (!options.some(o => o.id === value) && opt.id === options[0]?.id) ? 0 : -1) : undefined}
+            onKeyDown={(e) => {
+              if (role !== "tablist" || e.altKey || e.ctrlKey || e.metaKey) return;
+              const current = options.findIndex(o => o.id === opt.id);
+              const next = e.key === "Home" ? 0 : e.key === "End" ? options.length - 1
+                : e.key === "ArrowRight" ? (current + 1) % options.length
+                : e.key === "ArrowLeft" ? (current - 1 + options.length) % options.length : -1;
+              if (next < 0) return;
+              e.preventDefault();
+              const id = options[next].id;
+              btnRefs.current.get(id)?.focus();
+              onChange(id);
+            }}
             title={opt.title}
             ref={(el) => {
               if (el) btnRefs.current.set(opt.id, el);
