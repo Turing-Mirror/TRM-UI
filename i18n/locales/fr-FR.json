@@ -31,7 +31,17 @@
     },
     "error": {
       "title": "L’interface a rencontré une erreur",
-      "hint": "Vous pouvez nous envoyer les détails ci-dessous."
+      "safe": "Vos fichiers, réglages et tâches en cours ne sont pas affectés. Réessayez d’abord ; si cela ne suffit pas, essayez les autres options dans l’ordre.",
+      "retry": "Réessayer",
+      "home": "Retour à l’accueil",
+      "reload": "Recharger",
+      "resetUi": "Rétablir l’interface par défaut",
+      "resetNote": "Rétablir l’interface ne réinitialise que l’apparence et la disposition. Aucune donnée n’est supprimée.",
+      "details": "Détails de l’erreur",
+      "hint": "Pour signaler le problème, joignez le texte ci-dessous.",
+      "copy": "Copier les détails",
+      "copied": "Copié",
+      "copyFailed": "Échec de la copie. Sélectionnez le texte et copiez-le manuellement"
     }
   },
   "nav": {

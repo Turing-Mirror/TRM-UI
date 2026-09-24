@@ -31,7 +31,17 @@
     },
     "error": {
       "title": "La interfaz ha fallado",
-      "hint": "Puedes enviarnos los detalles que aparecen abajo."
+      "safe": "Tus archivos, ajustes y tareas en curso no se han visto afectados. Prueba primero a reintentar; si no funciona, prueba las demás opciones en orden.",
+      "retry": "Reintentar",
+      "home": "Volver al inicio",
+      "reload": "Recargar",
+      "resetUi": "Restaurar la interfaz predeterminada",
+      "resetNote": "Restaurar la interfaz solo recupera el aspecto y la disposición predeterminados. No se elimina ningún dato.",
+      "details": "Detalles del error",
+      "hint": "Al informar del problema, incluye el texto siguiente.",
+      "copy": "Copiar detalles del error",
+      "copied": "Copiado",
+      "copyFailed": "No se pudo copiar. Selecciona el texto y cópialo manualmente"
     }
   },
   "nav": {

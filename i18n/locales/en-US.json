@@ -31,7 +31,17 @@
     },
     "error": {
       "title": "The interface hit an error",
-      "hint": "You can send us the details below."
+      "safe": "Your files, settings and running tasks are not affected. Try again first; if that does not help, try the other options in order.",
+      "retry": "Try again",
+      "home": "Back to Home",
+      "reload": "Reload",
+      "resetUi": "Restore default interface",
+      "resetNote": "Restoring the default interface only resets the look and layout. No data is deleted.",
+      "details": "Error details",
+      "hint": "When reporting the problem, please include the text below.",
+      "copy": "Copy error details",
+      "copied": "Copied",
+      "copyFailed": "Copy failed. Please select the text and copy it manually"
     }
   },
   "nav": {
