@@ -126,7 +126,7 @@ export function TitleBar<T extends string>({
   );
 }
 
-function WinBtn({
+export function WinBtn({
   children,
   label,
   onClick,

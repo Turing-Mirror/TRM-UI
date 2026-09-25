@@ -21,7 +21,7 @@ export function PageHead({
   actions?: ReactNode;
 }) {
   return (
-    <div className="pt-[26px] pb-1.5 flex items-end justify-between gap-4 flex-wrap">
+    <div className="pt-2 pb-1.5 flex items-end justify-between gap-4 flex-wrap">
       <div>
         <h2 className="text-[25px] font-semibold tracking-tight m-0 max-[860px]:text-[22px]">
           {title}
@@ -126,7 +126,7 @@ export function Btn({
       aria-label={ariaLabel}
       onClick={onClick}
       className={[
-        "text-[12.5px] border-0 rounded-[var(--rs)] cursor-pointer",
+        "text-[12.5px] border-0 rounded-[var(--rs)] cursor-pointer whitespace-nowrap",
         "transition-[transform,background,color,box-shadow] duration-200 ease-[var(--ease)]",
         "active:scale-[0.955] focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2",
         uw ? "min-w-[74px] text-center px-0 py-1.5" : "px-[13px] py-1.5",

@@ -1,33 +1,13 @@
-import type { Dict, LocaleCode, TVars } from "./types";
-import zh from "../../../i18n/locales/zh-CN.json";
-import tw from "../../../i18n/locales/zh-TW.json";
-import en from "../../../i18n/locales/en-US.json";
-import ja from "../../../i18n/locales/ja-JP.json";
-import ko from "../../../i18n/locales/ko-KR.json";
-import es from "../../../i18n/locales/es-ES.json";
-import fr from "../../../i18n/locales/fr-FR.json";
-import ru from "../../../i18n/locales/ru-RU.json";
-
-/** 语言包在构建时就打进产物（Vite 直接 import JSON），运行时不再有网络或
- *  文件读取 —— 换语言是一次同步的对象切换，不会有「先显示 key 再变成文字」。 */
-const PACKS: Record<LocaleCode, Dict> = {
-  "zh-CN": zh as Dict,
-  "zh-TW": tw as Dict,
-  "en-US": en as Dict,
-  "ja-JP": ja as Dict,
-  "ko-KR": ko as Dict,
-  "es-ES": es as Dict,
-  "fr-FR": fr as Dict,
-  "ru-RU": ru as Dict,
-};
+import { DEFAULT_LOCALE, type Dict, type LocaleCode, type TVars } from "./types";
+import { PACKS } from "./packs";
 
 export function packOf(locale: LocaleCode): Dict {
-  return PACKS[locale] ?? PACKS["zh-CN"];
+  return PACKS[locale] ?? fallbackPack();
 }
 
 /** 兜底语言包。任何一条在当前语言里查不到，都回落到这里。 */
 export function fallbackPack(): Dict {
-  return PACKS["zh-CN"];
+  return PACKS[DEFAULT_LOCALE] ?? {};
 }
 
 /**

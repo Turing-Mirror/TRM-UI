@@ -42,6 +42,32 @@
       "copy": "Copy error details",
       "copied": "Copied",
       "copyFailed": "Copy failed. Please select the text and copy it manually"
+    },
+    "common": {
+      "close": "Close",
+      "cancel": "Cancel",
+      "confirm": "OK",
+      "more": "More",
+      "clear": "Clear",
+      "search": "Search"
+    },
+    "pager": {
+      "label": "Pages",
+      "prev": "Previous page",
+      "next": "Next page"
+    },
+    "cal": {
+      "today": "Today",
+      "prev": "Previous month",
+      "next": "Next month"
+    },
+    "notice": {
+      "clearAll": "Clear all",
+      "now": "Now"
+    },
+    "sidebar": {
+      "collapse": "Collapse sidebar",
+      "expand": "Expand sidebar"
     }
   },
   "nav": {
@@ -49,16 +75,17 @@
     "components": "Components",
     "type": "Typography",
     "color": "Color",
-    "motion": "Motion"
+    "motion": "Motion",
+    "patterns": "Patterns"
   },
   "demo": {
     "overview": {
       "title": "TRM UI",
       "sub": "The design system and component library behind Turing Mirror desktop products",
       "whatTitle": "What this is",
-      "whatBody": "A set of design tokens, a component library, eight-language i18n, and a build setup that runs as-is.\nExtracted from RVC Fabric, but it depends on no product code — the whole src/trm/ directory can be copied out.",
+      "whatBody": "A set of design tokens, a component library, eight-language i18n, a sidebar app shell, and a build setup that runs as-is.\nThe whole src/trm/ directory depends on no product code and can be copied out directly.",
       "whyTitle": "Why it exists",
-      "whyBody": "“Copy RVC Fabric’s UI” kept turning into “fork the whole repository and hack on it”, so every new product started from a pile of code it never needed, and the design system was kept in sync by hand — drifting a little further with every pass.\nPulling the interface layer out on its own means new products start here, and improvements flow back here — instead of into five diverging copies.",
+      "whyBody": "Every new product starts from the same interface: the same tokens, the same components, the same motion.\nImprovements come back here too, instead of scattering into diverging copies inside each product.",
       "ruleTitle": "Three hard rules",
       "rule1": "Every colour comes from a token. A hard-coded colour is guaranteed wrong in the other theme — and only visible when someone switches.",
       "rule2": "Every string comes from a locale pack. All eight are forced into the same shape by a build-time check, not by good intentions.",
@@ -80,7 +107,17 @@
       "source": "UI source",
       "sourceTip": "The UI is served over a custom protocol, so a frontend/ directory next to the exe can replace the shipped copy. Without showing this, a misapplied UI patch is invisible — all the user can say is “it went wrong after the update”.",
       "autostart": "Start with the system",
-      "autostartTip": "The registry is the source of truth, not the config file — config carries product meaning, autostart is a fact about this machine. Mixing them means copying your config to another machine shows the switch on while nothing actually starts. Windows only."
+      "autostartTip": "The registry is the source of truth, not the config file — config carries product meaning, autostart is a fact about this machine. Mixing them means copying your config to another machine shows the switch on while nothing actually starts. Windows only.",
+      "search": "Search",
+      "searchTip": "A global search goes here",
+      "nav": "Navigation",
+      "settings": "Settings",
+      "running": "In progress",
+      "taskA": "Export images",
+      "taskASub": "24 files",
+      "taskB": "Convert audio",
+      "taskBSub": "Click to mark as seen",
+      "done": "Done"
     },
     "components": {
       "sub": "Everything below is a live control, not a screenshot.",
@@ -131,7 +168,9 @@
       "sub": "Switch to dark and look again: every swatch has to hold up in both themes.",
       "groupCore": "Core",
       "groupInk": "Text",
-      "groupAccent": "Accent and state"
+      "groupAccent": "Accent and state",
+      "groupState": "States",
+      "groupArt": "Preview tints"
     },
     "motion": {
       "sub": "Page direction follows the nav order. Click a few tabs above and you’ll see it.",
@@ -139,7 +178,67 @@
       "easeNav": "Page transitions only. Fast off the mark, long on the tail, and it never overshoots — the page layer sits flush with the window edge, and an overshoot is a visible seam.",
       "spring": "For small elements. It overshoots, so it only goes on things that don’t touch the window edge — the segment thumb, floating panels.",
       "ease": "The general-purpose transition. Hover, press, colour changes.",
-      "reduce": "If the system asks for reduced motion, all of the above switches off. That is not optional — large sliding animations make people with vestibular sensitivity dizzy."
+      "reduce": "If the system asks for reduced motion, all of the above switches off. That is not optional — large sliding animations make people with vestibular sensitivity dizzy.",
+      "easeSoft": "Gentle start, slow settle — for fades and small moves",
+      "springSettle": "Critically damped spring, no overshoot — for large morphs",
+      "springGentle": "About 1% overshoot — for page changes and small moves",
+      "springBouncy": "About 8% overshoot — only for small scales",
+      "flow": "Flowing light",
+      "flowLabel": "Convert audio",
+      "flowSub": "Finished but unseen: only a streak of light runs past",
+      "done": "Done",
+      "seen": "Seen"
+    },
+    "patterns": {
+      "sub": "Patterns that recur in desktop apps — every one is live",
+      "tabs": "Tabs and filters",
+      "tabA": "All",
+      "tabB": "Starred",
+      "tabC": "Recent",
+      "all": "All",
+      "on": "On",
+      "off": "Off",
+      "menus": "Menus and dropdowns",
+      "menuBtn": "Actions",
+      "size": "Size",
+      "sizeS": "Small",
+      "sizeM": "Medium",
+      "sizeL": "Large",
+      "rightClick": "Right-click here",
+      "open": "Open",
+      "opened": "Opened",
+      "rename": "Rename",
+      "delete": "Delete",
+      "deleted": "Deleted",
+      "cards": "Cards and tags",
+      "card1": "Rainy street",
+      "card2": "Morning take",
+      "card3": "Seaside ride",
+      "card4": "Project notes",
+      "metaA": "2 hours ago",
+      "metaB": "12 MB",
+      "tagOk": "Ready",
+      "tagWarn": "Needs changes",
+      "tagDanger": "Failed",
+      "tagAccent": "Recommended",
+      "tagMuted": "Archived",
+      "warnLine": "Needs 14 GB of VRAM; this machine has 12 GB",
+      "overlays": "Overlays and messages",
+      "modal": "Dialog",
+      "modalText": "Click outside or press Esc to close; closing is animated too.",
+      "drawer": "Drawer",
+      "drawerText": "Slides in from the right so details open without leaving the page.",
+      "tip": "Tip",
+      "tipText": "Copied",
+      "notice": "Notification",
+      "noticeTitle": "Export finished",
+      "noticeText": "Click to see the details",
+      "calendar": "Calendar",
+      "pager": "Pagination",
+      "empty": "Empty state",
+      "emptyTitle": "Nothing here yet",
+      "emptyAction": "Add",
+      "icons": "Icons"
     }
   }
 }

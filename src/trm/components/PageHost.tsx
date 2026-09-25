@@ -20,6 +20,8 @@ type Props<T extends string> = {
   nav: Nav<T>;
   page: T;
   children: (id: T) => ReactNode;
+  /** 换页方向的轴。顶部页签用 "x"（默认），侧栏用 "y"：导航竖着排，页面就上下推。 */
+  axis?: "x" | "y";
 };
 
 /**
@@ -28,7 +30,7 @@ type Props<T extends string> = {
  * 同时挂两层（离场页 + 入场页），所以 `children` 是个函数而不是节点 ——
  * 它会被调用两次，各画各的那一页。
  */
-export function PageHost<T extends string>({ nav, page, children }: Props<T>) {
+export function PageHost<T extends string>({ nav, page, children, axis = "x" }: Props<T>) {
   const [phase, setPhase] = useState<{
     /** 叫 `page` 不叫 `current`：`x.current` 读起来像个 ref。 */
     page: T;
@@ -80,10 +82,11 @@ export function PageHost<T extends string>({ nav, page, children }: Props<T>) {
     if (paneRef.current) paneRef.current.scrollTop = 0;
   }, [phase.page]);
 
+  const [fwd, back] = axis === "y" ? ["u", "d"] : ["l", "r"];
   const enterCls =
-    phase.dir === 1 ? "page-enter-l" : phase.dir === -1 ? "page-enter-r" : "";
+    phase.dir === 1 ? `page-enter-${fwd}` : phase.dir === -1 ? `page-enter-${back}` : "";
   const leaveCls =
-    phase.dir === 1 ? "page-leave-l" : phase.dir === -1 ? "page-leave-r" : "";
+    phase.dir === 1 ? `page-leave-${fwd}` : phase.dir === -1 ? `page-leave-${back}` : "";
 
   return (
     <div className="relative flex-1 overflow-hidden">

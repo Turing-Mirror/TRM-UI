@@ -1,42 +1,77 @@
 import { useEffect, useState } from "react";
 import {
-  TitleBar,
+  AppBar,
+  Sidebar,
+  SidebarItem,
+  SidebarHead,
+  ActivityRow,
+  Mark,
+  IconBtn,
   PageHost,
+  Notices,
+  NoticeProvider,
   createNav,
   applyAppearance,
   useI18n,
+  useNotify,
   hostWindowControls,
   markReady,
+  type IconName,
   type ThemeMode,
 } from "./trm";
 import { OverviewPage } from "./pages/OverviewPage";
 import { ComponentsPage } from "./pages/ComponentsPage";
+import { PatternsPage } from "./pages/PatternsPage";
 import { TypePage } from "./pages/TypePage";
 import { ColorPage } from "./pages/ColorPage";
 import { MotionPage } from "./pages/MotionPage";
 
 /**
- * 导航顺序**就是**换页动画的方向依据：数组里靠后的页在右边。
- * 改这里的顺序，动画方向跟着改；顺序和标题栏上看到的不一致，
- * 用户的手感就会和动画反着来。
+ * 导航顺序**就是**换页动画的方向依据：数组里靠后的页在下面。
+ * 改这里的顺序，动画方向跟着改。
  */
 const nav = createNav([
   { id: "overview", labelKey: "nav.overview" },
   { id: "components", labelKey: "nav.components" },
+  { id: "patterns", labelKey: "nav.patterns" },
   { id: "type", labelKey: "nav.type" },
   { id: "color", labelKey: "nav.color" },
-  { id: "motion", labelKey: "nav.motion", badge: true },
+  { id: "motion", labelKey: "nav.motion" },
 ] as const);
 
 type PageId = (typeof nav.defs)[number]["id"];
 
+const ICONS: Record<PageId, IconName> = {
+  overview: "home",
+  components: "sliders",
+  patterns: "layers",
+  type: "book",
+  color: "brush",
+  motion: "play",
+};
+
 /** 窗口按钮解析一次就够 —— 它不会在运行期间从「有壳」变成「没壳」。 */
 const windowControls = hostWindowControls();
 
+/** 窗口宽度小于这个值时侧栏只留图标。 */
+const NARROW = 900;
+
 export function App() {
-  const { ready } = useI18n();
+  return (
+    <NoticeProvider>
+      <Shell />
+    </NoticeProvider>
+  );
+}
+
+function Shell() {
+  const { ready, t } = useI18n();
+  const notify = useNotify();
   const [page, setPage] = useState<PageId>("overview");
   const [theme, setTheme] = useState<ThemeMode>("system");
+  const [open, setOpen] = useState(true);
+  const narrow = useNarrow(NARROW);
+  const collapsed = narrow || !open;
 
   useEffect(() => {
     applyAppearance({ themeMode: theme });
@@ -46,38 +81,96 @@ export function App() {
   // 它会把「UI 从哪儿来的、处理了几个资源请求、404 了几次」写进日志。
   useEffect(markReady, []);
 
-  // 语言还没从存储里读出来时先不画正文，免得闪一下默认语言。
-  // 标题栏照画：窗口框架先出来，观感上比整屏空白好。
   return (
     <div className="h-full flex flex-col">
-      <TitleBar
+      <AppBar
         brand="TRM UI"
-        nav={nav}
-        page={page}
-        onPage={setPage}
-        badges={{ motion: true }}
+        sidebarOpen={!collapsed}
+        onSidebar={() => setOpen((v) => !v)}
         windowControls={windowControls}
+        actions={<IconBtn icon="search" label={t("demo.shell.search")} onClick={() => notify.tip(t("demo.shell.searchTip"))} />}
       />
-      {ready ? (
-        <PageHost nav={nav} page={page}>
-          {(id) => {
-            switch (id) {
-              case "overview":
-                return <OverviewPage theme={theme} onTheme={setTheme} />;
-              case "components":
-                return <ComponentsPage />;
-              case "type":
-                return <TypePage />;
-              case "color":
-                return <ColorPage />;
-              case "motion":
-                return <MotionPage />;
-            }
-          }}
-        </PageHost>
-      ) : (
-        <div className="flex-1" />
-      )}
+      <div className="flex-1 min-h-0 flex">
+        <Sidebar
+          collapsed={collapsed}
+          label={t("demo.shell.nav")}
+          foot={<SidebarItem icon="settings" label={t("demo.shell.settings")} collapsed={collapsed} onClick={() => setPage("overview")} />}
+        >
+          {nav.pages().map((p) => (
+            <SidebarItem key={p.id} icon={ICONS[p.id]} label={p.label} on={page === p.id} collapsed={collapsed} onClick={() => setPage(p.id)} />
+          ))}
+          <SidebarHead label={t("demo.shell.running")} collapsed={collapsed} />
+          <Activity collapsed={collapsed} />
+        </Sidebar>
+        <main className="relative flex-1 min-w-0 flex flex-col">
+          {ready ? (
+            <PageHost nav={nav} page={page} axis="y">
+              {(id) => {
+                switch (id) {
+                  case "overview":
+                    return <OverviewPage theme={theme} onTheme={setTheme} />;
+                  case "components":
+                    return <ComponentsPage />;
+                  case "patterns":
+                    return <PatternsPage />;
+                  case "type":
+                    return <TypePage />;
+                  case "color":
+                    return <ColorPage />;
+                  case "motion":
+                    return <MotionPage />;
+                }
+              }}
+            </PageHost>
+          ) : null}
+        </main>
+      </div>
+      <Notices />
     </div>
   );
+}
+
+/** 侧栏里两件演示用的事：一件在跑，一件做完了还没看。 */
+function Activity({ collapsed }: { collapsed: boolean }) {
+  const { t } = useI18n();
+  const notify = useNotify();
+  const [progress, setProgress] = useState(0.2);
+  const [seen, setSeen] = useState(false);
+  useEffect(() => {
+    const id = window.setInterval(() => setProgress((p) => (p >= 1 ? 0.05 : Math.min(1, p + 0.01))), 120);
+    return () => window.clearInterval(id);
+  }, []);
+  return (
+    <>
+      <ActivityRow
+        collapsed={collapsed}
+        label={t("demo.shell.taskA")}
+        sub={t("demo.shell.taskASub")}
+        icon={<Mark art={1} text="" glyph="image" size={20} plain />}
+        status={`${Math.round(progress * 100)}%`}
+        progress={progress}
+        onClick={() => notify.tip(t("demo.shell.taskA"))}
+      />
+      <ActivityRow
+        collapsed={collapsed}
+        label={t("demo.shell.taskB")}
+        sub={t("demo.shell.taskBSub")}
+        icon={<Mark art={4} text="" glyph="audio" size={20} plain />}
+        status={t("demo.shell.done")}
+        fresh={!seen}
+        onClick={() => setSeen(true)}
+      />
+    </>
+  );
+}
+
+function useNarrow(px: number) {
+  const [narrow, setNarrow] = useState(() => window.innerWidth < px);
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${px - 1}px)`);
+    const fn = () => setNarrow(mq.matches);
+    mq.addEventListener("change", fn);
+    return () => mq.removeEventListener("change", fn);
+  }, [px]);
+  return narrow;
 }

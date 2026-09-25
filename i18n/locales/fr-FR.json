@@ -42,6 +42,32 @@
       "copy": "Copier les détails",
       "copied": "Copié",
       "copyFailed": "Échec de la copie. Sélectionnez le texte et copiez-le manuellement"
+    },
+    "common": {
+      "close": "Fermer",
+      "cancel": "Annuler",
+      "confirm": "OK",
+      "more": "Plus",
+      "clear": "Effacer",
+      "search": "Rechercher"
+    },
+    "pager": {
+      "label": "Pages",
+      "prev": "Page précédente",
+      "next": "Page suivante"
+    },
+    "cal": {
+      "today": "Aujourd’hui",
+      "prev": "Mois précédent",
+      "next": "Mois suivant"
+    },
+    "notice": {
+      "clearAll": "Tout effacer",
+      "now": "À l’instant"
+    },
+    "sidebar": {
+      "collapse": "Réduire la barre latérale",
+      "expand": "Déployer la barre latérale"
     }
   },
   "nav": {
@@ -49,16 +75,17 @@
     "components": "Composants",
     "type": "Typographie",
     "color": "Couleurs",
-    "motion": "Animation"
+    "motion": "Animation",
+    "patterns": "Modèles"
   },
   "demo": {
     "overview": {
       "title": "TRM UI",
       "sub": "Le système de design et la bibliothèque de composants des logiciels Turing Mirror",
       "whatTitle": "De quoi s’agit-il",
-      "whatBody": "Un jeu de tokens de design, une bibliothèque de composants, une i18n en huit langues et une configuration de build prête à l’emploi.\nExtrait de RVC Fabric, sans aucune dépendance au code produit : le dossier src/trm/ se copie tel quel.",
+      "whatBody": "Un jeu de tokens de design, une bibliothèque de composants, une i18n en huit langues, une coque d’application à barre latérale et une configuration de build prête à l’emploi.\nLe dossier src/trm/ ne dépend d’aucun code produit et se copie tel quel.",
       "whyTitle": "Pourquoi il existe",
-      "whyBody": "« Copie l’interface de RVC Fabric » se transformait invariablement en « duplique tout le dépôt et bricole dedans » : chaque nouveau produit démarrait sur une pile de code inutile, et le système de design était synchronisé à la main, dérivant un peu plus à chaque fois.\nEn isolant la couche interface, les nouveaux produits partent d’ici et les améliorations y reviennent — au lieu de se disperser dans cinq copies divergentes.",
+      "whyBody": "Chaque nouveau produit part de la même interface : mêmes tokens, mêmes composants, mêmes animations.\nLes améliorations reviennent ici aussi, au lieu de s’éparpiller dans des copies divergentes au sein de chaque produit.",
       "ruleTitle": "Trois règles fermes",
       "rule1": "Toute couleur vient d’un token. Une couleur codée en dur est forcément fausse dans l’autre thème — et ne se voit qu’au moment où l’on bascule.",
       "rule2": "Tout texte vient d’un paquet de langue. Les huit sont alignés par une vérification au build, pas par bonne volonté.",
@@ -80,7 +107,17 @@
       "source": "Source de l’interface",
       "sourceTip": "L’interface est servie par un protocole dédié : un dossier frontend/ à côté de l’exécutable peut remplacer la copie livrée. Sans cet affichage, un correctif mal appliqué est invisible — l’utilisateur ne peut que dire « ça a cassé après la mise à jour ».",
       "autostart": "Démarrer avec le système",
-      "autostartTip": "La source de vérité est le registre, pas le fichier de configuration : la configuration porte le sens du produit, le démarrage automatique est un fait propre à cette machine. Les mélanger fait qu’en copiant la configuration ailleurs, l’interrupteur paraît actif sans que rien ne démarre. Windows uniquement."
+      "autostartTip": "La source de vérité est le registre, pas le fichier de configuration : la configuration porte le sens du produit, le démarrage automatique est un fait propre à cette machine. Les mélanger fait qu’en copiant la configuration ailleurs, l’interrupteur paraît actif sans que rien ne démarre. Windows uniquement.",
+      "search": "Rechercher",
+      "searchTip": "Une recherche globale se place ici",
+      "nav": "Navigation",
+      "settings": "Réglages",
+      "running": "En cours",
+      "taskA": "Exporter les images",
+      "taskASub": "24 fichiers",
+      "taskB": "Convertir l’audio",
+      "taskBSub": "Cliquez pour marquer comme vu",
+      "done": "Terminé"
     },
     "components": {
       "sub": "Tout ce qui suit est un contrôle réel, pas une capture d’écran.",
@@ -131,7 +168,9 @@
       "sub": "Passez en sombre et regardez à nouveau : chaque échantillon doit tenir dans les deux thèmes.",
       "groupCore": "Base",
       "groupInk": "Texte",
-      "groupAccent": "Accent et état"
+      "groupAccent": "Accent et état",
+      "groupState": "États",
+      "groupArt": "Teintes d’aperçu"
     },
     "motion": {
       "sub": "Le sens de transition suit l’ordre de navigation. Cliquez sur quelques onglets en haut pour le voir.",
@@ -139,7 +178,67 @@
       "easeNav": "Réservée aux transitions de page. Départ rapide, fin longue, et jamais de dépassement : la couche de page affleure le bord de la fenêtre, et un dépassement laisse une couture visible.",
       "spring": "Pour les petits éléments. Elle dépasse, donc réservée à ce qui ne touche pas le bord de la fenêtre : la pastille du contrôle segmenté, les panneaux flottants.",
       "ease": "La transition polyvalente. Survol, appui, changements de couleur.",
-      "reduce": "Si le système demande de réduire les animations, tout ce qui précède est désactivé. Ce n’est pas facultatif : les grands mouvements donnent le vertige aux personnes sensibles sur le plan vestibulaire."
+      "reduce": "Si le système demande de réduire les animations, tout ce qui précède est désactivé. Ce n’est pas facultatif : les grands mouvements donnent le vertige aux personnes sensibles sur le plan vestibulaire.",
+      "easeSoft": "Départ doux, arrêt lent : pour les fondus et petits déplacements",
+      "springSettle": "Ressort à amortissement critique, sans dépassement : pour les grandes transformations",
+      "springGentle": "Environ 1 % de dépassement : changements de page et petits déplacements",
+      "springBouncy": "Environ 8 % de dépassement : seulement pour les petites mises à l’échelle",
+      "flow": "Lumière qui file",
+      "flowLabel": "Convertir l’audio",
+      "flowSub": "Terminé mais pas vu : seul un trait de lumière passe",
+      "done": "Terminé",
+      "seen": "Vu"
+    },
+    "patterns": {
+      "sub": "Les modèles récurrents des applications de bureau, tous manipulables",
+      "tabs": "Onglets et filtres",
+      "tabA": "Tout",
+      "tabB": "Favoris",
+      "tabC": "Récents",
+      "all": "Tout",
+      "on": "Activé",
+      "off": "Désactivé",
+      "menus": "Menus et listes déroulantes",
+      "menuBtn": "Actions",
+      "size": "Taille",
+      "sizeS": "Petit",
+      "sizeM": "Moyen",
+      "sizeL": "Grand",
+      "rightClick": "Clic droit ici",
+      "open": "Ouvrir",
+      "opened": "Ouvert",
+      "rename": "Renommer",
+      "delete": "Supprimer",
+      "deleted": "Supprimé",
+      "cards": "Cartes et étiquettes",
+      "card1": "Rue sous la pluie",
+      "card2": "Prise du matin",
+      "card3": "Balade en bord de mer",
+      "card4": "Notes de projet",
+      "metaA": "Il y a 2 h",
+      "metaB": "12 Mo",
+      "tagOk": "Prêt",
+      "tagWarn": "À ajuster",
+      "tagDanger": "Échec",
+      "tagAccent": "Recommandé",
+      "tagMuted": "Archivé",
+      "warnLine": "Nécessite 14 Go de VRAM ; cette machine en a 12 Go",
+      "overlays": "Surcouches et messages",
+      "modal": "Boîte de dialogue",
+      "modalText": "Cliquez à l’extérieur ou appuyez sur Échap ; la fermeture est aussi animée.",
+      "drawer": "Tiroir",
+      "drawerText": "S’ouvre à droite pour voir les détails sans quitter la page.",
+      "tip": "Info",
+      "tipText": "Copié",
+      "notice": "Notification",
+      "noticeTitle": "Export terminé",
+      "noticeText": "Cliquez pour voir les détails",
+      "calendar": "Calendrier",
+      "pager": "Pagination",
+      "empty": "État vide",
+      "emptyTitle": "Rien pour l’instant",
+      "emptyAction": "Ajouter",
+      "icons": "Icônes"
     }
   }
 }

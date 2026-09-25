@@ -42,6 +42,32 @@
       "copy": "Copiar detalles del error",
       "copied": "Copiado",
       "copyFailed": "No se pudo copiar. Selecciona el texto y cópialo manualmente"
+    },
+    "common": {
+      "close": "Cerrar",
+      "cancel": "Cancelar",
+      "confirm": "Aceptar",
+      "more": "Más",
+      "clear": "Borrar",
+      "search": "Buscar"
+    },
+    "pager": {
+      "label": "Páginas",
+      "prev": "Página anterior",
+      "next": "Página siguiente"
+    },
+    "cal": {
+      "today": "Hoy",
+      "prev": "Mes anterior",
+      "next": "Mes siguiente"
+    },
+    "notice": {
+      "clearAll": "Borrar todo",
+      "now": "Ahora"
+    },
+    "sidebar": {
+      "collapse": "Contraer barra lateral",
+      "expand": "Expandir barra lateral"
     }
   },
   "nav": {
@@ -49,16 +75,17 @@
     "components": "Componentes",
     "type": "Tipografía",
     "color": "Color",
-    "motion": "Movimiento"
+    "motion": "Movimiento",
+    "patterns": "Patrones"
   },
   "demo": {
     "overview": {
       "title": "TRM UI",
       "sub": "El sistema de diseño y la biblioteca de componentes de los productos de escritorio de Turing Mirror",
       "whatTitle": "Qué es esto",
-      "whatBody": "Un conjunto de tokens de diseño, una biblioteca de componentes, i18n en ocho idiomas y una configuración de compilación lista para usar.\nSe extrajo de RVC Fabric, pero no depende de ningún código del producto: puedes copiar el directorio src/trm/ entero.",
+      "whatBody": "Un conjunto de tokens de diseño, una biblioteca de componentes, i18n en ocho idiomas, un armazón de aplicación con barra lateral y una configuración de compilación lista para usar.\nEl directorio src/trm/ no depende de código de producto y se puede copiar tal cual.",
       "whyTitle": "Por qué existe",
-      "whyBody": "«Copia la interfaz de RVC Fabric» acababa siendo siempre «duplica el repositorio entero y modifícalo», así que cada producto nuevo partía de un montón de código que no necesitaba, y el sistema de diseño se sincronizaba a mano, desviándose un poco más en cada pasada.\nAl separar la capa de interfaz, los productos nuevos parten de aquí y las mejoras vuelven aquí, en lugar de repartirse entre cinco copias divergentes.",
+      "whyBody": "Cada producto nuevo parte de la misma interfaz: los mismos tokens, los mismos componentes, el mismo movimiento.\nLas mejoras también vuelven aquí, en lugar de dispersarse en copias divergentes dentro de cada producto.",
       "ruleTitle": "Tres reglas firmes",
       "rule1": "Todo color sale de un token. Un color escrito a mano siempre estará mal en el otro tema, y solo se nota cuando alguien lo cambia.",
       "rule2": "Todo texto sale de un paquete de idioma. Los ocho se mantienen idénticos gracias a una comprobación en la compilación, no a la buena voluntad.",
@@ -80,7 +107,17 @@
       "source": "Origen de la interfaz",
       "sourceTip": "La interfaz se sirve por un protocolo propio, así que un directorio frontend/ junto al ejecutable puede sustituir la copia incluida. Sin mostrar esto, un parche mal aplicado es invisible: el usuario solo podrá decir «se estropeó tras la actualización».",
       "autostart": "Iniciar con el sistema",
-      "autostartTip": "El registro es la fuente de verdad, no el archivo de configuración: la configuración lleva significado del producto, el arranque automático es un hecho de esta máquina. Mezclarlos hace que copiar la configuración a otro equipo muestre el interruptor activado sin que nada arranque. Solo Windows."
+      "autostartTip": "El registro es la fuente de verdad, no el archivo de configuración: la configuración lleva significado del producto, el arranque automático es un hecho de esta máquina. Mezclarlos hace que copiar la configuración a otro equipo muestre el interruptor activado sin que nada arranque. Solo Windows.",
+      "search": "Buscar",
+      "searchTip": "Aquí va una búsqueda global",
+      "nav": "Navegación",
+      "settings": "Ajustes",
+      "running": "En curso",
+      "taskA": "Exportar imágenes",
+      "taskASub": "24 archivos",
+      "taskB": "Convertir audio",
+      "taskBSub": "Clic para marcar como visto",
+      "done": "Hecho"
     },
     "components": {
       "sub": "Todo lo de abajo es un control real, no una captura.",
@@ -131,7 +168,9 @@
       "sub": "Cambia a oscuro y míralo otra vez: cada muestra debe funcionar en ambos temas.",
       "groupCore": "Base",
       "groupInk": "Texto",
-      "groupAccent": "Acento y estado"
+      "groupAccent": "Acento y estado",
+      "groupState": "Estados",
+      "groupArt": "Tonos de vista previa"
     },
     "motion": {
       "sub": "La dirección del cambio de página sigue el orden de navegación. Pulsa algunas pestañas arriba y lo verás.",
@@ -139,7 +178,67 @@
       "easeNav": "Solo para cambios de página. Arranca rápido, termina largo y nunca se pasa: la capa de página va al ras del borde de la ventana, y pasarse deja una costura visible.",
       "spring": "Para elementos pequeños. Se pasa de largo, así que solo va en cosas que no tocan el borde de la ventana: el tirador del control segmentado, los paneles flotantes.",
       "ease": "La transición de uso general. Hover, pulsación, cambios de color.",
-      "reduce": "Si el sistema pide movimiento reducido, todo lo anterior se apaga. No es opcional: las animaciones de desplazamiento amplio marean a quienes tienen sensibilidad vestibular."
+      "reduce": "Si el sistema pide movimiento reducido, todo lo anterior se apaga. No es opcional: las animaciones de desplazamiento amplio marean a quienes tienen sensibilidad vestibular.",
+      "easeSoft": "Arranque suave y final lento, para fundidos y movimientos cortos",
+      "springSettle": "Muelle con amortiguación crítica, sin rebote, para grandes transformaciones",
+      "springGentle": "Rebote de un 1 %, para cambios de página y movimientos cortos",
+      "springBouncy": "Rebote de un 8 %, solo para escalados pequeños",
+      "flow": "Luz que fluye",
+      "flowLabel": "Convertir audio",
+      "flowSub": "Terminado sin ver: solo pasa un destello",
+      "done": "Hecho",
+      "seen": "Visto"
+    },
+    "patterns": {
+      "sub": "Patrones habituales en apps de escritorio; todos funcionan",
+      "tabs": "Pestañas y filtros",
+      "tabA": "Todo",
+      "tabB": "Favoritos",
+      "tabC": "Recientes",
+      "all": "Todo",
+      "on": "Activado",
+      "off": "Desactivado",
+      "menus": "Menús y desplegables",
+      "menuBtn": "Acciones",
+      "size": "Tamaño",
+      "sizeS": "Pequeño",
+      "sizeM": "Mediano",
+      "sizeL": "Grande",
+      "rightClick": "Clic derecho aquí",
+      "open": "Abrir",
+      "opened": "Abierto",
+      "rename": "Renombrar",
+      "delete": "Eliminar",
+      "deleted": "Eliminado",
+      "cards": "Tarjetas y etiquetas",
+      "card1": "Calle lluviosa",
+      "card2": "Toma matinal",
+      "card3": "Paseo por la costa",
+      "card4": "Notas del proyecto",
+      "metaA": "Hace 2 horas",
+      "metaB": "12 MB",
+      "tagOk": "Listo",
+      "tagWarn": "Requiere ajustes",
+      "tagDanger": "Falló",
+      "tagAccent": "Recomendado",
+      "tagMuted": "Archivado",
+      "warnLine": "Requiere 14 GB de VRAM; este equipo tiene 12 GB",
+      "overlays": "Capas y mensajes",
+      "modal": "Diálogo",
+      "modalText": "Haz clic fuera o pulsa Esc para cerrar; el cierre también se anima.",
+      "drawer": "Panel lateral",
+      "drawerText": "Entra por la derecha para ver detalles sin salir de la página.",
+      "tip": "Aviso",
+      "tipText": "Copiado",
+      "notice": "Notificación",
+      "noticeTitle": "Exportación terminada",
+      "noticeText": "Haz clic para ver los detalles",
+      "calendar": "Calendario",
+      "pager": "Paginación",
+      "empty": "Estado vacío",
+      "emptyTitle": "Aún no hay nada",
+      "emptyAction": "Añadir",
+      "icons": "Iconos"
     }
   }
 }

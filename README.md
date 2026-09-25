@@ -1,20 +1,14 @@
 # TRM UI
 
-图灵镜（Turing Mirror Software）桌面产品的 UI/UX 模板：设计令牌、组件库、八语言 i18n，外加一个能直接开窗的 Tauri 壳。
-
-从 [RVC Fabric](https://github.com/Turing-Mirror/RVC-Fabric) 抽取而来，**不包含任何产品代码**。
+图灵镜（Turing Mirror Software）桌面产品的 UI/UX 模板：设计令牌、组件库、侧栏式应用外壳、八语言 i18n，外加一个能直接开窗的 Tauri 壳。**不包含任何产品代码。**
 
 [English](./README_en.md)
-
-最新回流说明：[RVC Fabric 界面回流 v1](./docs/rvc-sync-v1.md)。包含问号与开关事件修复、切页生命周期、禁用控件、折叠列表和弹窗焦点工具；运行 `npm test` 验证交互回归。
 
 ---
 
 ## 为什么有它
 
-「照抄 RVC Fabric 的 UI」这句话，曾经被反复执行成「复制整个仓库再魔改」。结果是每个新产品都从一堆用不上的代码开始，设计系统靠人肉同步，每同步一次就歪一点。
-
-把界面这一层单独拿出来之后：新产品从它起步，改进也回流到它 —— 而不是回流到五份互相分叉的副本里。
+每个新产品都从同一套界面起步：同样的令牌、同样的组件、同样的动效。改进也回到这里，而不是散落在各个产品里互相分叉的副本中。
 
 ## 里面有什么
 
@@ -22,14 +16,22 @@
 src/trm/                 ← 界面模板本体，可以整个复制走
 ├── index.ts             出口
 ├── components/
-│   ├── ui.tsx           PagePad PageHead Block Group Btn ListItem
+│   ├── ui.tsx           PagePad PageHead Block Group Btn ListItem AccordionGroup
 │   ├── controls.tsx     Field Select RangeBar Slider Toggle
-│   ├── SegmentControl.tsx
+│   ├── SegmentControl.tsx  分段控件，选项可单独禁用
 │   ├── Tooltip.tsx      Tooltip HelpMark
-│   ├── TitleBar.tsx     无边框窗口的标题栏
-│   ├── PageHost.tsx     方向性换页
+│   ├── TitleBar.tsx     顶部页签式标题栏
+│   ├── Sidebar.tsx      AppBar Sidebar SidebarItem SidebarHead ActivityRow  ← 侧栏式外壳
+│   ├── PageHost.tsx     方向性换页，横向（页签）或竖向（侧栏）
+│   ├── display.tsx      Tag Meta Mark Bar Section IconBtn Empty Tabs Filters Pager usePaged
+│   ├── overlay.tsx      Modal Drawer usePresence useLatest
+│   ├── Menu.tsx         Popover Menu useMenu Dropdown PromptDialog
+│   ├── Calendar.tsx     月历与挂在按钮下的浮层
+│   ├── Notices.tsx      右上角的提示与通知
+│   ├── listing.tsx      列表页的筛选列、搜索框、「…」按钮、拖拽收尾
+│   ├── Icon.tsx         线条图标
 │   └── ErrorBoundary.tsx
-├── i18n/                八语言，构建时打包，同步切换
+├── i18n/                八语言，构建时打包，同步切换；按文件发现语言包
 └── lib/                 nav / clipboard / appearance / host
 
 src/index.css            设计令牌 + 三态主题 + 动画  ← 核心资产
@@ -53,6 +55,13 @@ src-tauri/               ← 桌面壳
 └── icons/
 ```
 
+## 设计取向
+
+- **少框少线。** 分区靠底色与留白，不靠分隔线和卡片套卡片。侧栏与内容区同一底色；标签只是一段带颜色的小字，不画胶囊、不加色点。
+- **颜色克制。** 一个强调色给主操作与选中；提醒用系统橙（`--warn`，文字用 `--warn-ink`），只落在图标、细线和一行字上，不铺整块底色；红色只给失败与删除。
+- **出现和消失都有过程。** 弹窗、抽屉、菜单、消息收起时先放完动画再卸下；换页、换视图有入场；大的变形用不过冲的曲线，小的位移才用弹簧。
+- **指到的卡片向内收**，不向上浮。
+- **能点的东西一律是手形指针**，禁用的恢复箭头。
 
 ## 跑起来
 
@@ -168,8 +177,8 @@ CSS 圆角」—— 后者会连系统投影一起丢掉，四角还会露锯齿
 
 3. 删掉 `src/pages/`，写你自己的页面
 4. 删掉语言包里的 `demo` 节点，保留 `ui` 和 `locale`
-5. 改 `src/App.tsx` 里的 `createNav`，顺序就是换页动画的方向依据
-6. `TitleBar` 的 `brand` 换成你的牌子
+5. 改 `src/App.tsx` 里的 `createNav`，顺序就是换页动画的方向依据（侧栏里靠下的页从下方推上来）
+6. `AppBar` 的 `brand` 换成你的牌子；想用顶部页签式的布局就换成 `TitleBar`
 
 ## 那些注释
 

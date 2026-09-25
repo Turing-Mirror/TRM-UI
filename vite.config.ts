@@ -37,9 +37,8 @@ export default defineConfig({
 
   clearScreen: false,
   server: {
-    // 1410：Turing Mirror 各产品的 dev 端口互不相同，避免 WebView2 按端口
-    // 分的缓存目录串味（同一个端口换了产品，会读到上一个产品的 localStorage）。
-    // 1420 RVC / 1430 GSV / 1440 SVC / 1450 Deco / 1460 FPS，模板占 1410。
+    // 模板占 1410。基于它的每个产品都应换一个自己的端口：WebView2 按端口分缓存目录，
+    // 同一个端口换了产品，会读到上一个产品的 localStorage。
     port: 1410,
     strictPort: true,
   },

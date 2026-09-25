@@ -1,8 +1,6 @@
 # TRM UI
 
-The UI/UX template behind Turing Mirror Software's desktop products: design tokens, a component library, eight-language i18n, and a Tauri shell that opens a real window.
-
-Extracted from [RVC Fabric](https://github.com/Turing-Mirror/RVC-Fabric). **It contains no product code.**
+The UI/UX template behind Turing Mirror Software's desktop products: design tokens, a component library, a sidebar app shell, eight-language i18n, and a Tauri shell that opens a real window. **It contains no product code.**
 
 [简体中文](./README.md)
 
@@ -10,47 +8,60 @@ Extracted from [RVC Fabric](https://github.com/Turing-Mirror/RVC-Fabric). **It c
 
 ## Why it exists
 
-"Copy RVC Fabric's UI" kept getting carried out as "fork the whole repository and hack on it". Every new product started from a pile of code it never needed, and the design system was kept in sync by hand — drifting a little further with every pass.
-
-Pulling the interface layer out on its own means new products start here, and improvements flow back here — instead of into five diverging copies.
+Every new product starts from the same interface: the same tokens, the same components, the same motion. Improvements come back here too, instead of scattering into diverging copies inside each product.
 
 ## What's inside
 
 ```
 src/trm/                 ← the UI template; copy the whole directory
-├── index.ts             barrel export
+├── index.ts             exports
 ├── components/
-│   ├── ui.tsx           PagePad PageHead Block Group Btn ListItem
+│   ├── ui.tsx           PagePad PageHead Block Group Btn ListItem AccordionGroup
 │   ├── controls.tsx     Field Select RangeBar Slider Toggle
-│   ├── SegmentControl.tsx
+│   ├── SegmentControl.tsx  segmented control; options can be disabled one by one
 │   ├── Tooltip.tsx      Tooltip HelpMark
-│   ├── TitleBar.tsx     title bar for a frameless window
-│   ├── PageHost.tsx     directional page transitions
+│   ├── TitleBar.tsx     title bar with top tabs
+│   ├── Sidebar.tsx      AppBar Sidebar SidebarItem SidebarHead ActivityRow  ← sidebar shell
+│   ├── PageHost.tsx     directional page transitions, horizontal (tabs) or vertical (sidebar)
+│   ├── display.tsx      Tag Meta Mark Bar Section IconBtn Empty Tabs Filters Pager usePaged
+│   ├── overlay.tsx      Modal Drawer usePresence useLatest
+│   ├── Menu.tsx         Popover Menu useMenu Dropdown PromptDialog
+│   ├── Calendar.tsx     month calendar and an anchored popover
+│   ├── Notices.tsx      tips and notifications in the top-right corner
+│   ├── listing.tsx      filter column, search box, "…" button, drag cleanup for list pages
+│   ├── Icon.tsx         line icons
 │   └── ErrorBoundary.tsx
-├── i18n/                eight locales, bundled at build time
+├── i18n/                eight languages, bundled at build time, switched synchronously; packs are discovered by file
 └── lib/                 nav / clipboard / appearance / host
 
-src/index.css            design tokens + themes + animations  ← the core asset
-src/pages/               demo gallery (delete it)
-i18n/locales/*.json      locale packs, shared by the UI and the shell
+src/index.css            tokens + three-state theme + animation  ← the core asset
+src/pages/               demo gallery (deletable)
+i18n/locales/*.json      eight locale packs, shared by UI and shell
 scripts/check_i18n.mjs   three hard i18n checks
 index.html               blank-window guard
 
-src-tauri/               ← the desktop shell
+src-tauri/               ← desktop shell
 ├── src/
-│   ├── lib.rs           startup order, commands, two watchdogs
-│   ├── window_watch.rs  frameless windows: corners, maximize clamp, rescue
-│   ├── ui_assets.rs     custom protocol; a frontend/ next to the exe wins
-│   ├── config.rs        app_config.json — atomic writes, corrupt files kept
-│   ├── logging.rs       shell.log, one file per day, 48h retention
-│   ├── i18n.rs          shell-side translation, same packs as the UI
+│   ├── lib.rs           start-up order, commands, two watchdogs
+│   ├── window_watch.rs  frameless window: corners, maximise clamping, recovering lost windows
+│   ├── ui_assets.rs     UI served over a custom protocol; frontend/ next to the exe can replace it
+│   ├── config.rs        app_config.json, atomic writes, broken files kept aside
+│   ├── logging.rs       shell.log, one file per day, kept 48 hours
+│   ├── i18n.rs          shell-side strings, same locale packs as the UI
 │   ├── paths.rs         product root / User_Data
-│   ├── tray.rs          tray icon
+│   ├── tray.rs          tray
 │   ├── autostart.rs     start with Windows (registry)
-│   └── asset_scope.rs   runtime asset-protocol allowlist
+│   └── asset_scope.rs   runtime allow-list for the asset protocol
 └── icons/
 ```
 
+## Design stance
+
+- **Few boxes, few lines.** Areas are separated by background and space, not dividers or cards inside cards. The sidebar shares the content background; a tag is just a short coloured label — no pill, no dot.
+- **Restrained colour.** One accent for the main action and selection; attention uses the system orange (`--warn`, text in `--warn-ink`) on an icon, a thin line or a single line of text, never as a filled block; red only for failure and deletion.
+- **Nothing appears or vanishes abruptly.** Dialogs, drawers, menus and notices play their exit before unmounting; pages and views have an entrance; large morphs use curves without overshoot, springs only for small moves.
+- **Hovered cards sink inward** rather than lifting.
+- **Everything clickable shows a pointer**; disabled controls fall back to the arrow.
 
 ## Running it
 
@@ -174,8 +185,8 @@ filled from defaults instead of reading back null.
 3. Delete `src/pages/` and write your own.
 4. Delete the `demo` node from the locale packs; keep `ui` and `locale`.
 5. Edit `createNav` in `src/App.tsx` — its order is what page-transition direction is
-   derived from.
-6. Replace `TitleBar`'s `brand`.
+   derived from (lower sidebar entries push in from below).
+6. Replace `AppBar`'s `brand`; for a top-tab layout, use `TitleBar` instead.
 
 ## About the comments
 

@@ -12,7 +12,7 @@ export { Field, Select, RangeBar, Slider, Toggle } from "./components/controls";
 export { SegmentControl, type SegmentOption } from "./components/SegmentControl";
 export { Tooltip } from "./components/Tooltip";
 export { PageHost } from "./components/PageHost";
-export { TitleBar, type WindowControls } from "./components/TitleBar";
+export { TitleBar, WinBtn, type WindowControls } from "./components/TitleBar";
 export { ErrorBoundary } from "./components/ErrorBoundary";
 
 export { createNav, type Nav, type NavDef } from "./lib/nav";
@@ -59,4 +59,14 @@ export {
 } from "./i18n";
 
 export { AccordionGroup, type AccordionItem } from "./components/ui";
+
+// 桌面应用的外壳与内容件
+export { Icon, ICON_NAMES, isIconName, type IconName } from "./components/Icon";
+export { Tag, Meta, Mark, Bar, Section, IconBtn, Empty, Tabs, Filters, Pager, pageList, usePaged, type Art, type Tone } from "./components/display";
+export { Modal, Drawer, usePresence, useLatest, OUT_MS } from "./components/overlay";
+export { Popover, Menu, useMenu, Dropdown, PromptDialog, anchorOf, type Anchor, type MenuItem } from "./components/Menu";
+export { Calendar, dayKey, useAnchoredPop } from "./components/Calendar";
+export { NoticeProvider, useNotify, Notices, NOTICE_OUT_MS, type Notice, type NoticeInput } from "./components/Notices";
+export { AppBar, Sidebar, SidebarItem, SidebarHead, SidebarHeadBtn, ActivityRow, SIDEBAR_W } from "./components/Sidebar";
+export { Pane, Side, SideHead, SideItem, SearchBox, MoreBtn, afterDrag } from "./components/listing";
 export { useModalKeys } from "./hooks/useModalKeys";

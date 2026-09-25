@@ -11,6 +11,8 @@ export type SegmentOption<T extends string> = {
   id: T;
   label: ReactNode;
   title?: string;
+  /** 这一项此时不能选：变淡，不接点击。 */
+  disabled?: boolean;
 };
 
 type Props<T extends string> = {
@@ -81,6 +83,15 @@ export function SegmentControl<T extends string>({
     place(false);
   });
 
+  // 第一次量完之前不开过渡：否则每次挂载，滑块都会从最左边、零宽度「长」到
+  // 选中项上。页面里的分段控件会随换页反复挂载，这一下就会反复出现。
+  const [armed, setArmed] = useState(false);
+  useEffect(() => {
+    if (armed || thumb.w === 0) return;
+    const id = requestAnimationFrame(() => setArmed(true));
+    return () => cancelAnimationFrame(id);
+  }, [armed, thumb.w]);
+
   // 容器或按钮自己变大变小（窗口缩放、侧栏收起、字体加载完成）时重量。
   // 这类变化不一定伴随重渲染，光靠上面那个 effect 抓不到。
   //
@@ -119,7 +130,7 @@ export function SegmentControl<T extends string>({
           aria-hidden
           className={[
             "absolute top-[3px] bottom-[3px] left-0 rounded-full pointer-events-none",
-            "transition-[transform,width] duration-[520ms] ease-[var(--spring)]",
+            armed ? "transition-[transform,width] duration-[520ms] ease-[var(--spring)]" : "",
           ].join(" ")}
           style={{
             width: thumb.w,
@@ -152,6 +163,7 @@ export function SegmentControl<T extends string>({
               onChange(id);
             }}
             title={opt.title}
+            disabled={opt.disabled}
             ref={(el) => {
               if (el) btnRefs.current.set(opt.id, el);
               else btnRefs.current.delete(opt.id);
@@ -164,6 +176,7 @@ export function SegmentControl<T extends string>({
               "duration-200 ease-[var(--ease)] active:scale-95",
               "focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2",
               on ? "text-[var(--ink)]" : "hover:text-[var(--ink)]",
+              "disabled:opacity-40 disabled:cursor-default disabled:hover:text-[var(--ink-muted)] disabled:active:scale-100",
               compact && on ? "bg-[var(--seg-thumb)] shadow-[var(--glass)]" : "",
             ].join(" ")}
           >

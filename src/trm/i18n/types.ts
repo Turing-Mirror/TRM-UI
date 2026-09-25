@@ -1,3 +1,5 @@
+import { PACKS } from "./packs";
+
 /** 支持的界面语言。语言包放在 `i18n/locales/{code}.json`。 */
 export type LocaleCode =
   | "zh-CN"
@@ -9,8 +11,8 @@ export type LocaleCode =
   | "ru-RU"
   | "zh-TW";
 
-/** 语言选择器里的顺序。中文在前是因为这是母语市场优先的产品。 */
-export const LOCALES: { id: LocaleCode; labelKey: string }[] = [
+/** 语言选择器里的顺序。只列出 `i18n/locales/` 里真有语言包的那几种。 */
+const ALL_LOCALES: { id: LocaleCode; labelKey: string }[] = [
   { id: "zh-CN", labelKey: "locale.zh-CN" },
   { id: "zh-TW", labelKey: "locale.zh-TW" },
   { id: "en-US", labelKey: "locale.en-US" },
@@ -20,6 +22,8 @@ export const LOCALES: { id: LocaleCode; labelKey: string }[] = [
   { id: "fr-FR", labelKey: "locale.fr-FR" },
   { id: "ru-RU", labelKey: "locale.ru-RU" },
 ];
+
+export const LOCALES = ALL_LOCALES.filter((l) => l.id in PACKS);
 
 export const DEFAULT_LOCALE: LocaleCode = "zh-CN";
 
@@ -58,7 +62,7 @@ export function detectSystemLocale(tag?: string | null): LocaleCode {
       lower.includes("mo") ||
       lower.includes("hant")
     ) {
-      return "zh-TW";
+      return isLocaleCode("zh-TW") ? "zh-TW" : DEFAULT_LOCALE;
     }
     return "zh-CN";
   }
@@ -71,7 +75,8 @@ export function detectSystemLocale(tag?: string | null): LocaleCode {
     fr: "fr-FR",
     ru: "ru-RU",
   };
-  return map[base] ?? DEFAULT_LOCALE;
+  const hit = map[base];
+  return hit && isLocaleCode(hit) ? hit : DEFAULT_LOCALE;
 }
 
 export type Dict = Record<string, unknown>;

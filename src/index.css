@@ -34,7 +34,7 @@
   --accent-ink: #ffffff;
   --accent-soft: rgba(18, 137, 240, 0.1);
   --stage: #e8f4fd;
-  --notify: #e8a91c;
+  --notify: #ff9500;
   --page-bg: #dfe4ea;
   --ui:
     -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei UI",
@@ -98,7 +98,7 @@
     --accent: #4aa3f0;
     --accent-ink: #0f1319;
     --accent-soft: rgba(74, 163, 240, 0.14);
-    --notify: #e0ae3d;
+    --notify: #ff9f0a;
     --page-bg: #0c0f13;
     --glass:
       0 2px 12px rgba(0, 0, 0, 0.4), inset 0 0 0 0.5px rgba(255, 255, 255, 0.1);
@@ -138,7 +138,7 @@
   --accent: #4aa3f0;
   --accent-ink: #0f1319;
   --accent-soft: rgba(74, 163, 240, 0.14);
-  --notify: #e0ae3d;
+  --notify: #ff9f0a;
   --page-bg: #0c0f13;
   --glass:
     0 2px 12px rgba(0, 0, 0, 0.4), inset 0 0 0 0.5px rgba(255, 255, 255, 0.1);
@@ -531,3 +531,366 @@ body::before {
   opacity: var(--wp-opacity, 0);
   transform: scale(1.06); /* 盖住模糊产生的边 */
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   桌面应用的补充令牌与动效：状态色、预览色、弹簧曲线、浮层的进出、
+   侧栏外壳、消息、卡片内收。组件在 src/trm/components/ 里。
+   ───────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* 预览色。图块、应用标在没有真图时的底色，浅而淡，六组轮换。 */
+  --art-1: #dcebfa;
+  --art-2: #e4f3ec;
+  --art-3: #f6ebdc;
+  --art-4: #eee6f6;
+  --art-5: #f7e3e6;
+  --art-6: #e3eef0;
+  --art-ink: rgba(30, 36, 43, 0.38);
+  /* 侧栏。比内容区稍深一点，靠底色分区，不画分隔线。 */
+  --rail: color-mix(in srgb, var(--bg) 88%, var(--ink) 3%);
+  /* 状态色：成功、提醒、危险。 */
+  --ok: #2f9e6a;
+  --ok-soft: rgba(47, 158, 106, 0.12);
+  /* 提醒用 macOS 的系统橙：图标、线条用 --warn，文字用深一档的 --warn-ink */
+  --warn: #ff9500;
+  --warn-ink: #c96a00;
+  --danger: #d0533f;
+  --danger-soft: rgba(208, 83, 63, 0.11);
+  --scrim: rgba(20, 26, 34, 0.28);
+  /* 输入框聚焦、控件悬停时的描边：比平时的描边深一档，不用强调色。
+     由 --ink 混出，深色模式跟着 --ink 走，不用另写。 */
+  --focus-line: color-mix(in srgb, var(--ink) 30%, transparent);
+  /* 补充的动效曲线。起步平缓、尾段慢慢停稳，不在第一帧就冲出大半路程；
+     离场用加速曲线，短而轻，让出位置给入场。 */
+  --ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out-quick: cubic-bezier(0.4, 0, 1, 1);
+  /* 弹簧曲线：阻尼振子取样而成。
+     settle 是临界阻尼，不过冲、尾段长而软，用于大跨度的变形，落定时不会抖；
+     gentle 过冲约 1%，只用于小位移；bouncy 过冲约 8%，只用于小幅度的缩放。 */
+  --spring-settle: linear(0, 0.0172, 0.0604, 0.1198, 0.1882, 0.2604, 0.3329, 0.4031, 0.4697, 0.5316, 0.5883, 0.6398, 0.6861, 0.7273, 0.7639, 0.7961, 0.8244, 0.8491, 0.8706, 0.8892, 0.9053, 0.9192, 0.9312, 0.9415, 0.9503, 0.9578, 0.9642, 0.9697, 0.9744, 0.9783, 0.9817, 0.9846, 0.987, 0.989, 0.9908, 0.9922, 0.9935, 0.9945, 0.9954, 0.9961, 0.9967, 0.9973, 0.9977, 0.9981, 0.9984, 0.9987, 0.9989, 0.9991, 1);
+  --spring-gentle: linear(0, 0.0104, 0.0382, 0.0791, 0.1294, 0.186, 0.2466, 0.3089, 0.3714, 0.4327, 0.492, 0.5485, 0.6016, 0.6511, 0.6968, 0.7385, 0.7763, 0.8104, 0.8407, 0.8677, 0.8914, 0.9121, 0.93, 0.9454, 0.9585, 0.9696, 0.9789, 0.9866, 0.9929, 0.9979, 1.0019, 1.005, 1.0073, 1.0089, 1.0101, 1.0107, 1.0111, 1.0111, 1.0109, 1.0105, 1.01, 1.0094, 1.0088, 1.0081, 1.0074, 1.0067, 1.006, 1.0054, 1);
+  --spring-bouncy: linear(0, 0.0106, 0.0396, 0.0834, 0.1386, 0.202, 0.271, 0.3433, 0.4167, 0.4897, 0.5607, 0.6286, 0.6927, 0.7521, 0.8066, 0.8558, 0.8996, 0.938, 0.9711, 0.9993, 1.0226, 1.0416, 1.0564, 1.0676, 1.0755, 1.0805, 1.0831, 1.0834, 1.0821, 1.0792, 1.0752, 1.0704, 1.0649, 1.0591, 1.053, 1.0468, 1.0408, 1.0349, 1.0293, 1.0241, 1.0193, 1.0149, 1.0109, 1.0074, 1.0043, 1.0016, 0.9994, 0.9976, 1);
+  --pop-shadow: 0 12px 40px rgba(20, 30, 45, 0.16), 0 0 0 0.5px rgba(30, 36, 43, 0.1);
+  /* 卡片被指到时向内收的阴影。 */
+  --sink: inset 0 3px 14px rgba(20, 30, 45, 0.2), inset 0 0 0 1px rgba(20, 30, 45, 0.06);
+  --sink-deep: inset 0 4px 18px rgba(20, 30, 45, 0.3), inset 0 0 0 1px rgba(20, 30, 45, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --art-1: #22324a;
+    --art-2: #213a31;
+    --art-3: #3a3226;
+    --art-4: #322a42;
+    --art-5: #3d2a30;
+    --art-6: #243639;
+    --art-ink: rgba(232, 240, 248, 0.4);
+    --ok: #5cc493;
+    --ok-soft: rgba(92, 196, 147, 0.14);
+    --warn: #ff9f0a;
+    --warn-ink: #ffb340;
+    --danger: #ec7b69;
+    --danger-soft: rgba(236, 123, 105, 0.14);
+    --scrim: rgba(0, 0, 0, 0.5);
+    --pop-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(232, 240, 248, 0.12);
+    --sink: inset 0 3px 14px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+    --sink-deep: inset 0 4px 18px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+  }
+}
+
+:root[data-theme="dark"] {
+  --art-1: #22324a;
+  --art-2: #213a31;
+  --art-3: #3a3226;
+  --art-4: #322a42;
+  --art-5: #3d2a30;
+  --art-6: #243639;
+  --art-ink: rgba(232, 240, 248, 0.4);
+  --ok: #5cc493;
+  --ok-soft: rgba(92, 196, 147, 0.14);
+  --warn: #ff9f0a;
+  --warn-ink: #ffb340;
+  --danger: #ec7b69;
+  --danger-soft: rgba(236, 123, 105, 0.14);
+  --scrim: rgba(0, 0, 0, 0.5);
+  --pop-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(232, 240, 248, 0.12);
+  --sink: inset 0 3px 14px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+  --sink-deep: inset 0 4px 18px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+/* 能点的东西一律显示手形，不靠每个组件自己记得加：Tailwind 4 默认让按钮显示箭头，
+   漏写一处就是一处「看起来不能点」。放在 base 层，组件里写的 cursor-grab、
+   cursor-default 等照样优先；禁用的恢复箭头。 */
+/* 能点的东西一律显示手形，不靠每个组件自己记得加：Tailwind 4 默认让按钮显示箭头，
+   漏写一处就是一处「看起来不能点」。放在 base 层，组件里写的 cursor-grab、
+   cursor-default 等照样优先；禁用的恢复箭头。 */
+@layer base {
+  :where(
+      button,
+      [role="button"],
+      [role="tab"],
+      [role="menuitem"],
+      [role="menuitemcheckbox"],
+      [role="menuitemradio"],
+      [role="option"],
+      [role="checkbox"],
+      [role="switch"],
+      [role="radio"],
+      summary,
+      label[for],
+      select,
+      a[href],
+      input[type="checkbox"],
+      input[type="radio"],
+      input[type="file"],
+      input[type="range"],
+      input[type="color"]
+    ) {
+    cursor: pointer;
+  }
+  :where(button, select, input):disabled,
+  :where([aria-disabled="true"]) {
+    cursor: default;
+  }
+}
+
+/* 侧栏导航用的竖向换页。旧页很快淡出、只挪一点点，让出位置；新页随即从一小段
+   距离外浮上来，按弹簧曲线收住，尾段有一点点回弹。位移用固定像素，不按页面高度算。
+   配 PageHost 的 axis="y"。 */
+@keyframes leaveU {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(-6px); }
+}
+@keyframes enterU {
+  from { opacity: 0; transform: translateY(22px) scale(0.994); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes leaveD {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(6px); }
+}
+@keyframes enterD {
+  from { opacity: 0; transform: translateY(-22px) scale(0.994); }
+  to { opacity: 1; transform: none; }
+}
+.page-leave-u { animation: leaveU 0.18s var(--ease-out-quick) forwards; }
+.page-leave-d { animation: leaveD 0.18s var(--ease-out-quick) forwards; }
+.page-enter-u { animation: enterU 0.62s var(--spring-gentle) 0.04s both; }
+.page-enter-d { animation: enterD 0.62s var(--spring-gentle) 0.04s both; }
+.page-leave-u, .page-enter-u, .page-leave-d, .page-enter-d { will-change: transform, opacity; }
+
+/* 一页之内换视图：列表与详情之间切换。与换页同一种入场。 */
+@keyframes view-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+.view-in { animation: view-in 0.5s var(--spring-gentle) both; }
+
+/* 浮层：弹窗、抽屉、面板。 */
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(6px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+.pop-in { animation: pop-in 0.26s var(--ease) both; }
+
+/* 浮层收起。时长与 overlay.tsx 的 OUT_MS 一致：弹窗、抽屉、菜单都先放完收起再卸下，
+   不凭空消失。 */
+@keyframes pop-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(4px) scale(0.985); }
+}
+.pop-out { animation: pop-out 0.2s var(--ease-out-quick) both; }
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+.fade-out { animation: fade-out 0.2s var(--ease-soft) both; }
+@keyframes drawer-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateX(28px); }
+}
+.drawer-out { animation: drawer-out 0.2s var(--ease-out-quick) both; }
+@keyframes menu-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: scale(0.98); }
+}
+.menu-out { animation: menu-out 0.16s var(--ease-out-quick) both; }
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.fade-in { animation: fade-in 0.28s var(--ease-soft) both; }
+
+@keyframes drawer-in {
+  from { opacity: 0.4; transform: translateX(24px); }
+  to { opacity: 1; transform: none; }
+}
+.drawer-in { animation: drawer-in 0.4s var(--ease-soft) both; }
+
+/* 列表里新的一条出现。 */
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.msg-in { animation: msg-in 0.34s var(--ease) both; }
+
+/* 正在处理：三个点依次起伏。 */
+.typing { display: inline-flex; gap: 3px; }
+.typing i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: typing 1.2s ease-in-out infinite;
+}
+.typing i:nth-child(2) { animation-delay: 0.15s; }
+.typing i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes typing {
+  0%, 60%, 100% { opacity: 0.3; transform: none; }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
+
+/* 菜单与下拉。从控件那一侧长出来。 */
+@keyframes menu-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes menu-in-up {
+  from { opacity: 0; transform: translateY(4px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+.menu-in { animation: menu-in 0.18s var(--ease) both; transform-origin: top left; }
+.menu-in-up { animation: menu-in-up 0.18s var(--ease) both; transform-origin: bottom left; }
+
+/* 折叠组展开。 */
+@keyframes collapse-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+.collapse-in { animation: collapse-in 0.22s var(--ease) both; }
+
+/* 新开的标签页。 */
+@keyframes tab-in {
+  from { opacity: 0; max-width: 0; }
+  to { opacity: 1; max-width: 220px; }
+}
+.tab-in { animation: tab-in 0.34s var(--ease-soft) both; }
+
+/* 侧栏每一行底部的细线。在跑的时候是进度；做完还没看，没有底轨，只有一段光沿着它加速流过。 */
+.row-line {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 3px;
+  height: 2px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+  pointer-events: none;
+}
+.row-line-sm { left: 18px; right: 18px; bottom: 4px; }
+.row-line > i {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--accent);
+  transform-origin: left;
+  transition: transform 0.2s linear;
+}
+.row-line-done { background: none; }
+.row-line-done > i {
+  width: 38%;
+  right: auto;
+  background: linear-gradient(90deg, transparent, var(--notify) 45%, var(--notify) 55%, transparent);
+  transform: translateX(-100%);
+  will-change: transform;
+  /* 起步慢、越走越快，冲出右端后停一拍再来 */
+  animation: row-flow 1.9s cubic-bezier(0.55, 0, 0.85, 0.35) infinite;
+}
+@keyframes row-flow {
+  0% { transform: translateX(-100%); }
+  78%, 100% { transform: translateX(265%); }
+}
+
+/* 条目逐个浮现。网格里给每一格一个小延迟。 */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+.rise { animation: rise 0.46s var(--ease-soft) both; }
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+.breathe { animation: breathe 3.2s ease-in-out infinite; }
+
+.selectable { user-select: text; }
+
+/* 柱状图从底部长出来。 */
+@keyframes grow-up {
+  from { transform: scaleY(0); }
+  to { transform: none; }
+}
+.grow-up { transform-origin: bottom; animation: grow-up 0.7s var(--ease-soft) both; }
+
+/* 卡片：指到时不上浮，而是向内收一点，像要按进去；按下时再深一点。
+   阴影画在最上面一层，盖得住卡片里的图。 */
+.sink { transition: scale 0.32s var(--ease-soft); }
+.sink::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: var(--sink);
+  opacity: 0;
+  transition: opacity 0.28s var(--ease-soft), box-shadow 0.2s var(--ease-soft);
+}
+.group:hover .sink::after, .group:focus-visible .sink::after { opacity: 1; }
+.group:hover .sink { scale: 0.99; }
+.group:active .sink { scale: 0.98; }
+.group:active .sink::after { box-shadow: var(--sink-deep); }
+
+/* 右上角的消息。从右边拉进来，关掉时向右收回；收回之后占位的高度再合上，
+   下面的消息平滑补位，不跳。收回用关键帧而不用过渡：卡片刚放完入场动画时
+   改样式，WebKit 不一定触发过渡，动画就被吞掉了。 */
+@keyframes notice-in {
+  from { transform: translateX(calc(100% + 28px)); }
+  to { transform: none; }
+}
+@keyframes notice-out {
+  from { transform: none; opacity: 1; }
+  to { transform: translateX(calc(100% + 28px)); opacity: 0.6; }
+}
+@keyframes notice-row-in {
+  from { grid-template-rows: 0fr; }
+  to { grid-template-rows: 1fr; }
+}
+@keyframes notice-row-out {
+  from { grid-template-rows: 1fr; }
+  to { grid-template-rows: 0fr; }
+}
+.notice-row { display: grid; grid-template-rows: 1fr; animation: notice-row-in 0.36s var(--ease-soft) both; }
+/* 先滑出，滑出之后再合上 */
+.notice-row-out { animation: notice-row-out 0.26s var(--ease-soft) 0.34s both; }
+.notice-card { will-change: transform; }
+.notice-in { animation: notice-in 0.56s cubic-bezier(0.32, 0.72, 0, 1) both; }
+.notice-out { animation: notice-out 0.36s cubic-bezier(0.55, 0, 0.85, 0.36) both; }
+
+/* 跳到某处后，那一段的标题亮一下再退回 */
+@keyframes day-flash {
+  0%, 60% { color: var(--ink); }
+  100% { color: var(--ink-muted); }
+}
+.day-flash { animation: day-flash 1.4s var(--ease-soft) both; }
+
+/* 电平格：上下起伏，每一格的节奏错开。停下时回到一排静止的短格。 */
+@keyframes meter {
+  0%, 100% { transform: scaleY(0.12); }
+  35% { transform: scaleY(0.9); }
+  60% { transform: scaleY(0.35); }
+  80% { transform: scaleY(0.6); }
+}
+.meter-bar { animation: meter 0.8s ease-in-out infinite; }
