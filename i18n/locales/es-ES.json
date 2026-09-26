@@ -49,7 +49,8 @@
       "confirm": "Aceptar",
       "more": "Más",
       "clear": "Borrar",
-      "search": "Buscar"
+      "search": "Buscar",
+      "back": "Atrás"
     },
     "pager": {
       "label": "Páginas",
@@ -68,6 +69,44 @@
     "sidebar": {
       "collapse": "Contraer barra lateral",
       "expand": "Expandir barra lateral"
+    },
+    "panel": {
+      "hide": "Ocultar {name}",
+      "show": "Mostrar {name}"
+    },
+    "comments": {
+      "all": "Todo",
+      "count": "{n} comentarios",
+      "hot": "Destacados",
+      "new": "Recientes",
+      "none": "Todavía no hay comentarios",
+      "fold": "Ocultar respuestas",
+      "moreReplies": "Ver {n} respuestas más",
+      "replyTo": "Responder a {name}",
+      "author": "Autor",
+      "replied": "respondió a",
+      "like": "Me gusta",
+      "reply": "Responder",
+      "delete": "Eliminar",
+      "report": "Denunciar",
+      "post": "Publicar",
+      "hint": "Escribe un comentario",
+      "reviewHint": "Escribe una reseña"
+    },
+    "wizard": {
+      "count": "Paso {n} de {total}",
+      "later": "Continuar más tarde",
+      "prev": "Atrás",
+      "next": "Siguiente",
+      "skip": "Omitir este paso",
+      "finish": "Terminar",
+      "close": "No volver a mostrar"
+    },
+    "errorNote": {
+      "show": "Ver detalles",
+      "hide": "Ocultar detalles",
+      "copy": "Copiar el error completo",
+      "copied": "Copiado"
     }
   },
   "nav": {
@@ -76,7 +115,8 @@
     "type": "Tipografía",
     "color": "Color",
     "motion": "Movimiento",
-    "patterns": "Patrones"
+    "patterns": "Patrones",
+    "interaction": "Interacción"
   },
   "demo": {
     "overview": {
@@ -239,6 +279,57 @@
       "emptyTitle": "Aún no hay nada",
       "emptyAction": "Añadir",
       "icons": "Iconos"
+    },
+    "inter": {
+      "sub": "Cambios dentro de la página, comentarios, guías por pasos, avisos, errores, gráficos de anillo, paneles y un botón flotante",
+      "panes": "Cambio superpuesto",
+      "tab": {
+        "a": "Todo",
+        "b": "Recientes",
+        "c": "Guardados"
+      },
+      "filter": {
+        "x": "Cuatro",
+        "y": "Dos",
+        "z": "Uno"
+      },
+      "comments": "Comentarios",
+      "ok": "Funciona",
+      "issue": "Con problemas",
+      "c1": "Las instrucciones son claras; funcionó a la primera.",
+      "c2": "En un equipo lento tarda bastante.",
+      "r1": "Gracias por los comentarios.",
+      "r2": "A mí también.",
+      "r3": "¿Qué versión usaste?",
+      "ago": "hace {n} h",
+      "guides": "Guías y errores",
+      "openWizard": "Abrir la guía",
+      "toggleNudge": "Mostrar u ocultar el aviso",
+      "nudgeTitle": "Hay una versión nueva",
+      "nudgeBody": "Actualizar requiere reiniciar.",
+      "later": "Más tarde",
+      "go": "Actualizar ahora",
+      "fix": "Usar 48000 Hz",
+      "ring": "Gráfico de anillo",
+      "free": "86 GB libres",
+      "seg": {
+        "a": "Programa",
+        "b": "Proyectos",
+        "c": "Recursos",
+        "d": "Caché y registros"
+      },
+      "dock": "Panel inferior",
+      "main": "Contenido principal",
+      "dockLabel": "Detalles",
+      "bubble": "Arrástrame a un lado",
+      "wizardTitle": "Primeros pasos",
+      "step": {
+        "one": "Conectar un dispositivo",
+        "two": "Elegir una plantilla",
+        "three": "Probar"
+      },
+      "stepBody": "Cada paso hace una sola cosa; pulsa Siguiente al terminar.",
+      "resume": "Continuar la guía"
     }
   }
 }

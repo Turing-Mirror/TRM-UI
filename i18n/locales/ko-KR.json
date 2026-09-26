@@ -49,7 +49,8 @@
       "confirm": "확인",
       "more": "더 보기",
       "clear": "지우기",
-      "search": "검색"
+      "search": "검색",
+      "back": "뒤로"
     },
     "pager": {
       "label": "페이지",
@@ -68,6 +69,44 @@
     "sidebar": {
       "collapse": "사이드바 접기",
       "expand": "사이드바 펼치기"
+    },
+    "panel": {
+      "hide": "{name} 숨기기",
+      "show": "{name} 표시"
+    },
+    "comments": {
+      "all": "전체",
+      "count": "댓글 {n}",
+      "hot": "인기순",
+      "new": "최신순",
+      "none": "아직 댓글이 없습니다",
+      "fold": "답글 접기",
+      "moreReplies": "답글 {n}개 더 보기",
+      "replyTo": "{name}에게 답글",
+      "author": "작성자",
+      "replied": "답글 대상",
+      "like": "좋아요",
+      "reply": "답글",
+      "delete": "삭제",
+      "report": "신고",
+      "post": "게시",
+      "hint": "댓글 쓰기",
+      "reviewHint": "리뷰 쓰기"
+    },
+    "wizard": {
+      "count": "{total}단계 중 {n}단계",
+      "later": "나중에 계속",
+      "prev": "이전",
+      "next": "다음",
+      "skip": "이 단계 건너뛰기",
+      "finish": "완료",
+      "close": "다시 표시 안 함"
+    },
+    "errorNote": {
+      "show": "자세히 보기",
+      "hide": "자세히 접기",
+      "copy": "전체 오류 복사",
+      "copied": "복사됨"
     }
   },
   "nav": {
@@ -76,7 +115,8 @@
     "type": "타이포그래피",
     "color": "색상",
     "motion": "모션",
-    "patterns": "패턴"
+    "patterns": "패턴",
+    "interaction": "상호작용"
   },
   "demo": {
     "overview": {
@@ -239,6 +279,57 @@
       "emptyTitle": "아직 내용이 없습니다",
       "emptyAction": "추가",
       "icons": "아이콘"
+    },
+    "inter": {
+      "sub": "페이지 내 전환, 댓글, 단계 안내, 알림, 오류, 링 차트, 패널, 떠 있는 버튼",
+      "panes": "겹쳐 전환",
+      "tab": {
+        "a": "전체",
+        "b": "최근",
+        "c": "저장됨"
+      },
+      "filter": {
+        "x": "4개",
+        "y": "2개",
+        "z": "1개"
+      },
+      "comments": "댓글",
+      "ok": "작동함",
+      "issue": "문제 있음",
+      "c1": "설명이 명확해서 처음부터 잘 됐습니다.",
+      "c2": "사양이 낮은 컴퓨터에서는 시간이 걸립니다.",
+      "r1": "피드백 감사합니다.",
+      "r2": "저도 마찬가지입니다.",
+      "r3": "어느 버전을 쓰셨나요?",
+      "ago": "{n}시간 전",
+      "guides": "안내와 오류",
+      "openWizard": "단계 안내 열기",
+      "toggleNudge": "알림 표시/숨기기",
+      "nudgeTitle": "새 버전이 있습니다",
+      "nudgeBody": "업데이트 후 다시 시작해야 합니다.",
+      "later": "나중에",
+      "go": "지금 업데이트",
+      "fix": "48000 Hz 사용",
+      "ring": "링 차트",
+      "free": "86 GB 남음",
+      "seg": {
+        "a": "프로그램",
+        "b": "프로젝트",
+        "c": "자원",
+        "d": "캐시와 로그"
+      },
+      "dock": "하단 패널",
+      "main": "주요 내용",
+      "dockLabel": "세부 정보",
+      "bubble": "좌우로 끌어 보세요",
+      "wizardTitle": "시작하기",
+      "step": {
+        "one": "장치 연결",
+        "two": "템플릿 선택",
+        "three": "실행해 보기"
+      },
+      "stepBody": "단계마다 한 가지만 하고, 끝나면 다음을 누릅니다.",
+      "resume": "안내 계속"
     }
   }
 }

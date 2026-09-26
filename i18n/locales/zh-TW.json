@@ -49,7 +49,8 @@
       "confirm": "確定",
       "more": "更多",
       "clear": "清除",
-      "search": "搜尋"
+      "search": "搜尋",
+      "back": "返回"
     },
     "pager": {
       "label": "翻頁",
@@ -68,6 +69,44 @@
     "sidebar": {
       "collapse": "收起側欄",
       "expand": "展開側欄"
+    },
+    "panel": {
+      "hide": "收起{name}",
+      "show": "展開{name}"
+    },
+    "comments": {
+      "all": "全部",
+      "count": "評論 {n}",
+      "hot": "最熱",
+      "new": "最新",
+      "none": "暫無評論",
+      "fold": "收起回覆",
+      "moreReplies": "展開其餘 {n} 則回覆",
+      "replyTo": "回覆 {name}",
+      "author": "作者",
+      "replied": "回覆",
+      "like": "讚",
+      "reply": "回覆",
+      "delete": "刪除",
+      "report": "檢舉",
+      "post": "發表",
+      "hint": "發表評論",
+      "reviewHint": "發表評價"
+    },
+    "wizard": {
+      "count": "第 {n} 步，共 {total} 步",
+      "later": "稍後繼續",
+      "prev": "上一步",
+      "next": "下一步",
+      "skip": "略過此步",
+      "finish": "完成",
+      "close": "不再顯示"
+    },
+    "errorNote": {
+      "show": "查看詳情",
+      "hide": "收起詳情",
+      "copy": "複製完整錯誤",
+      "copied": "已複製"
     }
   },
   "nav": {
@@ -76,7 +115,8 @@
     "type": "排版",
     "color": "配色",
     "motion": "動效",
-    "patterns": "模式"
+    "patterns": "模式",
+    "interaction": "互動"
   },
   "demo": {
     "overview": {
@@ -239,6 +279,57 @@
       "emptyTitle": "這裡還沒有內容",
       "emptyAction": "新增",
       "icons": "圖示"
+    },
+    "inter": {
+      "sub": "頁內切換、評論、分步引導、提示、報錯、環形圖、面板與浮動按鈕",
+      "panes": "交疊切換",
+      "tab": {
+        "a": "全部",
+        "b": "最近",
+        "c": "收藏"
+      },
+      "filter": {
+        "x": "四項",
+        "y": "兩項",
+        "z": "一項"
+      },
+      "comments": "評論",
+      "ok": "可用",
+      "issue": "存在問題",
+      "c1": "說明寫得很清楚，第一次使用就順利完成了。",
+      "c2": "在低配置的電腦上需要等待較長時間。",
+      "r1": "感謝回饋。",
+      "r2": "同樣順利。",
+      "r3": "請問用的是哪個版本？",
+      "ago": "{n} 小時前",
+      "guides": "引導與報錯",
+      "openWizard": "打開分步引導",
+      "toggleNudge": "顯示或收起提示",
+      "nudgeTitle": "有新版本",
+      "nudgeBody": "更新後需要重新啟動。",
+      "later": "稍後",
+      "go": "立即更新",
+      "fix": "改用 48000 Hz",
+      "ring": "環形圖",
+      "free": "磁碟剩餘 86 GB",
+      "seg": {
+        "a": "程式",
+        "b": "專案",
+        "c": "資源",
+        "d": "快取與日誌"
+      },
+      "dock": "底部面板",
+      "main": "主要內容",
+      "dockLabel": "詳細資訊",
+      "bubble": "拖動我到左右兩側",
+      "wizardTitle": "開始使用",
+      "step": {
+        "one": "連接裝置",
+        "two": "選擇範本",
+        "three": "試執行"
+      },
+      "stepBody": "每一步只做一件事，完成後點擊下一步。",
+      "resume": "繼續引導"
     }
   }
 }

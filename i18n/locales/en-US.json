@@ -49,7 +49,8 @@
       "confirm": "OK",
       "more": "More",
       "clear": "Clear",
-      "search": "Search"
+      "search": "Search",
+      "back": "Back"
     },
     "pager": {
       "label": "Pages",
@@ -68,6 +69,44 @@
     "sidebar": {
       "collapse": "Collapse sidebar",
       "expand": "Expand sidebar"
+    },
+    "panel": {
+      "hide": "Hide {name}",
+      "show": "Show {name}"
+    },
+    "comments": {
+      "all": "All",
+      "count": "{n} comments",
+      "hot": "Top",
+      "new": "Newest",
+      "none": "No comments yet",
+      "fold": "Hide replies",
+      "moreReplies": "Show {n} more replies",
+      "replyTo": "Reply to {name}",
+      "author": "Author",
+      "replied": "replied to",
+      "like": "Like",
+      "reply": "Reply",
+      "delete": "Delete",
+      "report": "Report",
+      "post": "Post",
+      "hint": "Add a comment",
+      "reviewHint": "Write a review"
+    },
+    "wizard": {
+      "count": "Step {n} of {total}",
+      "later": "Continue later",
+      "prev": "Back",
+      "next": "Next",
+      "skip": "Skip this step",
+      "finish": "Finish",
+      "close": "Don’t show again"
+    },
+    "errorNote": {
+      "show": "Show details",
+      "hide": "Hide details",
+      "copy": "Copy full error",
+      "copied": "Copied"
     }
   },
   "nav": {
@@ -76,7 +115,8 @@
     "type": "Typography",
     "color": "Color",
     "motion": "Motion",
-    "patterns": "Patterns"
+    "patterns": "Patterns",
+    "interaction": "Interaction"
   },
   "demo": {
     "overview": {
@@ -239,6 +279,57 @@
       "emptyTitle": "Nothing here yet",
       "emptyAction": "Add",
       "icons": "Icons"
+    },
+    "inter": {
+      "sub": "In-page switching, comments, step guides, prompts, errors, ring charts, panels and a floating button",
+      "panes": "Overlapping switch",
+      "tab": {
+        "a": "All",
+        "b": "Recent",
+        "c": "Saved"
+      },
+      "filter": {
+        "x": "Four",
+        "y": "Two",
+        "z": "One"
+      },
+      "comments": "Comments",
+      "ok": "Works",
+      "issue": "Has issues",
+      "c1": "The instructions are clear; it worked the first time.",
+      "c2": "On a slower computer it takes a while.",
+      "r1": "Thanks for the feedback.",
+      "r2": "Same here.",
+      "r3": "Which version did you use?",
+      "ago": "{n} h ago",
+      "guides": "Guides and errors",
+      "openWizard": "Open the step guide",
+      "toggleNudge": "Show or hide the prompt",
+      "nudgeTitle": "A new version is available",
+      "nudgeBody": "Updating requires a restart.",
+      "later": "Later",
+      "go": "Update now",
+      "fix": "Use 48000 Hz",
+      "ring": "Ring chart",
+      "free": "86 GB free",
+      "seg": {
+        "a": "Program",
+        "b": "Projects",
+        "c": "Assets",
+        "d": "Cache and logs"
+      },
+      "dock": "Bottom panel",
+      "main": "Main content",
+      "dockLabel": "Details",
+      "bubble": "Drag me to either side",
+      "wizardTitle": "Getting started",
+      "step": {
+        "one": "Connect a device",
+        "two": "Choose a template",
+        "three": "Try it"
+      },
+      "stepBody": "Each step does one thing; choose Next when it’s done.",
+      "resume": "Continue the guide"
     }
   }
 }

@@ -49,7 +49,8 @@
       "confirm": "OK",
       "more": "Plus",
       "clear": "Effacer",
-      "search": "Rechercher"
+      "search": "Rechercher",
+      "back": "Retour"
     },
     "pager": {
       "label": "Pages",
@@ -68,6 +69,44 @@
     "sidebar": {
       "collapse": "Réduire la barre latérale",
       "expand": "Déployer la barre latérale"
+    },
+    "panel": {
+      "hide": "Masquer {name}",
+      "show": "Afficher {name}"
+    },
+    "comments": {
+      "all": "Tout",
+      "count": "{n} commentaires",
+      "hot": "Populaires",
+      "new": "Récents",
+      "none": "Aucun commentaire pour l’instant",
+      "fold": "Masquer les réponses",
+      "moreReplies": "Afficher {n} autres réponses",
+      "replyTo": "Répondre à {name}",
+      "author": "Auteur",
+      "replied": "a répondu à",
+      "like": "J’aime",
+      "reply": "Répondre",
+      "delete": "Supprimer",
+      "report": "Signaler",
+      "post": "Publier",
+      "hint": "Ajouter un commentaire",
+      "reviewHint": "Rédiger un avis"
+    },
+    "wizard": {
+      "count": "Étape {n} sur {total}",
+      "later": "Continuer plus tard",
+      "prev": "Précédent",
+      "next": "Suivant",
+      "skip": "Passer cette étape",
+      "finish": "Terminer",
+      "close": "Ne plus afficher"
+    },
+    "errorNote": {
+      "show": "Afficher les détails",
+      "hide": "Masquer les détails",
+      "copy": "Copier l’erreur complète",
+      "copied": "Copié"
     }
   },
   "nav": {
@@ -76,7 +115,8 @@
     "type": "Typographie",
     "color": "Couleurs",
     "motion": "Animation",
-    "patterns": "Modèles"
+    "patterns": "Modèles",
+    "interaction": "Interaction"
   },
   "demo": {
     "overview": {
@@ -239,6 +279,57 @@
       "emptyTitle": "Rien pour l’instant",
       "emptyAction": "Ajouter",
       "icons": "Icônes"
+    },
+    "inter": {
+      "sub": "Transitions dans la page, commentaires, guides pas à pas, invites, erreurs, anneaux, panneaux et bouton flottant",
+      "panes": "Transition superposée",
+      "tab": {
+        "a": "Tout",
+        "b": "Récents",
+        "c": "Enregistrés"
+      },
+      "filter": {
+        "x": "Quatre",
+        "y": "Deux",
+        "z": "Un"
+      },
+      "comments": "Commentaires",
+      "ok": "Fonctionne",
+      "issue": "Problèmes",
+      "c1": "Les instructions sont claires ; ça a marché du premier coup.",
+      "c2": "Sur un ordinateur lent, c’est assez long.",
+      "r1": "Merci pour le retour.",
+      "r2": "Pareil pour moi.",
+      "r3": "Quelle version avez-vous utilisée ?",
+      "ago": "il y a {n} h",
+      "guides": "Guides et erreurs",
+      "openWizard": "Ouvrir le guide",
+      "toggleNudge": "Afficher ou masquer l’invite",
+      "nudgeTitle": "Une nouvelle version est disponible",
+      "nudgeBody": "La mise à jour nécessite un redémarrage.",
+      "later": "Plus tard",
+      "go": "Mettre à jour",
+      "fix": "Utiliser 48000 Hz",
+      "ring": "Anneau",
+      "free": "86 Go libres",
+      "seg": {
+        "a": "Programme",
+        "b": "Projets",
+        "c": "Ressources",
+        "d": "Cache et journaux"
+      },
+      "dock": "Panneau inférieur",
+      "main": "Contenu principal",
+      "dockLabel": "Détails",
+      "bubble": "Faites-moi glisser sur un côté",
+      "wizardTitle": "Premiers pas",
+      "step": {
+        "one": "Connecter un appareil",
+        "two": "Choisir un modèle",
+        "three": "Essayer"
+      },
+      "stepBody": "Chaque étape fait une seule chose ; cliquez sur Suivant une fois terminé.",
+      "resume": "Reprendre le guide"
     }
   }
 }

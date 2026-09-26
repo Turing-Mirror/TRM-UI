@@ -818,7 +818,7 @@ body::before {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: none; }
 }
-.rise { animation: rise 0.46s var(--ease-soft) both; }
+.rise { animation: rise 0.5s var(--spring-settle) both; }
 
 @keyframes breathe {
   0%, 100% { opacity: 0.55; }
@@ -894,3 +894,76 @@ body::before {
   80% { transform: scaleY(0.6); }
 }
 .meter-bar { animation: meter 0.8s ease-in-out infinite; }
+
+/* 页内切换（motion.tsx）：分栏、列表与详情、筛选结果。旧的很快淡出、朝来处让一小步；
+   新的从去向那一侧浮上来，按临界阻尼收住，不冲过头。方向由 --swap-dx、--swap-ox 给出，
+   上下切换时两者为 0，只有一点纵向的浮动。时长与 motion.tsx 的 SWAP_OUT_MS 一致。 */
+@keyframes swap-in {
+  from { opacity: 0; transform: translate3d(var(--swap-dx, 0px), 8px, 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes swap-in-b {
+  from { opacity: 0; transform: translate3d(var(--swap-dx, 0px), 8px, 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes swap-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translate3d(var(--swap-ox, 0px), 0, 0); }
+}
+.swap-in { animation: swap-in 0.46s var(--spring-settle) 0.04s both; }
+.swap-in-b { animation: swap-in-b 0.46s var(--spring-settle) 0.04s both; }
+.swap-out { animation: swap-out 0.18s var(--ease-out-quick) both; }
+
+/* 标题栏里的页标题（TitleSlot.tsx）：换页时旧标题淡出、新标题浮上来；
+   同一页里换了标题（列表进详情）时新标题从右边轻轻滑入。 */
+@keyframes title-in {
+  from { opacity: 0; transform: translate3d(0, 5px, 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes title-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translate3d(0, -4px, 0); visibility: hidden; }
+}
+@keyframes title-swap {
+  from { opacity: 0; transform: translate3d(10px, 0, 0); }
+  to { opacity: 1; transform: none; }
+}
+.title-in { animation: title-in 0.42s var(--spring-settle) 0.05s both; }
+.title-out { animation: title-out 0.16s var(--ease-out-quick) both; }
+.title-swap { animation: title-swap 0.4s var(--spring-settle) both; }
+
+/* 选中项的指示：底色或下划线滑到新位置（motion.tsx 的 useSlider）。 */
+.slider { position: absolute; left: 0; top: 0; pointer-events: none; }
+.slider[data-armed] { transition: transform 0.42s var(--spring-gentle), width 0.42s var(--spring-gentle), height 0.42s var(--spring-gentle); }
+
+
+/* 分步引导（Wizard.tsx）：换步时新的一步从去向那一侧滑进来；收起后的小按钮从右下浮上来。 */
+@keyframes wizard-step-in {
+  from { opacity: 0; transform: translate3d(calc(var(--dir, 1) * 24px), 0, 0); }
+  to { opacity: 1; transform: none; }
+}
+.wizard-step { animation: wizard-step-in 0.5s var(--spring-settle) both; }
+@keyframes wizard-pill-in {
+  from { opacity: 0; transform: translate3d(0, 12px, 0) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+.wizard-pill { animation: wizard-pill-in 0.46s var(--spring-gentle) both; }
+
+/* 底部提示（Nudge.tsx）：从下方浮上来；收起时行高收到 0，下面的内容平滑补位。 */
+@keyframes nudge-out {
+  from { grid-template-rows: 1fr; opacity: 1; }
+  to { grid-template-rows: 0fr; opacity: 0; transform: translate3d(0, 8px, 0); }
+}
+.nudge-out { animation: nudge-out 0.18s var(--ease-out-quick) forwards; }
+
+/* 点赞：图标轻轻弹一下。 */
+@keyframes pop-like {
+  0% { scale: 1; }
+  40% { scale: 1.28; }
+  100% { scale: 1; }
+}
+.pop-like { animation: pop-like 0.42s var(--spring-bouncy, var(--spring-gentle)) both; }
+
+/* 环形图的各段从零长到比例。 */
+@keyframes ring-grow { from { stroke-dasharray: 0 999; } }
+.ring-seg { animation: ring-grow 0.9s var(--spring-settle) both; }

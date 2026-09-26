@@ -166,10 +166,10 @@ pub fn run() {
             .min_inner_size(880.0, 640.0)
             .resizable(true)
             .decorations(false)
-            // 无边框 + shadow=true 在 Windows 上会强制一条 1px 系统白边
-            // （Aero 描边），最大化时更明显。投影由 WS_CAPTION 提供，
-            // 见 window_watch::ensure_caption_for_shadow。
-            .shadow(false)
+            // Windows 上投影不走 tao 的 shadow：它会带出一条 1px 系统白边，
+            // 投影由 window_watch::round_corners 经 DWM 要回来。macOS 上
+            // shadow 就是系统原生投影，直接开。
+            .shadow(cfg!(target_os = "macos"))
             .center()
             .build()?;
 

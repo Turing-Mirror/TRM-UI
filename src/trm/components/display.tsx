@@ -2,9 +2,10 @@
  * 内容里反复出现的小件：标签、说明行、应用标、进度条、小节、空状态、页内分栏、翻页。
  * 控件在 ui.tsx 与 controls.tsx，这里管「内容怎么排」。
  */
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { startTransition, useState, type ReactNode } from "react";
 import { useI18n } from "../i18n";
 import { Icon, isIconName, type IconName } from "./Icon";
+import { sliderStyle, useSlider } from "./motion";
 
 export type Tone = "ok" | "warn" | "muted" | "accent" | "danger";
 
@@ -126,62 +127,81 @@ export function Empty({ icon, title, desc, action }: { icon: IconName; title: st
 
 /**
  * 页内的分类切换：一排文字，选中的那项下面有一小段指示条，换项时滑过去。
- * 不用胶囊底色，也不画整条分割线。
+ * 不用胶囊底色，也不画整条分割线。点下去的那一刻指示条就走，内容的更新放进过渡里，
+ * 内容再多也不会先卡住指示条。
  */
-export function Tabs<T extends string>({ value, options, onChange }: { value: T; options: { id: T; label: string; count?: number }[]; onChange: (v: T) => void }) {
-  const row = useRef<HTMLDivElement>(null);
-  const [bar, setBar] = useState<{ left: number; width: number } | null>(null);
-  const [armed, setArmed] = useState(false);
-  useLayoutEffect(() => {
-    const el = row.current?.querySelector<HTMLElement>('[aria-selected="true"]');
-    if (!el) return;
-    setBar({ left: el.offsetLeft, width: el.offsetWidth });
-  }, [value, options.length]);
-  // 第一次量完之前不开过渡，免得指示条从最左边滑进来
-  useEffect(() => {
-    if (bar && !armed) requestAnimationFrame(() => setArmed(true));
-  }, [bar, armed]);
+export function Tabs<T extends string>({
+  value,
+  options,
+  onChange,
+}: {
+  value: T;
+  options: { id: T; label: string; count?: number }[];
+  onChange: (v: T) => void;
+}) {
+  const [shown, setShown] = useState(value);
+  const [lastValue, setLastValue] = useState(value);
+  if (value !== lastValue) {
+    setLastValue(value);
+    setShown(value);
+  }
+  const { box, pos, armed, jump } = useSlider<HTMLDivElement>();
   return (
-    <div ref={row} role="tablist" className="relative flex items-center gap-5 flex-wrap">
+    <div ref={box} role="tablist" className="relative flex items-center gap-5 flex-wrap">
       {options.map((o) => {
-        const on = o.id === value;
+        const on = o.id === shown;
         return (
           <button
             key={o.id}
             type="button"
             role="tab"
             aria-selected={on}
-            onClick={() => onChange(o.id)}
-            className={["relative h-8 px-0 border-0 bg-transparent cursor-pointer text-[13.5px] transition-colors whitespace-nowrap", on ? "text-[var(--ink)] font-medium" : "text-[var(--ink-muted)] hover:text-[var(--ink)]"].join(" ")}
+            onClick={(e) => {
+              if (o.id === shown) return;
+              jump(e.currentTarget);
+              setShown(o.id);
+              startTransition(() => onChange(o.id));
+            }}
+            className={[
+              "relative h-8 px-0 border-0 bg-transparent cursor-pointer text-[13.5px] transition-colors duration-200 whitespace-nowrap",
+              on ? "text-[var(--ink)] font-medium" : "text-[var(--ink-muted)] hover:text-[var(--ink)]",
+            ].join(" ")}
           >
             {o.label}
             {o.count !== undefined ? <span className="ml-1.5 text-[var(--meta)] font-normal">{o.count}</span> : null}
           </button>
         );
       })}
-      {bar ? (
-        <span
-          aria-hidden
-          className={`absolute bottom-0 h-[2px] rounded-full bg-[var(--accent)] ${armed ? "transition-[left,width] duration-[340ms] ease-[var(--ease-soft)]" : ""}`}
-          style={{ left: bar.left, width: bar.width }}
-        />
-      ) : null}
+      {pos ? <span aria-hidden data-armed={armed || undefined} className="slider h-[2px] rounded-full bg-[var(--accent)]" style={{ ...sliderStyle(pos, "bar"), top: pos.y + pos.h - 2 }} /> : null}
     </div>
   );
 }
 
-/** 列表上方的一排筛选，比 Tabs 轻一级：选中的一项底色略深。 */
+/** 列表上方的一排筛选。比分栏轻一级，选中的一项底色略深，换项时底色滑过去。 */
 export function Filters<T extends string>({ value, options, onChange }: { value: T; options: { id: T; label: string; count?: number }[]; onChange: (v: T) => void }) {
+  const [shown, setShown] = useState(value);
+  const [lastValue, setLastValue] = useState(value);
+  if (value !== lastValue) {
+    setLastValue(value);
+    setShown(value);
+  }
+  const { box, pos, armed, jump } = useSlider<HTMLDivElement>();
   return (
-    <div className="flex items-center gap-1 flex-wrap" role="radiogroup">
+    <div ref={box} className="relative flex items-center gap-1 flex-wrap" role="radiogroup">
+      {pos ? <span aria-hidden data-armed={armed || undefined} className="slider rounded-[var(--rs)] bg-[color-mix(in_srgb,var(--ink)_7%,transparent)]" style={sliderStyle(pos, "box")} /> : null}
       {options.map((o) => (
         <button
           key={o.id}
           type="button"
           role="radio"
-          aria-checked={o.id === value}
-          onClick={() => onChange(o.id)}
-          className={`h-7 px-2.5 inline-flex items-center gap-1.5 rounded-[var(--rs)] border-0 cursor-pointer text-[12.5px] transition-colors ${o.id === value ? "bg-[color-mix(in_srgb,var(--ink)_7%,transparent)] text-[var(--ink)] font-medium" : "bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]"}`}
+          aria-checked={o.id === shown}
+          onClick={(e) => {
+            if (o.id === shown) return;
+            jump(e.currentTarget);
+            setShown(o.id);
+            startTransition(() => onChange(o.id));
+          }}
+          className={`relative h-7 px-2.5 inline-flex items-center gap-1.5 rounded-[var(--rs)] border-0 cursor-pointer text-[12.5px] bg-transparent transition-colors duration-200 ${o.id === shown ? "text-[var(--ink)] font-medium" : "text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]"}`}
         >
           {o.label}
           {o.count !== undefined ? <span className="text-[11.5px] text-[var(--meta)] font-normal tabular-nums">{o.count}</span> : null}

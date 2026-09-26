@@ -68,5 +68,16 @@ export { Popover, Menu, useMenu, Dropdown, PromptDialog, anchorOf, type Anchor, 
 export { Calendar, dayKey, useAnchoredPop } from "./components/Calendar";
 export { NoticeProvider, useNotify, Notices, NOTICE_OUT_MS, type Notice, type NoticeInput } from "./components/Notices";
 export { AppBar, Sidebar, SidebarItem, SidebarHead, SidebarHeadBtn, ActivityRow, SIDEBAR_W } from "./components/Sidebar";
-export { Pane, Side, SideHead, SideItem, SearchBox, MoreBtn, afterDrag } from "./components/listing";
+export { Side, SideHead, SideItem, SearchBox, MoreBtn, afterDrag } from "./components/listing";
+export { Panes, Pane, Swap, usePaneOn, useSlider, sliderStyle, stagger, SWAP_OUT_MS } from "./components/motion";
 export { useModalKeys } from "./hooks/useModalKeys";
+
+// 页内切换、页标题、面板、评论、分步引导、提示、报错、环形图、可拖动的浮动按钮
+export { PageTitle, TitleHost, TitleHostProvider, type TitleProps } from "./components/TitleSlot";
+export { SidePanel, PanelToggle, useSidePanel, type PanelState } from "./components/SidePanel";
+export { Comments, Avatar, type CommentItem, type Verdict } from "./components/Comments";
+export { Wizard, WizardPill, type WizardStep } from "./components/Wizard";
+export { Nudge } from "./components/Nudge";
+export { ErrorNote, splitErrorText } from "./components/ErrorNote";
+export { Ring, type RingSegment } from "./components/Ring";
+export { useSnapDrag, type SnapPos } from "./lib/snapDrag";

@@ -4,6 +4,7 @@
 import type { MouseEvent, ReactNode } from "react";
 import { useI18n } from "../i18n";
 import { Icon, type IconName } from "./Icon";
+import { sliderStyle, useSlider } from "./motion";
 
 /** 拖拽收尾最多等多久，毫秒。拖到窗口外松开时不一定有 dragend。 */
 const DRAG_END_WAIT = 400;
@@ -26,13 +27,17 @@ export function afterDrag(fn: () => void) {
 }
 
 /** 页内一个分栏。常驻不卸载，切走时只是藏起来，筛选、页码都留着。 */
-export function Pane({ on, children }: { on: boolean; children: ReactNode }) {
-  return <div className={on ? "fade-in" : "hidden"}>{children}</div>;
-}
 
-/** 左侧的筛选列。窄窗口下收起，筛选挪到网格上方的下拉里。 */
+
+/** 左侧的筛选列。窄窗口下收起，筛选挪到网格上方的下拉里。选中项的底色随选择滑过去。 */
 export function Side({ children }: { children: ReactNode }) {
-  return <aside className="w-[188px] flex-none pr-3 max-[860px]:hidden flex flex-col gap-0.5">{children}</aside>;
+  const { box, pos, armed } = useSlider<HTMLElement>();
+  return (
+    <aside ref={box} className="relative w-[188px] flex-none mr-3 max-[860px]:hidden flex flex-col gap-0.5 self-start">
+      {pos ? <span aria-hidden data-armed={armed || undefined} className="slider rounded-[var(--rs)] bg-[color-mix(in_srgb,var(--ink)_7%,transparent)]" style={sliderStyle(pos, "box")} /> : null}
+      {children}
+    </aside>
+  );
 }
 
 export function SideHead({ label, action }: { label: string; action?: { icon: IconName; label: string; run: () => void } }) {
@@ -70,8 +75,8 @@ export function SideItem({
       onContextMenu={onContextMenu}
       aria-pressed={on}
       className={[
-        "w-full h-8 flex items-center gap-2 px-3 rounded-[var(--rs)] border-0 cursor-pointer text-[13px] text-left transition-colors",
-        on ? "bg-[color-mix(in_srgb,var(--ink)_7%,transparent)] text-[var(--ink)] font-medium" : "bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]",
+        "relative w-full h-8 flex items-center gap-2 px-3 rounded-[var(--rs)] border-0 cursor-pointer text-[13px] text-left transition-colors duration-200",
+        on ? "bg-transparent text-[var(--ink)] font-medium" : "bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]",
       ].join(" ")}
     >
       {icon ? <Icon name={icon} size={15} className={on ? "text-[var(--accent)]" : "text-[var(--meta)]"} /> : null}

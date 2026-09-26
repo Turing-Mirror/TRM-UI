@@ -98,6 +98,7 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x" }: 
           <div
             key={id}
             ref={leaving ? undefined : paneRef}
+            data-page-scroll={leaving ? undefined : ""}
             inert={leaving}
             aria-hidden={leaving || undefined}
             className={leaving

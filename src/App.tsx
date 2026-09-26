@@ -25,6 +25,7 @@ import { PatternsPage } from "./pages/PatternsPage";
 import { TypePage } from "./pages/TypePage";
 import { ColorPage } from "./pages/ColorPage";
 import { MotionPage } from "./pages/MotionPage";
+import { InteractionPage } from "./pages/InteractionPage";
 
 /**
  * 导航顺序**就是**换页动画的方向依据：数组里靠后的页在下面。
@@ -34,6 +35,7 @@ const nav = createNav([
   { id: "overview", labelKey: "nav.overview" },
   { id: "components", labelKey: "nav.components" },
   { id: "patterns", labelKey: "nav.patterns" },
+  { id: "interaction", labelKey: "nav.interaction" },
   { id: "type", labelKey: "nav.type" },
   { id: "color", labelKey: "nav.color" },
   { id: "motion", labelKey: "nav.motion" },
@@ -45,6 +47,7 @@ const ICONS: Record<PageId, IconName> = {
   overview: "home",
   components: "sliders",
   patterns: "layers",
+  interaction: "chat",
   type: "book",
   color: "brush",
   motion: "play",
@@ -113,6 +116,8 @@ function Shell() {
                     return <ComponentsPage />;
                   case "patterns":
                     return <PatternsPage />;
+                  case "interaction":
+                    return <InteractionPage />;
                   case "type":
                     return <TypePage />;
                   case "color":

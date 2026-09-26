@@ -29,10 +29,18 @@ src/trm/                 ← the UI template; copy the whole directory
 │   ├── Calendar.tsx     month calendar and an anchored popover
 │   ├── Notices.tsx      tips and notifications in the top-right corner
 │   ├── listing.tsx      filter column, search box, "…" button, drag cleanup for list pages
+│   ├── motion.tsx       Panes Pane Swap useSlider stagger  ← one set of in-page transitions
+│   ├── TitleSlot.tsx    PageTitle TitleHost: page titles live in the title bar
+│   ├── SidePanel.tsx    resizable, collapsible panels on the left, right or bottom
+│   ├── Comments.tsx     comment threads: replies, likes, verdict filters, sorting
+│   ├── Wizard.tsx       step-by-step guide that can shrink to a corner button
+│   ├── Nudge.tsx        a non-blocking prompt at the bottom
+│   ├── ErrorNote.tsx    errors show the one useful line; details and copy behind it
+│   ├── Ring.tsx         ring chart for proportions
 │   ├── Icon.tsx         line icons
 │   └── ErrorBoundary.tsx
 ├── i18n/                eight languages, bundled at build time, switched synchronously; packs are discovered by file
-└── lib/                 nav / clipboard / appearance / host
+└── lib/                 nav / clipboard / appearance / host / snapDrag (floating button that snaps to an edge)
 
 src/index.css            tokens + three-state theme + animation  ← the core asset
 src/pages/               demo gallery (deletable)
@@ -60,6 +68,8 @@ src-tauri/               ← desktop shell
 - **Few boxes, few lines.** Areas are separated by background and space, not dividers or cards inside cards. The sidebar shares the content background; a tag is just a short coloured label — no pill, no dot.
 - **Restrained colour.** One accent for the main action and selection; attention uses the system orange (`--warn`, text in `--warn-ink`) on an icon, a thin line or a single line of text, never as a filled block; red only for failure and deletion.
 - **Nothing appears or vanishes abruptly.** Dialogs, drawers, menus and notices play their exit before unmounting; pages and views have an entrance; large morphs use curves without overshoot, springs only for small moves.
+- **Switches overlap.** Between tabs, list and detail, or filter results, the old content fades out with a small step back while the new content rises from the direction of travel; hidden tabs stay mounted but don't re-render, so the indicator moves the instant you click.
+- **Titles live in the title bar.** Back is an arrow before the title, small details such as status or author follow it, and actions sit on the right.
 - **Hovered cards sink inward** rather than lifting.
 - **Everything clickable shows a pointer**; disabled controls fall back to the arrow.
 
