@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────────────────────────────────
-   设计令牌 — Schale 浅蓝。没有 AI 味的蓝紫渐变，没有霓虹强调色。
+   设计令牌 — 浅蓝。没有 AI 味的蓝紫渐变，没有霓虹强调色。
    界面里的每一处颜色都从这里取，不许在组件里写死颜色字面量：
    写死的那一处在另一个主题下必然是错的，而且只有换主题时才看得出来。
    ───────────────────────────────────────────────────────────────────────── */
@@ -967,3 +967,27 @@ body::before {
 /* 环形图的各段从零长到比例。 */
 @keyframes ring-grow { from { stroke-dasharray: 0 999; } }
 .ring-seg { animation: ring-grow 0.9s var(--spring-settle) both; }
+
+/* 分步进度里正在走的那一段来回轻轻起伏。 */
+@keyframes step-now {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+.step-now { animation: step-now 1.2s ease-in-out infinite; }
+
+/* 正在播放的提示：三根小竖条轮流起伏。 */
+@keyframes eq-bar {
+  0%, 100% { height: 3px; }
+  50% { height: 12px; }
+}
+.eq-bar { height: 3px; animation: eq-bar 0.9s ease-in-out infinite; }
+
+/* WebKit（Safari 与 macOS 上的 WebView）在带位移的动画放完时会把元素从独立图层撤回页面重画，
+   看起来就是动画刚到位又闪一下。入场与退场的元素从头到尾留在自己的图层上，放完不撤。 */
+.swap-in, .swap-in-b, .swap-out, .rise, .pop-in, .pop-out, .fade-in, .fade-out,
+.drawer-in, .drawer-out, .menu-in, .menu-out, .title-in, .title-out { will-change: transform, opacity; }
+
+@media (prefers-reduced-motion: reduce) {
+  .step-now, .eq-bar { animation: none; }
+  .eq-bar { height: 8px; }
+}

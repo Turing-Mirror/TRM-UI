@@ -37,10 +37,13 @@ src/trm/                 ← the UI template; copy the whole directory
 │   ├── Nudge.tsx        a non-blocking prompt at the bottom
 │   ├── ErrorNote.tsx    errors show the one useful line; details and copy behind it
 │   ├── Ring.tsx         ring chart for proportions
+│   ├── HotkeyInput.tsx  shortcut recorder: click, then press keys; Esc cancels, Backspace clears
+│   ├── StepBar.tsx      step progress: done steps filled, the current one pulses gently
+│   ├── PickList.tsx     checklist with size and effect per item, one action for the selection
 │   ├── Icon.tsx         line icons
 │   └── ErrorBoundary.tsx
 ├── i18n/                eight languages, bundled at build time, switched synchronously; packs are discovered by file
-└── lib/                 nav / clipboard / appearance / host / snapDrag (floating button that snaps to an edge)
+└── lib/                 nav / clipboard / appearance / host / snapDrag (floating button that snaps to an edge) / hotkeys (writing and matching key combos) / mouseNav (mouse side buttons for back and forward)
 
 src/index.css            tokens + three-state theme + animation  ← the core asset
 src/pages/               demo gallery (deletable)

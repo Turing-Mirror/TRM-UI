@@ -37,10 +37,13 @@ src/trm/                 ← 界面模板本体，可以整个复制走
 │   ├── Nudge.tsx        底部的一条提示，不拦操作
 │   ├── ErrorNote.tsx    报错只露有用的一行，详情与复制在后面
 │   ├── Ring.tsx         环形占比图
+│   ├── HotkeyInput.tsx  录制快捷键：点一下再按组合键，Esc 取消，Backspace 清空
+│   ├── StepBar.tsx      分步进度：走过的实心，正在走的一段轻轻起伏
+│   ├── PickList.tsx     勾选清单：每项写明大小与影响，底部汇总后一次处理
 │   ├── Icon.tsx         线条图标
 │   └── ErrorBoundary.tsx
 ├── i18n/                八语言，构建时打包，同步切换；按文件发现语言包
-└── lib/                 nav / clipboard / appearance / host / snapDrag（可拖动、松手贴边的浮动按钮）
+└── lib/                 nav / clipboard / appearance / host / snapDrag（可拖动、松手贴边的浮动按钮）/ hotkeys（组合键的写法与比对）/ mouseNav（鼠标侧键前进后退）
 
 src/index.css            设计令牌 + 三态主题 + 动画  ← 核心资产
 src/pages/               演示画廊（可删）

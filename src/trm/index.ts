@@ -81,3 +81,10 @@ export { Nudge } from "./components/Nudge";
 export { ErrorNote, splitErrorText } from "./components/ErrorNote";
 export { Ring, type RingSegment } from "./components/Ring";
 export { useSnapDrag, type SnapPos } from "./lib/snapDrag";
+
+// 快捷键、鼠标侧键、分步进度、勾选清单
+export { HotkeyInput } from "./components/HotkeyInput";
+export { comboFromEvent, comboLabel, typingInto } from "./lib/hotkeys";
+export { useMouseNav } from "./lib/mouseNav";
+export { StepBar } from "./components/StepBar";
+export { PickList, type PickItem } from "./components/PickList";

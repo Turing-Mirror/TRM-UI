@@ -25,6 +25,7 @@ import {
   useI18n,
   type Art,
 } from "../trm";
+import { CleanupPattern, ListEditPattern, StarterPattern } from "./MorePatterns";
 
 /** 演示用的一排卡片。 */
 const CARDS: { art: Art; glyph: string; key: string }[] = [
@@ -177,6 +178,10 @@ export function PatternsPage() {
           ))}
         </div>
       </Block>
+
+      <ListEditPattern />
+      <CleanupPattern />
+      <StarterPattern />
 
       <Modal open={modal} onClose={() => setModal(false)} width={420} label={t("demo.patterns.modal")}>
         <div className="p-6">

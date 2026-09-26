@@ -26,6 +26,8 @@ import {
   type SnapPos,
 } from "../trm";
 
+/** 评论框下方的快捷颜文字。 */
+const QUICK = ["(＾▽＾)", "(´・ω・`)", "(๑•̀ㅂ•́)و✧", "(≧∇≦)", "( ˘ω˘ )", "╮(╯▽╰)╭"];
 const TABS = ["a", "b", "c"] as const;
 const TAB_KEYS = { a: "demo.inter.tab.a", b: "demo.inter.tab.b", c: "demo.inter.tab.c" } as const;
 const FILTER_KEYS = { x: "demo.inter.filter.x", y: "demo.inter.filter.y", z: "demo.inter.filter.z" } as const;
@@ -89,6 +91,7 @@ export function InteractionPage() {
 
       <Block title={t("demo.inter.comments")}>
         <Comments
+            quick={QUICK}
           items={items}
           me="you"
           owner="author"

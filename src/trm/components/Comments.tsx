@@ -58,6 +58,7 @@ export function Comments({
   onLike,
   onDelete,
   onReport,
+  quick,
 }: {
   items: CommentItem[];
   /** 当前用户的名字，发表框旁的头像用它。 */
@@ -71,6 +72,8 @@ export function Comments({
   onLike: (id: string) => void;
   onDelete?: (id: string) => void;
   onReport?: (id: string) => void;
+  /** 发表框下方的快捷短语（比如颜文字），点一下插到光标处。 */
+  quick?: string[];
 }) {
   const { t } = useI18n();
   const [sort, setSort] = useState<Sort>("hot");
@@ -79,7 +82,7 @@ export function Comments({
   const repliesOf = (id: string) => items.filter((c) => c.parent === id).sort((a, b) => a.at.localeCompare(b.at));
   const heat = (c: CommentItem) => c.likes + repliesOf(c.id).length * 2;
   const shown = tops.filter((c) => verdict === "all" || c.verdict === verdict).sort((a, b) => (sort === "new" ? b.at.localeCompare(a.at) : heat(b) - heat(a)));
-  const ctx = { me, owner, verdicts, ago, onPost, onLike, onDelete, onReport };
+  const ctx = { me, owner, verdicts, ago, onPost, onLike, onDelete, onReport, quick };
 
   return (
     <div>
@@ -121,6 +124,7 @@ type Ctx = {
   onLike: (id: string) => void;
   onDelete?: (id: string) => void;
   onReport?: (id: string) => void;
+  quick?: string[];
 };
 
 function Floor({ c, replies, ctx, i }: { c: CommentItem; replies: CommentItem[]; ctx: Ctx; i: number }) {
@@ -231,39 +235,73 @@ function Composer({ ctx, parent, replyTo, placeholder, autoFocus = false, onDone
     setText("");
     onDone?.();
   };
+  // 快捷短语插到光标处，插完光标落在它后面
+  const insert = (k: string) => {
+    const el = area.current;
+    const at = el ? el.selectionStart : text.length;
+    const to = el ? el.selectionEnd : text.length;
+    setText(text.slice(0, at) + k + text.slice(to));
+    requestAnimationFrame(() => {
+      el?.focus();
+      el?.setSelectionRange(at + k.length, at + k.length);
+    });
+  };
   return (
     <div className="flex items-start gap-3">
       {parent ? null : <Avatar name={ctx.me} />}
-      <div className="flex-1 min-w-0 rounded-[var(--r)] shadow-[inset_0_0_0_1px_var(--line)] focus-within:shadow-[inset_0_0_0_1px_var(--focus-line)] transition-shadow">
-        <textarea
-          ref={area}
-          value={text}
-          rows={1}
-          autoFocus={autoFocus}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
-              e.preventDefault();
-              void send();
-            }
-            if (e.key === "Escape" && onDone) {
-              e.stopPropagation();
-              onDone();
-            }
-          }}
-          placeholder={hint}
-          aria-label={hint}
-          className="block w-full resize-none bg-transparent border-0 outline-none px-3.5 pt-2.5 pb-1 text-[13.5px] leading-[1.6] text-[var(--ink)] placeholder:text-[var(--meta)] select-text"
-        />
-        <div className="flex items-center gap-2 px-2 pb-2">
-          {withVerdict && ctx.verdicts ? <SegmentControl value={verdict} onChange={setVerdict} options={ctx.verdicts.map((v) => ({ id: v.id, label: v.label }))} /> : null}
-          <span className="ml-auto flex items-center gap-1.5">
-            {onDone ? <Btn onClick={onDone}>{t("ui.common.cancel")}</Btn> : null}
-            <Btn primary disabled={!text.trim()} onClick={() => void send()}>
-              {t(parent ? "ui.comments.reply" : "ui.comments.post")}
-            </Btn>
-          </span>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-end gap-2">
+          <div className="flex-1 min-w-0 rounded-[var(--r)] shadow-[inset_0_0_0_1px_var(--line)] focus-within:shadow-[inset_0_0_0_1px_var(--focus-line)] transition-shadow">
+            <textarea
+              ref={area}
+              value={text}
+              rows={1}
+              autoFocus={autoFocus}
+              onChange={(e) => setText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+                  e.preventDefault();
+                  void send();
+                }
+                if (e.key === "Escape" && onDone) {
+                  e.stopPropagation();
+                  onDone();
+                }
+              }}
+              placeholder={hint}
+              aria-label={hint}
+              className="block w-full resize-none bg-transparent border-0 outline-none px-3.5 py-2 text-[13.5px] leading-[1.6] text-[var(--ink)] placeholder:text-[var(--meta)] select-text"
+            />
+          </div>
+          {onDone ? <Btn onClick={onDone} className="h-[38px]">{t("ui.common.cancel")}</Btn> : null}
+          <Btn primary disabled={!text.trim()} onClick={() => void send()} className="h-[38px] px-4">
+            {t(parent ? "ui.comments.reply" : "ui.comments.post")}
+          </Btn>
         </div>
+        {ctx.quick?.length || withVerdict ? (
+          <div className="mt-1.5 flex items-center gap-2 flex-wrap">
+            {ctx.quick?.length ? (
+              <span className="flex items-center gap-0.5 flex-wrap" role="group" aria-label={t("ui.comments.quick")}>
+                {ctx.quick.map((k) => (
+                  <button
+                    key={k}
+                    type="button"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => insert(k)}
+                    className="h-6 px-1.5 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[11.5px] text-[var(--meta)] whitespace-nowrap transition-colors hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_5%,transparent)]"
+                  >
+                    {k}
+                  </button>
+                ))}
+              </span>
+            ) : null}
+            {withVerdict && ctx.verdicts ? (
+              <span className="ml-auto">
+                <SegmentControl value={verdict} onChange={setVerdict} options={ctx.verdicts.map((v) => ({ id: v.id, label: v.label }))} />
+              </span>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </div>
   );

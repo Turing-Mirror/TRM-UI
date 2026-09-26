@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AppBar,
   Sidebar,
@@ -16,6 +16,7 @@ import {
   useNotify,
   hostWindowControls,
   markReady,
+  useMouseNav,
   type IconName,
   type ThemeMode,
 } from "./trm";
@@ -26,6 +27,7 @@ import { TypePage } from "./pages/TypePage";
 import { ColorPage } from "./pages/ColorPage";
 import { MotionPage } from "./pages/MotionPage";
 import { InteractionPage } from "./pages/InteractionPage";
+import { SettingsPage, type Look } from "./pages/SettingsPage";
 
 /**
  * 导航顺序**就是**换页动画的方向依据：数组里靠后的页在下面。
@@ -39,6 +41,7 @@ const nav = createNav([
   { id: "type", labelKey: "nav.type" },
   { id: "color", labelKey: "nav.color" },
   { id: "motion", labelKey: "nav.motion" },
+  { id: "settings", labelKey: "nav.settings" },
 ] as const);
 
 type PageId = (typeof nav.defs)[number]["id"];
@@ -51,6 +54,7 @@ const ICONS: Record<PageId, IconName> = {
   type: "book",
   color: "brush",
   motion: "play",
+  settings: "settings",
 };
 
 /** 窗口按钮解析一次就够 —— 它不会在运行期间从「有壳」变成「没壳」。 */
@@ -70,15 +74,35 @@ export function App() {
 function Shell() {
   const { ready, t } = useI18n();
   const notify = useNotify();
-  const [page, setPage] = useState<PageId>("overview");
-  const [theme, setTheme] = useState<ThemeMode>("system");
+  const [page, setPageRaw] = useState<PageId>("overview");
+  const [look, setLook] = useState<Look>({ theme: "system", wallpaper: "", blur: 30, opacity: 60 });
+  const theme = look.theme;
+  const setTheme = (m: ThemeMode) => setLook((l) => ({ ...l, theme: m }));
+  const [mouseNav, setMouseNav] = useState(true);
+  // 换页记一步，鼠标侧键按它前进后退；后退之后再换页，前面的几步作废，与浏览器一致
+  const steps = useRef<PageId[]>(["overview"]);
+  const at = useRef(0);
+  const setPage = useCallback((p: PageId) => {
+    if (steps.current[at.current] !== p) {
+      steps.current = [...steps.current.slice(0, at.current + 1), p];
+      at.current = steps.current.length - 1;
+    }
+    setPageRaw(p);
+  }, []);
+  const move = (d: 1 | -1) => {
+    const next = steps.current[at.current + d];
+    if (!next) return;
+    at.current += d;
+    setPageRaw(next);
+  };
+  useMouseNav({ back: () => move(-1), forward: () => move(1), enabled: mouseNav });
   const [open, setOpen] = useState(true);
   const narrow = useNarrow(NARROW);
   const collapsed = narrow || !open;
 
   useEffect(() => {
-    applyAppearance({ themeMode: theme });
-  }, [theme]);
+    applyAppearance({ themeMode: look.theme, wallpaper: look.wallpaper, wallpaperBlur: look.blur, wallpaperOpacity: look.opacity });
+  }, [look]);
 
   // 告诉壳界面活着。壳的白窗看门狗等的就是这一句 —— 12 秒内没等到，
   // 它会把「UI 从哪儿来的、处理了几个资源请求、404 了几次」写进日志。
@@ -97,9 +121,9 @@ function Shell() {
         <Sidebar
           collapsed={collapsed}
           label={t("demo.shell.nav")}
-          foot={<SidebarItem icon="settings" label={t("demo.shell.settings")} collapsed={collapsed} onClick={() => setPage("overview")} />}
+          foot={<SidebarItem icon="settings" label={t("demo.shell.settings")} collapsed={collapsed} on={page === "settings"} onClick={() => setPage("settings")} />}
         >
-          {nav.pages().map((p) => (
+          {nav.pages().filter((p) => p.id !== "settings").map((p) => (
             <SidebarItem key={p.id} icon={ICONS[p.id]} label={p.label} on={page === p.id} collapsed={collapsed} onClick={() => setPage(p.id)} />
           ))}
           <SidebarHead label={t("demo.shell.running")} collapsed={collapsed} />
@@ -124,6 +148,8 @@ function Shell() {
                     return <ColorPage />;
                   case "motion":
                     return <MotionPage />;
+                  case "settings":
+                    return <SettingsPage look={look} onLook={setLook} mouseNav={mouseNav} onMouseNav={setMouseNav} />;
                 }
               }}
             </PageHost>
