@@ -42,6 +42,7 @@ export function Block({
   title,
   titleTip,
   note,
+  extra,
   action,
   children,
   className = "",
@@ -51,6 +52,8 @@ export function Block({
   /** 标题后面的小问号。 */
   titleTip?: string;
   note?: string;
+  /** 紧跟在标题和计数后面的控件，比如这一块的搜索框。 */
+  extra?: ReactNode;
   action?: ReactNode;
   children: ReactNode;
   className?: string;
@@ -58,7 +61,7 @@ export function Block({
 }) {
   return (
     <section id={id} className={`mt-[30px] ${className}`}>
-      {(title || note || action) && (
+      {(title || note || extra || action) && (
         // items-center（不是 baseline）：标题旁的小问号是 17px 的圆，按基线
         // 对齐会整颗往下掉一截，看起来比标题低半个字。
         <div className="flex items-center gap-[11px] mb-[15px] flex-wrap">
@@ -71,6 +74,7 @@ export function Block({
           {note ? (
             <span className="text-xs text-[var(--meta)] leading-none">{note}</span>
           ) : null}
+          {extra}
           {action ? <span className="ml-auto">{action}</span> : null}
         </div>
       )}
