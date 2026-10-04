@@ -75,7 +75,13 @@ export function Block({
             <span className="text-xs text-[var(--meta)] leading-none">{note}</span>
           ) : null}
           {extra}
-          {action ? <span className="ml-auto">{action}</span> : null}
+          {action ? (
+            // 动作区可能塞多枚按钮（如资源包页的恢复默认/导出/导入），
+            // span 里裸排会贴在一起，统一给横向间距。
+            <span className="ml-auto inline-flex items-center gap-2 flex-wrap">
+              {action}
+            </span>
+          ) : null}
         </div>
       )}
       {children}
