@@ -238,17 +238,17 @@ export function SettingsPage({ look, onLook, mouseNav, onMouseNav }: { look: Loo
                           <span className="text-[13px]">{t(h.labelKey)}</span>
                           <span className="ml-auto flex items-center gap-3">
                             {combos[h.id] !== h.combo ? (
-                              <button type="button" onClick={() => setCombo(h.id, h.combo)} className="h-7 px-2 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[12px] text-[var(--meta)] hover:text-[var(--ink)]">
+                              <button type="button" disabled={!globalOn} onClick={() => setCombo(h.id, h.combo)} className="h-7 px-2 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[12px] text-[var(--meta)] hover:text-[var(--ink)] disabled:cursor-default disabled:hover:text-[var(--meta)]">
                                 {t("demo.set.reset")}
                               </button>
                             ) : null}
                             {g === "main" ? (
-                              <label className="flex items-center gap-1.5 text-[12px] text-[var(--meta)] cursor-pointer select-none" title={t("demo.set.globalTip")}>
-                                <input type="checkbox" checked={global[h.id] ?? false} onChange={(e) => setGlobal((x) => ({ ...x, [h.id]: e.target.checked }))} className="w-[13px] h-[13px]" />
+                              <label className={`flex items-center gap-1.5 text-[12px] text-[var(--meta)] select-none ${globalOn ? "cursor-pointer" : "cursor-default"}`} title={t("demo.set.globalTip")}>
+                                <input type="checkbox" disabled={!globalOn} checked={global[h.id] ?? false} onChange={(e) => setGlobal((x) => ({ ...x, [h.id]: e.target.checked }))} className="w-[13px] h-[13px]" />
                                 {t("demo.set.global")}
                               </label>
                             ) : null}
-                            <HotkeyInput value={combos[h.id]} onChange={(c) => setCombo(h.id, c)} label={t(h.labelKey)} />
+                            <HotkeyInput value={combos[h.id]} onChange={(c) => setCombo(h.id, c)} label={t(h.labelKey)} disabled={!globalOn} />
                           </span>
                         </div>
                       ))}

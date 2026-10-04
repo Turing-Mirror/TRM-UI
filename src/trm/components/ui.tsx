@@ -132,14 +132,16 @@ export function Btn({
       className={[
         "text-[12.5px] border-0 rounded-[var(--rs)] cursor-pointer whitespace-nowrap",
         "transition-[transform,background,color,box-shadow] duration-200 ease-[var(--ease)]",
-        "active:scale-[0.955] focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2",
+        // 交互态一律写 enabled: 不写 disabled: 反向覆盖：前者在禁用下根本不匹配，
+        // 后者要跟 Tailwind 的变体排序赌先后，赌输就是禁用按钮按下照样缩放。
+        "enabled:active:scale-[0.955] focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2",
         uw ? "min-w-[74px] text-center px-0 py-1.5" : "px-[13px] py-1.5",
         primary
-          ? "bg-[var(--accent)] text-[var(--accent-ink)] font-semibold shadow-none hover:brightness-95"
+          ? "bg-[var(--accent)] text-[var(--accent-ink)] font-semibold shadow-none enabled:hover:brightness-95"
           : on
             ? "bg-transparent text-[var(--accent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--accent)_42%,transparent)]"
-            : "bg-transparent text-[var(--ink-muted)] shadow-[inset_0_0_0_1px_var(--line)] hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]",
-        disabled || busy ? "cursor-default active:scale-100" : "",
+            : "bg-transparent text-[var(--ink-muted)] shadow-[inset_0_0_0_1px_var(--line)] enabled:hover:text-[var(--ink)] enabled:hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]",
+        disabled || busy ? "disabled:cursor-default disabled:opacity-40" : "",
         className,
       ].join(" ")}
     >

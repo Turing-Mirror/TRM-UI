@@ -101,7 +101,7 @@ export function Select({
       className={[
         "text-[13px] text-[var(--ink)] bg-transparent appearance-none cursor-pointer",
         "px-3.5 py-[7px] rounded-[var(--rs)] shadow-[inset_0_0_0_1px_var(--line)]",
-        "outline-none focus:shadow-[inset_0_0_0_1px_var(--accent)] disabled:opacity-50",
+        "outline-none focus:shadow-[inset_0_0_0_1px_var(--accent)] disabled:opacity-50 disabled:cursor-default",
         full ? "w-full" : "",
       ].join(" ")}
     >
@@ -337,7 +337,7 @@ export function RangeBar({
         disabled={disabled}
         onChange={(e) => onChange(Number(e.target.value))}
         onPointerDown={(e) => { if (!disabled) setDragPct(pctFromClientX(e.clientX)); }}
-        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-default"
       />
     </div>
   );
@@ -410,7 +410,7 @@ export function Toggle({
     // （设置不切）。问号挪出去，label 的关联才只属于复选框。
     <div className="flex items-center gap-[11px]">
       {tip ? <HelpMark title={tip} /> : null}
-      <label className="flex items-center gap-[11px] cursor-pointer select-none">
+      <label className={`flex items-center gap-[11px] select-none ${disabled ? "cursor-default" : "cursor-pointer"}`}>
         {/* 纯视觉的框：点击由 label 转发给真正的 input，不再自己切一次 —
             否则 label 激活会再点一下 input，一次点击切两回。 */}
         <span

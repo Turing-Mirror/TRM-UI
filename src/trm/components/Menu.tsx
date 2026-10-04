@@ -30,6 +30,7 @@ export function Popover({
   side = "below",
   label,
   leaving = false,
+  trigger,
 }: {
   anchor: Anchor;
   onClose: () => void;
@@ -39,6 +40,12 @@ export function Popover({
   label?: string;
   /** 正在收起：放完收起动画再卸下，这期间不接鼠标。 */
   leaving?: boolean;
+  /**
+   * 打开这个浮层的控件。点在它身上不算「点外面」——否则按下那一刻浮层先收、
+   * 同一个 click 接着落在按钮上又把它打开，想收起反而重播一遍展开动画。
+   * 按钮要不要接着收起由它自己的 click 决定。
+   */
+  trigger?: Element | null;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<{ left: number; top: number; up: boolean } | null>(null);
@@ -69,6 +76,8 @@ export function Popover({
       if (box.current?.contains(t)) return;
       // 子菜单在另一个层里；点在任何一层菜单里都不算点外面
       if ((t as HTMLElement).closest?.("[data-popover]")) return;
+      // 点在触发控件上：留给它的 click 去决定收起还是换位置
+      if (trigger instanceof Element && trigger.contains(t)) return;
       onClose();
     };
     const key = (e: KeyboardEvent) => {
@@ -86,7 +95,7 @@ export function Popover({
       window.removeEventListener("keydown", key, true);
       window.removeEventListener("resize", blur);
     };
-  }, [onClose, leaving]);
+  }, [onClose, leaving, trigger]);
 
   return createPortal(
     <div
@@ -119,11 +128,11 @@ export type MenuItem =
   | { id: string; gap: true };
 
 /** 一张菜单。项之间不画线，分组靠一小段空白。 */
-export function Menu({ anchor, items, onClose, side, leaving }: { anchor: Anchor; items: MenuItem[]; onClose: () => void; side?: "below" | "right"; leaving?: boolean }) {
+export function Menu({ anchor, items, onClose, side, leaving, trigger }: { anchor: Anchor; items: MenuItem[]; onClose: () => void; side?: "below" | "right"; leaving?: boolean; trigger?: Element | null }) {
   const [sub, setSub] = useState<{ id: string; anchor: Anchor } | null>(null);
   const subItems = sub ? items.find((i) => i.id === sub.id) : undefined;
   return (
-    <Popover anchor={anchor} onClose={onClose} side={side} leaving={leaving}>
+    <Popover anchor={anchor} onClose={onClose} side={side} leaving={leaving} trigger={trigger}>
       {items.map((it) =>
         "gap" in it ? (
           <div key={it.id} className="h-1.5" />
@@ -145,7 +154,7 @@ export function Menu({ anchor, items, onClose, side, leaving }: { anchor: Anchor
             }}
             className={[
               "w-full flex items-center gap-2.5 h-8 px-2.5 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-left text-[13px] whitespace-nowrap",
-              "hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)] disabled:opacity-40 disabled:cursor-default",
+              "enabled:hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)] disabled:opacity-40 disabled:cursor-default",
               it.danger ? "text-[var(--danger)]" : "text-[var(--ink)]",
               sub?.id === it.id ? "bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]" : "",
             ].join(" ")}
@@ -165,24 +174,39 @@ export function Menu({ anchor, items, onClose, side, leaving }: { anchor: Anchor
   );
 }
 
+type MenuState = { anchor: Anchor; items: MenuItem[]; trigger: Element | null; leaving?: boolean };
+
 /** 右键菜单与「…」菜单共用：open 接鼠标事件（右键时按指针位置）或元素（按钮下方）。 */
 export function useMenu() {
-  const [state, setState] = useState<{ anchor: Anchor; items: MenuItem[]; leaving?: boolean } | null>(null);
+  const [state, setState] = useState<MenuState | null>(null);
+  // setState 的 updater 不保证当场执行，要同步读当前状态得自己留一份
+  const cur = useRef<MenuState | null>(null);
+  const set = (next: MenuState | null | ((s: MenuState | null) => MenuState | null)) => {
+    const v = typeof next === "function" ? next(cur.current) : next;
+    cur.current = v;
+    setState(v);
+  };
   // 收起时先标为收起中，放完动画再卸下
   const close = () => {
-    setState((st) => (st ? { ...st, leaving: true } : st));
-    window.setTimeout(() => setState((st) => (st?.leaving ? null : st)), OUT_MS);
+    set((st) => (st ? { ...st, leaving: true } : st));
+    window.setTimeout(() => set((st) => (st?.leaving ? null : st)), OUT_MS);
   };
   const open = (from: MouseEvent | Element, items: MenuItem[]) => {
     if (from instanceof Element) {
-      setState({ anchor: anchorOf(from), items });
+      const st = cur.current;
+      // 菜单开着时再点同一个按钮是收起；换个按钮则挪过去接着开
+      if (st && !st.leaving && st.trigger === from) {
+        close();
+        return;
+      }
+      set({ anchor: anchorOf(from), items, trigger: from });
       return;
     }
     from.preventDefault();
     from.stopPropagation();
-    setState({ anchor: pointAnchor(from.clientX, from.clientY), items });
+    set({ anchor: pointAnchor(from.clientX, from.clientY), items, trigger: null });
   };
-  const node = state ? <Menu anchor={state.anchor} items={state.items} onClose={close} leaving={state.leaving} /> : null;
+  const node = state ? <Menu anchor={state.anchor} items={state.items} onClose={close} leaving={state.leaving} trigger={state.trigger} /> : null;
   return { open, node };
 }
 
@@ -257,7 +281,7 @@ export function Dropdown<T extends string>({
         <Icon name="down" size={14} className={`text-[var(--meta)] transition-transform duration-200 ${anchor ? "rotate-180" : ""}`} />
       </button>
       {(anchor || closing) && shown ? (
-        <Popover anchor={shown} onClose={() => setAnchor(null)} minWidth={shown.w} label={label} leaving={!anchor}>
+        <Popover anchor={shown} onClose={() => setAnchor(null)} minWidth={shown.w} label={label} leaving={!anchor} trigger={btn.current}>
           <div
             role="listbox"
             tabIndex={-1}
@@ -341,7 +365,7 @@ export function PromptDialog({
           <button type="button" onClick={onClose} className="h-8 px-3.5 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[13px] text-[var(--ink-muted)] hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]">
             {t("ui.common.cancel")}
           </button>
-          <button type="submit" disabled={!name.trim()} className="h-8 px-3.5 rounded-[var(--rs)] border-0 cursor-pointer text-[13px] bg-[var(--accent)] text-[var(--accent-ink)] disabled:opacity-40">
+          <button type="submit" disabled={!name.trim()} className="h-8 px-3.5 rounded-[var(--rs)] border-0 cursor-pointer text-[13px] bg-[var(--accent)] text-[var(--accent-ink)] disabled:opacity-40 disabled:cursor-default">
             {shownConfirm}
           </button>
         </div>
