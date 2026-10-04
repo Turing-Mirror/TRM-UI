@@ -41,5 +41,9 @@ export default defineConfig({
     // 同一个端口换了产品，会读到上一个产品的 localStorage。
     port: 1410,
     strictPort: true,
+    watch: {
+      // Rust 构建产物不归前端管：cargo 随时在里面换 exe，监听它只会撞 EBUSY
+      ignored: ["**/src-tauri/target/**"],
+    },
   },
 });
