@@ -295,33 +295,40 @@ export function AccordionGroup({
   onToggle,
   openLabel,
   closedLabel,
+  highlight,
 }: {
   items: readonly AccordionItem[];
   openId: string;
   onToggle: (id: string) => void;
   openLabel: ReactNode;
   closedLabel: ReactNode;
+  /** 从别处深链跳进来时描边提示的那一条（按 id 匹配），让人一眼看到落在哪。 */
+  highlight?: string;
 }) {
   return (
     <Group>
       {items.map((item) => {
         const expanded = openId === item.id;
         return (
-          <ListItem
+          <div
             key={item.id}
-            title={item.title}
-            desc={item.desc}
-            expanded={expanded}
-            onClick={() => onToggle(item.id)}
-            rightInteractive={false}
-            right={
-              <span className="text-[13.5px] text-[var(--ink-muted)]">
-                {expanded ? openLabel : closedLabel}
-              </span>
-            }
+            className={highlight === item.id ? "rounded-[var(--rs)] shadow-[inset_0_0_0_2px_var(--accent)]" : undefined}
           >
-            {item.content}
-          </ListItem>
+            <ListItem
+              title={item.title}
+              desc={item.desc}
+              expanded={expanded}
+              onClick={() => onToggle(item.id)}
+              rightInteractive={false}
+              right={
+                <span className="text-[13.5px] text-[var(--ink-muted)]">
+                  {expanded ? openLabel : closedLabel}
+                </span>
+              }
+            >
+              {item.content}
+            </ListItem>
+          </div>
         );
       })}
     </Group>
