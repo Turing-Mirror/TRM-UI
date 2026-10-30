@@ -102,8 +102,9 @@ export function IconBtn({ icon, label, onClick, active = false, size = 18 }: { i
       title={label}
       onClick={onClick}
       className={[
-        "w-8 h-8 grid place-items-center rounded-[var(--rs)] border-0 cursor-pointer transition-colors",
-        active ? "bg-[var(--accent-soft)] text-[var(--accent)]" : "bg-transparent text-[var(--ink-muted)] hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)] hover:text-[var(--ink)]",
+        // 图标按钮没有底：悬停、选中都只改图标本身的颜色，见 docs/patterns.md
+        "w-8 h-8 grid place-items-center rounded-[var(--rs)] border-0 bg-transparent cursor-pointer transition-colors",
+        active ? "text-[var(--accent)]" : "text-[var(--ink-muted)] hover:text-[var(--ink)]",
       ].join(" ")}
     >
       <Icon name={icon} size={size} />

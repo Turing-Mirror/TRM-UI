@@ -46,6 +46,8 @@ src/trm/                 ← 界面模板本体，可以整个复制走
 └── lib/                 nav / clipboard / appearance / host / snapDrag（可拖动、松手贴边的浮动按钮）/ hotkeys（组合键的写法与比对）/ mouseNav（鼠标侧键前进后退）
 
 src/index.css            设计令牌 + 三态主题 + 动画  ← 核心资产
+docs/tokens.md           令牌速查
+docs/patterns.md         交互约定：该做的与不该做的
 src/pages/               演示画廊（可删）
 i18n/locales/*.json      八份语言包，界面和壳共用
 scripts/check_i18n.mjs   三道 i18n 硬校验

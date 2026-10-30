@@ -46,6 +46,8 @@ src/trm/                 ← the UI template; copy the whole directory
 └── lib/                 nav / clipboard / appearance / host / snapDrag (floating button that snaps to an edge) / hotkeys (writing and matching key combos) / mouseNav (mouse side buttons for back and forward)
 
 src/index.css            tokens + three-state theme + animation  ← the core asset
+docs/tokens.md           token reference
+docs/patterns.md         interaction rules: do and don't (Chinese)
 src/pages/               demo gallery (deletable)
 i18n/locales/*.json      eight locale packs, shared by UI and shell
 scripts/check_i18n.mjs   three hard i18n checks
