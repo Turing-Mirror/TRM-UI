@@ -108,6 +108,22 @@ export const TEXT_RULES: Rule[] = [
     ],
     examples: [
       {
+        source: "RVC Fabric (s.engineCmdBusy)",
+        pairs: {
+          "en-US": ["Engine is busy — the previous command has not been picked up yet. Try again in a moment.", "The engine is busy and has not picked up the previous command yet. Try again in a moment."],
+          "fr-FR": ["Le moteur est occupé — la commande précédente n'a pas encore été prise en compte. Réessayez dans un instant.", "Le moteur est occupé. La commande précédente n'a pas encore été prise en compte. Réessayez dans un instant."],
+          "ru-RU": ["Движок занят — предыдущая команда ещё не принята. Повторите через мгновение.", "Движок занят. Предыдущая команда ещё не принята. Повторите через мгновение."],
+        },
+      },
+      {
+        source: "RVC Fabric (msg.train.kmeans_failed)",
+        pairs: {
+          "en-US": ["Clustering failed — falling back to all features: {error}", "Clustering failed. Falling back to all features: {error}"],
+          "fr-FR": ["Échec du regroupement — repli sur toutes les caractéristiques : {error}", "Échec du regroupement. Repli sur toutes les caractéristiques : {error}"],
+          "ru-RU": ["Кластеризация не удалась — используем все признаки: {error}", "Кластеризация не удалась. Используем все признаки: {error}"],
+        },
+      },
+      {
         source: "RVC Fabric (s.dlWhyDisk)",
         pairs: {
           "zh-CN": ["磁盘空间不足，无法写入。请清理空间后重试——运行时解压后约需十几 GB。", "磁盘空间不足，无法写入。运行环境解压后约需十几 GB，请清理空间后重试。"],
