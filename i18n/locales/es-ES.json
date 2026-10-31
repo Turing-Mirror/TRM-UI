@@ -165,7 +165,8 @@
       "taskASub": "24 archivos",
       "taskB": "Convertir audio",
       "taskBSub": "Clic para marcar como visto",
-      "done": "Hecho"
+      "done": "Hecho",
+      "sourceLoading": "Cargando"
     },
     "components": {
       "sub": "Todo lo de abajo es un control real, no una captura.",
@@ -209,7 +210,8 @@
       "sub": "El cuerpo es de 15px con interlineado 1,65. Los escalones de tamaño son fijos: no metas valores intermedios.",
       "roleBody": "Cuerpo",
       "roleHelp": "Ayuda",
-      "roleMeta": "Meta"
+      "roleMeta": "Meta",
+      "weight": "Grosor {v}"
     },
     "color": {
       "sub": "Cambia a oscuro y míralo otra vez: cada muestra debe funcionar en ambos temas.",
@@ -253,7 +255,7 @@
       "drawerBody": "Entra desde la derecha para mostrar detalles sin salir de la página.",
       "close": "Cerrar",
       "live": "Estados en curso",
-      "stepOf": "Paso {n} de {total} · {label}",
+      "stepOf": "Paso {n} de {total}: {label}",
       "step1": "Iniciando",
       "step2": "Cargando componentes",
       "step3": "Cargando datos",

@@ -21,11 +21,13 @@ export function TypePage() {
 
       <Block title={t("nav.type")}>
         <Group>
-          <div className="py-3 flex flex-col divide-y divide-[var(--hairline)]">
+          <div className="py-3 flex flex-col">
             {SCALE.map((s, i) => (
               <div key={i} className="py-3.5 flex items-baseline gap-5">
-                <div className="w-[110px] flex-none text-[11.5px] text-[var(--meta)] tabular-nums">
-                  {s.px}px · {s.weight} · {s.note}
+                <div className="w-[110px] flex-none flex flex-col gap-0.5 text-[11.5px] text-[var(--meta)] tabular-nums">
+                  <span>{s.px}px</span>
+                  <span>{t("demo.type.weight", { v: s.weight })}</span>
+                  <span>{s.note}</span>
                 </div>
                 <div className="min-w-0 flex flex-col gap-1" style={{ fontSize: s.px, fontWeight: s.weight }}>
                   {SPECIMENS.map((x) => (

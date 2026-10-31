@@ -180,7 +180,8 @@ export function ActivityRow({
       type="button"
       onClick={onClick}
       onContextMenu={onContextMenu}
-      title={collapsed ? `${label} · ${status}` : undefined}
+      title={collapsed ? `${label}
+${status}` : undefined}
       className={[
         "relative w-full flex-none flex items-center gap-2.5 rounded-[var(--rs)] border-0 cursor-pointer text-left transition-colors",
         on ? "bg-[color-mix(in_srgb,var(--ink)_7%,transparent)]" : "bg-transparent hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]",

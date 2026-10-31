@@ -135,13 +135,13 @@
       "whyTitle": "Why it exists",
       "whyBody": "Every new product starts from the same interface: the same tokens, the same components, the same motion.\nImprovements come back here too, instead of scattering into diverging copies inside each product.",
       "ruleTitle": "Three hard rules",
-      "rule1": "Every colour comes from a token. A hard-coded colour is guaranteed wrong in the other theme — and only visible when someone switches.",
+      "rule1": "Every colour comes from a token. A hard-coded colour is always wrong in the other theme, and the error is only visible when someone switches.",
       "rule2": "Every string comes from a locale pack. All eight are forced into the same shape by a build-time check, not by good intentions.",
       "rule3": "src/trm/ imports nothing outside itself. The moment it reaches into product code, the template degrades into “part of one product”.",
       "themeLabel": "Theme",
       "themeTip": "“Follow system” writes no data-theme and relies on prefers-color-scheme; picking light or dark stamps the attribute onto <html>.",
       "langLabel": "Language",
-      "langTip": "All eight packs are bundled at build time, so switching is a synchronous swap — no flash of raw keys before the text arrives."
+      "langTip": "All eight packs are bundled at build time, so switching is a synchronous swap. Raw keys never flash before the text appears."
     },
     "theme": {
       "system": "Follow system",
@@ -150,12 +150,12 @@
     },
     "shell": {
       "title": "Desktop shell",
-      "web": "This is the plain web preview. Window buttons, the tray and on-disk config all need the shell; in a browser they degrade quietly — not drawn, no errors, and never pretending to work.",
+      "web": "This is the web preview. Window buttons, the tray and saving the config all need the desktop app. In a browser they are not shown, raise no errors and never pretend to work.",
       "host": "Running inside the desktop shell.",
       "source": "UI source",
-      "sourceTip": "The UI is served over a custom protocol, so a frontend/ directory next to the exe can replace the shipped copy. Without showing this, a misapplied UI patch is invisible — all the user can say is “it went wrong after the update”.",
+      "sourceTip": "The UI is served over a custom protocol, so a frontend/ directory next to the exe can replace the shipped copy. Without this item, a misapplied UI patch is invisible, and the user can only report that something broke after the update.",
       "autostart": "Start with the system",
-      "autostartTip": "The registry is the source of truth, not the config file — config carries product meaning, autostart is a fact about this machine. Mixing them means copying your config to another machine shows the switch on while nothing actually starts. Windows only.",
+      "autostartTip": "The registry is the source of truth, not the config file. Config records product settings, while autostart is a fact about this machine. If they were mixed, copying the config to another machine would show the switch on while nothing actually starts. Windows only.",
       "search": "Search",
       "searchTip": "A global search goes here",
       "nav": "Navigation",
@@ -165,7 +165,8 @@
       "taskASub": "24 files",
       "taskB": "Convert audio",
       "taskBSub": "Click to mark as seen",
-      "done": "Done"
+      "done": "Done",
+      "sourceLoading": "Loading"
     },
     "components": {
       "sub": "Everything below is a live control, not a screenshot.",
@@ -174,7 +175,7 @@
       "fields": "Fields",
       "list": "List rows",
       "segment": "Segment control",
-      "segmentNote": "One thumb that slides, not a separate background painted under each button. The difference is “the same object moved” versus “this one went out and that one came on” — the latter is two flickers."
+      "segmentNote": "One thumb that slides, not a separate background painted under each button. The first looks like one object moving. The second looks like one light going out and another coming on, which is two flickers."
     },
     "btn": {
       "normal": "Default",
@@ -185,18 +186,18 @@
     },
     "field": {
       "name": "Display name",
-      "nameTip": "The help mark has to be a button that swallows its own click — it often sits inside a label, and a label forwards clicks to the control it owns.",
+      "nameTip": "The help mark has to be a button that handles its own click. It often sits inside a label, and a label forwards clicks to the control it owns.",
       "device": "Output device",
-      "deviceDesc": "A saved option that has left the list stays visible and says so — rendering an empty box would pretend it was never set.",
+      "deviceDesc": "A saved option that has left the list stays visible and is marked as unavailable. An empty box would suggest it was never set.",
       "volume": "Volume",
-      "volumeNote": "While dragging, the knob is drawn at the pointer’s real position with no transition; it glides onto the step only when you let go — and that snap is what tells you which step you actually got.",
+      "volumeNote": "While dragging, the knob is drawn at the pointer’s real position with no transition. It glides onto the step only when you let go, and that movement shows which step you actually got.",
       "enable": "Start with the system"
     },
     "list": {
       "meta": "August 2026",
       "item1": "An expandable row",
       "item1Desc": "Give it a click.",
-      "item1Body": "“Looks clickable” and “is clickable” have to agree. This row once had only the styling; no onClick was ever wired. People clicked it four times, nothing happened, and they concluded the app was broken.\n\nNow the styling follows whether an onClick exists — not a separate clickable flag.",
+      "item1Body": "Anything that looks clickable must be clickable. This row once had only the styling, and no onClick was wired. People clicked it four times, nothing happened, and they concluded the app was broken.\n\nThe styling now follows whether an onClick exists, not a separate clickable flag.",
       "item2": "Anything can go on the right",
       "item2Desc": "Buttons, toggles, status marks."
     },
@@ -206,10 +207,11 @@
       "c": "Third"
     },
     "type": {
-      "sub": "Body is 15px at 1.65 line-height. The size steps are fixed — don’t slip a new value in between them.",
+      "sub": "Body is 15px at 1.65 line-height. The size steps are fixed. Do not add a new value between them.",
       "roleBody": "Body",
       "roleHelp": "Help",
-      "roleMeta": "Meta"
+      "roleMeta": "Meta",
+      "weight": "Weight {v}"
     },
     "color": {
       "sub": "Switch to dark and look again: every swatch has to hold up in both themes.",
@@ -222,14 +224,14 @@
     "motion": {
       "sub": "Page direction follows the nav order. Click a few tabs above and you’ll see it.",
       "curves": "Four curves",
-      "easeNav": "Page transitions only. Fast off the mark, long on the tail, and it never overshoots — the page layer sits flush with the window edge, and an overshoot is a visible seam.",
-      "spring": "For small elements. It overshoots, so it only goes on things that don’t touch the window edge — the segment thumb, floating panels.",
+      "easeNav": "Page transitions only. It starts fast, ends slowly and never overshoots. The page layer sits flush with the window edge, so an overshoot would show a visible seam.",
+      "spring": "For small elements. It overshoots, so it is used only on elements that do not touch the window edge, such as the segment thumb and floating panels.",
       "ease": "The general-purpose transition. Hover, press, colour changes.",
-      "reduce": "If the system asks for reduced motion, all of the above switches off. That is not optional — large sliding animations make people with vestibular sensitivity dizzy.",
-      "easeSoft": "Gentle start, slow settle — for fades and small moves",
-      "springSettle": "Critically damped spring, no overshoot — for large morphs",
-      "springGentle": "About 1% overshoot — for page changes and small moves",
-      "springBouncy": "About 8% overshoot — only for small scales",
+      "reduce": "If the system asks for reduced motion, all of the above switches off. This is required, because large sliding animations make people with vestibular sensitivity dizzy.",
+      "easeSoft": "Gentle start and slow settle, for fades and small moves",
+      "springSettle": "Critically damped spring with no overshoot, for large morphs",
+      "springGentle": "About 1% overshoot, for page changes and small moves",
+      "springBouncy": "About 8% overshoot, for small scale changes only",
       "flow": "Flowing light",
       "flowLabel": "Convert audio",
       "flowSub": "Finished but unseen: only a streak of light runs past",
@@ -253,7 +255,7 @@
       "drawerBody": "It slides in from the right to show details without leaving the page.",
       "close": "Close",
       "live": "Ongoing states",
-      "stepOf": "Step {n} of {total} · {label}",
+      "stepOf": "Step {n} of {total}: {label}",
       "step1": "Starting",
       "step2": "Loading components",
       "step3": "Loading data",
@@ -265,7 +267,7 @@
       "ringC": "Other"
     },
     "patterns": {
-      "sub": "Patterns that recur in desktop apps — every one is live",
+      "sub": "Patterns that recur in desktop apps. Every one is live.",
       "tabs": "Tabs and filters",
       "tabA": "All",
       "tabB": "Starred",

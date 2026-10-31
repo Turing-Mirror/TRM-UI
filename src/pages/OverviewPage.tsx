@@ -75,7 +75,7 @@ export function OverviewPage({
                   tip={t("demo.shell.sourceTip")}
                   control={
                     <span className="text-[13px] text-[var(--ink-muted)] select-text">
-                      {uiSource || "—"}
+                      {uiSource || t("demo.shell.sourceLoading")}
                     </span>
                   }
                 />

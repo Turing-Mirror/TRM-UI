@@ -195,7 +195,7 @@ export function InteractionPage() {
             body: (
               <Field
                 label={t("demo.inter.template")}
-                control={<Select full value={template} onChange={setTemplate} options={[{ id: "", label: "—" }, { id: "a", label: "A" }, { id: "b", label: "B" }]} />}
+                control={<Select full value={template} onChange={setTemplate} options={[{ id: "", label: t("demo.set.none") }, { id: "a", label: "A" }, { id: "b", label: "B" }]} />}
               />
             ),
           },

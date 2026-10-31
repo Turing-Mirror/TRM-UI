@@ -59,7 +59,7 @@ export function ListEditPattern() {
             <div className="bg-[var(--group)] rounded-[var(--r)] p-1.5">
               {shown.map((e) => (
                 <button key={e.id} type="button" aria-pressed={sel === e.id} onClick={() => setSel(e.id)} onDoubleClick={() => setPlaying({ id: e.id, at: 0 })} className={`w-full flex items-center gap-3 px-2.5 py-2 rounded-[var(--rs)] border-0 cursor-pointer text-left transition-colors ${sel === e.id ? "bg-[var(--accent-soft)]" : "bg-transparent hover:bg-[color-mix(in_srgb,var(--ink)_5%,transparent)]"}`}>
-                  <span className="w-7 flex-none text-right tabular-nums text-[12px] text-[var(--meta)]">{e.no ?? "—"}</span>
+                  <span className="w-7 flex-none text-right tabular-nums text-[12px] text-[var(--meta)]">{e.no ?? ""}</span>
                   <span className={`min-w-0 truncate text-[13px] ${sel === e.id ? "text-[var(--accent)] font-medium" : ""}`}>{t(e.key)}</span>
                   {playing?.id === e.id ? (
                     <span aria-hidden className="flex items-end gap-[2px] h-3">
