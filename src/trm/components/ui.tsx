@@ -1,5 +1,7 @@
 import type { MouseEvent, ReactNode } from "react";
 import { HelpMark } from "./Tooltip";
+import { Icon } from "./Icon";
+import { useI18n } from "../i18n";
 
 /** 页面内容的左右留白。窄窗口下逐档收窄，不是一刀切。 */
 export function PagePad({ children }: { children: ReactNode }) {
@@ -15,15 +17,30 @@ export function PageHead({
   title,
   sub,
   actions,
+  back,
 }: {
   title: string;
   sub?: string;
   actions?: ReactNode;
+  /** 给出时标题前多一个返回箭头，用于从页内的下一层回到上一层。 */
+  back?: () => void;
 }) {
+  const { t } = useI18n();
   return (
     <div className="pt-2 pb-1.5 flex items-end justify-between gap-4 flex-wrap">
       <div>
-        <h2 className="text-[25px] font-semibold tracking-tight m-0 max-[860px]:text-[22px]">
+        <h2 className="text-[25px] font-semibold tracking-tight m-0 max-[860px]:text-[22px] flex items-center gap-1.5">
+          {back ? (
+            <button
+              type="button"
+              onClick={back}
+              aria-label={t("ui.common.back")}
+              title={t("ui.common.back")}
+              className="-ml-2 w-9 h-9 flex-none grid place-items-center rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors"
+            >
+              <Icon name="back" size={20} />
+            </button>
+          ) : null}
           {title}
         </h2>
         {sub ? (
