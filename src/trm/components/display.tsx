@@ -18,8 +18,8 @@ const TONE_TEXT: Record<Tone, string> = {
 };
 
 /**
- * 标签：一段小字，靠颜色区分。不画底色、不画胶囊、不加色点，
- * 一行里的几个标签之间用「·」隔开（见 Meta）。
+ * 标签：一段小字，靠颜色区分。不画底色、不画胶囊、不加色点。
+ * 一行里放几个标签时只靠间距隔开，不用「·」（见 Meta）。
  */
 export function Tag({ tone = "muted", children, icon }: { tone?: Tone; children: ReactNode; icon?: IconName }) {
   return (
@@ -30,14 +30,16 @@ export function Tag({ tone = "muted", children, icon }: { tone?: Tone; children:
   );
 }
 
-/** 一行小字说明，各项之间用间隔号隔开。空的项跳过。 */
+/**
+ * 一行小字说明。每项写成「名称：值」，各项之间只靠间距隔开，不用「·」「|」拼接。
+ * 空的项跳过。规则见 src/pages/textRules.ts。
+ */
 export function Meta({ children, className = "" }: { children: ReactNode[]; className?: string }) {
   const parts = children.filter((c) => c !== null && c !== undefined && c !== false && c !== "");
   return (
-    <span className={`inline-flex items-center gap-x-1.5 flex-wrap text-[12px] text-[var(--meta)] ${className}`}>
+    <span className={`inline-flex items-center gap-x-3 gap-y-0.5 flex-wrap text-[12px] text-[var(--meta)] ${className}`}>
       {parts.map((c, i) => (
-        <span key={i} className="inline-flex items-center gap-1.5">
-          {i ? <span aria-hidden>·</span> : null}
+        <span key={i} className="inline-flex items-center">
           {c}
         </span>
       ))}
