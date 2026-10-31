@@ -27,6 +27,7 @@ import { TypePage } from "./pages/TypePage";
 import { ColorPage } from "./pages/ColorPage";
 import { MotionPage } from "./pages/MotionPage";
 import { InteractionPage } from "./pages/InteractionPage";
+import { TextPage } from "./pages/TextPage";
 import { SettingsPage, type Look } from "./pages/SettingsPage";
 
 /**
@@ -38,6 +39,7 @@ const nav = createNav([
   { id: "components", labelKey: "nav.components" },
   { id: "patterns", labelKey: "nav.patterns" },
   { id: "interaction", labelKey: "nav.interaction" },
+  { id: "text", labelKey: "nav.text" },
   { id: "type", labelKey: "nav.type" },
   { id: "color", labelKey: "nav.color" },
   { id: "motion", labelKey: "nav.motion" },
@@ -51,6 +53,7 @@ const ICONS: Record<PageId, IconName> = {
   components: "sliders",
   patterns: "layers",
   interaction: "chat",
+  text: "caption",
   type: "book",
   color: "brush",
   motion: "play",
@@ -142,6 +145,8 @@ function Shell() {
                     return <PatternsPage />;
                   case "interaction":
                     return <InteractionPage />;
+                  case "text":
+                    return <TextPage />;
                   case "type":
                     return <TypePage />;
                   case "color":

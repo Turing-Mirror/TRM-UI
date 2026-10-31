@@ -124,6 +124,7 @@
     "motion": "Motion",
     "patterns": "Patterns",
     "interaction": "Interaction",
+    "text": "Writing",
     "settings": "Settings"
   },
   "demo": {
@@ -487,6 +488,11 @@
       "pack3": "Sample project",
       "get": "Download",
       "installed": "Installed"
+    },
+    "text": {
+      "sub": "How interface text is written, with a wrong and a right example for each rule.",
+      "wrong": "Wrong",
+      "right": "Right"
     }
   }
 }

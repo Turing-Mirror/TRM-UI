@@ -124,6 +124,7 @@
     "motion": "Movimiento",
     "patterns": "Patrones",
     "interaction": "Interacción",
+    "text": "Redacción",
     "settings": "Ajustes"
   },
   "demo": {
@@ -487,6 +488,11 @@
       "pack3": "Proyecto de ejemplo",
       "get": "Descargar",
       "installed": "Instalado"
+    },
+    "text": {
+      "sub": "Reglas de redacción de los textos de la interfaz, con un ejemplo incorrecto y uno correcto para cada una.",
+      "wrong": "Incorrecto",
+      "right": "Correcto"
     }
   }
 }
