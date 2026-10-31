@@ -1,6 +1,6 @@
 # TRM UI
 
-The UI/UX template behind Turing Mirror Software's desktop products: design tokens, a component library, a sidebar app shell, eight-language i18n, and a Tauri shell that opens a real window. **It contains no product code.**
+Shared frontend foundation and reference design system for the Turing Mirror family of desktop applications. **It contains no product code.**
 
 [简体中文](./README.md)
 

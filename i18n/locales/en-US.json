@@ -129,7 +129,7 @@
   "demo": {
     "overview": {
       "title": "TRM UI",
-      "sub": "The design system and component library behind Turing Mirror desktop products",
+      "sub": "Desktop Application Framework & Component Gallery",
       "whatTitle": "What this is",
       "whatBody": "A set of design tokens, a component library, eight-language i18n, a sidebar app shell, and a build setup that runs as-is.\nThe whole src/trm/ directory depends on no product code and can be copied out directly.",
       "whyTitle": "Why it exists",
@@ -223,11 +223,11 @@
     },
     "motion": {
       "sub": "Page direction follows the nav order. Click a few tabs above and you’ll see it.",
-      "curves": "Four curves",
+      "curves": "Seven curves",
       "easeNav": "Page transitions only. It starts fast, ends slowly and never overshoots. The page layer sits flush with the window edge, so an overshoot would show a visible seam.",
       "spring": "For small elements. It overshoots, so it is used only on elements that do not touch the window edge, such as the segment thumb and floating panels.",
       "ease": "The general-purpose transition. Hover, press, colour changes.",
-      "reduce": "If the system asks for reduced motion, all of the above switches off. This is required, because large sliding animations make people with vestibular sensitivity dizzy.",
+      "reduce": "Reduced Motion Preview",
       "easeSoft": "Gentle start and slow settle, for fades and small moves",
       "springSettle": "Critically damped spring with no overshoot, for large morphs",
       "springGentle": "About 1% overshoot, for page changes and small moves",

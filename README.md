@@ -1,6 +1,6 @@
 # TRM UI
 
-图灵镜（Turing Mirror Software）桌面产品的 UI/UX 模板：设计令牌、组件库、侧栏式应用外壳、八语言 i18n，外加一个能直接开窗的 Tauri 壳。**不包含任何产品代码。**
+图灵镜（Turing Mirror）桌面应用程序家族的共享前端基础框架与设计系统参考实现。 **不包含任何产品代码。**
 
 [English](./README_en.md)
 

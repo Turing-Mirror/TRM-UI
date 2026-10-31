@@ -129,7 +129,7 @@
   "demo": {
     "overview": {
       "title": "TRM UI",
-      "sub": "Le système de design et la bibliothèque de composants des logiciels Turing Mirror",
+      "sub": "Socle d'application de bureau et galerie de composants",
       "whatTitle": "De quoi s’agit-il",
       "whatBody": "Un jeu de tokens de design, une bibliothèque de composants, une i18n en huit langues, une coque d’application à barre latérale et une configuration de build prête à l’emploi.\nLe dossier src/trm/ ne dépend d’aucun code produit et se copie tel quel.",
       "whyTitle": "Pourquoi il existe",
@@ -223,11 +223,11 @@
     },
     "motion": {
       "sub": "Le sens de transition suit l’ordre de navigation. Cliquez sur quelques onglets en haut pour le voir.",
-      "curves": "Quatre courbes",
+      "curves": "Sept courbes",
       "easeNav": "Réservée aux transitions de page. Départ rapide, fin longue, et jamais de dépassement : la couche de page affleure le bord de la fenêtre, et un dépassement laisse une couture visible.",
       "spring": "Pour les petits éléments. Elle dépasse, donc réservée à ce qui ne touche pas le bord de la fenêtre : la pastille du contrôle segmenté, les panneaux flottants.",
       "ease": "La transition polyvalente. Survol, appui, changements de couleur.",
-      "reduce": "Si le système demande de réduire les animations, tout ce qui précède est désactivé. Ce n’est pas facultatif : les grands mouvements donnent le vertige aux personnes sensibles sur le plan vestibulaire.",
+      "reduce": "Aperçu de la réduction des animations",
       "easeSoft": "Départ doux, arrêt lent : pour les fondus et petits déplacements",
       "springSettle": "Ressort à amortissement critique, sans dépassement : pour les grandes transformations",
       "springGentle": "Environ 1 % de dépassement : changements de page et petits déplacements",

@@ -129,7 +129,7 @@
   "demo": {
     "overview": {
       "title": "TRM UI",
-      "sub": "El sistema de diseño y la biblioteca de componentes de los productos de escritorio de Turing Mirror",
+      "sub": "Marco de aplicación de escritorio y galería de componentes",
       "whatTitle": "Qué es esto",
       "whatBody": "Un conjunto de tokens de diseño, una biblioteca de componentes, i18n en ocho idiomas, un armazón de aplicación con barra lateral y una configuración de compilación lista para usar.\nEl directorio src/trm/ no depende de código de producto y se puede copiar tal cual.",
       "whyTitle": "Por qué existe",
@@ -223,11 +223,11 @@
     },
     "motion": {
       "sub": "La dirección del cambio de página sigue el orden de navegación. Pulsa algunas pestañas arriba y lo verás.",
-      "curves": "Cuatro curvas",
+      "curves": "Siete curvas",
       "easeNav": "Solo para cambios de página. Arranca rápido, termina largo y nunca se pasa: la capa de página va al ras del borde de la ventana, y pasarse deja una costura visible.",
       "spring": "Para elementos pequeños. Se pasa de largo, así que solo va en cosas que no tocan el borde de la ventana: el tirador del control segmentado, los paneles flotantes.",
       "ease": "La transición de uso general. Hover, pulsación, cambios de color.",
-      "reduce": "Si el sistema pide movimiento reducido, todo lo anterior se apaga. No es opcional: las animaciones de desplazamiento amplio marean a quienes tienen sensibilidad vestibular.",
+      "reduce": "Vista previa de reducción de movimiento",
       "easeSoft": "Arranque suave y final lento, para fundidos y movimientos cortos",
       "springSettle": "Muelle con amortiguación crítica, sin rebote, para grandes transformaciones",
       "springGentle": "Rebote de un 1 %, para cambios de página y movimientos cortos",
