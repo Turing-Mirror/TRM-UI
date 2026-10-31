@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { RuleBlock } from "./RuleList";
+import { INTERACTION_RULES } from "./interactionRules";
 import {
   PagePad,
   PageHead,
@@ -70,6 +72,10 @@ export function InteractionPage() {
   return (
     <PagePad>
       <PageHead title={t("nav.interaction")} sub={t("demo.inter.sub")} />
+
+      {INTERACTION_RULES.map((rule) => (
+        <RuleBlock key={rule.id} rule={rule} />
+      ))}
 
       <Block title={t("demo.inter.panes")}>
         <Tabs value={tab} onChange={setTab} options={TABS.map((id) => ({ id, label: t(TAB_KEYS[id]) }))} />

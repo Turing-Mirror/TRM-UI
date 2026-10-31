@@ -1,4 +1,5 @@
 import { PagePad, PageHead, Block, Group, useI18n } from "../trm";
+import { COLOR_ROLES } from "./colorRoles";
 
 const CORE = ["--bg", "--surface", "--rail", "--group", "--stage", "--page-bg", "--scrim"];
 const INK = ["--ink", "--ink-muted", "--help", "--meta", "--hairline", "--line", "--focus-line"];
@@ -11,10 +12,15 @@ const ART = ["--art-1", "--art-2", "--art-3", "--art-4", "--art-5", "--art-6"];
  * 自己就跟着变，也就顺便证明了令牌确实是活的。
  */
 function Swatch({ name }: { name: string }) {
+  const { locale } = useI18n();
+  const role = (COLOR_ROLES[name] ?? (name.startsWith("--art-") ? COLOR_ROLES.art : undefined))?.[locale];
   return (
-    <div className="flex items-center gap-3 py-2">
+    <div className="flex items-start gap-3 py-2">
       <span className="w-9 h-9 rounded-[var(--rs)] flex-none shadow-[inset_0_0_0_1px_var(--hairline)]" style={{ background: `var(${name})` }} />
-      <code className="text-[12.5px] text-[var(--ink-muted)] select-text">{name}</code>
+      <span className="min-w-0 flex flex-col gap-0.5">
+        <code className="text-[12.5px] text-[var(--ink-muted)] select-text">{name}</code>
+        {role ? <span className="text-[11.5px] text-[var(--help)] leading-snug">{role}</span> : null}
+      </span>
     </div>
   );
 }
@@ -22,7 +28,7 @@ function Swatch({ name }: { name: string }) {
 function Row({ names }: { names: string[] }) {
   return (
     <Group>
-      <div className="py-2 grid grid-cols-[repeat(auto-fill,minmax(190px,1fr))] gap-x-6">
+      <div className="py-2 grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-x-6">
         {names.map((n) => (
           <Swatch key={n} name={n} />
         ))}

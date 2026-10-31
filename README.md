@@ -1,207 +1,96 @@
 # TRM UI
 
-图灵镜（Turing Mirror）桌面应用程序家族的共享前端基础框架与设计系统参考实现。 **不包含任何产品代码。**
+图灵镜（Turing Mirror）桌面应用程序家族的共享前端基础框架与设计系统参考实现。**不包含任何产品代码。**
 
 [English](./README_en.md)
 
 ---
 
-## 为什么有它
+TRM UI 不另写规范文档。界面本身就是示范，代码本身就是说明：每条规则只在一个数据文件里写一次，画廊页面照它渲染，人在界面上看到效果，Agent 读同一个文件。
 
-每个新产品都从同一套界面起步：同样的令牌、同样的组件、同样的动效。改进也回到这里，而不是散落在各个产品里互相分叉的副本中。
+## Agent 怎么用这个项目
 
-## 里面有什么
+1. **先看界面。** `npm install && npm run dev`，打开 http://localhost:1410。侧栏每一页既是规范，也是能操作的示范。
+2. **按下表找到对应代码。**
+
+   | 侧栏 | 内容 | 代码 |
+   | --- | --- | --- |
+   | 概览 | 外壳、主题、整体结构 | `src/pages/OverviewPage.tsx` |
+   | 组件 | 全部基础组件 | `src/pages/ComponentsPage.tsx`、`src/trm/components/` |
+   | 模式 | 列表、详情、清理、下载等整页模式 | `src/pages/PatternsPage.tsx`、`src/pages/MorePatterns.tsx` |
+   | 交互 | 交互约定，以及照约定做的演示 | `src/pages/interactionRules.ts`、`src/pages/InteractionPage.tsx` |
+   | 文本要求 | 界面文字的写法，附错误示范与正确示范 | `src/pages/textRules.ts` |
+   | 排版 | 字号档位 | `src/pages/TypePage.tsx` |
+   | 配色 | 颜色变量及其用途 | `src/pages/colorRoles.ts`、`src/index.css` |
+   | 动效 | 曲线与各类切换 | `src/pages/MotionPage.tsx`、`src/index.css` |
+   | 设置 | 设置页的写法 | `src/pages/SettingsPage.tsx` |
+
+3. **做产品界面时：** 组件从 `src/trm/` 取，颜色只用 `src/index.css` 的变量，文字照 `textRules.ts`，交互照 `interactionRules.ts`。
+4. **改规范时：** 改对应的数据文件，八种语言写全，少一种 `tsc` 会报错；画廊页面自动跟着变。不新建 Markdown 文档，也不把规则复制进产品仓库。
+5. **改组件时：** 产品仓库里的 `app/src/trm/` 是这里 `src/trm/` 的副本。这里改完，把改动的文件拷过去。
+6. **改完检查：** `npm run build`，依次运行 eslint、tsc、i18n 校验和 vite build，任何一步失败就停。
+
+规则的来历和取舍写在代码注释里，大多在解释「为什么不能改成看起来更合理的写法」。注释背后都是已经发生过的问题，不要删。
+
+## 目录
 
 ```
-src/trm/                 ← 界面模板本体，可以整个复制走
-├── index.ts             出口
-├── components/
-│   ├── ui.tsx           PagePad PageHead Block Group Btn ListItem AccordionGroup
-│   ├── controls.tsx     Field Select RangeBar Slider Toggle
-│   ├── SegmentControl.tsx  分段控件，选项可单独禁用
-│   ├── Tooltip.tsx      Tooltip HelpMark
-│   ├── TitleBar.tsx     顶部页签式标题栏
-│   ├── Sidebar.tsx      AppBar Sidebar SidebarItem SidebarHead ActivityRow  ← 侧栏式外壳
-│   ├── PageHost.tsx     方向性换页，横向（页签）或竖向（侧栏）
-│   ├── display.tsx      Tag Meta Mark Bar Section IconBtn Empty Tabs Filters Pager usePaged
-│   ├── overlay.tsx      Modal Drawer usePresence useLatest
-│   ├── Menu.tsx         Popover Menu useMenu Dropdown PromptDialog
-│   ├── Calendar.tsx     月历与挂在按钮下的浮层
-│   ├── Notices.tsx      右上角的提示与通知
-│   ├── listing.tsx      列表页的筛选列、搜索框、「…」按钮、拖拽收尾
-│   ├── motion.tsx       Panes Pane Swap useSlider stagger  ← 页内切换，全站一套
-│   ├── TitleSlot.tsx    PageTitle TitleHost  页标题放进标题栏
-│   ├── SidePanel.tsx    左、右、底三侧可拖动改尺寸、可收起的面板
-│   ├── Comments.tsx     评论区：回复（楼中楼）、点赞、评价筛选、排序
-│   ├── Wizard.tsx       分步引导，可收成角落里的小按钮稍后继续
-│   ├── Nudge.tsx        底部的一条提示，不拦操作
-│   ├── ErrorNote.tsx    报错只露有用的一行，详情与复制在后面
-│   ├── Ring.tsx         环形占比图
-│   ├── HotkeyInput.tsx  录制快捷键：点一下再按组合键，Esc 取消，Backspace 清空
-│   ├── StepBar.tsx      分步进度：走过的实心，正在走的一段轻轻起伏
-│   ├── PickList.tsx     勾选清单：每项写明大小与影响，底部汇总后一次处理
-│   ├── Icon.tsx         线条图标
-│   └── ErrorBoundary.tsx
-├── i18n/                八语言，构建时打包，同步切换；按文件发现语言包
-└── lib/                 nav / clipboard / inputModality（焦点环只给键盘）/ appearance / host / snapDrag（可拖动、松手贴边的浮动按钮）/ hotkeys（组合键的写法与比对）/ mouseNav（鼠标侧键前进后退）
-
-src/index.css            设计令牌 + 三态主题 + 动画  ← 核心资产
-docs/tokens.md           令牌速查
-docs/patterns.md         交互约定：该做的与不该做的
-src/pages/               演示画廊（可删）
-src/pages/textRules.ts   文本要求：界面文字的写法，附错误示范与正确示范（删画廊时保留）
+src/trm/                 界面模板本体，产品复制的就是它
+├── components/          全部组件，入口是 src/trm/index.ts
+├── i18n/                八种语言，构建时打包，同步切换
+└── lib/                 导航、剪贴板、外观、与壳的桥（host.ts）、快捷键、鼠标侧键
+src/index.css            颜色、圆角、曲线、三态主题、动画类
+src/pages/               画廊页面与规则数据
 i18n/locales/*.json      八份语言包，界面和壳共用
-scripts/check_i18n.mjs   三道 i18n 硬校验
-index.html               白窗兜底守卫
+scripts/check_i18n.mjs   语言包结构、占位符与代码引用的校验
+index.html               白窗兜底
 
-src-tauri/               ← 桌面壳
-├── src/
-│   ├── lib.rs           启动顺序、命令、两个看门狗
-│   ├── window_watch.rs  无边框窗口：圆角、最大化钳制、跑丢了捞回来
-│   ├── ui_assets.rs     自定义协议供界面，exe 旁的 frontend/ 可替换
-│   ├── config.rs        app_config.json，原子写入、坏文件留档
-│   ├── logging.rs       shell.log，按天分文件，48 小时保留
-│   ├── i18n.rs          壳侧翻译，和界面共用语言包
-│   ├── paths.rs         产品根 / User_Data
-│   ├── tray.rs          托盘
-│   ├── autostart.rs     开机自启（注册表）
-│   └── asset_scope.rs   asset 协议运行时放行
-└── icons/
+src-tauri/src/           桌面壳
+├── lib.rs               启动顺序、命令、两个看门狗
+├── window_watch.rs      无边框窗口：圆角、最大化、窗口跑丢后找回
+├── ui_assets.rs         自定义协议提供界面，exe 旁的 frontend/ 可替换
+├── config.rs            app_config.json：原子写入、坏文件留档、默认值补齐
+├── logging.rs           shell.log，按天分文件
+├── i18n.rs              壳侧翻译，和界面共用语言包
+├── paths.rs             产品根目录与 User_Data
+├── tray.rs              托盘
+├── autostart.rs         开机自启（注册表）
+└── asset_scope.rs       asset 协议的运行时放行
 ```
 
-## 设计取向
-
-- **少框少线。** 分区靠底色与留白，不靠分隔线和卡片套卡片。界面文字写成完整的句子或"名称：值"，不用"·"和"——"拼凑（见画廊的「文本要求」页）。侧栏与内容区同一底色；标签只是一段带颜色的小字，不画胶囊、不加色点。
-- **颜色克制。** 一个强调色给主操作与选中；提醒用系统橙（`--warn`，文字用 `--warn-ink`），只落在图标、细线和一行字上，不铺整块底色；红色只给失败与删除。
-- **出现和消失都有过程。** 弹窗、抽屉、菜单、消息收起时先放完动画再卸下；换页、换视图有入场；大的变形用不过冲的曲线，小的位移才用弹簧。
-- **切换是交叠的。** 分栏、列表与详情、筛选结果之间，旧内容很快淡出、朝来处让一小步，新内容从去向那一侧浮上来；看不见的分栏照常挂着但不重绘，点下去的那一刻指示条就走。
-- **标题放进标题栏。** 返回是标题前的一个箭头，状态与作者这类小字跟在标题后面，操作靠右。
-- **指到的卡片向内收**，不向上浮。
-- **能点的东西一律是手形指针**，禁用的恢复箭头。
-
-## 跑起来
-
-**只看界面**（不用装 Rust）：
+## 运行与构建
 
 ```bash
-npm install && npm run dev
-```
-
-打开 http://localhost:1410 —— 一个组件画廊，每一个都是真能操作的控件。
-
-**连壳一起跑**：
-
-```bash
-npm install && npm run tauri:dev
-```
-
-开出一扇无边框窗口：Win11 上是系统圆角，标题栏按钮可用，托盘常驻，日志写在
-`User_Data/logs/shell/`。
-
-**构建**：
-
-```bash
-npm run build          # eslint → tsc → check_i18n → vite build
-npm run tauri:build    # 上面这些 + 打包安装程序
+npm install && npm run dev          # 只看界面，不需要 Rust
+npm install && npm run tauri:dev    # 连桌面壳一起运行
+npm run build                       # eslint、tsc、i18n 校验、vite build
+npm run tauri:build                 # 以上步骤加打包安装程序
 cargo test --manifest-path src-tauri/Cargo.toml
 ```
 
-任何一步失败就停。
-
 ## 三条硬规矩
 
-**一、颜色只从令牌取。** 写死的颜色字面量在另一个主题下必然是错的，而且只有换主题时才看得出来 —— 也就是说，正常开发流程里没有任何一步会发现它。
-
-**二、文案只从语言包取。** 八种语言的结构由 `scripts/check_i18n.mjs` 在构建时强制一致，不是靠自觉。它查三件事：结构对齐、占位符对齐、**代码里 `t("…")` 引用到的 key 必须真的存在**。第三条最重要 —— 前两条只做语言包之间的横向比对，一个八份里都没有的 key 可以一路绿灯，然后在界面上显示成 `s.a1b2c3`。
-
-**三、`src/trm/` 不引用它自己以外的东西。** 除了 react、语言包，和 `host.ts` 那一个桥。一旦它引了产品代码，模板就退化成了「某个产品的一部分」，而这正是它要解决的问题。
-
-## 主题有三种状态，不是两种
-
-这是最容易写错的一处，写错的表现是「某些用户看到白底白字」。
-
-| 用户设置 | `<html>` | 靠什么区分 |
-| --- | --- | --- |
-| 明确选浅色 | `data-theme="light"` | 属性 |
-| 明确选深色 | `data-theme="dark"` | 属性 |
-| 跟随系统（默认） | *没有属性* | `prefers-color-scheme` |
-
-所以深色要写两遍：一遍在媒体查询里（并且用 `:not([data-theme="light"])` 排除「系统深色但用户选了浅色」），一遍在 `[data-theme="dark"]` 里。
-
-**任何颜色都不许把唯一的定义放在媒体查询或 `[data-theme]` 块里** —— 那样它在「跟随系统」这个默认状态下根本不存在。
-
-## 界面和壳是怎么接上的
-
-界面**不依赖壳**。所有和壳打交道的东西都收在 `src/trm/lib/host.ts` 一个文件里，
-每一项在没有壳的时候安静降级：
-
-| 能力 | 有壳 | 没壳（浏览器） |
-| --- | --- | --- |
-| 语言持久化 | `app_config.json` | `localStorage` |
-| 窗口按钮 | 最小化 / 最大化 / 关闭 | **不画** |
-| 崩溃日志 | 写进 `shell.log` | 只进控制台 |
-| 界面已挂载信号 | 喂给白窗看门狗 | 空操作 |
-
-窗口按钮在浏览器里选择「不画」而不是「画了不响应」：一个看着能点、点了没反应的
-按钮，用户会以为软件坏了。
-
-判断有没有壳看 `window.__TAURI_INTERNALS__`，不靠 try/catch 试一次 invoke ——
-后者会在控制台里留下一条吓人的报错。
-
-## 壳做对了什么
-
-这几件事都是踩过才知道要做的，注释里写了各自的来历：
-
-**无边框窗口**（`window_watch.rs`）。Win11 的圆角走 DWM 属性，不走「透明窗口 +
-CSS 圆角」—— 后者会连系统投影一起丢掉，四角还会露锯齿。Win10 没有这个属性，
-退到 `SetWindowRgn` 自己裁。最大化的尺寸在 `WM_WINDOWPOSCHANGING` 里**落地前**
-钳到工作区，不是事后 `SetWindowPos` 去改（那会毁掉还原矩形，窗口再也缩不回
-最大化前的大小）。`WM_NCCALCSIZE` 一律让客户区铺满整个窗口，否则 Win10 上会留
-一圈没人画的非客户区，表现为「拖动之后出现、再也不消失的左缘竖带」。
-
-**窗口跑丢了能捞回来**。`.center()` 只认主显示器，而多显示器的人正在看的往往
-不是主屏 —— 窗口连同任务栏按钮一起去了另一块屏，用户这头一点动静都没有，和
-「根本没启动」长得一模一样。所以启动时按光标所在的屏摆窗口。
-
-**两个看门狗**（`lib.rs`）。「打开是白的」和「打开就未响应」是用户唯一描述不出、
-我们也看不见的两种故障。前者靠界面挂载信号 + 资源请求计数（「0 个请求」和
-「12 个请求、1 个 404」是完全不同的两个 bug）；后者靠一个普通线程去 ping 事件
-循环，日志里有没有那几行，直接区分「Rust 侧停了」和「WebView 卡住了」。
-
-**界面可单独替换**（`ui_assets.rs`）。界面走自定义协议提供，exe 旁边的
-`frontend/` 目录能替换掉随包发布的那份，不用重编译 exe。只改界面的补丁因此
-可以做得很小。
-
-**配置不会把用户的设置搞丢**（`config.rs`）。原子写入（临时文件 + rename），
-解析失败时把坏文件改名留档而不是覆盖，升级新增的键用默认值补齐而不是读出 null。
+1. **颜色只从变量取。** 写死的颜色在另一个主题下必然是错的，而且只有换主题时才看得出来。
+2. **界面文字只从语言包取。** `scripts/check_i18n.mjs` 在构建时检查八种语言的结构和占位符一致，并确认代码里 `t("…")` 引用的 key 真实存在。
+3. **`src/trm/` 不引用它以外的东西。** react、语言包和 `host.ts` 这一个桥除外。一旦引用了产品代码，模板就成了某个产品的一部分。
 
 ## 从这里开一个新产品
 
-1. 复制整个仓库，改 `package.json` 的 `name`、`index.html` 的 `<title>`、
-   `vite.config.ts` 的 `port`（各产品端口互不相同，否则 WebView2 按端口分的
-   缓存会串味）
-2. 壳里有六处要改，全都标了注释：
+1. 复制 `src/trm/`、`src/index.css`、`i18n/`、`scripts/`、`src-tauri/` 和构建配置。画廊页面与规则数据留在 TRM UI，需要时回这里看。
+2. 改 `package.json` 的 `name`、`index.html` 的 `<title>`、`vite.config.ts` 的端口。各产品端口互不相同，否则 WebView2 按端口区分的缓存会混在一起。
+3. 改壳里标了注释的六处：
 
    | 位置 | 改什么 |
    | --- | --- |
-   | `src-tauri/tauri.conf.json` | `productName` / `identifier` / `devUrl` 端口 |
+   | `src-tauri/tauri.conf.json` | `productName`、`identifier`、`devUrl` 端口 |
    | `src-tauri/src/lib.rs` | `APP_TITLE` |
-   | `src-tauri/src/paths.rs` | `ROOT_MARKERS` —— 挑一个一定会跟着产品走的文件 |
-   | `src-tauri/src/autostart.rs` | `VALUE_NAME`，**发布之后就别再改** |
-   | `src-tauri/src/config.rs` | `defaults()` 里加你自己的键 |
+   | `src-tauri/src/paths.rs` | `ROOT_MARKERS`，选一个一定随产品发布的文件 |
+   | `src-tauri/src/autostart.rs` | `VALUE_NAME`，发布之后不要再改 |
+   | `src-tauri/src/config.rs` | 在 `defaults()` 里加产品自己的键 |
    | `src-tauri/icons/` | `npx tauri icon your-logo.png -o src-tauri/icons` |
 
-3. 删掉 `src/pages/`，写你自己的页面
-4. 删掉语言包里的 `demo` 节点，保留 `ui` 和 `locale`
-5. 改 `src/App.tsx` 里的 `createNav`，顺序就是换页动画的方向依据（侧栏里靠下的页从下方推上来）
-6. `AppBar` 的 `brand` 换成你的牌子；想用顶部页签式的布局就换成 `TitleBar`
-
-## 那些注释
-
-代码里的中文注释密度偏高，而且大多在解释「为什么不能改成看起来更合理的写法」。它们不是话多 —— 每一条背后都是一个已经发生过的问题：滑块跟不上手、切页时窗口边缘露出一条缝、语言换了但药丸宽度停在旧文字上、点一下问号把开关也切了。
-
-删掉注释不会让代码更短多少，但会让下一个人重新踩一遍。`window_watch.rs` 里
-有好几段是「这里曾经写过 X，别再写回来」—— 那些是花了最多时间才换来的。
+4. 语言包里只保留 `ui` 和 `locale`，`demo` 是画廊用的。
+5. 在 `src/App.tsx` 的 `createNav` 里列出页面。顺序决定换页动画的方向。
 
 ## 许可
 

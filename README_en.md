@@ -2,215 +2,95 @@
 
 Shared frontend foundation and reference design system for the Turing Mirror family of desktop applications. **It contains no product code.**
 
-[简体中文](./README.md)
+[中文](./README.md)
 
 ---
 
-## Why it exists
+TRM UI has no separate specification documents. The interface is the example and the code is the explanation: each rule is written once in a data file, the gallery renders it, people see the result on screen, and agents read the same file.
 
-Every new product starts from the same interface: the same tokens, the same components, the same motion. Improvements come back here too, instead of scattering into diverging copies inside each product.
+## How an agent uses this project
 
-## What's inside
+1. **Look at the interface first.** Run `npm install && npm run dev` and open http://localhost:1410. Every page in the sidebar is both a rule and a working example.
+2. **Find the code with this table.**
+
+   | Sidebar | Content | Code |
+   | --- | --- | --- |
+   | Overview | Shell, theme, overall structure | `src/pages/OverviewPage.tsx` |
+   | Components | All base components | `src/pages/ComponentsPage.tsx`, `src/trm/components/` |
+   | Patterns | Full-page patterns: lists, details, cleanup, downloads | `src/pages/PatternsPage.tsx`, `src/pages/MorePatterns.tsx` |
+   | Interaction | Interaction rules and demos built to them | `src/pages/interactionRules.ts`, `src/pages/InteractionPage.tsx` |
+   | Writing | How interface text is written, with wrong and right examples | `src/pages/textRules.ts` |
+   | Typography | Font size scale | `src/pages/TypePage.tsx` |
+   | Color | Colour variables and what each is for | `src/pages/colorRoles.ts`, `src/index.css` |
+   | Motion | Curves and transitions | `src/pages/MotionPage.tsx`, `src/index.css` |
+   | Settings | How a settings page is built | `src/pages/SettingsPage.tsx` |
+
+3. **When building a product interface:** take components from `src/trm/`, use only the variables in `src/index.css` for colour, write text by `textRules.ts` and handle interaction by `interactionRules.ts`.
+4. **When changing a rule:** edit its data file and fill in all eight languages; `tsc` fails if one is missing, and the gallery page updates by itself. Do not add Markdown documents and do not copy rules into product repositories.
+5. **When changing a component:** `app/src/trm/` in each product repository is a copy of `src/trm/` here. After changing it here, copy the changed files over.
+6. **When done:** run `npm run build`, which runs eslint, tsc, the i18n check and vite build in order and stops at the first failure.
+
+The reasons behind each choice are in code comments, most of them explaining why a more obvious-looking version does not work. Each one comes from a problem that already happened; do not delete them.
+
+## Layout
 
 ```
-src/trm/                 ← the UI template; copy the whole directory
-├── index.ts             exports
-├── components/
-│   ├── ui.tsx           PagePad PageHead Block Group Btn ListItem AccordionGroup
-│   ├── controls.tsx     Field Select RangeBar Slider Toggle
-│   ├── SegmentControl.tsx  segmented control; options can be disabled one by one
-│   ├── Tooltip.tsx      Tooltip HelpMark
-│   ├── TitleBar.tsx     title bar with top tabs
-│   ├── Sidebar.tsx      AppBar Sidebar SidebarItem SidebarHead ActivityRow  ← sidebar shell
-│   ├── PageHost.tsx     directional page transitions, horizontal (tabs) or vertical (sidebar)
-│   ├── display.tsx      Tag Meta Mark Bar Section IconBtn Empty Tabs Filters Pager usePaged
-│   ├── overlay.tsx      Modal Drawer usePresence useLatest
-│   ├── Menu.tsx         Popover Menu useMenu Dropdown PromptDialog
-│   ├── Calendar.tsx     month calendar and an anchored popover
-│   ├── Notices.tsx      tips and notifications in the top-right corner
-│   ├── listing.tsx      filter column, search box, "…" button, drag cleanup for list pages
-│   ├── motion.tsx       Panes Pane Swap useSlider stagger  ← one set of in-page transitions
-│   ├── TitleSlot.tsx    PageTitle TitleHost: page titles live in the title bar
-│   ├── SidePanel.tsx    resizable, collapsible panels on the left, right or bottom
-│   ├── Comments.tsx     comment threads: replies, likes, verdict filters, sorting
-│   ├── Wizard.tsx       step-by-step guide that can shrink to a corner button
-│   ├── Nudge.tsx        a non-blocking prompt at the bottom
-│   ├── ErrorNote.tsx    errors show the one useful line; details and copy behind it
-│   ├── Ring.tsx         ring chart for proportions
-│   ├── HotkeyInput.tsx  shortcut recorder: click, then press keys; Esc cancels, Backspace clears
-│   ├── StepBar.tsx      step progress: done steps filled, the current one pulses gently
-│   ├── PickList.tsx     checklist with size and effect per item, one action for the selection
-│   ├── Icon.tsx         line icons
-│   └── ErrorBoundary.tsx
-├── i18n/                eight languages, bundled at build time, switched synchronously; packs are discovered by file
-└── lib/                 nav / clipboard / appearance / host / snapDrag (floating button that snaps to an edge) / hotkeys (writing and matching key combos) / mouseNav (mouse side buttons for back and forward)
+src/trm/                 the interface template that products copy
+├── components/          all components; entry point is src/trm/index.ts
+├── i18n/                eight languages, bundled at build time, switched synchronously
+└── lib/                 navigation, clipboard, appearance, the shell bridge (host.ts), hotkeys, mouse side buttons
+src/index.css            colours, radii, curves, three-state theme, animation classes
+src/pages/               gallery pages and rule data
+i18n/locales/*.json      eight locale packs, shared by the interface and the shell
+scripts/check_i18n.mjs   checks locale structure, placeholders and references from code
+index.html               blank-window fallback
 
-src/index.css            tokens + three-state theme + animation  ← the core asset
-docs/tokens.md           token reference
-docs/patterns.md         interaction rules: do and don't (Chinese)
-src/pages/               demo gallery (deletable)
-src/pages/textRules.ts   writing rules for interface text, with wrong and right examples (Chinese; keep it when deleting the gallery)
-i18n/locales/*.json      eight locale packs, shared by UI and shell
-scripts/check_i18n.mjs   three hard i18n checks
-index.html               blank-window guard
-
-src-tauri/               ← desktop shell
-├── src/
-│   ├── lib.rs           start-up order, commands, two watchdogs
-│   ├── window_watch.rs  frameless window: corners, maximise clamping, recovering lost windows
-│   ├── ui_assets.rs     UI served over a custom protocol; frontend/ next to the exe can replace it
-│   ├── config.rs        app_config.json, atomic writes, broken files kept aside
-│   ├── logging.rs       shell.log, one file per day, kept 48 hours
-│   ├── i18n.rs          shell-side strings, same locale packs as the UI
-│   ├── paths.rs         product root / User_Data
-│   ├── tray.rs          tray
-│   ├── autostart.rs     start with Windows (registry)
-│   └── asset_scope.rs   runtime allow-list for the asset protocol
-└── icons/
+src-tauri/src/           desktop shell
+├── lib.rs               start-up order, commands, two watchdogs
+├── window_watch.rs      frameless window: corners, maximise, recovering a lost window
+├── ui_assets.rs         custom protocol serving the interface; frontend/ next to the exe can replace it
+├── config.rs            app_config.json: atomic writes, broken files kept aside, defaults filled in
+├── logging.rs           shell.log, one file per day
+├── i18n.rs              shell-side translation using the same locale packs
+├── paths.rs             product root and User_Data
+├── tray.rs              tray icon
+├── autostart.rs         start with Windows (registry)
+└── asset_scope.rs       runtime allow-list for the asset protocol
 ```
 
-## Design stance
-
-- **Few boxes, few lines.** Areas are separated by background and space, not dividers or cards inside cards. Interface text is written as complete sentences or "name: value" fields, never strung together with "·" or dashes (see the Writing page in the gallery). The sidebar shares the content background; a tag is just a short coloured label — no pill, no dot.
-- **Restrained colour.** One accent for the main action and selection; attention uses the system orange (`--warn`, text in `--warn-ink`) on an icon, a thin line or a single line of text, never as a filled block; red only for failure and deletion.
-- **Nothing appears or vanishes abruptly.** Dialogs, drawers, menus and notices play their exit before unmounting; pages and views have an entrance; large morphs use curves without overshoot, springs only for small moves.
-- **Switches overlap.** Between tabs, list and detail, or filter results, the old content fades out with a small step back while the new content rises from the direction of travel; hidden tabs stay mounted but don't re-render, so the indicator moves the instant you click.
-- **Titles live in the title bar.** Back is an arrow before the title, small details such as status or author follow it, and actions sit on the right.
-- **Hovered cards sink inward** rather than lifting.
-- **Everything clickable shows a pointer**; disabled controls fall back to the arrow.
-
-## Running it
-
-**UI only** (no Rust toolchain needed):
+## Run and build
 
 ```bash
-npm install && npm run dev
-```
-
-Open http://localhost:1410 — a component gallery where everything is a live control.
-
-**With the shell**:
-
-```bash
-npm install && npm run tauri:dev
-```
-
-You get a frameless window: system-drawn rounded corners on Win11, working title-bar
-buttons, a tray icon, and a log at `User_Data/logs/shell/`.
-
-**Building**:
-
-```bash
-npm run build          # eslint → tsc → check_i18n → vite build
-npm run tauri:build    # all of the above + installers
+npm install && npm run dev          # interface only, no Rust needed
+npm install && npm run tauri:dev    # with the desktop shell
+npm run build                       # eslint, tsc, i18n check, vite build
+npm run tauri:build                 # all of the above plus the installer
 cargo test --manifest-path src-tauri/Cargo.toml
 ```
 
-Each stops at the first failure.
-
 ## Three hard rules
 
-**1. Every colour comes from a token.** A hard-coded colour is guaranteed wrong in the other theme, and only visible when someone switches — meaning no step of normal development will ever catch it.
+1. **Colours come only from variables.** A hard-coded colour is always wrong in the other theme, and that only shows when someone switches themes.
+2. **Interface text comes only from the locale packs.** `scripts/check_i18n.mjs` checks at build time that all eight languages share the same structure and placeholders, and that every key used in `t("…")` exists.
+3. **`src/trm/` imports nothing outside itself**, except react, the locale packs and the single bridge in `host.ts`. Once it imports product code, the template becomes part of one product.
 
-**2. Every string comes from a locale pack.** All eight are forced into the same shape by `scripts/check_i18n.mjs` at build time. It checks three things: structural alignment, placeholder alignment, and **that every key referenced by `t("…")` in the source actually exists**. The third matters most — the first two only compare packs against each other, so a key missing from all eight sails straight through and then renders as `s.a1b2c3` on screen.
+## Starting a new product
 
-**3. `src/trm/` imports nothing outside itself** — react, the locale packs, and the single `host.ts` bridge aside. The moment it reaches into product code, the template degrades into "part of one product", which is the problem it exists to solve.
+1. Copy `src/trm/`, `src/index.css`, `i18n/`, `scripts/`, `src-tauri/` and the build configuration. The gallery pages and rule data stay in TRM UI; come back here to read them.
+2. Change `name` in `package.json`, `<title>` in `index.html` and the port in `vite.config.ts`. Each product needs its own port, otherwise WebView2's per-port cache gets mixed up.
+3. Change the six commented places in the shell:
 
-## The theme has three states, not two
-
-This is the easiest thing to get wrong, and getting it wrong means some users see white text on white.
-
-| User setting | `<html>` | Distinguished by |
-| --- | --- | --- |
-| Explicitly light | `data-theme="light"` | the attribute |
-| Explicitly dark | `data-theme="dark"` | the attribute |
-| Follow system (default) | *no attribute* | `prefers-color-scheme` |
-
-So dark has to be written twice: once inside the media query (guarded with `:not([data-theme="light"])` so an explicit light choice beats a dark OS), and once under `[data-theme="dark"]`.
-
-**No colour may have its only definition inside a media query or a `[data-theme]` block** — such a colour simply does not exist in the default "follow system" state.
-
-## How the UI and the shell meet
-
-**The UI does not depend on the shell.** Everything that talks to it is collected in a
-single file, `src/trm/lib/host.ts`, and every capability degrades quietly when there is
-no shell:
-
-| Capability | With the shell | Without (browser) |
-| --- | --- | --- |
-| Locale persistence | `app_config.json` | `localStorage` |
-| Window buttons | minimize / maximize / close | **not drawn** |
-| Crash logging | into `shell.log` | console only |
-| "UI mounted" signal | feeds the blank-window watchdog | no-op |
-
-In a browser the window buttons are *not drawn* rather than drawn-but-dead: a button
-that looks clickable and does nothing reads as a broken app.
-
-Shell detection reads `window.__TAURI_INTERNALS__` instead of try/catching an invoke —
-the latter leaves an alarming error in the console.
-
-## What the shell gets right
-
-Each of these was learned the hard way; the comments carry the story:
-
-**Frameless windows** (`window_watch.rs`). Rounded corners on Win11 come from a DWM
-attribute, not from "transparent window + CSS radius" — that approach loses the system
-shadow and leaves aliased corners. Windows 10 has no such attribute, so it falls back to
-clipping with `SetWindowRgn`. The maximized size is clamped to the work area **before it
-lands**, in `WM_WINDOWPOSCHANGING`, not afterwards with `SetWindowPos` — doing it
-afterwards destroys the restore rectangle and the window can never shrink back.
-`WM_NCCALCSIZE` always gives the client area the whole window, otherwise Windows 10
-leaves a strip of non-client area nobody paints: the notorious vertical band that appears
-on the left edge after you drag the window and never goes away.
-
-**A window that got lost can be found.** `.center()` only knows the primary monitor, and
-people with two screens are usually looking at the other one — the window and its taskbar
-button both go somewhere invisible, which is indistinguishable from "it never launched".
-So the window is placed on whichever monitor the cursor is on.
-
-**Two watchdogs** (`lib.rs`). "It opens blank" and "it hangs on open" are the two failures
-a user cannot describe and we cannot see. The first is caught by the UI-mounted signal plus
-asset-request counters ("0 served" and "12 served, 1 missing" are completely different
-bugs). The second is caught by pinging the event loop from a plain thread: whether those
-lines are in the log separates "the Rust side stopped" from "the webview wedged".
-
-**The UI ships separately** (`ui_assets.rs`). It is served over a custom protocol, so a
-`frontend/` directory next to the exe replaces the bundled copy without rebuilding the
-binary. UI-only patches can therefore be tiny.
-
-**Settings do not get lost** (`config.rs`). Atomic writes (temp file + rename); a file that
-fails to parse is renamed aside rather than overwritten; keys added by an upgrade are
-filled from defaults instead of reading back null.
-
-## Starting a new product from this
-
-1. Copy the repository. Change `name` in `package.json`, `<title>` in `index.html`, and
-   `port` in `vite.config.ts` (each product needs its own port, or WebView2's per-port
-   cache will bleed between them).
-2. Six places in the shell need your product's details; all are commented:
-
-   | File | What to change |
+   | Where | What |
    | --- | --- |
-   | `src-tauri/tauri.conf.json` | `productName` / `identifier` / `devUrl` port |
+   | `src-tauri/tauri.conf.json` | `productName`, `identifier`, `devUrl` port |
    | `src-tauri/src/lib.rs` | `APP_TITLE` |
-   | `src-tauri/src/paths.rs` | `ROOT_MARKERS` — pick a file that always ships |
-   | `src-tauri/src/autostart.rs` | `VALUE_NAME`, and **never change it after release** |
-   | `src-tauri/src/config.rs` | add your keys to `defaults()` |
+   | `src-tauri/src/paths.rs` | `ROOT_MARKERS`: pick a file that always ships with the product |
+   | `src-tauri/src/autostart.rs` | `VALUE_NAME`; never change it after release |
+   | `src-tauri/src/config.rs` | add the product's own keys in `defaults()` |
    | `src-tauri/icons/` | `npx tauri icon your-logo.png -o src-tauri/icons` |
 
-3. Delete `src/pages/` and write your own.
-4. Delete the `demo` node from the locale packs; keep `ui` and `locale`.
-5. Edit `createNav` in `src/App.tsx` — its order is what page-transition direction is
-   derived from (lower sidebar entries push in from below).
-6. Replace `AppBar`'s `brand`; for a top-tab layout, use `TitleBar` instead.
-
-## About the comments
-
-The source is heavily commented in Chinese, and most comments explain why something cannot be rewritten the more obvious-looking way. They are not chatter — each one stands on a bug that already happened: a knob that lagged behind the cursor, a seam at the window edge during page transitions, a segment thumb stuck at the old language's width, a help mark that toggled the switch it was explaining.
-
-Deleting them would not shorten the code by much. It would just make the next person step
-on the same rakes. Several passages in `window_watch.rs` say "this used to do X — do not
-put it back"; those cost the most to learn.
+4. Keep only `ui` and `locale` in the locale packs; `demo` belongs to the gallery.
+5. List the pages in `createNav` in `src/App.tsx`. The order sets the direction of the page transition.
 
 ## Licence
 

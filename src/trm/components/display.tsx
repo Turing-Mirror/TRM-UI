@@ -102,7 +102,7 @@ export function IconBtn({ icon, label, onClick, active = false, size = 18 }: { i
       title={label}
       onClick={onClick}
       className={[
-        // 图标按钮没有底：悬停、选中都只改图标本身的颜色，见 docs/patterns.md
+        // 图标按钮没有底：悬停、选中都只改图标本身的颜色，见 src/pages/interactionRules.ts
         "w-8 h-8 grid place-items-center rounded-[var(--rs)] border-0 bg-transparent cursor-pointer transition-colors",
         active ? "text-[var(--accent)]" : "text-[var(--ink-muted)] hover:text-[var(--ink)]",
       ].join(" ")}

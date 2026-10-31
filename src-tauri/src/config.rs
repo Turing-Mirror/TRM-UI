@@ -28,7 +28,8 @@ pub fn defaults() -> Map<String, Value> {
     m.insert("wallpaper_path".into(), json!(""));
     m.insert("wallpaper_blur".into(), json!(40));
     m.insert("wallpaper_opacity".into(), json!(70));
-    // 关掉窗口时是收进托盘还是真的退出。
+    // 关掉窗口时是收进托盘还是真的退出。默认退出：点了关闭却还在后台运行，
+    // 用户会以为程序已经关了。要常驻托盘的产品，必须在界面上说清楚。
     m.insert("close_to_tray".into(), json!(false));
     m
 }

@@ -492,7 +492,8 @@
     "text": {
       "sub": "How interface text is written, with a wrong and a right example for each rule.",
       "wrong": "Wrong",
-      "right": "Right"
+      "right": "Right",
+      "source": "Source: {v}"
     }
   }
 }

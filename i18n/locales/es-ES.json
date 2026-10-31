@@ -492,7 +492,8 @@
     "text": {
       "sub": "Reglas de redacción de los textos de la interfaz, con un ejemplo incorrecto y uno correcto para cada una.",
       "wrong": "Incorrecto",
-      "right": "Correcto"
+      "right": "Correcto",
+      "source": "Origen: {v}"
     }
   }
 }
