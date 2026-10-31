@@ -70,7 +70,7 @@ src-tauri/               ← desktop shell
 
 ## Design stance
 
-- **Few boxes, few lines.** Areas are separated by background and space, not dividers or cards inside cards. The sidebar shares the content background; a tag is just a short coloured label — no pill, no dot.
+- **Few boxes, few lines.** Areas are separated by background and space, not dividers or cards inside cards. Interface text is written as complete sentences or "name: value" fields, never strung together with "·" or dashes (see `docs/patterns.md`). The sidebar shares the content background; a tag is just a short coloured label — no pill, no dot.
 - **Restrained colour.** One accent for the main action and selection; attention uses the system orange (`--warn`, text in `--warn-ink`) on an icon, a thin line or a single line of text, never as a filled block; red only for failure and deletion.
 - **Nothing appears or vanishes abruptly.** Dialogs, drawers, menus and notices play their exit before unmounting; pages and views have an entrance; large morphs use curves without overshoot, springs only for small moves.
 - **Switches overlap.** Between tabs, list and detail, or filter results, the old content fades out with a small step back while the new content rises from the direction of travel; hidden tabs stay mounted but don't re-render, so the indicator moves the instant you click.
