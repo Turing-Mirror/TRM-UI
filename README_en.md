@@ -4,6 +4,8 @@ Shared frontend foundation and reference design system for the Turing Mirror fam
 
 [简体中文](./README.md)
 
+For UI copy and translations, follow the [copywriting guide](docs/copywriting.md). AI contributors should start with [AGENTS.md](AGENTS.md).
+
 ---
 
 ## Why it exists

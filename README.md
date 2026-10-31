@@ -4,6 +4,8 @@
 
 [English](./README_en.md)
 
+文案规范见 [桌面软件文案原则与廉耻表](docs/copywriting.md)，AI 开发入口见 [AGENTS.md](AGENTS.md)。
+
 ---
 
 ## 为什么有它
