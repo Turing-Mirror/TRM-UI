@@ -17,7 +17,7 @@ export type Pair = readonly [wrong: string, right: string];
 export type Example = {
   /** 这组示范属于哪一类，例如「分隔点」。连续几组同类时只在第一组上显示。 */
   term?: Partial<Text>;
-  /** 示范出自哪里，例如「RVC Fabric：s.1db2e283ac」。真实条目才写。 */
+  /** 示范出自哪里，例如「RVC Fabric (s.1db2e283ac)」。真实条目才写。 */
   source?: string;
   /** 各语言的示范。没有当前语言的那组，页面上不显示。 */
   pairs: Partial<Record<LocaleCode, Pair>>;
