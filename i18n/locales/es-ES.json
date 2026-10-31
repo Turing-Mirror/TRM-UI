@@ -101,7 +101,9 @@
       "next": "Siguiente",
       "skip": "Omitir este paso",
       "finish": "Terminar",
-      "close": "No volver a mostrar"
+      "close": "No volver a mostrar",
+      "noticeWait": "Podrá continuar en {n} s",
+      "noticeOk": "Entendido"
     },
     "errorNote": {
       "show": "Ver detalles",
@@ -362,7 +364,13 @@
         "three": "Probar"
       },
       "stepBody": "Cada paso hace una sola cosa; pulsa Siguiente al terminar.",
-      "resume": "Continuar la guía"
+      "resume": "Continuar la guía",
+      "noticeTitle": "Antes de empezar",
+      "notice1": "Informe de los problemas en la página de incidencias.",
+      "notice2": "Genere un paquete de diagnóstico y adjúntelo antes de enviar.",
+      "noticeLink": "Incidencias",
+      "connected": "Dispositivo conectado",
+      "template": "Plantilla"
     },
     "set": {
       "sub": "Tres tipos de ajustes: apariencia, generales y atajos. Etiquetas a la izquierda, controles a la derecha y notas debajo. Un cambio que requiere reinicio muestra un aviso arriba.",

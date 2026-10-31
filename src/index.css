@@ -212,6 +212,12 @@ option {
  * 位移，看上去就是「左边也冒出一根上下滚动条」。
  *
  * 键盘、滚轮、触控板、拖动全部不受影响；被隐藏的只有那根指示条。 */
+/* 焦点环只给键盘操作（lib/inputModality.ts）：最近一次输入来自鼠标或触控时不画。
+ * 窗口切回来、弹窗关闭把焦点还给按钮时，WebView2 会给点过的按钮误画焦点环。 */
+html[data-input="pointer"] :focus-visible {
+  outline: none !important;
+}
+
 * {
   scrollbar-width: none; /* Firefox / 新版 Chromium */
   -ms-overflow-style: none; /* 老 Edge */

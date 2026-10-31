@@ -21,6 +21,9 @@ import {
   useSnapDrag,
   stagger,
   Icon,
+  Toggle,
+  Select,
+  Field,
   useI18n,
   type CommentItem,
   type SnapPos,
@@ -55,6 +58,10 @@ export function InteractionPage() {
   const [filter, setFilter] = useState<"x" | "y" | "z">("x");
   const [items, setItems] = useState<CommentItem[]>(() => seed(t));
   const [wizard, setWizard] = useState<{ open: boolean; step: string; pill: boolean }>({ open: false, step: "one", pill: false });
+  // 引导的「真实状态」：演示里由步骤里的控件改变，产品里来自设备、文件、任务状态。
+  const [connected, setConnected] = useState(false);
+  const [template, setTemplate] = useState("");
+  const [noticeDone, setNoticeDone] = useState(false);
   const [nudge, setNudge] = useState(false);
   const dock = useSidePanel("demo.dock", { def: 160, min: 100, max: 300 });
 
@@ -162,7 +169,38 @@ export function InteractionPage() {
         onStep={(step) => setWizard((w) => ({ ...w, step }))}
         onMinimize={() => setWizard((w) => ({ ...w, open: false, pill: true }))}
         onFinish={() => setWizard({ open: false, step: "one", pill: false })}
-        steps={(["one", "two", "three"] as const).map((id, i) => ({ id, title: t(STEP_KEYS[id]), done: i === 0, body: <p className="m-0 text-[13px] text-[var(--help)] leading-relaxed">{t("demo.inter.stepBody")}</p> }))}
+        notice={noticeDone ? undefined : {
+          title: t("demo.inter.noticeTitle"),
+          body: <ol className="m-0 pl-5 list-decimal flex flex-col gap-3"><li>{t("demo.inter.notice1")}</li><li>{t("demo.inter.notice2")}</li></ol>,
+          actions: <Btn onClick={() => undefined}>{t("demo.inter.noticeLink")}</Btn>,
+          seconds: 3,
+          onAck: () => setNoticeDone(true),
+        }}
+        steps={[
+          {
+            id: "one",
+            title: t(STEP_KEYS.one),
+            done: connected,
+            body: (
+              <div className="flex flex-col gap-4">
+                <p className="m-0 text-[13px] text-[var(--help)] leading-relaxed">{t("demo.inter.stepBody")}</p>
+                <Toggle checked={connected} onChange={setConnected} label={t("demo.inter.connected")} />
+              </div>
+            ),
+          },
+          {
+            id: "two",
+            title: t(STEP_KEYS.two),
+            done: template !== "",
+            body: (
+              <Field
+                label={t("demo.inter.template")}
+                control={<Select full value={template} onChange={setTemplate} options={[{ id: "", label: "—" }, { id: "a", label: "A" }, { id: "b", label: "B" }]} />}
+              />
+            ),
+          },
+          { id: "three", title: t(STEP_KEYS.three), body: <p className="m-0 text-[13px] text-[var(--help)] leading-relaxed">{t("demo.inter.stepBody")}</p> },
+        ]}
       />
       {wizard.pill && !wizard.open ? <WizardPill label={t("demo.inter.resume")} onOpen={() => setWizard((w) => ({ ...w, open: true, pill: false }))} onClose={() => setWizard({ open: false, step: "one", pill: false })} /> : null}
     </PagePad>

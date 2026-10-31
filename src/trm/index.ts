@@ -17,6 +17,7 @@ export { ErrorBoundary } from "./components/ErrorBoundary";
 
 export { createNav, type Nav, type NavDef } from "./lib/nav";
 export { copyText } from "./lib/clipboard";
+export { trackInputModality } from "./lib/inputModality";
 export {
   inHost,
   call as hostCall,
@@ -76,7 +77,7 @@ export { useModalKeys } from "./hooks/useModalKeys";
 export { PageTitle, TitleHost, TitleHostProvider, type TitleProps } from "./components/TitleSlot";
 export { SidePanel, PanelToggle, useSidePanel, type PanelState } from "./components/SidePanel";
 export { Comments, Avatar, type CommentItem, type Verdict } from "./components/Comments";
-export { Wizard, WizardPill, type WizardStep } from "./components/Wizard";
+export { Wizard, WizardPill, type WizardStep, type WizardNotice } from "./components/Wizard";
 export { Nudge } from "./components/Nudge";
 export { ErrorNote, splitErrorText } from "./components/ErrorNote";
 export { Ring, type RingSegment } from "./components/Ring";

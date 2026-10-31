@@ -1,8 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { I18nProvider, ErrorBoundary, hostLocaleStore, logToHost } from "./trm";
+import { I18nProvider, ErrorBoundary, hostLocaleStore, logToHost, trackInputModality } from "./trm";
 import { App } from "./App";
 import "./index.css";
+
+trackInputModality();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

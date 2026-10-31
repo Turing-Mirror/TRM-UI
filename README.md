@@ -43,7 +43,7 @@ src/trm/                 ← 界面模板本体，可以整个复制走
 │   ├── Icon.tsx         线条图标
 │   └── ErrorBoundary.tsx
 ├── i18n/                八语言，构建时打包，同步切换；按文件发现语言包
-└── lib/                 nav / clipboard / appearance / host / snapDrag（可拖动、松手贴边的浮动按钮）/ hotkeys（组合键的写法与比对）/ mouseNav（鼠标侧键前进后退）
+└── lib/                 nav / clipboard / inputModality（焦点环只给键盘）/ appearance / host / snapDrag（可拖动、松手贴边的浮动按钮）/ hotkeys（组合键的写法与比对）/ mouseNav（鼠标侧键前进后退）
 
 src/index.css            设计令牌 + 三态主题 + 动画  ← 核心资产
 docs/tokens.md           令牌速查

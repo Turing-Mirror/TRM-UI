@@ -101,7 +101,9 @@
       "next": "Next",
       "skip": "Skip this step",
       "finish": "Finish",
-      "close": "Don’t show again"
+      "close": "Don’t show again",
+      "noticeWait": "Continue in {n} s",
+      "noticeOk": "I understand"
     },
     "errorNote": {
       "show": "Show details",
@@ -362,7 +364,13 @@
         "three": "Try it"
       },
       "stepBody": "Each step does one thing; choose Next when it’s done.",
-      "resume": "Continue the guide"
+      "resume": "Continue the guide",
+      "noticeTitle": "Before you start",
+      "notice1": "Report problems on the issue page.",
+      "notice2": "Generate a diagnostic package and attach it before you submit.",
+      "noticeLink": "Issues",
+      "connected": "Device connected",
+      "template": "Template"
     },
     "set": {
       "sub": "Three kinds of settings: appearance, general and shortcuts. Labels on the left, controls on the right, notes below. A change that needs a restart shows a bar at the top.",

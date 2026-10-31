@@ -101,7 +101,9 @@
       "next": "Suivant",
       "skip": "Passer cette étape",
       "finish": "Terminer",
-      "close": "Ne plus afficher"
+      "close": "Ne plus afficher",
+      "noticeWait": "Vous pourrez continuer dans {n} s",
+      "noticeOk": "J’ai compris"
     },
     "errorNote": {
       "show": "Afficher les détails",
@@ -362,7 +364,13 @@
         "three": "Essayer"
       },
       "stepBody": "Chaque étape fait une seule chose ; cliquez sur Suivant une fois terminé.",
-      "resume": "Reprendre le guide"
+      "resume": "Reprendre le guide",
+      "noticeTitle": "Avant de commencer",
+      "notice1": "Signalez les problèmes sur la page des incidents.",
+      "notice2": "Générez un paquet de diagnostic et joignez-le avant l’envoi.",
+      "noticeLink": "Incidents",
+      "connected": "Appareil connecté",
+      "template": "Modèle"
     },
     "set": {
       "sub": "Trois types de réglages : apparence, général et raccourcis. Libellés à gauche, commandes à droite, notes en dessous. Un changement qui demande un redémarrage affiche une barre en haut.",
