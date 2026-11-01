@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { RuleBlock } from "./RuleList";
 import { INTERACTION_RULES } from "./interactionRules";
+import { RULE_DEMOS } from "./ruleDemos";
 import {
   PagePad,
   PageHead,
@@ -10,8 +11,8 @@ import {
   Tabs,
   Panes,
   Pane,
-  Swap,
   Filters,
+  FlowList,
   Comments,
   Wizard,
   WizardPill,
@@ -21,7 +22,6 @@ import {
   SidePanel,
   useSidePanel,
   useSnapDrag,
-  stagger,
   Icon,
   Toggle,
   Select,
@@ -73,18 +73,19 @@ export function InteractionPage() {
     <PagePad>
       <PageHead title={t("nav.interaction")} sub={t("demo.inter.sub")} />
 
-      {INTERACTION_RULES.map((rule) => (
-        <RuleBlock key={rule.id} rule={rule} />
-      ))}
+      {INTERACTION_RULES.map((rule) => {
+        const Demo = RULE_DEMOS[rule.id];
+        return <RuleBlock key={rule.id} rule={rule} demo={Demo ? <Demo /> : undefined} />;
+      })}
 
-      <Block title={t("demo.inter.panes")}>
+      <Block title={t("demo.inter.panes")} note={t("demo.inter.panesNote")}>
         <Tabs value={tab} onChange={setTab} options={TABS.map((id) => ({ id, label: t(TAB_KEYS[id]) }))} />
-        <Panes value={tab} order={TABS}>
+        <Panes value={tab} order={TABS} className="mt-4">
           {TABS.map((id, k) => (
             <Pane key={id} id={id}>
-              <div className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-3">
-                {Array.from({ length: 6 }, (_, i) => (
-                  <div key={i} className="rise aspect-[4/3] rounded-[var(--r)]" style={{ ...stagger(i), background: `var(--art-${((i + k) % 6) + 1})` }} />
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-3">
+                {Array.from({ length: 3 + k * 2 }, (_, i) => (
+                  <div key={i} className="aspect-[4/3] rounded-[var(--r)]" style={{ background: `var(--art-${((i + k) % 6) + 1})` }} />
                 ))}
               </div>
             </Pane>
@@ -92,13 +93,18 @@ export function InteractionPage() {
         </Panes>
         <div className="mt-6">
           <Filters value={filter} onChange={setFilter} options={(["x", "y", "z"] as const).map((id) => ({ id, label: t(FILTER_KEYS[id]) }))} />
-          <Swap k={filter} className="mt-3">
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-3">
-              {Array.from({ length: filter === "x" ? 4 : filter === "y" ? 2 : 1 }, (_, i) => (
-                <div key={i} className="rise h-16 rounded-[var(--r)] bg-[color-mix(in_srgb,var(--ink)_5%,transparent)]" style={stagger(i)} />
-              ))}
-            </div>
-          </Swap>
+          <div className="mt-3 bg-[var(--group)] rounded-[var(--r)] px-4 py-1">
+            <FlowList
+              items={Array.from({ length: filter === "x" ? 4 : filter === "y" ? 2 : 1 }, (_, i) => i)}
+              keyOf={(i) => String(i)}
+              render={(i) => (
+                <div className="flex items-center gap-3 py-2.5 text-[13px]">
+                  <span className="w-7 h-7 rounded-[8px]" style={{ background: `var(--art-${i + 1})` }} />
+                  {t("demo.rules.item", { n: i + 1 })}
+                </div>
+              )}
+            />
+          </div>
         </div>
       </Block>
 

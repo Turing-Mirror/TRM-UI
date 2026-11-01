@@ -16,8 +16,9 @@ import { HelpMark } from "./ui";
 
 const TIP = "这一行说明文字";
 
+/** 正在显示的说明。收起中的那一个（正在淡出）不算。 */
 function tooltipEl(): HTMLElement | null {
-  return document.querySelector("[role=tooltip]");
+  return document.querySelector("[role=tooltip]:not(.tooltip-out)");
 }
 
 function pointerOver(el: Element): void {

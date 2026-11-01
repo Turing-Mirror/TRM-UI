@@ -2,10 +2,11 @@
  * 内容里反复出现的小件：标签、说明行、应用标、进度条、小节、空状态、页内分栏、翻页。
  * 控件在 ui.tsx 与 controls.tsx，这里管「内容怎么排」。
  */
-import { startTransition, useState, type ReactNode } from "react";
+import { startTransition, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { useI18n } from "../i18n";
 import { Icon, isIconName, type IconName } from "./Icon";
-import { sliderStyle, useSlider } from "./motion";
+import { FLOW_MS, curve, sliderStyle, useSlider } from "./motion";
+import { hoverInk, useHoverStyle } from "../lib/hoverStyle";
 
 export type Tone = "ok" | "warn" | "muted" | "accent" | "danger";
 
@@ -180,8 +181,12 @@ export function Tabs<T extends string>({
   );
 }
 
-/** 列表上方的一排筛选。比分栏轻一级，选中的一项底色略深，换项时底色滑过去。 */
+/**
+ * 列表上方的一排筛选。比分栏轻一级。默认（soft）选中的一项底色略深，换项时底色滑过去；
+ * plain 样式下不画底，选中项换成强调色。见 lib/hoverStyle。
+ */
 export function Filters<T extends string>({ value, options, onChange }: { value: T; options: { id: T; label: string; count?: number }[]; onChange: (v: T) => void }) {
+  const look = useHoverStyle();
   const [shown, setShown] = useState(value);
   const [lastValue, setLastValue] = useState(value);
   if (value !== lastValue) {
@@ -191,7 +196,7 @@ export function Filters<T extends string>({ value, options, onChange }: { value:
   const { box, pos, armed, jump } = useSlider<HTMLDivElement>();
   return (
     <div ref={box} className="relative flex items-center gap-1 flex-wrap" role="radiogroup">
-      {pos ? <span aria-hidden data-armed={armed || undefined} className="slider rounded-[var(--rs)] bg-[color-mix(in_srgb,var(--ink)_7%,transparent)]" style={sliderStyle(pos, "box")} /> : null}
+      {pos && look === "soft" ? <span aria-hidden data-armed={armed || undefined} className="slider rounded-[var(--rs)] bg-[color-mix(in_srgb,var(--ink)_7%,transparent)]" style={sliderStyle(pos, "box")} /> : null}
       {options.map((o) => (
         <button
           key={o.id}
@@ -204,7 +209,7 @@ export function Filters<T extends string>({ value, options, onChange }: { value:
             setShown(o.id);
             startTransition(() => onChange(o.id));
           }}
-          className={`relative h-7 px-2.5 inline-flex items-center gap-1.5 rounded-[var(--rs)] border-0 cursor-pointer text-[12.5px] bg-transparent transition-colors duration-200 ${o.id === shown ? "text-[var(--ink)] font-medium" : "text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]"}`}
+          className={`relative h-7 px-2.5 inline-flex items-center gap-1.5 rounded-[var(--rs)] border-0 cursor-pointer text-[12.5px] bg-transparent transition-colors duration-200 ${o.id === shown ? (look === "plain" ? "text-[var(--accent)] font-medium" : "text-[var(--ink)] font-medium") : `text-[var(--ink-muted)] ${hoverInk(look)}`}`}
         >
           {o.label}
           {o.count !== undefined ? <span className="text-[11.5px] text-[var(--meta)] font-normal tabular-nums">{o.count}</span> : null}
@@ -214,34 +219,76 @@ export function Filters<T extends string>({ value, options, onChange }: { value:
   );
 }
 
-/** 翻页。只有一页时不显示；页码多时中间用省略号。 */
+/**
+ * 翻页。只有一页时不显示；页码多时中间用省略号。
+ * 换页时当前页的标记滑过去；留下的页码滑到新位置，新出现的页码淡入，离开的页码原地淡出，整排不跳。
+ */
 export function Pager({ page, pages, onChange }: { page: number; pages: number; onChange: (p: number) => void }) {
   const { t } = useI18n();
+  const look = useHoverStyle();
+  const { box, pos, armed } = useSlider<HTMLDivElement>();
+  const lefts = useRef<Map<string, { x: number; label: string }> | null>(null);
+  const [ghosts, setGhosts] = useState<{ key: string; x: number; label: string; seq: number }[]>([]);
+  const list = pageList(page, pages);
+  // 省略号按它前面那个页码取名，前后页码不变时它也算同一个
+  const keyed = list.map((p, i) => ({ p, key: p === null ? `gap-${list[i - 1]}` : `p${p}` }));
+  useLayoutEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    const now = new Map<string, { x: number; label: string }>();
+    const easing = curve("--ease-nav");
+    const quiet = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.querySelectorAll<HTMLElement>(":scope > [data-k]").forEach((node) => {
+      const key = node.dataset.k ?? "";
+      now.set(key, { x: node.offsetLeft, label: node.textContent ?? "" });
+      const was = lefts.current?.get(key);
+      if (quiet || !lefts.current) return;
+      if (!was) node.animate([{ opacity: 0, transform: "scale(0.86)" }, { opacity: 1, transform: "none" }], { duration: FLOW_MS, easing });
+      else if (was.x !== node.offsetLeft) node.animate([{ transform: `translate3d(${was.x - node.offsetLeft}px, 0, 0)` }, { transform: "none" }], { duration: FLOW_MS, easing });
+    });
+    const gone = lefts.current ? [...lefts.current].filter(([k]) => !now.has(k)) : [];
+    lefts.current = now;
+    if (gone.length && !quiet) setGhosts(gone.map(([key, v]) => ({ key, ...v, seq: Date.now() })));
+  }, [page, pages, box]);
+  useLayoutEffect(() => {
+    if (!ghosts.length) return;
+    const id = window.setTimeout(() => setGhosts([]), FLOW_MS);
+    return () => window.clearTimeout(id);
+  }, [ghosts]);
   if (pages <= 1) return null;
-  const btn = "h-8 min-w-8 px-2 grid place-items-center rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[13px] transition-colors disabled:opacity-30 disabled:cursor-default";
-  const hover = "hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]";
+  const btn = "relative h-8 min-w-8 px-2 grid place-items-center rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[13px] tabular-nums transition-colors disabled:opacity-30 disabled:cursor-default";
+  const hover = hoverInk(look);
   return (
     <nav aria-label={t("ui.pager.label")} className="mt-8 flex items-center justify-center gap-1">
       <button type="button" aria-label={t("ui.pager.prev")} disabled={page <= 1} onClick={() => onChange(page - 1)} className={`${btn} text-[var(--ink-muted)] ${hover}`}>
         <Icon name="back" size={15} />
       </button>
-      {pageList(page, pages).map((p, i) =>
-        p === null ? (
-          <span key={`gap-${i}`} aria-hidden className="h-8 min-w-6 grid place-items-center text-[13px] text-[var(--meta)]">
-            …
+      <div ref={box} className="relative flex items-center gap-1">
+        {pos && look === "soft" ? <span aria-hidden data-armed={armed || undefined} className="slider rounded-[var(--rs)] bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]" style={sliderStyle(pos, "box")} /> : null}
+        {keyed.map(({ p, key }) =>
+          p === null ? (
+            <span key={key} data-k={key} aria-hidden className="h-8 min-w-6 grid place-items-center text-[13px] text-[var(--meta)]">
+              …
+            </span>
+          ) : (
+            <button
+              key={key}
+              data-k={key}
+              type="button"
+              aria-current={p === page ? "page" : undefined}
+              onClick={() => onChange(p)}
+              className={`${btn} ${p === page ? (look === "plain" ? "text-[var(--accent)] font-medium" : "text-[var(--ink)] font-medium") : `text-[var(--ink-muted)] ${hover}`}`}
+            >
+              {p}
+            </button>
+          ),
+        )}
+        {ghosts.map((g) => (
+          <span key={`${g.key}-${g.seq}`} aria-hidden className="fade-out absolute top-0 h-8 min-w-8 px-2 grid place-items-center text-[13px] tabular-nums text-[var(--ink-muted)] pointer-events-none" style={{ left: g.x }}>
+            {g.label}
           </span>
-        ) : (
-          <button
-            key={p}
-            type="button"
-            aria-current={p === page ? "page" : undefined}
-            onClick={() => onChange(p)}
-            className={`${btn} ${p === page ? "text-[var(--ink)] font-medium bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]" : `text-[var(--ink-muted)] ${hover}`}`}
-          >
-            {p}
-          </button>
-        ),
-      )}
+        ))}
+      </div>
       <button type="button" aria-label={t("ui.pager.next")} disabled={page >= pages} onClick={() => onChange(page + 1)} className={`${btn} text-[var(--ink-muted)] ${hover}`}>
         <Icon name="chevron" size={15} />
       </button>

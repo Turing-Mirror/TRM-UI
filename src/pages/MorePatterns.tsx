@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Block, Btn, Ring, PickList, Swap, SearchBox, Slider, stagger, useI18n, useNotify, type PickItem } from "../trm";
+import { Block, Btn, Ring, PickList, FlowList, Roll, SearchBox, Slider, Side, SideItem, stagger, useI18n, useNotify, type PickItem } from "../trm";
 
 const GB = 1024 ** 3;
 const MB = 1024 ** 2;
@@ -39,26 +39,43 @@ export function ListEditPattern() {
     return () => window.clearInterval(id);
   }, [playing]);
   const shown = ENTRIES.filter((e) => (!src || e.src === src) && (!q || t(e.key).includes(q)));
-  const cur = ENTRIES.find((e) => e.id === sel);
+  const cur = ENTRIES.find((e) => e.id === sel && shown.some((x) => x.id === e.id));
+  // 选中项被筛掉后，编辑栏先照原样收回，收完再换成提示
+  const [shownSel, setShownSel] = useState<(typeof ENTRIES)[number] | null>(null);
+  if (cur && shownSel !== cur) setShownSel(cur);
+  useEffect(() => {
+    if (cur || !shownSel) return;
+    const id = window.setTimeout(() => setShownSel(null), 420);
+    return () => window.clearTimeout(id);
+  }, [cur, shownSel]);
   const now = playing ? ENTRIES.find((e) => e.id === playing.id) : undefined;
   return (
     <Block title={t("demo.more.board")} note={t("demo.more.boardSub")}>
       <div className="grid grid-cols-[150px_minmax(0,1fr)_minmax(220px,280px)] gap-5 items-start max-[900px]:grid-cols-[minmax(0,1fr)_minmax(200px,240px)]">
-        <aside className="flex flex-col gap-0.5 max-[900px]:hidden">
-          {["", ...SOURCES].map((s) => (
-            <button key={s || "all"} type="button" aria-pressed={src === s} onClick={() => { setSrc(s); setSel(""); }} className={`flex items-center px-2.5 py-1.5 rounded-[var(--rs)] border-0 cursor-pointer text-left text-[13px] transition-colors ${src === s ? "bg-[color-mix(in_srgb,var(--ink)_7%,transparent)] text-[var(--ink)] font-medium" : "bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]"}`}>
-              <span className="truncate">{s ? t(SOURCE_KEYS[s as keyof typeof SOURCE_KEYS]) : t("demo.more.all")}</span>
-              <span className="ml-auto text-[11px] text-[var(--meta)] font-normal tabular-nums">{ENTRIES.filter((e) => !s || e.src === s).length}</span>
-            </button>
-          ))}
-        </aside>
+        <div className="max-[900px]:hidden [&>aside]:w-full [&>aside]:mr-0">
+          <Side>
+            {["", ...SOURCES].map((s) => (
+              <SideItem
+                key={s || "all"}
+                on={src === s}
+                label={s ? t(SOURCE_KEYS[s as keyof typeof SOURCE_KEYS]) : t("demo.more.all")}
+                count={ENTRIES.filter((e) => !s || e.src === s).length}
+                onClick={() => setSrc(s)}
+              />
+            ))}
+          </Side>
+        </div>
         <section className="min-w-0">
           <SearchBox value={q} onChange={setQ} />
           <div className="mt-1.5 px-3 text-[11.5px] text-[var(--meta)] text-right">{t("demo.more.dbl")}</div>
-          <Swap k={src} className="mt-1">
-            <div className="bg-[var(--group)] rounded-[var(--r)] p-1.5">
-              {shown.map((e) => (
-                <button key={e.id} type="button" aria-pressed={sel === e.id} onClick={() => setSel(e.id)} onDoubleClick={() => setPlaying({ id: e.id, at: 0 })} className={`w-full flex items-center gap-3 px-2.5 py-2 rounded-[var(--rs)] border-0 cursor-pointer text-left transition-colors ${sel === e.id ? "bg-[var(--accent-soft)]" : "bg-transparent hover:bg-[color-mix(in_srgb,var(--ink)_5%,transparent)]"}`}>
+          {/* 换来源时底板不动：留下的条目滑到新位置，不属于这个来源的收拢 */}
+          <div className="mt-1 bg-[var(--group)] rounded-[var(--r)] px-1.5 py-1">
+            <FlowList
+              items={shown}
+              keyOf={(e) => e.id}
+              itemClassName="py-0.5"
+              render={(e) => (
+                <button type="button" aria-pressed={sel === e.id} onClick={() => setSel(e.id)} onDoubleClick={() => setPlaying({ id: e.id, at: 0 })} className={`w-full flex items-center gap-3 px-2.5 py-2 rounded-[var(--rs)] border-0 cursor-pointer text-left transition-colors ${sel === e.id ? "bg-[var(--accent-soft)]" : "bg-transparent hover:bg-[color-mix(in_srgb,var(--ink)_5%,transparent)]"}`}>
                   <span className="w-7 flex-none text-right tabular-nums text-[12px] text-[var(--meta)]">{e.no ?? ""}</span>
                   <span className={`min-w-0 truncate text-[13px] ${sel === e.id ? "text-[var(--accent)] font-medium" : ""}`}>{t(e.key)}</span>
                   {playing?.id === e.id ? (
@@ -68,22 +85,23 @@ export function ListEditPattern() {
                   ) : null}
                   <span className="ml-auto text-[11px] text-[var(--meta)] tabular-nums">{e.sec.toFixed(1)} s</span>
                 </button>
-              ))}
-            </div>
-          </Swap>
+              )}
+            />
+          </div>
         </section>
         <aside className="min-w-0">
-          <Swap k={sel}>
-            {cur ? (
-              <div className="bg-[var(--group)] rounded-[var(--r)] p-4 flex flex-col gap-3">
-                <div className="text-[15px] font-semibold truncate">{t(cur.key)}</div>
-                <Btn primary onClick={() => setPlaying({ id: cur.id, at: 0 })}>{t("demo.more.run")}</Btn>
-                <p className="m-0 text-[12px] text-[var(--help)] leading-relaxed">{t("demo.more.editNote")}</p>
+          {/* 第一次选中时编辑栏从上往下拉开；之后换选中项，只有标题滚动换字，底板与按钮不动 */}
+          {shownSel ? (
+            <div className={`${cur ? "curtain-in" : "curtain-out"} bg-[var(--group)] rounded-[var(--r)] p-4 flex flex-col gap-3`}>
+              <div className="text-[15px] font-semibold">
+                <Roll value={t((cur ?? shownSel).key)} />
               </div>
-            ) : (
-              <p className="m-0 py-2 text-[12.5px] text-[var(--meta)] leading-relaxed">{t("demo.more.editEmpty")}</p>
-            )}
-          </Swap>
+              <Btn primary onClick={() => setPlaying({ id: (cur ?? shownSel).id, at: 0 })}>{t("demo.more.run")}</Btn>
+              <p className="m-0 text-[12px] text-[var(--help)] leading-relaxed">{t("demo.more.editNote")}</p>
+            </div>
+          ) : (
+            <p className="m-0 py-2 text-[12.5px] text-[var(--meta)] leading-relaxed fade-in">{t("demo.more.editEmpty")}</p>
+          )}
         </aside>
       </div>
       <div className="mt-4 -mx-2 px-2 py-2.5 flex items-center gap-4 flex-wrap shadow-[0_-1px_0_var(--line)]">

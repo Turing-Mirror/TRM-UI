@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Block, Group, useI18n } from "../trm";
 import type { Example, Rule } from "./rules";
 
@@ -42,8 +43,8 @@ function ExampleRow({ e, term }: { e: Example; term: string }) {
   );
 }
 
-/** 一条规则：标题、说明、编号原则、当前语言的示范、补充说明。 */
-export function RuleBlock({ rule }: { rule: Rule }) {
+/** 一条规则：标题、说明、实物示范、编号原则、当前语言的文字示范、补充说明。 */
+export function RuleBlock({ rule, demo }: { rule: Rule; demo?: ReactNode }) {
   const { locale } = useI18n();
   const shown = rule.examples.filter((e) => e.pairs[locale]);
   return (
@@ -51,6 +52,7 @@ export function RuleBlock({ rule }: { rule: Rule }) {
       {rule.lead?.map((p) => (
         <p key={p[locale]} className="text-[12.5px] text-[var(--help)] leading-relaxed m-0 mb-3">{p[locale]}</p>
       ))}
+      {demo}
       {rule.list?.length ? (
         <Group>
           <ol className="list-decimal m-0 py-2 pl-5 flex flex-col gap-2.5 text-[13.5px] leading-relaxed">

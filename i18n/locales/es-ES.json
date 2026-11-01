@@ -30,7 +30,7 @@
       "quit": "Salir"
     },
     "error": {
-      "title": "La interfaz ha fallado",
+      "title": "La interfaz ha encontrado un error",
       "safe": "Tus archivos, ajustes y tareas en curso no se han visto afectados. Prueba primero a reintentar; si no funciona, prueba las demás opciones en orden.",
       "retry": "Reintentar",
       "home": "Volver al inicio",
@@ -38,7 +38,7 @@
       "resetUi": "Restaurar la interfaz predeterminada",
       "resetNote": "Restaurar la interfaz solo recupera el aspecto y la disposición predeterminados. No se elimina ningún dato.",
       "details": "Detalles del error",
-      "hint": "Al informar del problema, incluye el texto siguiente.",
+      "hint": "Al informar del problema, adjunte los detalles del error que aparecen abajo.",
       "copy": "Copiar detalles del error",
       "copied": "Copiado",
       "copyFailed": "No se pudo copiar. Selecciona el texto y cópialo manualmente"
@@ -124,25 +124,26 @@
     "motion": "Movimiento",
     "patterns": "Patrones",
     "interaction": "Interacción",
-    "text": "Redacción",
-    "settings": "Ajustes"
+    "text": "Textos",
+    "settings": "Ajustes",
+    "history": "Historial"
   },
   "demo": {
     "overview": {
       "title": "TRM UI",
       "sub": "Marco de aplicación de escritorio y galería de componentes",
       "whatTitle": "Qué es esto",
-      "whatBody": "Un conjunto de tokens de diseño, una biblioteca de componentes, i18n en ocho idiomas, un armazón de aplicación con barra lateral y una configuración de compilación lista para usar.\nEl directorio src/trm/ no depende de código de producto y se puede copiar tal cual.",
+      "whatBody": "TRM UI incluye tokens de diseño, componentes básicos, textos de interfaz en ocho idiomas, un armazón de aplicación con barra lateral y una configuración de proyecto lista para ejecutarse.\nLa carpeta src/trm/ no depende de ningún código de producto y se puede copiar entera a un proyecto nuevo.",
       "whyTitle": "Por qué existe",
-      "whyBody": "Cada producto nuevo parte de la misma interfaz: los mismos tokens, los mismos componentes, el mismo movimiento.\nLas mejoras también vuelven aquí, en lugar de dispersarse en copias divergentes dentro de cada producto.",
+      "whyBody": "Cada producto nuevo parte de la misma interfaz, con los mismos tokens, componentes y movimientos.\nLas mejoras se hacen aquí y luego se sincronizan con cada producto, en lugar de cambiarse por separado en cada copia.",
       "ruleTitle": "Tres reglas firmes",
-      "rule1": "Todo color sale de un token. Un color escrito a mano siempre estará mal en el otro tema, y solo se nota cuando alguien lo cambia.",
-      "rule2": "Todo texto sale de un paquete de idioma. Los ocho se mantienen idénticos gracias a una comprobación en la compilación, no a la buena voluntad.",
-      "rule3": "src/trm/ no importa nada de fuera de sí mismo. En cuanto toca código del producto, la plantilla se degrada a «parte de un producto».",
+      "rule1": "Los colores salen solo de los tokens. Un color escrito a mano falla en el otro tema, y el problema solo se ve al cambiar de tema.",
+      "rule2": "Los textos de la interfaz salen solo de los paquetes de idioma. Una comprobación al compilar verifica que los ocho idiomas tengan la misma estructura.",
+      "rule3": "src/trm/ no importa código de fuera de la carpeta. En cuanto importa código de un producto, la plantilla pasa a formar parte de ese producto.",
       "themeLabel": "Tema",
-      "themeTip": "«Seguir al sistema» no escribe data-theme y se apoya en prefers-color-scheme; elegir claro u oscuro fija el atributo en <html>.",
+      "themeTip": "Con «Seguir al sistema», la interfaz cambia según el ajuste claro u oscuro del sistema.",
       "langLabel": "Idioma",
-      "langTip": "Los ocho paquetes se incluyen en la compilación, así que cambiar de idioma es un intercambio síncrono: no se ven las claves antes del texto."
+      "langTip": "Los ocho idiomas están integrados; los textos se actualizan en cuanto se cambia."
     },
     "theme": {
       "system": "Seguir al sistema",
@@ -151,32 +152,32 @@
     },
     "shell": {
       "title": "Shell de escritorio",
-      "web": "Esto es la vista previa web. Los botones de ventana, la bandeja y la configuración en disco necesitan el shell; en un navegador se degradan en silencio: no se dibujan, no fallan y no fingen funcionar.",
+      "web": "Esto es una vista previa web. Los botones de ventana, la bandeja y el guardado de ajustes requieren la aplicación de escritorio y no se muestran aquí.",
       "host": "Ejecutándose dentro del shell de escritorio.",
       "source": "Origen de la interfaz",
-      "sourceTip": "La interfaz se sirve por un protocolo propio, así que un directorio frontend/ junto al ejecutable puede sustituir la copia incluida. Sin mostrar esto, un parche mal aplicado es invisible: el usuario solo podrá decir «se estropeó tras la actualización».",
+      "sourceTip": "Origen de los archivos de la interfaz. Una carpeta frontend en la carpeta del programa sustituye a los archivos del instalador, lo que permite comprobar si un parche de interfaz se ha aplicado.",
       "autostart": "Iniciar con el sistema",
-      "autostartTip": "El registro es la fuente de verdad, no el archivo de configuración: la configuración lleva significado del producto, el arranque automático es un hecho de esta máquina. Mezclarlos hace que copiar la configuración a otro equipo muestre el interruptor activado sin que nada arranque. Solo Windows.",
+      "autostartTip": "El estado de inicio automático se lee del registro del sistema, no del archivo de ajustes, para que siga siendo correcto si los ajustes se copian a otro equipo. Solo Windows.",
       "search": "Buscar",
-      "searchTip": "Aquí va una búsqueda global",
+      "searchTip": "Aquí se conecta la búsqueda global.",
       "nav": "Navegación",
       "settings": "Ajustes",
       "running": "En curso",
       "taskA": "Exportar imágenes",
       "taskASub": "24 archivos",
       "taskB": "Convertir audio",
-      "taskBSub": "Clic para marcar como visto",
+      "taskBSub": "Haga clic para marcar como visto",
       "done": "Hecho",
       "sourceLoading": "Cargando"
     },
     "components": {
-      "sub": "Todo lo de abajo es un control real, no una captura.",
+      "sub": "Todos los controles siguientes se pueden manejar.",
       "buttons": "Botones",
-      "buttonsNote": "Un botón ocupado no puede limitarse a ponerse gris: el gris es un estado, los puntos en movimiento son el acuse de recibo. Sin ellos, «trabajando» y «no registró mi clic» se ven igual.",
+      "buttonsNote": "Mientras un botón trabaja muestra tres puntos en movimiento para confirmar que la acción se recibió y está en curso.",
       "fields": "Campos",
       "list": "Filas de lista",
       "segment": "Control segmentado",
-      "segmentNote": "Un solo tirador que se desliza, no un fondo distinto bajo cada botón. La diferencia está entre «el mismo objeto se movió» y «este se apagó y aquel se encendió»: lo segundo son dos parpadeos."
+      "segmentNote": "El segmento seleccionado se marca con un deslizador que se puede pulsar o arrastrar."
     },
     "btn": {
       "normal": "Normal",
@@ -187,35 +188,36 @@
     },
     "field": {
       "name": "Nombre visible",
-      "nameTip": "La marca de ayuda debe ser un botón que se trague su propio clic: suele vivir dentro de una etiqueta, y una etiqueta reenvía los clics al control que gobierna.",
+      "nameTip": "El signo de interrogación es un botón aparte: al pulsarlo se muestra la ayuda sin cambiar el ajuste.",
       "device": "Dispositivo de salida",
-      "deviceDesc": "Una opción guardada que ya no está en la lista permanece visible y lo indica: dibujar un cuadro vacío sería fingir que nunca se configuró.",
+      "deviceDesc": "Una opción guardada que ya no está disponible se sigue mostrando y se marca como no disponible.",
       "volume": "Volumen",
-      "volumeNote": "Mientras arrastras, el tirador se dibuja en la posición real del puntero sin transición; solo al soltar se desliza hasta el paso. Ese ajuste final es lo que te dice qué valor obtuviste.",
+      "volumeNote": "Al arrastrar, el control sigue al puntero; al soltar, se ajusta a la marca más cercana y muestra el valor real.",
       "enable": "Iniciar con el sistema"
     },
     "list": {
       "meta": "Agosto de 2026",
       "item1": "Una fila desplegable",
-      "item1Desc": "Haz clic.",
-      "item1Body": "«Parece pulsable» y «es pulsable» deben coincidir. Esta fila solo tenía el estilo; nunca se conectó un onClick. La gente hizo clic cuatro veces, no pasó nada y concluyó que la aplicación estaba rota.\n\nAhora el estilo depende de si existe un onClick, no de un indicador clickable aparte.",
-      "item2": "A la derecha cabe cualquier cosa",
-      "item2Desc": "Botones, interruptores, indicadores de estado."
+      "item1Desc": "Haga clic para ver los detalles.",
+      "item1Body": "Una fila pulsable despliega su descripción al hacer clic y la pliega con otro clic. Ambos sentidos tienen una transición de altura.",
+      "item2": "Acciones a la derecha",
+      "item2Desc": "El lado derecho admite un botón, un interruptor o una etiqueta de estado."
     },
     "seg": {
       "a": "Primero",
       "b": "Segundo",
-      "c": "Tercero"
+      "c": "Tercero",
+      "d": "Cuarto"
     },
     "type": {
-      "sub": "El cuerpo es de 15px con interlineado 1,65. Los escalones de tamaño son fijos: no metas valores intermedios.",
+      "sub": "El texto principal mide 15 px con un interlineado de 1,65. Solo se usan los tamaños siguientes, sin valores intermedios.",
       "roleBody": "Cuerpo",
       "roleHelp": "Ayuda",
       "roleMeta": "Meta",
       "weight": "Grosor {v}"
     },
     "color": {
-      "sub": "Cambia a oscuro y míralo otra vez: cada muestra debe funcionar en ambos temas.",
+      "sub": "Cada color debe comprobarse en el tema claro y en el oscuro.",
       "groupCore": "Base",
       "groupInk": "Texto",
       "groupAccent": "Acento y estado",
@@ -223,7 +225,7 @@
       "groupArt": "Tonos de vista previa"
     },
     "motion": {
-      "sub": "La dirección del cambio de página sigue el orden de navegación. Pulsa algunas pestañas arriba y lo verás.",
+      "sub": "Curvas, nombres y demostraciones de cada movimiento. Todas las demostraciones se pueden manejar.",
       "curves": "Siete curvas",
       "easeNav": "Solo para cambios de página. Arranca rápido, termina largo y nunca se pasa: la capa de página va al ras del borde de la ventana, y pasarse deja una costura visible.",
       "spring": "Para elementos pequeños. Se pasa de largo, así que solo va en cosas que no tocan el borde de la ventana: el tirador del control segmentado, los paneles flotantes.",
@@ -235,25 +237,19 @@
       "springBouncy": "Rebote de un 8 %, solo para escalados pequeños",
       "flow": "Luz que fluye",
       "flowLabel": "Convertir audio",
-      "flowSub": "Terminado sin ver: solo pasa un destello",
+      "flowSub": "Una franja de luz recorre la parte inferior cuando una tarea ha terminado y aún no se ha visto",
       "done": "Hecho",
       "seen": "Visto",
-      "playground": "Curvas comparadas",
-      "play": "Reproducir",
       "replay": "Repetir",
-      "swap": "Cambio superpuesto",
-      "rise": "Entrada escalonada",
-      "flight": "Vuelo de intercambio",
-      "flightSub": "Pulse una ventana pequeña: vuela al centro y crece, y la del centro se encoge en el hueco libre.",
       "flightPick": "Llevar al centro",
       "layers": "Capas",
       "openModal": "Abrir diálogo",
       "openDrawer": "Abrir panel",
       "toggleNudge": "Aviso inferior",
       "nudgeTitle": "Aviso",
-      "nudgeBody": "Sube desde abajo; al cerrarse su altura se pliega y el contenido inferior sube.",
-      "modalBody": "Al abrirse sube y crece un poco; al cerrarse termina su salida antes de desaparecer.",
-      "drawerBody": "Entra desde la derecha para mostrar detalles sin salir de la página.",
+      "nudgeBody": "Aparece subiendo desde abajo; al cerrarse, su altura se reduce y el contenido de debajo sube.",
+      "modalBody": "Sube y crece ligeramente al abrirse, y reproduce su animación de cierre antes de retirarse.",
+      "drawerBody": "Se desliza desde la derecha para mostrar los detalles sin salir de la página actual.",
       "close": "Cerrar",
       "live": "Estados en curso",
       "stepOf": "Paso {n} de {total}: {label}",
@@ -265,10 +261,19 @@
       "playing": "Reproduciendo",
       "ringA": "Usado",
       "ringB": "Se puede limpiar",
-      "ringC": "Otros"
+      "ringC": "Otros",
+      "playAll": "Reproducir todo",
+      "curvesHint": "Haga clic en una fila para reproducir esa curva.",
+      "addRow": "Añadir una fila",
+      "removeRow": "Quitar una fila",
+      "byOrder": "Por número",
+      "likes": "Me gusta: {n}",
+      "next": "Siguiente",
+      "open": "Abrir",
+      "glassHint": "Haga clic en un segmento, o mantenga pulsado el deslizador para arrastrarlo o lanzarlo hacia un extremo."
     },
     "patterns": {
-      "sub": "Patrones habituales en apps de escritorio; todos funcionan",
+      "sub": "Patrones de interfaz habituales en las aplicaciones de escritorio. Todos se pueden manejar.",
       "tabs": "Pestañas y filtros",
       "tabA": "Todo",
       "tabB": "Favoritos",
@@ -282,7 +287,7 @@
       "sizeS": "Pequeño",
       "sizeM": "Mediano",
       "sizeL": "Grande",
-      "rightClick": "Clic derecho aquí",
+      "rightClick": "Haga clic derecho aquí",
       "open": "Abrir",
       "opened": "Abierto",
       "rename": "Renombrar",
@@ -303,24 +308,25 @@
       "warnLine": "Requiere 14 GB de VRAM; este equipo tiene 12 GB",
       "overlays": "Capas y mensajes",
       "modal": "Diálogo",
-      "modalText": "Haz clic fuera o pulsa Esc para cerrar; el cierre también se anima.",
+      "modalText": "Haga clic fuera o pulse Esc para cerrar.",
       "drawer": "Panel lateral",
       "drawerText": "Entra por la derecha para ver detalles sin salir de la página.",
       "tip": "Aviso",
       "tipText": "Copiado",
       "notice": "Notificación",
       "noticeTitle": "Exportación terminada",
-      "noticeText": "Haz clic para ver los detalles",
+      "noticeText": "Haga clic en esta notificación para ver los detalles.",
       "calendar": "Calendario",
       "pager": "Paginación",
       "empty": "Estado vacío",
       "emptyTitle": "Aún no hay nada",
       "emptyAction": "Añadir",
-      "icons": "Iconos"
+      "icons": "Iconos",
+      "pagerNote": "El contenido se desplaza en la dirección del cambio y los números de página se deslizan a su nuevo sitio."
     },
     "inter": {
       "sub": "Cambios dentro de la página, comentarios, guías por pasos, avisos, errores, gráficos de anillo, paneles y un botón flotante",
-      "panes": "Cambio superpuesto",
+      "panes": "Empuje y lista fluida",
       "tab": {
         "a": "Todo",
         "b": "Recientes",
@@ -359,7 +365,7 @@
       "dock": "Panel inferior",
       "main": "Contenido principal",
       "dockLabel": "Detalles",
-      "bubble": "Arrástrame a un lado",
+      "bubble": "Abrir el chat",
       "wizardTitle": "Primeros pasos",
       "step": {
         "one": "Conectar un dispositivo",
@@ -373,7 +379,8 @@
       "notice2": "Genere un paquete de diagnóstico y adjúntelo antes de enviar.",
       "noticeLink": "Incidencias",
       "connected": "Dispositivo conectado",
-      "template": "Plantilla"
+      "template": "Plantilla",
+      "panesNote": "Las pestañas usan el empuje; el filtrado de una misma lista usa la lista fluida."
     },
     "set": {
       "sub": "Tres tipos de ajustes: apariencia, generales y atajos. Etiquetas a la izquierda, controles a la derecha y notas debajo. Un cambio que requiere reinicio muestra un aviso arriba.",
@@ -410,7 +417,7 @@
       "stats": "Compartir estadísticas anónimas",
       "statsDesc": "Solo envía un ID anónimo aleatorio, la versión y la aceleración por hardware. Nada que le identifique.",
       "mouse": "Botones laterales del ratón",
-      "mouseDesc": "El botón 4 retrocede y el 5 avanza. En esta demo recorre las páginas de la izquierda.",
+      "mouseDesc": "El botón 4 del ratón retrocede y el botón 5 avanza entre las páginas de la izquierda.",
       "update": "Actualizaciones",
       "version": "Versión actual {v}",
       "check": "Buscar actualizaciones",
@@ -420,7 +427,7 @@
       "restartBody": "Se cambió el renderizado compatible. Reinicie para aplicarlo.",
       "restartNow": "Reiniciar ahora",
       "restartLater": "Más tarde",
-      "restarted": "Demo: la aplicación se reinició.",
+      "restarted": "La aplicación se ha reiniciado.",
       "keysOn": "Activar atajos globales",
       "keysNone": "No hay atajos que coincidan.",
       "keysHint": "Pulse un atajo y luego las nuevas teclas. Esc cancela y Retroceso lo borra. Si otra acción ya usa esas teclas, su atajo se borra y se le avisa.",
@@ -438,7 +445,11 @@
         "search": "Buscar",
         "back": "Atrás",
         "forward": "Adelante"
-      }
+      },
+      "hover": "Puntero sobre botones de texto",
+      "hoverNote": "Estilo de puntero y selección de los botones de texto, como las acciones de comentarios, los filtros y los números de página.",
+      "hoverSoft": "Fondo claro",
+      "hoverPlain": "Solo color"
     },
     "more": {
       "board": "Lista y editor en tres columnas",
@@ -453,7 +464,7 @@
       "e5": "Risas",
       "dbl": "Doble clic para ejecutar",
       "run": "Ejecutar",
-      "editNote": "Nombre, número, rango y atajos se editan aquí; la lista no se mueve.",
+      "editNote": "El nombre, el número, el intervalo y el atajo se editan en esta columna; la lista no se mueve mientras se edita.",
       "editEmpty": "Seleccione un elemento de la lista para editarlo aquí.",
       "idle": "Nada en curso",
       "volume": "Volumen",
@@ -482,7 +493,7 @@
       "freed": "Listo. Se liberaron {size}.",
       "resetDemo": "Restablecer demo",
       "starter": "Descargas recomendadas",
-      "starterSub": "Si aún no hay nada, ofrezca algunos: un clic descarga, el progreso se ve en el sitio y se puede cancelar.",
+      "starterSub": "Cuando aún no hay nada, se ofrecen algunas recomendaciones. Un clic inicia la descarga, el progreso se muestra en su sitio y se puede cancelar en cualquier momento.",
       "pack1": "Paquete inicial",
       "pack2": "Recursos habituales",
       "pack3": "Proyecto de ejemplo",
@@ -494,6 +505,21 @@
       "wrong": "Incorrecto",
       "right": "Correcto",
       "source": "Origen: {v}"
+    },
+    "history": {
+      "sub": "Diseños consolidados que se han sustituido, del más reciente al más antiguo.",
+      "list": "Diseños sustituidos",
+      "count": "{n} en total",
+      "now": "Sustituido por: {v}",
+      "why": "Motivo: {v}",
+      "none": "No hay entradas coincidentes"
+    },
+    "rules": {
+      "soft": "Fondo claro (soft)",
+      "plain": "Solo color (plain)",
+      "item": "Elemento {n}",
+      "tipLabel": "Volumen de salida",
+      "tipText": "Ajusta el volumen que se envía a los altavoces o los auriculares."
     }
   }
 }

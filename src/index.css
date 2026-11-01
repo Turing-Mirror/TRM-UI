@@ -235,22 +235,20 @@ html[data-input="pointer"] :focus-visible {
   display: none;
 }
 
-/* 分段控件滑块移动时的挤压。液态玻璃的那一下「软」。 */
-@keyframes squish {
-  0% {
-    scale: 1 1;
-  }
-  34% {
-    scale: 1.05 0.88;
-  }
-  100% {
-    scale: 1 1;
-  }
+/* 分段控件的液态玻璃滑块（SegmentControl.tsx）。位置、宽度、拉伸都由脚本按弹簧逐帧写入，
+   这里只管玻璃的质感：半透明的底、背后的磨砂、上沿的高光、下沿的一点暗边。 */
+.seg-thumb { will-change: transform, width; }
+.seg-glass {
+  background: var(--seg-thumb);
+  -webkit-backdrop-filter: blur(10px) saturate(1.5);
+  backdrop-filter: blur(10px) saturate(1.5);
+  box-shadow:
+    var(--glass),
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.55),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.04);
+  will-change: transform;
 }
-
-.seg-thumb-move {
-  animation: squish 0.52s var(--spring);
-}
+.seg-lens { will-change: transform, left; }
 
 /* 不确定进度条：不知道要多久，只表示「在动」。 */
 @keyframes trm-bar-indeterminate {
@@ -420,7 +418,14 @@ html[data-input="pointer"] :focus-visible {
   }
 }
 .tooltip-in {
-  animation: tooltip-in 0.13s var(--ease) both;
+  animation: tooltip-in 0.16s var(--ease) both;
+}
+@keyframes tooltip-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: scale(0.97); }
+}
+.tooltip-out {
+  animation: tooltip-out 0.16s var(--ease-out-quick) both;
 }
 
 /* 邀请式提示的入场：从底下托上来，带一点点回弹。
@@ -801,7 +806,12 @@ body::before {
   background: color-mix(in srgb, var(--ink) 8%, transparent);
   pointer-events: none;
 }
-.row-line-sm { left: 18px; right: 18px; bottom: 4px; }
+.row-line { transition: left 0.38s var(--ease-nav), right 0.38s var(--ease-nav); }
+.row-line-sm { left: 16px; right: 16px; }
+
+/* 侧栏收起与展开：图标原地不动，文字随宽度淡出淡入，不卸下、不换排法。 */
+.side-label { transition: opacity 0.26s var(--ease-soft); white-space: nowrap; }
+[data-collapsed] .side-label { opacity: 0; pointer-events: none; }
 .row-line > i {
   position: absolute;
   inset: 0;
@@ -827,10 +837,10 @@ body::before {
 
 /* 条目逐个浮现。网格里给每一格一个小延迟。 */
 @keyframes rise {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translate3d(0, 14px, 0) scale(0.985); }
   to { opacity: 1; transform: none; }
 }
-.rise { animation: rise 0.5s var(--spring-settle) both; }
+.rise { animation: rise 0.62s var(--ease-nav) both; }
 
 @keyframes breathe {
   0%, 100% { opacity: 0.55; }
@@ -849,7 +859,7 @@ body::before {
 
 /* 卡片：指到时不上浮，而是向内收一点，像要按进去；按下时再深一点。
    阴影画在最上面一层，盖得住卡片里的图。 */
-.sink { transition: scale 0.32s var(--ease-soft); }
+.sink { transform: translateZ(0); will-change: transform; transition: transform 0.36s var(--ease-nav); }
 .sink::after {
   content: "";
   position: absolute;
@@ -858,11 +868,11 @@ body::before {
   pointer-events: none;
   box-shadow: var(--sink);
   opacity: 0;
-  transition: opacity 0.28s var(--ease-soft), box-shadow 0.2s var(--ease-soft);
+  transition: opacity 0.36s var(--ease-nav), box-shadow 0.36s var(--ease-nav);
 }
 .group:hover .sink::after, .group:focus-visible .sink::after { opacity: 1; }
-.group:hover .sink { scale: 0.99; }
-.group:active .sink { scale: 0.98; }
+.group:hover .sink { transform: translateZ(0) scale(0.99); }
+.group:active .sink { transform: translateZ(0) scale(0.98); }
 .group:active .sink::after { box-shadow: var(--sink-deep); }
 
 /* 右上角的消息。从右边拉进来，关掉时向右收回；收回之后占位的高度再合上，
@@ -907,24 +917,91 @@ body::before {
 }
 .meter-bar { animation: meter 0.8s ease-in-out infinite; }
 
-/* 页内切换（motion.tsx）：分栏、列表与详情、筛选结果。旧的很快淡出、朝来处让一小步；
-   新的从去向那一侧浮上来，按临界阻尼收住，不冲过头。方向由 --swap-dx、--swap-ox 给出，
-   上下切换时两者为 0，只有一点纵向的浮动。时长与 motion.tsx 的 SWAP_OUT_MS 一致。 */
-@keyframes swap-in {
-  from { opacity: 0; transform: translate3d(var(--swap-dx, 0px), 8px, 0); }
-  to { opacity: 1; transform: none; }
+/* 页内动效（motion.tsx）。名字与用途见画廊「动效」页的「名词」一节。
+   推移、伸缩、流动列表共用一个时长（--flow-ms，与 motion.tsx 的 FLOW_MS 一致）和一条曲线（--ease-nav），
+   所以同一次切换里几样东西同时起步、同时停稳，看上去是一个动作。 */
+:root { --flow-ms: 420ms; }
+
+/* 推移：两层同一条曲线、同样的时长。位移和淡入淡出分开写：位移走 --ease-nav，
+   淡入淡出按时间线性分段，旧的在前四成时间里淡完，新的在四分之一之后才出现，
+   两层几乎不同时半透明，不留残影。方向由 --push 给出（1 从右进，-1 从左进）。 */
+@keyframes push-move-in {
+  from { transform: translate3d(calc(var(--push, 1) * 32px), 0, 0); }
+  to { transform: none; }
 }
-@keyframes swap-in-b {
-  from { opacity: 0; transform: translate3d(var(--swap-dx, 0px), 8px, 0); }
-  to { opacity: 1; transform: none; }
+@keyframes push-move-out {
+  from { transform: none; }
+  to { transform: translate3d(calc(var(--push, 1) * -14px), 0, 0) scale(0.99); }
 }
-@keyframes swap-out {
-  from { opacity: 1; transform: none; }
-  to { opacity: 0; transform: translate3d(var(--swap-ox, 0px), 0, 0); }
+@keyframes push-fade-in {
+  0%, 25% { opacity: 0; }
+  100% { opacity: 1; }
 }
-.swap-in { animation: swap-in 0.46s var(--spring-settle) 0.04s both; }
-.swap-in-b { animation: swap-in-b 0.46s var(--spring-settle) 0.04s both; }
-.swap-out { animation: swap-out 0.18s var(--ease-out-quick) both; }
+@keyframes push-fade-out {
+  0% { opacity: 1; }
+  40%, 100% { opacity: 0; }
+}
+.push-in, .push-in-b { animation: push-move-in var(--flow-ms) var(--ease-nav) both, push-fade-in var(--flow-ms) linear both; }
+.push-in-b { animation-name: push-move-in, push-fade-in; }
+.push-out { animation: push-move-out var(--flow-ms) var(--ease-nav) both, push-fade-out var(--flow-ms) linear both; }
+/* 推移期间左右的位移裁在内容区以内，上下不裁 */
+.push-stage { overflow-x: clip; overflow-clip-margin: 8px; }
+/* 推进来的新内容里，各项不再一项项重新浮现 */
+.flow-quiet .rise { animation: none; }
+
+/* 伸缩：高度过渡。 */
+.morph { transition: height var(--flow-ms) var(--ease-nav); }
+.morph[data-morphing] { overflow-clip-margin: 8px; }
+
+/* 流动列表：新来的项从零高度撑开，离开的项收拢到零。 */
+@keyframes flow-open {
+  from { grid-template-rows: 0fr; opacity: 0; }
+  to { grid-template-rows: 1fr; opacity: 1; }
+}
+@keyframes flow-close {
+  from { grid-template-rows: 1fr; opacity: 1; }
+  to { grid-template-rows: 0fr; opacity: 0; }
+}
+.flow-item { display: grid; grid-template-rows: 1fr; }
+.flow-body { min-height: 0; }
+.flow-enter, .flow-leave { overflow: clip; overflow-clip-margin: 6px; }
+.flow-enter { animation: flow-open var(--flow-ms) var(--ease-nav) both; }
+.flow-leave { animation: flow-close var(--flow-ms) var(--ease-nav) both; pointer-events: none; }
+
+/* 滚字：两段字叠在同一格里，旧字向下滑出，新字从上方滑入。 */
+.roll { display: inline-grid; overflow: clip; overflow-clip-margin: 2px; vertical-align: bottom; }
+.roll > span { grid-area: 1 / 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@keyframes roll-in {
+  from { transform: translate3d(0, -70%, 0); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes roll-out {
+  from { transform: none; opacity: 1; }
+  to { transform: translate3d(0, 70%, 0); opacity: 0; }
+}
+.roll-in { animation: roll-in var(--flow-ms) var(--ease-nav) both; }
+.roll-out { animation: roll-out var(--flow-ms) var(--ease-nav) both; }
+
+/* 拉幕：一块区域第一次出现时从上往下展开，收起时从下往上收回。 */
+@keyframes curtain-in {
+  from { clip-path: inset(0 0 100% 0 round var(--r)); opacity: 0.6; }
+  to { clip-path: inset(0 0 0 0 round var(--r)); opacity: 1; }
+}
+@keyframes curtain-out {
+  from { clip-path: inset(0 0 0 0 round var(--r)); opacity: 1; }
+  to { clip-path: inset(0 0 100% 0 round var(--r)); opacity: 0.6; }
+}
+.curtain-in { animation: curtain-in 0.5s var(--ease-nav) both; }
+.curtain-out { animation: curtain-out var(--flow-ms) var(--ease-nav) both; }
+
+/* 折叠（motion.tsx 的 Collapse）：高度在 0 与内容高度之间过渡，内容同时淡入淡出。 */
+.collapse-area {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows var(--flow-ms) var(--ease-nav), opacity 0.3s var(--ease-soft);
+}
+.collapse-area[data-open] { grid-template-rows: 1fr; opacity: 1; }
 
 /* 标题栏里的页标题（TitleSlot.tsx）：换页时旧标题淡出、新标题浮上来；
    同一页里换了标题（列表进详情）时新标题从右边轻轻滑入。 */
@@ -946,7 +1023,7 @@ body::before {
 
 /* 选中项的指示：底色或下划线滑到新位置（motion.tsx 的 useSlider）。 */
 .slider { position: absolute; left: 0; top: 0; pointer-events: none; }
-.slider[data-armed] { transition: transform 0.42s var(--spring-gentle), width 0.42s var(--spring-gentle), height 0.42s var(--spring-gentle); }
+.slider[data-armed] { transition: transform var(--flow-ms) var(--ease-nav), width var(--flow-ms) var(--ease-nav), height var(--flow-ms) var(--ease-nav); }
 
 
 /* 分步引导（Wizard.tsx）：换步时新的一步从去向那一侧滑进来；收起后的小按钮从右下浮上来。 */
@@ -996,7 +1073,7 @@ body::before {
 
 /* WebKit（Safari 与 macOS 上的 WebView）在带位移的动画放完时会把元素从独立图层撤回页面重画，
    看起来就是动画刚到位又闪一下。入场与退场的元素从头到尾留在自己的图层上，放完不撤。 */
-.swap-in, .swap-in-b, .swap-out, .rise, .pop-in, .pop-out, .fade-in, .fade-out,
+.push-in, .push-in-b, .push-out, .rise, .pop-in, .pop-out, .fade-in, .fade-out,
 .drawer-in, .drawer-out, .menu-in, .menu-out, .title-in, .title-out { will-change: transform, opacity; }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { usePresence } from "./overlay";
+
+/** 提示框收起的时长，与 index.css 的 .tooltip-out 一致。 */
+const TIP_OUT_MS = 160;
 
 /**
  * 自己画的悬浮提示，替掉浏览器原生的 `title`。
@@ -41,6 +45,8 @@ export function Tooltip({
   const open = hovered || focused;
   const leaveTimer = useRef<number | null>(null);
   const [pos, setPos] = useState<Pos | null>(null);
+  // 收起时照原位放完淡出再卸下，和出现时一样有过渡
+  const { mounted, leaving } = usePresence(open, TIP_OUT_MS);
 
   const place = useCallback(() => {
     const a = anchor.current?.getBoundingClientRect();
@@ -125,7 +131,7 @@ export function Tooltip({
       >
         {children}
       </span>
-      {open
+      {mounted
         ? createPortal(
             <div
               ref={bubble}
@@ -137,7 +143,7 @@ export function Tooltip({
                 // 字号比正文的辅助文字大一档：这是用户特地凑过去看的东西，
                 // 不该比他不看的说明文字还小。
                 "text-[13.5px] leading-[1.65] text-[var(--ink)] whitespace-pre-line",
-                "tooltip-in",
+                leaving ? "tooltip-out" : "tooltip-in",
               ].join(" ")}
               style={{
                 left: pos?.left ?? -9999,

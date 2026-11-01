@@ -10,6 +10,7 @@ import {
   Tabs,
   Filters,
   Pager,
+  Swap,
   Empty,
   Modal,
   Drawer,
@@ -20,12 +21,17 @@ import {
   ICON_NAMES,
   MoreBtn,
   SearchBox,
+  MenuBtn,
+  useDir,
   useMenu,
   useNotify,
   useI18n,
   type Art,
 } from "../trm";
 import { CleanupPattern, ListEditPattern, StarterPattern } from "./MorePatterns";
+
+/** 翻页演示里每页几项。 */
+const PER_PAGE = 4;
 
 /** 演示用的一排卡片。 */
 const CARDS: { art: Art; glyph: string; key: string }[] = [
@@ -47,6 +53,7 @@ export function PatternsPage() {
   const [filter, setFilter] = useState<"all" | "on" | "off">("all");
   const [size, setSize] = useState("m");
   const [page, setPage] = useState(3);
+  const pageDir = useDir(page);
   const [day, setDay] = useState<string | null>(null);
   const [modal, setModal] = useState(false);
   const [drawer, setDrawer] = useState(false);
@@ -92,12 +99,7 @@ export function PatternsPage() {
 
       <Block title={t("demo.patterns.menus")}>
         <div className="flex items-center gap-3 flex-wrap">
-          <Btn onClick={(e) => menu.open(e.currentTarget, menuItems)}>
-            <span className="inline-flex items-center gap-1.5">
-              {t("demo.patterns.menuBtn")}
-              <Icon name="down" size={14} />
-            </span>
-          </Btn>
+          <MenuBtn label={t("demo.patterns.menuBtn")} items={menuItems} />
           <Dropdown
             value={size}
             onChange={setSize}
@@ -161,7 +163,20 @@ export function PatternsPage() {
         </div>
       </Block>
 
-      <Block title={t("demo.patterns.pager")}>
+      <Block title={t("demo.patterns.pager")} note={t("demo.patterns.pagerNote")}>
+        <Swap k={String(page)} dir={pageDir}>
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-3">
+            {Array.from({ length: PER_PAGE }, (_, i) => {
+              const n = (page - 1) * PER_PAGE + i + 1;
+              return (
+                <div key={n} className="rounded-[var(--r)] bg-[var(--group)] p-2.5">
+                  <div className="aspect-[16/9] rounded-[calc(var(--r)-4px)]" style={{ background: `linear-gradient(145deg, var(--art-${(n % 6) + 1}), var(--art-${((n + 1) % 6) + 1}))` }} />
+                  <div className="mt-2 text-[13px]">{t("demo.rules.item", { n })}</div>
+                </div>
+              );
+            })}
+          </div>
+        </Swap>
         <Pager page={page} pages={12} onChange={setPage} />
       </Block>
 

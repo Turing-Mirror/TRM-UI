@@ -65,12 +65,13 @@ export { AccordionGroup, type AccordionItem } from "./components/ui";
 export { Icon, ICON_NAMES, isIconName, type IconName } from "./components/Icon";
 export { Tag, Meta, Mark, Bar, Section, IconBtn, Empty, Tabs, Filters, Pager, pageList, usePaged, type Art, type Tone } from "./components/display";
 export { Modal, Drawer, usePresence, useLatest, OUT_MS } from "./components/overlay";
-export { Popover, Menu, useMenu, Dropdown, PromptDialog, anchorOf, type Anchor, type MenuItem } from "./components/Menu";
+export { Popover, Menu, MenuBtn, useMenu, Dropdown, PromptDialog, anchorOf, type Anchor, type MenuItem } from "./components/Menu";
 export { Calendar, dayKey, useAnchoredPop } from "./components/Calendar";
 export { NoticeProvider, useNotify, Notices, NOTICE_OUT_MS, type Notice, type NoticeInput } from "./components/Notices";
 export { AppBar, Sidebar, SidebarItem, SidebarHead, SidebarHeadBtn, ActivityRow, SIDEBAR_W } from "./components/Sidebar";
 export { Side, SideHead, SideItem, SearchBox, MoreBtn, afterDrag } from "./components/listing";
-export { Panes, Pane, Swap, usePaneOn, useSlider, sliderStyle, stagger, SWAP_OUT_MS } from "./components/motion";
+export { Panes, Pane, Swap, Morph, FlowList, Roll, Collapse, usePaneOn, useDir, useSlider, sliderStyle, stagger, curve, FLOW_MS, SWAP_OUT_MS } from "./components/motion";
+export { HoverStyleProvider, useHoverStyle, hoverInk, hoverAccent, type HoverStyle } from "./lib/hoverStyle";
 export { useModalKeys } from "./hooks/useModalKeys";
 
 // 页内切换、页标题、面板、评论、分步引导、提示、报错、环形图、可拖动的浮动按钮

@@ -73,12 +73,10 @@ it("group buttons expose selection without intercepting arrows", () => {
   expect(button.getAttribute("aria-pressed")).toBe("true");
   pressKey(button,"ArrowRight"); expect(change).not.toHaveBeenCalled();
 });
-it("pill animation restarts while the sliding container stays mounted", () => {
+it("clicking a segment selects it even before the thumb can be measured", () => {
   const m=mount(<Tabs />); mounts.push(m);
-  const slider=m.container.querySelector('span[aria-hidden]')!;
-  const oldVisual=slider.firstElementChild;
+  const thumb=m.container.querySelector(".seg-thumb");
   act(() => m.container.querySelectorAll("button")[1].click());
-  expect(m.container.querySelector('span[aria-hidden]')).toBe(slider);
-  expect(slider.firstElementChild).not.toBe(oldVisual);
-  expect(slider.firstElementChild!.className).toContain("seg-thumb-move");
+  expect(m.container.querySelectorAll("button")[1].getAttribute("aria-selected")).toBe("true");
+  expect(m.container.querySelector(".seg-thumb")).toBe(thumb);
 });

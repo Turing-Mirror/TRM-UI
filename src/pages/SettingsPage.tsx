@@ -20,10 +20,12 @@ import {
   useI18n,
   useNotify,
   type LocaleCode,
+  useDir,
+  type HoverStyle,
   type ThemeMode,
 } from "../trm";
 
-export type Look = { theme: ThemeMode; wallpaper: string; blur: number; opacity: number };
+export type Look = { theme: ThemeMode; wallpaper: string; blur: number; opacity: number; hover: HoverStyle };
 
 const TABS = ["appearance", "general", "keys"] as const;
 type Tab = (typeof TABS)[number];
@@ -63,6 +65,7 @@ export function SettingsPage({ look, onLook, mouseNav, onMouseNav }: { look: Loo
   const [global, setGlobal] = useState<Record<string, boolean>>({ toggle: true, next: true, prev: true, mute: true });
   const [q, setQ] = useState("");
   const file = useRef<HTMLInputElement>(null);
+  const tabDir = useDir(TABS.indexOf(tab));
 
   const setCombo = (id: string, combo: string) => {
     const taken = combo ? HOTKEYS.find((h) => h.id !== id && combos[h.id] === combo) : undefined;
@@ -110,7 +113,7 @@ export function SettingsPage({ look, onLook, mouseNav, onMouseNav }: { look: Loo
         </Nudge>
       </div>
 
-      <Swap k={tab} className="mt-2">
+      <Swap k={tab} dir={tabDir} className="mt-2">
         {tab === "appearance" ? (
           <Block title={t("demo.set.tab.appearance")}>
             <Group>
@@ -127,6 +130,21 @@ export function SettingsPage({ look, onLook, mouseNav, onMouseNav }: { look: Loo
                         { id: "system", label: t("demo.set.themeSystem") },
                         { id: "light", label: t("demo.set.themeLight") },
                         { id: "dark", label: t("demo.set.themeDark") },
+                      ]}
+                    />
+                  }
+                />
+                <Field
+                  inline
+                  label={t("demo.set.hover")}
+                  note={t("demo.set.hoverNote")}
+                  control={
+                    <SegmentControl
+                      value={look.hover}
+                      onChange={(v) => onLook({ ...look, hover: v })}
+                      options={[
+                        { id: "soft" as const, label: t("demo.set.hoverSoft") },
+                        { id: "plain" as const, label: t("demo.set.hoverPlain") },
                       ]}
                     />
                   }

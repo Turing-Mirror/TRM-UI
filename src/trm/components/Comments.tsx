@@ -10,7 +10,8 @@ import { Btn } from "./ui";
 import { SegmentControl } from "./SegmentControl";
 import { Empty, Filters, Tag, type Tone } from "./display";
 import { Icon } from "./Icon";
-import { Swap, stagger } from "./motion";
+import { Collapse, FlowList } from "./motion";
+import { hoverAccent, hoverInk, useHoverStyle } from "../lib/hoverStyle";
 
 export type CommentItem = {
   id: string;
@@ -108,9 +109,11 @@ export function Comments({
           />
         </span>
       </div>
-      <Swap k={`${sort}|${verdict}`} className="mt-3">
-        {shown.length ? shown.map((c, i) => <Floor key={c.id} i={i} c={c} replies={repliesOf(c.id)} ctx={ctx} />) : <Empty icon="chat" title={t("ui.comments.none")} />}
-      </Swap>
+      {/* 换筛选、换排序时整块不重载：留下的楼滑到新位置，筛掉的收拢，新出现的撑开 */}
+      <FlowList className="mt-3" items={shown} keyOf={(c) => c.id} render={(c) => <Floor c={c} replies={repliesOf(c.id)} ctx={ctx} />} />
+      <Collapse open={!shown.length}>
+        <Empty icon="chat" title={t("ui.comments.none")} />
+      </Collapse>
     </div>
   );
 }
@@ -127,35 +130,33 @@ type Ctx = {
   quick?: string[];
 };
 
-function Floor({ c, replies, ctx, i }: { c: CommentItem; replies: CommentItem[]; ctx: Ctx; i: number }) {
+function Floor({ c, replies, ctx }: { c: CommentItem; replies: CommentItem[]; ctx: Ctx }) {
   const { t } = useI18n();
+  const look = useHoverStyle();
   const [open, setOpen] = useState(false);
   const [replying, setReplying] = useState<string | null>(null);
   const more = replies.length - REPLIES_SHOWN;
   const list = open ? replies : replies.slice(0, REPLIES_SHOWN);
   return (
-    <div className="rise py-4" style={stagger(i)}>
+    <div className="py-4">
       <Item c={c} ctx={ctx} onReply={() => setReplying(c.author)} />
       {replies.length || replying ? (
-        <div className="ml-[40px] mt-2 flex flex-col gap-3">
-          {list.map((r) => (
-            <div key={r.id} className="fade-in">
-              <Item c={r} ctx={ctx} small onReply={() => setReplying(r.author)} />
-            </div>
-          ))}
+        <div className="ml-[40px] mt-0.5 flex flex-col">
+          {/* 展开与收起回复：多出来的几条撑开、收拢，不是一下子冒出来或消失 */}
+          <FlowList items={list} keyOf={(r) => r.id} itemClassName="pt-2.5" render={(r) => <Item c={r} ctx={ctx} small onReply={() => setReplying(r.author)} />} />
           {more > 0 ? (
-            <button type="button" onClick={() => setOpen(!open)} className="self-start h-7 -ml-2 px-2 inline-flex items-center gap-1 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[12.5px] text-[var(--accent)] hover:bg-[var(--accent-soft)]">
+            <button type="button" onClick={() => setOpen(!open)} className={`mt-2 self-start h-7 -ml-2 px-2 inline-flex items-center gap-1 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[12.5px] text-[var(--accent)] transition-colors ${hoverAccent(look)}`}>
               {open ? t("ui.comments.fold") : t("ui.comments.moreReplies", { n: more })}
-              <Icon name="down" size={13} className={`transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
+              <Icon name="down" size={13} className={`transition-transform duration-300 ease-[var(--ease)] ${open ? "rotate-180" : ""}`} />
             </button>
           ) : null}
-          {replying ? (
-            <div className="fade-in">
+          <Collapse open={Boolean(replying)}>
+            <div className="pt-3">
               <Composer
                 ctx={ctx}
                 parent={c.id}
-                replyTo={replying === c.author ? undefined : replying}
-                placeholder={t("ui.comments.replyTo", { name: replying })}
+                replyTo={replying && replying !== c.author ? replying : undefined}
+                placeholder={t("ui.comments.replyTo", { name: replying ?? "" })}
                 autoFocus
                 onDone={() => {
                   setReplying(null);
@@ -163,7 +164,7 @@ function Floor({ c, replies, ctx, i }: { c: CommentItem; replies: CommentItem[];
                 }}
               />
             </div>
-          ) : null}
+          </Collapse>
         </div>
       ) : null}
     </div>
@@ -172,8 +173,9 @@ function Floor({ c, replies, ctx, i }: { c: CommentItem; replies: CommentItem[];
 
 function Item({ c, ctx, small = false, onReply }: { c: CommentItem; ctx: Ctx; small?: boolean; onReply: () => void }) {
   const { t } = useI18n();
+  const look = useHoverStyle();
   const v = ctx.verdicts?.find((x) => x.id === c.verdict);
-  const act = "h-7 px-2 inline-flex items-center gap-1 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer transition-colors hover:bg-[color-mix(in_srgb,var(--ink)_5%,transparent)]";
+  const act = `h-7 px-2 inline-flex items-center gap-1 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer transition-colors ${hoverInk(look)}`;
   return (
     <div className="group flex gap-3">
       <Avatar name={c.author} size={small ? 22 : 28} />
@@ -191,20 +193,20 @@ function Item({ c, ctx, small = false, onReply }: { c: CommentItem; ctx: Ctx; sm
         </div>
         <div className={`mt-0.5 whitespace-pre-wrap break-words leading-relaxed select-text ${small ? "text-[13px]" : "text-[13.5px]"}`}>{c.text}</div>
         <div className="mt-1 -ml-2 flex items-center gap-0.5 text-[12px] text-[var(--meta)]">
-          <button type="button" aria-pressed={Boolean(c.liked)} onClick={() => ctx.onLike(c.id)} className={`${act} ${c.liked ? "text-[var(--accent)]" : "hover:text-[var(--ink)]"}`}>
+          <button type="button" aria-pressed={Boolean(c.liked)} onClick={() => ctx.onLike(c.id)} className={`${act} ${c.liked ? "!text-[var(--accent)]" : ""}`}>
             <Icon name="thumbUp" size={13} className={c.liked ? "pop-like" : ""} />
             {c.likes || t("ui.comments.like")}
           </button>
-          <button type="button" onClick={onReply} className={`${act} hover:text-[var(--ink)]`}>
+          <button type="button" onClick={onReply} className={act}>
             <Icon name="chat" size={13} />
             {t("ui.comments.reply")}
           </button>
           {c.mine && ctx.onDelete ? (
-            <button type="button" onClick={() => ctx.onDelete?.(c.id)} className={`${act} opacity-0 group-hover:opacity-100 focus-visible:opacity-100 hover:text-[var(--danger)]`}>
+            <button type="button" onClick={() => ctx.onDelete?.(c.id)} className={`${act} opacity-0 group-hover:opacity-100 focus-visible:opacity-100 hover:!text-[var(--danger)]`}>
               {t("ui.comments.delete")}
             </button>
           ) : !c.mine && ctx.onReport ? (
-            <button type="button" onClick={() => ctx.onReport?.(c.id)} className={`${act} opacity-0 group-hover:opacity-100 focus-visible:opacity-100 hover:text-[var(--ink)]`}>
+            <button type="button" onClick={() => ctx.onReport?.(c.id)} className={`${act} opacity-0 group-hover:opacity-100 focus-visible:opacity-100`}>
               {t("ui.comments.report")}
             </button>
           ) : null}
@@ -226,6 +228,7 @@ function Composer({ ctx, parent, replyTo, placeholder, autoFocus = false, onDone
     el.style.height = "auto";
     el.style.height = `${Math.min(160, el.scrollHeight)}px`;
   }, [text]);
+  const look = useHoverStyle();
   const withVerdict = Boolean(ctx.verdicts?.length) && !parent;
   const hint = placeholder ?? t(withVerdict ? "ui.comments.reviewHint" : "ui.comments.hint");
   const send = async () => {
@@ -288,7 +291,7 @@ function Composer({ ctx, parent, replyTo, placeholder, autoFocus = false, onDone
                     type="button"
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => insert(k)}
-                    className="h-6 px-1.5 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[11.5px] text-[var(--meta)] whitespace-nowrap transition-colors hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_5%,transparent)]"
+                    className={`h-6 px-1.5 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[11.5px] text-[var(--meta)] whitespace-nowrap transition-colors ${hoverInk(look)}`}
                   >
                     {k}
                   </button>

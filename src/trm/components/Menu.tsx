@@ -8,7 +8,8 @@ import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type Rea
 import { createPortal } from "react-dom";
 import { useI18n } from "../i18n";
 import { Icon, type IconName } from "./Icon";
-import { Modal, OUT_MS, useLatest } from "./overlay";
+import { Modal, OUT_MS, useLatest, usePresence } from "./overlay";
+import { Btn } from "./ui";
 
 export type Anchor = { x: number; y: number; w: number; h: number };
 
@@ -207,7 +208,30 @@ export function useMenu() {
     set({ anchor: pointAnchor(from.clientX, from.clientY), items, trigger: null });
   };
   const node = state ? <Menu anchor={state.anchor} items={state.items} onClose={close} leaving={state.leaving} trigger={state.trigger} /> : null;
-  return { open, node };
+  /** 菜单此刻开在哪个控件上（收起中不算）。打开它的按钮据此翻转箭头。 */
+  const openOn = state && !state.leaving ? state.trigger : null;
+  return { open, node, openOn };
+}
+
+/**
+ * 打开菜单的按钮：文字加一个向下的箭头，菜单展开时箭头翻过来，收起时翻回去。
+ * 下拉选择（Dropdown）的箭头是同一种行为。
+ */
+export function MenuBtn({ label, items }: { label: string; items: MenuItem[] }) {
+  const menu = useMenu();
+  const box = useRef<HTMLSpanElement>(null);
+  const open = Boolean(menu.openOn && box.current?.contains(menu.openOn));
+  return (
+    <span ref={box} className="inline-flex">
+      <Btn onClick={(e) => menu.open(e.currentTarget, items)} on={open}>
+        <span className="inline-flex items-center gap-1.5" aria-expanded={open}>
+          {label}
+          <Icon name="down" size={14} className={`transition-transform duration-300 ease-[var(--ease)] ${open ? "rotate-180" : ""}`} />
+        </span>
+      </Btn>
+      {menu.node}
+    </span>
+  );
 }
 
 /** 下拉选择。代替原生 select：列表从控件下方展开，不盖住控件本身。 */
@@ -231,18 +255,10 @@ export function Dropdown<T extends string>({
   const [anchor, setAnchor] = useState<Anchor | null>(null);
   const current = options.find((o) => o.id === value);
   const [hi, setHi] = useState(0);
-  // 收起时列表照原样放完收起动画
-  const [closing, setClosing] = useState(false);
+  // 收起时列表照原样留着，放完收起动画再卸下。收起的那一帧就要接上，
+  // 不能先卸掉、下一帧再挂回来放动画：那样会先闪没、再从别处冒出来一下。
+  const { mounted } = usePresence(Boolean(anchor));
   const shown = useLatest(anchor);
-  useEffect(() => {
-    if (anchor) {
-      setClosing(false);
-      return;
-    }
-    setClosing(true);
-    const t = window.setTimeout(() => setClosing(false), OUT_MS);
-    return () => window.clearTimeout(t);
-  }, [anchor]);
   const openList = () => {
     if (!btn.current) return;
     setHi(Math.max(0, options.findIndex((o) => o.id === value)));
@@ -278,9 +294,9 @@ export function Dropdown<T extends string>({
         ].join(" ")}
       >
         <span className="truncate flex-1 text-left">{current?.label ?? value}</span>
-        <Icon name="down" size={14} className={`text-[var(--meta)] transition-transform duration-200 ${anchor ? "rotate-180" : ""}`} />
+        <Icon name="down" size={14} className={`text-[var(--meta)] transition-transform duration-300 ease-[var(--ease)] ${anchor ? "rotate-180" : ""}`} />
       </button>
-      {(anchor || closing) && shown ? (
+      {mounted && shown ? (
         <Popover anchor={shown} onClose={() => setAnchor(null)} minWidth={shown.w} label={label} leaving={!anchor} trigger={btn.current}>
           <div
             role="listbox"

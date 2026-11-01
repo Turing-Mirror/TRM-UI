@@ -18,17 +18,19 @@ TRM UI has no separate specification documents. The interface is the example and
    | Overview | Shell, theme, overall structure | `src/pages/OverviewPage.tsx` |
    | Components | All base components | `src/pages/ComponentsPage.tsx`, `src/trm/components/` |
    | Patterns | Full-page patterns: lists, details, cleanup, downloads | `src/pages/PatternsPage.tsx`, `src/pages/MorePatterns.tsx` |
-   | Interaction | Interaction rules and demos built to them | `src/pages/interactionRules.ts`, `src/pages/InteractionPage.tsx` |
-   | Writing | How interface text is written, with wrong and right examples | `src/pages/textRules.ts` |
+   | Interaction | Interaction rules, each with a working wrong and right demo | `src/pages/interactionRules.ts`, `src/pages/ruleDemos.tsx`, `src/pages/InteractionPage.tsx` |
+   | Copy | How interface text is written, with wrong and right examples | `src/pages/textRules.ts` |
    | Typography | Font size scale | `src/pages/TypePage.tsx` |
    | Color | Colour variables and what each is for | `src/pages/colorRoles.ts`, `src/index.css` |
-   | Motion | Curves and transitions | `src/pages/MotionPage.tsx`, `src/index.css` |
+   | Motion | Curves, plus the name, description and demo of each motion | `src/pages/motionTerms.ts`, `src/pages/MotionPage.tsx`, `src/trm/components/motion.tsx`, `src/index.css` |
+   | History | Established designs that were replaced, by date | `src/pages/historyEntries.ts` |
    | Settings | How a settings page is built | `src/pages/SettingsPage.tsx` |
 
-3. **When building a product interface:** take components from `src/trm/`, use only the variables in `src/index.css` for colour, write text by `textRules.ts` and handle interaction by `interactionRules.ts`.
-4. **When changing a rule:** edit its data file and fill in all eight languages; `tsc` fails if one is missing, and the gallery page updates by itself. Do not add Markdown documents and do not copy rules into product repositories.
-5. **When changing a component:** `app/src/trm/` in each product repository is a copy of `src/trm/` here. After changing it here, copy the changed files over.
-6. **When done:** run `npm run build`, which runs eslint, tsc, the i18n check and vite build in order and stops at the first failure.
+3. **When building a product interface:** take components from `src/trm/`, use only the variables in `src/index.css` for colour, write text by `textRules.ts`, handle interaction by `interactionRules.ts`, and use the names in `motionTerms.ts` when discussing motion.
+4. **When replacing an established design:** add an entry to `historyEntries.ts` with the date, the old design, the new one and the reason.
+5. **When changing a rule:** edit its data file and fill in all eight languages; `tsc` fails if one is missing, and the gallery page updates by itself. Do not add Markdown documents and do not copy rules into product repositories.
+6. **When changing a component:** `app/src/trm/` in each product repository is a copy of `src/trm/` here. After changing it here, copy the changed files over.
+7. **When done:** run `npm run build`, which runs eslint, tsc, the i18n check and vite build in order and stops at the first failure.
 
 The reasons behind each choice are in code comments, most of them explaining why a more obvious-looking version does not work. Each one comes from a problem that already happened; do not delete them.
 

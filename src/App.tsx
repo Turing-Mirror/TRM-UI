@@ -17,6 +17,7 @@ import {
   hostWindowControls,
   markReady,
   useMouseNav,
+  HoverStyleProvider,
   type IconName,
   type ThemeMode,
 } from "./trm";
@@ -28,6 +29,7 @@ import { ColorPage } from "./pages/ColorPage";
 import { MotionPage } from "./pages/MotionPage";
 import { InteractionPage } from "./pages/InteractionPage";
 import { TextPage } from "./pages/TextPage";
+import { HistoryPage } from "./pages/HistoryPage";
 import { SettingsPage, type Look } from "./pages/SettingsPage";
 
 /**
@@ -43,6 +45,7 @@ const nav = createNav([
   { id: "type", labelKey: "nav.type" },
   { id: "color", labelKey: "nav.color" },
   { id: "motion", labelKey: "nav.motion" },
+  { id: "history", labelKey: "nav.history" },
   { id: "settings", labelKey: "nav.settings" },
 ] as const);
 
@@ -57,6 +60,7 @@ const ICONS: Record<PageId, IconName> = {
   type: "book",
   color: "brush",
   motion: "play",
+  history: "clock",
   settings: "settings",
 };
 
@@ -78,7 +82,7 @@ function Shell() {
   const { ready, t } = useI18n();
   const notify = useNotify();
   const [page, setPageRaw] = useState<PageId>("overview");
-  const [look, setLook] = useState<Look>({ theme: "system", wallpaper: "", blur: 30, opacity: 60 });
+  const [look, setLook] = useState<Look>({ theme: "system", wallpaper: "", blur: 30, opacity: 60, hover: "soft" });
   const theme = look.theme;
   const setTheme = (m: ThemeMode) => setLook((l) => ({ ...l, theme: m }));
   const [mouseNav, setMouseNav] = useState(true);
@@ -112,6 +116,7 @@ function Shell() {
   useEffect(markReady, []);
 
   return (
+    <HoverStyleProvider value={look.hover}>
     <div className="h-full flex flex-col">
       <AppBar
         brand="TRM UI"
@@ -153,6 +158,8 @@ function Shell() {
                     return <ColorPage />;
                   case "motion":
                     return <MotionPage />;
+                  case "history":
+                    return <HistoryPage />;
                   case "settings":
                     return <SettingsPage look={look} onLook={setLook} mouseNav={mouseNav} onMouseNav={setMouseNav} />;
                 }
@@ -163,6 +170,7 @@ function Shell() {
       </div>
       <Notices />
     </div>
+    </HoverStyleProvider>
   );
 }
 

@@ -36,7 +36,7 @@ export function AppBar({
     <header data-tauri-drag-region className="flex-none h-[52px] flex items-center gap-3 pr-2" style={{ paddingLeft: inset }}>
       <div
         data-tauri-drag-region
-        className="flex items-center gap-2.5 flex-none select-none transition-[width] duration-[380ms] ease-[var(--ease-soft)]"
+        className="flex items-center gap-2.5 flex-none select-none transition-[width] duration-[380ms] ease-[var(--ease-nav)]"
         style={{ width: sidebarOpen ? SIDEBAR_W.open - inset - 6 : 150 }}
       >
         {typeof brand === "string" ? (
@@ -71,12 +71,16 @@ export function AppBar({
   );
 }
 
-/** 侧栏本体。main 放上面可滚动的部分，foot 固定在最下面。 */
+/**
+ * 侧栏本体。main 放上面可滚动的部分，foot 固定在最下面。
+ * 收起与展开时各项的图标留在原位，只有宽度变化、文字淡出淡入；不换排法，所以不会先跳一下再收。
+ */
 export function Sidebar({ collapsed, label, children, foot }: { collapsed: boolean; label: string; children: ReactNode; foot?: ReactNode }) {
   return (
     <nav
       aria-label={label}
-      className="flex-none flex flex-col pb-3 transition-[width] duration-[380ms] ease-[var(--ease-soft)]"
+      data-collapsed={collapsed || undefined}
+      className="flex-none flex flex-col pb-3 transition-[width] duration-[380ms] ease-[var(--ease-nav)]"
       style={{ width: collapsed ? SIDEBAR_W.collapsed : SIDEBAR_W.open }}
     >
       <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-2.5 pt-1 flex flex-col gap-0.5">{children}</div>
@@ -111,25 +115,24 @@ export function SidebarItem({
       aria-current={on ? "page" : undefined}
       title={collapsed ? label : undefined}
       className={[
-        "relative w-full flex-none flex items-center gap-3 h-9 rounded-[var(--rs)] border-0 cursor-pointer text-[13.5px] transition-colors",
-        collapsed ? "justify-center px-0" : "px-3",
+        // 左右留白固定：收起后按钮宽 44，18 的图标正好居中；展开时图标也在这个位置
+        "relative w-full flex-none flex items-center gap-3 h-9 px-[13px] rounded-[var(--rs)] border-0 cursor-pointer text-[13.5px] transition-colors overflow-hidden",
         on ? "bg-[color-mix(in_srgb,var(--ink)_7%,transparent)] text-[var(--ink)] font-medium" : "bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]",
       ].join(" ")}
     >
       <Icon name={icon} size={18} className={on ? "text-[var(--accent)]" : ""} />
-      {collapsed ? null : <span className="truncate">{label}</span>}
-      {dot ? <span aria-label={dot} className={`absolute w-[6px] h-[6px] rounded-full bg-[var(--notify)] ${collapsed ? "top-1.5 right-3" : "right-3"}`} /> : null}
+      <span className="side-label truncate" aria-hidden={collapsed || undefined}>{label}</span>
+      {dot ? <span aria-label={dot} className={`absolute w-[6px] h-[6px] rounded-full bg-[var(--notify)] transition-[top,right] duration-300 ${collapsed ? "top-1.5 right-2" : "top-[15px] right-3"}`} /> : null}
     </button>
   );
 }
 
-/** 侧栏里的小节标题，右边可放几个小按钮（见 SidebarHeadBtn）。收起时只留一段空白。 */
+/** 侧栏里的小节标题，右边可放几个小按钮（见 SidebarHeadBtn）。收起时文字淡出，高度不变。 */
 export function SidebarHead({ label, collapsed = false, children }: { label: string; collapsed?: boolean; children?: ReactNode }) {
-  if (collapsed) return <div className="h-4" />;
   return (
-    <div className="mt-5 mb-1 pl-3 pr-1 h-6 flex items-center gap-1 text-[11.5px] text-[var(--meta)]">
-      <span className="flex-1 truncate">{label}</span>
-      {children}
+    <div className="mt-5 mb-1 pl-3 pr-1 h-6 flex items-center gap-1 text-[11.5px] text-[var(--meta)] overflow-hidden">
+      <span className="side-label flex-1 truncate" aria-hidden={collapsed || undefined}>{label}</span>
+      <span className="side-label flex items-center gap-1">{children}</span>
     </div>
   );
 }
@@ -183,19 +186,17 @@ export function ActivityRow({
       title={collapsed ? `${label}
 ${status}` : undefined}
       className={[
-        "relative w-full flex-none flex items-center gap-2.5 rounded-[var(--rs)] border-0 cursor-pointer text-left transition-colors",
+        // 与导航项同一套留白：收起后 20 的图标正好居中，展开时也在这个位置
+        "relative w-full flex-none flex items-center gap-2.5 rounded-[var(--rs)] border-0 cursor-pointer text-left transition-colors overflow-hidden px-3 py-2 min-h-10",
         on ? "bg-[color-mix(in_srgb,var(--ink)_7%,transparent)]" : "bg-transparent hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]",
-        collapsed ? "justify-center h-10" : "px-3 py-2 min-h-10",
       ].join(" ")}
     >
       <span className="flex-none grid place-items-center w-5 h-5 text-[var(--ink-muted)]">{icon}</span>
-      {collapsed ? null : (
-        <span className="min-w-0 flex-1">
-          <span className="block text-[13px] text-[var(--ink)] truncate">{label}</span>
-          {sub ? <span className="block text-[11.5px] text-[var(--meta)] truncate">{sub}</span> : null}
-        </span>
-      )}
-      {collapsed ? null : <span className={`flex-none text-[11.5px] tabular-nums ${failed ? "text-[var(--danger)]" : "text-[var(--meta)]"}`}>{status}</span>}
+      <span className="side-label min-w-0 flex-1" aria-hidden={collapsed || undefined}>
+        <span className="block text-[13px] text-[var(--ink)] truncate">{label}</span>
+        {sub ? <span className="block text-[11.5px] text-[var(--meta)] truncate">{sub}</span> : null}
+      </span>
+      <span className={`side-label flex-none text-[11.5px] tabular-nums ${failed ? "text-[var(--danger)]" : "text-[var(--meta)]"}`}>{status}</span>
       {failed ? null : progress !== undefined ? (
         <span aria-hidden className={`row-line ${collapsed ? "row-line-sm" : ""}`}>
           <i style={{ transform: `scaleX(${progress})` }} />

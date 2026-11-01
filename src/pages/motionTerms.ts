@@ -1,0 +1,145 @@
+import type { Text } from "./rules";
+
+/**
+ * 动效的名字。「动效」页照这份数据渲染，每个名字下面有一个能操作的示范。
+ * 和 Agent 沟通时直接说这里的名字或 code，对方就能找到对应的组件与类名。
+ */
+export type MotionTerm = { id: string; code: string; name: Text; desc: Text };
+
+export const MOTION_TERMS: MotionTerm[] = [
+  {
+    id: "push",
+    code: "Swap, Panes",
+    name: { "zh-CN": "推移", "zh-TW": "推移", "en-US": "Push", "ja-JP": "プッシュ", "ko-KR": "밀기", "fr-FR": "Poussée", "es-ES": "Empuje", "ru-RU": "Сдвиг" },
+    desc: {
+      "zh-CN": "换分栏、翻页、换步骤时，旧内容朝来处退一小步并先淡掉，新内容从去向那一侧推进来。两层同一条曲线、同样的时长，看上去是一个动作。方向跟着顺序走：往后翻从右边进，往前翻从左边进。",
+      "zh-TW": "換分欄、翻頁、換步驟時，舊內容朝來處退一小步並先淡掉，新內容從去向那一側推進來。兩層同一條曲線、同樣的時長，看上去是一個動作。方向跟著順序走：往後翻從右邊進，往前翻從左邊進。",
+      "en-US": "On a tab, page or step change, the old content steps back towards where it came from and fades first, while the new content is pushed in from the side it is heading to. Both layers share one curve and one duration, so they read as a single motion. The direction follows the order: forward enters from the right, backward from the left.",
+      "ja-JP": "タブ、ページ、手順を切り替えるとき、古い内容は来た方向へ少し下がって先に消え、新しい内容は進む側から押し込まれます。二層は同じ曲線と同じ時間で動くので、一つの動きに見えます。方向は順序に従い、先へ進むと右から、戻ると左から入ります。",
+      "ko-KR": "탭, 페이지, 단계를 바꿀 때 이전 내용은 온 쪽으로 조금 물러나며 먼저 사라지고, 새 내용은 가는 쪽에서 밀려 들어온다. 두 층이 같은 곡선과 같은 시간으로 움직여 하나의 동작으로 보인다. 방향은 순서를 따라 앞으로 가면 오른쪽에서, 뒤로 가면 왼쪽에서 들어온다.",
+      "fr-FR": "Au changement d'onglet, de page ou d'étape, l'ancien contenu recule vers son origine et s'efface d'abord, tandis que le nouveau est poussé depuis le côté où l'on va. Les deux couches partagent une courbe et une durée : on voit un seul mouvement. Le sens suit l'ordre : vers l'avant depuis la droite, vers l'arrière depuis la gauche.",
+      "es-ES": "Al cambiar de pestaña, página o paso, el contenido anterior retrocede hacia donde vino y se desvanece primero, mientras el nuevo entra empujado desde el lado hacia el que se va. Las dos capas comparten curva y duración, así que se ven como un solo movimiento. La dirección sigue el orden: hacia delante entra por la derecha y hacia atrás por la izquierda.",
+      "ru-RU": "При смене вкладки, страницы или шага старое содержимое отступает туда, откуда пришло, и гаснет первым, а новое вдвигается со стороны, куда идёт переход. Оба слоя движутся по одной кривой и с одной длительностью, поэтому это выглядит как одно движение. Направление следует порядку: вперёд справа, назад слева.",
+    },
+  },
+  {
+    id: "stretch",
+    code: "Morph",
+    name: { "zh-CN": "伸缩", "zh-TW": "伸縮", "en-US": "Stretch", "ja-JP": "伸縮", "ko-KR": "늘이기", "fr-FR": "Étirement", "es-ES": "Estiramiento", "ru-RU": "Растяжение" },
+    desc: {
+      "zh-CN": "内容变多变少时，内容区的底板不重画，只把高度平滑地拉长或收短，下面的内容跟着平滑地移动。推移和流动列表都包在伸缩里面。",
+      "zh-TW": "內容變多變少時，內容區的底板不重畫，只把高度平滑地拉長或收短，下面的內容跟著平滑地移動。推移和流動列表都包在伸縮裡面。",
+      "en-US": "When the content grows or shrinks, the panel is not redrawn; only its height lengthens or shortens smoothly, and whatever sits below moves along with it. Push and flow list both sit inside a stretch.",
+      "ja-JP": "内容が増減しても内容エリアの下地は描き直さず、高さだけを滑らかに伸び縮みさせ、その下にあるものも滑らかに動きます。プッシュとフローリストはどちらも伸縮の中に入っています。",
+      "ko-KR": "내용이 많아지거나 줄어도 내용 영역의 바탕은 다시 그리지 않고 높이만 부드럽게 늘이거나 줄이며, 그 아래의 내용도 함께 부드럽게 움직인다. 밀기와 흐름 목록은 모두 늘이기 안에 들어 있다.",
+      "fr-FR": "Quand le contenu s'allonge ou se réduit, le panneau n'est pas redessiné : seule sa hauteur s'étire ou se raccourcit en douceur, et ce qui se trouve dessous suit. La poussée et la liste fluide sont toutes deux placées dans un étirement.",
+      "es-ES": "Cuando el contenido crece o se reduce, el panel no se redibuja: solo su altura se alarga o se acorta con suavidad, y lo que hay debajo se mueve con ella. El empuje y la lista fluida van dentro de un estiramiento.",
+      "ru-RU": "Когда содержимого становится больше или меньше, панель не перерисовывается: плавно меняется только её высота, а всё, что ниже, сдвигается вместе с ней. Сдвиг и плавный список находятся внутри растяжения.",
+    },
+  },
+  {
+    id: "flow",
+    code: "FlowList",
+    name: { "zh-CN": "流动列表", "zh-TW": "流動列表", "en-US": "Flow list", "ja-JP": "フローリスト", "ko-KR": "흐름 목록", "fr-FR": "Liste fluide", "es-ES": "Lista fluida", "ru-RU": "Плавный список" },
+    desc: {
+      "zh-CN": "同一份列表换了筛选、排序或展开了更多时，留下的条目从旧位置滑到新位置，筛掉的原地收拢，新出现的撑开。适合评论、文件、条目这类前后大部分都还在的列表。",
+      "zh-TW": "同一份列表換了篩選、排序或展開了更多時，留下的條目從舊位置滑到新位置，篩掉的原地收攏，新出現的撐開。適合評論、檔案、條目這類前後大部分都還在的列表。",
+      "en-US": "When the same list is filtered, re-sorted or expanded, remaining items slide from their old places to their new ones, removed items collapse in place, and new ones open up. Suited to comments, files and entries, where most items stay through the change.",
+      "ja-JP": "同じリストを絞り込んだり、並べ替えたり、さらに展開したりすると、残る項目は元の位置から新しい位置へ滑り、外れた項目はその場で縮み、新しい項目は広がって現れます。コメント、ファイル、項目のように、切り替え後も多くが残るリストに向いています。",
+      "ko-KR": "같은 목록을 필터링하거나 다시 정렬하거나 더 펼치면, 남는 항목은 이전 위치에서 새 위치로 미끄러지고, 빠지는 항목은 제자리에서 접히며, 새 항목은 펼쳐진다. 댓글, 파일, 항목처럼 전환 후에도 대부분이 남는 목록에 알맞다.",
+      "fr-FR": "Quand la même liste est filtrée, retriée ou dépliée, les éléments restants glissent de leur ancienne place à la nouvelle, ceux retirés se replient sur place et les nouveaux s'ouvrent. Adapté aux commentaires, fichiers et entrées, dont la plupart restent après le changement.",
+      "es-ES": "Cuando la misma lista se filtra, se reordena o se despliega, los elementos que se quedan se deslizan de su sitio anterior al nuevo, los que salen se pliegan en su lugar y los nuevos se abren. Adecuado para comentarios, archivos y entradas, donde la mayoría permanece tras el cambio.",
+      "ru-RU": "Когда тот же список фильтруют, пересортировывают или раскрывают, оставшиеся элементы скользят со старых мест на новые, убранные сворачиваются на месте, новые раскрываются. Подходит для комментариев, файлов и записей, где большая часть остаётся после изменения.",
+    },
+  },
+  {
+    id: "roll",
+    code: "Roll",
+    name: { "zh-CN": "滚字", "zh-TW": "滾字", "en-US": "Roll", "ja-JP": "ロール", "ko-KR": "글자 굴리기", "fr-FR": "Défilement du texte", "es-ES": "Rodillo", "ru-RU": "Прокрутка текста" },
+    desc: {
+      "zh-CN": "同一个位置的文字换了（当前项的名称、标题、计数），旧字向下滑出，新字从上方滑入。外框不动，只有字在换。",
+      "zh-TW": "同一個位置的文字換了（目前項目的名稱、標題、計數），舊字向下滑出，新字從上方滑入。外框不動，只有字在換。",
+      "en-US": "When the text in one place changes (the current item's name, a title, a count), the old text slides down and out while the new text slides in from above. The frame stays; only the words change.",
+      "ja-JP": "同じ場所の文字が変わるとき（現在の項目名、見出し、件数）、古い文字は下へ抜け、新しい文字は上から入ります。枠は動かず、文字だけが替わります。",
+      "ko-KR": "같은 자리의 글자가 바뀔 때(현재 항목 이름, 제목, 개수) 이전 글자는 아래로 빠지고 새 글자는 위에서 들어온다. 틀은 그대로이고 글자만 바뀐다.",
+      "fr-FR": "Quand le texte à un même endroit change (nom de l'élément courant, titre, compteur), l'ancien texte glisse vers le bas et sort tandis que le nouveau arrive par le haut. Le cadre reste, seuls les mots changent.",
+      "es-ES": "Cuando cambia el texto de un mismo lugar (el nombre del elemento actual, un título, un recuento), el texto anterior se desliza hacia abajo y sale mientras el nuevo entra desde arriba. El marco se queda; solo cambian las palabras.",
+      "ru-RU": "Когда текст в одном месте меняется (название текущего элемента, заголовок, счётчик), старый текст уезжает вниз, а новый въезжает сверху. Рамка остаётся, меняются только слова.",
+    },
+  },
+  {
+    id: "curtain",
+    code: ".curtain-in, .curtain-out",
+    name: { "zh-CN": "拉幕", "zh-TW": "拉幕", "en-US": "Curtain", "ja-JP": "幕開き", "ko-KR": "막 펼치기", "fr-FR": "Rideau", "es-ES": "Telón", "ru-RU": "Занавес" },
+    desc: {
+      "zh-CN": "一块区域第一次出现时从上往下展开，像拉开帷幕；关掉时从下往上收回。之后在里面换内容，用滚字或推移，不再拉一次。",
+      "zh-TW": "一塊區域第一次出現時從上往下展開，像拉開帷幕；關掉時從下往上收回。之後在裡面換內容，用滾字或推移，不再拉一次。",
+      "en-US": "A region unrolls from top to bottom the first time it appears, like a curtain opening, and rolls back up when closed. Later changes inside it use roll or push, not another curtain.",
+      "ja-JP": "領域が初めて現れるとき、幕が開くように上から下へ広がり、閉じるときは下から上へ戻ります。その後の中身の切り替えにはロールかプッシュを使い、幕は繰り返しません。",
+      "ko-KR": "영역이 처음 나타날 때 막이 열리듯 위에서 아래로 펼쳐지고, 닫을 때는 아래에서 위로 걷힌다. 그 뒤 안의 내용을 바꿀 때는 글자 굴리기나 밀기를 쓰고 막을 다시 펼치지 않는다.",
+      "fr-FR": "Une zone se déroule de haut en bas la première fois qu'elle apparaît, comme un rideau qui s'ouvre, et remonte à la fermeture. Les changements suivants à l'intérieur utilisent le défilement du texte ou la poussée, pas un nouveau rideau.",
+      "es-ES": "Una zona se despliega de arriba abajo la primera vez que aparece, como un telón que se abre, y se recoge hacia arriba al cerrarse. Los cambios posteriores en su interior usan el rodillo o el empuje, no otro telón.",
+      "ru-RU": "Область при первом появлении разворачивается сверху вниз, как открывающийся занавес, и сворачивается вверх при закрытии. Дальнейшие изменения внутри используют прокрутку текста или сдвиг, а не новый занавес.",
+    },
+  },
+  {
+    id: "collapse",
+    code: "Collapse",
+    name: { "zh-CN": "折叠", "zh-TW": "摺疊", "en-US": "Collapse", "ja-JP": "折りたたみ", "ko-KR": "접기", "fr-FR": "Repli", "es-ES": "Plegado", "ru-RU": "Сворачивание" },
+    desc: {
+      "zh-CN": "可展开的一行、回复框、说明段落，展开时高度从零长到内容高度，收起时反过来，内容同时淡入淡出。收起放完才卸下。",
+      "zh-TW": "可展開的一行、回覆框、說明段落，展開時高度從零長到內容高度，收起時反過來，內容同時淡入淡出。收起播完才卸下。",
+      "en-US": "Expandable rows, reply boxes and help paragraphs grow from zero to their content height when opened and do the reverse when closed, fading at the same time. They are removed only after closing finishes.",
+      "ja-JP": "展開できる行、返信欄、説明の段落は、開くと高さがゼロから内容の高さまで伸び、閉じると逆に縮み、同時にフェードします。閉じ終わってから外します。",
+      "ko-KR": "펼칠 수 있는 행, 답글 입력란, 설명 단락은 열 때 높이가 0에서 내용 높이까지 자라고 닫을 때는 반대로 줄며, 동시에 서서히 나타나고 사라진다. 닫기가 끝난 뒤에 없앤다.",
+      "fr-FR": "Les lignes dépliables, zones de réponse et paragraphes d'aide passent de zéro à la hauteur de leur contenu à l'ouverture et inversement à la fermeture, avec un fondu simultané. Ils ne sont retirés qu'une fois la fermeture terminée.",
+      "es-ES": "Las filas desplegables, los cuadros de respuesta y los párrafos de ayuda crecen de cero a la altura de su contenido al abrirse y al revés al cerrarse, con un fundido al mismo tiempo. Se retiran solo cuando termina el cierre.",
+      "ru-RU": "Раскрывающиеся строки, поля ответа и абзацы справки при открытии вырастают от нуля до высоты содержимого, при закрытии наоборот, одновременно плавно появляясь и исчезая. Они убираются только после окончания закрытия.",
+    },
+  },
+  {
+    id: "glass",
+    code: "SegmentControl",
+    name: { "zh-CN": "液态玻璃滑块", "zh-TW": "液態玻璃滑塊", "en-US": "Liquid glass thumb", "ja-JP": "リキッドガラスのつまみ", "ko-KR": "리퀴드 글래스 손잡이", "fr-FR": "Curseur en verre liquide", "es-ES": "Deslizador de cristal líquido", "ru-RU": "Ползунок из жидкого стекла" },
+    desc: {
+      "zh-CN": "分段控件的滑块可以按住拖动。弹簧：位置按与目标的距离和当前速度逐帧计算，所以中途改主意也是从当前位置接着走。惯性：松手时按甩出的速度判断停在哪一项。撞墙：用力甩向一端，滑块撞上边缘被压扁再弹回。透镜：滑块下面的文字透过它被放大。点击时以适中的力度弹过去，到达目标上方时切换；拖动时松手即切换。",
+      "zh-TW": "分段控制項的滑塊可以按住拖動。彈簧：位置按與目標的距離和目前速度逐格計算，所以中途改主意也是從目前位置接著走。慣性：放開時按甩出的速度判斷停在哪一項。撞牆：用力甩向一端，滑塊撞上邊緣被壓扁再彈回。透鏡：滑塊下面的文字透過它被放大。點擊時以適中的力度彈過去，到達目標上方時切換；拖動時放開即切換。",
+      "en-US": "The segment control thumb can be dragged. Spring: each frame the position is computed from the distance to the target and the current speed, so a change of mind continues from where the thumb is. Momentum: on release, the throw speed decides which segment it settles on. Wall: thrown hard at an end, the thumb squashes against the edge and springs back. Lens: the text beneath it is magnified. A click sends it over with moderate force and switches when it arrives; a drag switches on release.",
+      "ja-JP": "セグメントコントロールのつまみは押したままドラッグできます。ばね：位置は目標までの距離と現在の速度から毎フレーム計算されるので、途中で気が変わっても今の位置から続きます。慣性：離したときの勢いで止まる項目が決まります。壁：端へ強く投げると縁にぶつかって潰れ、跳ね返ります。レンズ：下の文字が拡大されて見えます。クリックでは適度な勢いで移動して到着時に切り替わり、ドラッグでは離した時点で切り替わります。",
+      "ko-KR": "세그먼트 컨트롤의 손잡이는 누른 채 끌 수 있다. 스프링: 위치를 목표까지의 거리와 현재 속도로 매 프레임 계산하므로, 도중에 마음을 바꿔도 현재 위치에서 이어진다. 관성: 놓을 때 던진 속도로 멈출 항목이 정해진다. 벽: 한쪽 끝으로 세게 던지면 가장자리에 부딪혀 눌렸다가 튕겨 나온다. 렌즈: 아래의 글자가 확대되어 보인다. 클릭하면 적당한 힘으로 이동해 도착할 때 전환되고, 끌면 놓는 순간 전환된다.",
+      "fr-FR": "Le curseur du contrôle segmenté se fait glisser. Ressort : à chaque image, la position se calcule d'après la distance à la cible et la vitesse, donc un changement d'avis repart de la position actuelle. Élan : au relâchement, la vitesse du lancer détermine le segment d'arrivée. Bord : lancé fort vers une extrémité, le curseur s'écrase contre le bord puis rebondit. Loupe : le texte en dessous est grossi. Un clic l'envoie avec une force modérée et bascule à l'arrivée ; un glissement bascule au relâchement.",
+      "es-ES": "El deslizador del control segmentado se puede arrastrar. Resorte: en cada fotograma la posición se calcula con la distancia al destino y la velocidad actual, así que un cambio de opinión continúa desde donde está. Inercia: al soltar, la velocidad del lanzamiento decide en qué segmento se detiene. Pared: lanzado con fuerza hacia un extremo, se aplasta contra el borde y rebota. Lupa: el texto de debajo se ve ampliado. Un clic lo envía con fuerza moderada y cambia al llegar; al arrastrar, cambia al soltar.",
+      "ru-RU": "Ползунок сегментного переключателя можно тянуть. Пружина: в каждом кадре положение рассчитывается по расстоянию до цели и текущей скорости, поэтому смена решения продолжается с текущего места. Инерция: при отпускании скорость броска определяет, на каком сегменте он остановится. Стенка: брошенный с силой к краю, ползунок сплющивается о него и отскакивает. Линза: текст под ним увеличивается. Щелчок отправляет его с умеренной силой и переключает по прибытии; при перетаскивании переключение происходит при отпускании.",
+    },
+  },
+  {
+    id: "flip",
+    code: "FLIP",
+    name: { "zh-CN": "换位飞行", "zh-TW": "換位飛行", "en-US": "Flight (FLIP)", "ja-JP": "入れ替え飛行（FLIP）", "ko-KR": "자리 바꿈 비행(FLIP)", "fr-FR": "Vol (FLIP)", "es-ES": "Vuelo (FLIP)", "ru-RU": "Перелёт (FLIP)" },
+    desc: {
+      "zh-CN": "一件东西换了位置或大小时，先记下起点，换完再量终点，用变换把它倒推回起点，再放开让它飞过去。流动列表里条目的滑动、页码的滑动都是这个做法。",
+      "zh-TW": "一件東西換了位置或大小時，先記下起點，換完再量終點，用變換把它倒推回起點，再放開讓它飛過去。流動列表裡條目的滑動、頁碼的滑動都是這個做法。",
+      "en-US": "When an element changes position or size, record where it starts, measure where it ends, transform it back to the start and then release it so it flies across. Items sliding in a flow list and page numbers sliding in the pager work this way.",
+      "ja-JP": "要素の位置や大きさが変わるとき、始点を記録し、変わった後の終点を測り、変形で始点まで戻してから放して移動させます。フローリストの項目やページ番号の移動もこの方法です。",
+      "ko-KR": "요소의 위치나 크기가 바뀔 때 시작점을 기록하고, 바뀐 뒤 끝점을 잰 다음, 변형으로 시작점까지 되돌렸다가 놓아 날아가게 한다. 흐름 목록의 항목과 페이지 번호가 미끄러지는 것도 이 방식이다.",
+      "fr-FR": "Quand un élément change de position ou de taille, on note son point de départ, on mesure son arrivée, on le ramène au départ par une transformation, puis on le relâche pour qu'il traverse. Le glissement des éléments d'une liste fluide et des numéros de page fonctionne ainsi.",
+      "es-ES": "Cuando un elemento cambia de posición o tamaño, se anota dónde empieza, se mide dónde termina, se lleva de vuelta al inicio con una transformación y se suelta para que vuele. Así se deslizan los elementos de una lista fluida y los números de página.",
+      "ru-RU": "Когда элемент меняет положение или размер, запоминают начальную точку, измеряют конечную, трансформацией возвращают его к началу и отпускают, чтобы он перелетел. Так скользят элементы плавного списка и номера страниц.",
+    },
+  },
+  {
+    id: "stagger",
+    code: "stagger(), .rise",
+    name: { "zh-CN": "依次浮现", "zh-TW": "依次浮現", "en-US": "Staggered rise", "ja-JP": "順に浮かぶ", "ko-KR": "차례로 떠오름", "fr-FR": "Apparition décalée", "es-ES": "Aparición escalonada", "ru-RU": "Поочерёдное появление" },
+    desc: {
+      "zh-CN": "一组卡片或条目第一次出现时，一项接一项地浮上来。只在第一次出现时用；之后换筛选、翻页时不再重放。",
+      "zh-TW": "一組卡片或條目第一次出現時，一項接一項地浮上來。只在第一次出現時用；之後換篩選、翻頁時不再重播。",
+      "en-US": "A group of cards or entries rises one after another the first time it appears. Use it only on first appearance; it does not replay on later filter or page changes.",
+      "ja-JP": "カードや項目の一群が初めて現れるとき、一つずつ順に浮かび上がります。最初の表示にだけ使い、その後の絞り込みやページ移動では再生しません。",
+      "ko-KR": "카드나 항목 묶음이 처음 나타날 때 하나씩 차례로 떠오른다. 처음 나타날 때만 쓰고, 이후 필터나 페이지를 바꿀 때는 다시 재생하지 않는다.",
+      "fr-FR": "Un groupe de cartes ou d'entrées apparaît élément par élément la première fois. À réserver à la première apparition ; l'effet ne se rejoue pas aux changements de filtre ou de page.",
+      "es-ES": "Un grupo de tarjetas o entradas aparece uno tras otro la primera vez. Úselo solo en la primera aparición; no se repite en cambios posteriores de filtro o de página.",
+      "ru-RU": "Группа карточек или записей при первом появлении всплывает по одному элементу. Используйте только при первом появлении; при последующей смене фильтра или страницы эффект не повторяется.",
+    },
+  },
+];

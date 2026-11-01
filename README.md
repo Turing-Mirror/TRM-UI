@@ -18,17 +18,19 @@ TRM UI 不另写规范文档。界面本身就是示范，代码本身就是说�
    | 概览 | 外壳、主题、整体结构 | `src/pages/OverviewPage.tsx` |
    | 组件 | 全部基础组件 | `src/pages/ComponentsPage.tsx`、`src/trm/components/` |
    | 模式 | 列表、详情、清理、下载等整页模式 | `src/pages/PatternsPage.tsx`、`src/pages/MorePatterns.tsx` |
-   | 交互 | 交互约定，以及照约定做的演示 | `src/pages/interactionRules.ts`、`src/pages/InteractionPage.tsx` |
-   | 文本要求 | 界面文字的写法，附错误示范与正确示范 | `src/pages/textRules.ts` |
+   | 交互 | 交互约定，每条附错误与正确的实物示范 | `src/pages/interactionRules.ts`、`src/pages/ruleDemos.tsx`、`src/pages/InteractionPage.tsx` |
+   | 文案 | 界面文字的写法，附错误示范与正确示范 | `src/pages/textRules.ts` |
    | 排版 | 字号档位 | `src/pages/TypePage.tsx` |
    | 配色 | 颜色变量及其用途 | `src/pages/colorRoles.ts`、`src/index.css` |
-   | 动效 | 曲线与各类切换 | `src/pages/MotionPage.tsx`、`src/index.css` |
+   | 动效 | 曲线，以及每种动效的名字、说明与示范 | `src/pages/motionTerms.ts`、`src/pages/MotionPage.tsx`、`src/trm/components/motion.tsx`、`src/index.css` |
+   | 历史 | 已被取代的成熟设计，按日期排列 | `src/pages/historyEntries.ts` |
    | 设置 | 设置页的写法 | `src/pages/SettingsPage.tsx` |
 
-3. **做产品界面时：** 组件从 `src/trm/` 取，颜色只用 `src/index.css` 的变量，文字照 `textRules.ts`，交互照 `interactionRules.ts`。
-4. **改规范时：** 改对应的数据文件，八种语言写全，少一种 `tsc` 会报错；画廊页面自动跟着变。不新建 Markdown 文档，也不把规则复制进产品仓库。
-5. **改组件时：** 产品仓库里的 `app/src/trm/` 是这里 `src/trm/` 的副本。这里改完，把改动的文件拷过去。
-6. **改完检查：** `npm run build`，依次运行 eslint、tsc、i18n 校验和 vite build，任何一步失败就停。
+3. **做产品界面时：** 组件从 `src/trm/` 取，颜色只用 `src/index.css` 的变量，文字照 `textRules.ts`，交互照 `interactionRules.ts`，动效用 `motionTerms.ts` 里的名字沟通。
+4. **换掉一个成熟的设计时：** 在 `historyEntries.ts` 记一条，写明日期、旧设计、新设计和原因。
+5. **改规范时：** 改对应的数据文件，八种语言写全，少一种 `tsc` 会报错；画廊页面自动跟着变。不新建 Markdown 文档，也不把规则复制进产品仓库。
+6. **改组件时：** 产品仓库里的 `app/src/trm/` 是这里 `src/trm/` 的副本。这里改完，把改动的文件拷过去。
+7. **改完检查：** `npm run build`，依次运行 eslint、tsc、i18n 校验和 vite build，任何一步失败就停。
 
 规则的来历和取舍写在代码注释里，大多在解释「为什么不能改成看起来更合理的写法」。注释背后都是已经发生过的问题，不要删。
 
