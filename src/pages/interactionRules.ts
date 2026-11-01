@@ -135,8 +135,8 @@ export const INTERACTION_RULES: Rule[] = [
     },
     lead: [
       {
-        "zh-CN": "点击按钮打开的浮层（详情、菜单、提示）以该按钮为定位锚点，紧贴按钮显示。",
-        "zh-TW": "點選按鈕開啟的浮層（詳情、選單、提示）以該按鈕為定位錨點，緊貼按鈕顯示。",
+        "zh-CN": "点击按钮打开的浮层（详情、菜单、提示）以该按钮为基准定位，紧贴按钮显示。",
+        "zh-TW": "點選按鈕開啟的浮層（詳情、選單、提示）以該按鈕為基準定位，緊貼按鈕顯示。",
         "en-US": "A popover opened by a button (details, menu, tooltip) is anchored to that button and appears right next to it.",
         "ja-JP": "ボタンで開くポップオーバー（詳細、メニュー、ヒント）は、そのボタンを基準に配置し、ボタンのすぐそばに表示します。",
         "ko-KR": "버튼으로 여는 팝오버(상세, 메뉴, 도움말)는 그 버튼을 기준으로 배치하며 버튼 바로 옆에 표시한다.",
@@ -148,8 +148,8 @@ export const INTERACTION_RULES: Rule[] = [
     examples: [
       {
         pairs: {
-          "zh-CN": ["以按钮外占满整行的容器为锚点，浮层出现在行的另一端", "以被点击的按钮为锚点"],
-          "zh-TW": ["以按鈕外佔滿整行的容器為錨點，浮層出現在行的另一端", "以被點選的按鈕為錨點"],
+          "zh-CN": ["以按钮外占满整行的区域为基准，浮层出现在行的另一端", "以被点击的按钮为基准"],
+          "zh-TW": ["以按鈕外佔滿整行的區域為基準，浮層出現在行的另一端", "以被點選的按鈕為基準"],
           "en-US": ["The anchor is a full-width container around the button, so the popover drifts to the far end of the row", "The anchor is the button that was clicked"],
           "ja-JP": ["基準がボタンの外側にある行いっぱいの要素で、ポップオーバーが行の反対端に出る", "基準はクリックされたボタンそのもの"],
           "ko-KR": ["기준점이 버튼 바깥의 한 줄 전체 컨테이너라서 팝오버가 줄의 반대쪽 끝에 뜬다", "기준점은 클릭한 바로 그 버튼이다"],
