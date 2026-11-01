@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { cloneElement, isValidElement, useId, useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactElement } from "react";
 import { createPortal } from "react-dom";
 import { usePresence } from "./overlay";
 
@@ -29,11 +29,19 @@ type Pos = { left: number; top: number; below: boolean; originX: number };
 export function Tooltip({
   text,
   children,
+  className,
+  triggerClassName = "inline-flex items-center shrink-0 align-middle",
+  exitMs,
 }: {
   text: string;
   /** 触发提示的那个元素。整块都算悬停区。 */
   children: React.ReactNode;
+  /** A product can supply all panel styles without importing the gallery's global stylesheet. */
+  className?: string;
+  triggerClassName?: string;
+  exitMs?: number;
 }) {
+  const id = useId();
   const anchor = useRef<HTMLSpanElement>(null);
   const bubble = useRef<HTMLDivElement>(null);
   // 悬停和聚焦是两条独立的「想看」通道：悬停走了但焦点还在，说明就还在 ——
@@ -42,7 +50,7 @@ export function Tooltip({
   const [focused, setFocused] = useState(false);
   const open = hovered || focused;
   // 收起时放完收起动画再卸掉。
-  const { mounted, leaving } = usePresence(open);
+  const { mounted, leaving } = usePresence(open, exitMs);
   const leaveTimer = useRef<number | null>(null);
   const [pos, setPos] = useState<Pos | null>(null);
 
@@ -53,7 +61,7 @@ export function Tooltip({
     // 默认放上面 —— 提示是对下面那一行的解释，压在它自己讲的东西上面
     // 会挡住上下文。上面放不下才翻到下面。
     const below = a.top - GAP - b.height < EDGE;
-    const top = below ? a.bottom + GAP : a.top - GAP - b.height;
+    const top = Math.max(EDGE, Math.min(below ? a.bottom + GAP : a.top - GAP - b.height, window.innerHeight - b.height - EDGE));
     // 水平居中对齐锚点，然后夹进窗口里。
     const raw = a.left + a.width / 2 - b.width / 2;
     const left = Math.min(
@@ -75,7 +83,8 @@ export function Tooltip({
       setFocused(false);
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Escape") return;
+      if (e.key !== "Escape" || e.defaultPrevented || e.isComposing) return;
+      e.preventDefault();
       close();
       // 焦点还在问号上的话一并放开，下一次点击/聚焦才能重新打开。
       const a = document.activeElement;
@@ -106,7 +115,7 @@ export function Tooltip({
     <>
       <span
         ref={anchor}
-        className="inline-flex items-center shrink-0 align-middle"
+        className={triggerClassName}
         onPointerEnter={() => {
           if (leaveTimer.current) {
             window.clearTimeout(leaveTimer.current);
@@ -127,24 +136,26 @@ export function Tooltip({
         // 捕获阶段把聚焦态补回来；Escape/点到别处照常收。
         onClickCapture={() => setFocused(true)}
       >
-        {children}
+        {isValidElement(children) ? cloneElement(children as ReactElement<{ 'aria-describedby'?: string }>, {
+          'aria-describedby': [children.props && (children.props as { 'aria-describedby'?: string })['aria-describedby'], open ? id : undefined].filter(Boolean).join(' ') || undefined,
+        }) : children}
       </span>
       {mounted
         ? createPortal(
             <div
               ref={bubble}
+              id={id}
               // 退场那一小段只是在淡出，已经不算提示了。
               role={leaving ? undefined : "tooltip"}
               aria-hidden={leaving || undefined}
-              className={[
+              className={[(className ?? [
                 "fixed z-[300] pointer-events-none max-w-[320px]",
                 "rounded-[var(--rs)] bg-[var(--surface)] px-3 py-2",
                 "shadow-[0_8px_24px_-10px_rgba(0,0,0,.45),inset_0_0_0_1px_var(--hairline)]",
                 // 字号比正文的辅助文字大一档：这是用户特地凑过去看的东西，
                 // 不该比他不看的说明文字还小。
                 "text-[13.5px] leading-[1.65] text-[var(--ink)] whitespace-pre-line",
-                leaving ? "tooltip-out" : "tooltip-in",
-              ].join(" ")}
+              ].join(" ")), leaving ? "tooltip-out" : "tooltip-in"].join(" ")}
               style={{
                 left: pos?.left ?? -9999,
                 top: pos?.top ?? -9999,

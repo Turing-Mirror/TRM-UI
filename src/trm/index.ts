@@ -98,4 +98,5 @@ export { MenuPopup, type PopupMenuItem, type PopupMenuCloseReason } from "./comp
 export { placePopup, type PopupAnchor, type PopupBox } from "./lib/popupPos";
 export { ModalLayer, Leave, LeavingContext, useLeaving } from "./components/overlay";
 export { Curtain, FADE_OUT_MS } from "./components/motion";
+export type { MotionOptions } from "./components/motion";
 export { lookup, interpolate, translate } from "./i18n/dict";

@@ -38,6 +38,9 @@ const reduced = () => typeof window !== "undefined" && window.matchMedia("(prefe
 
 type Dir = -1 | 0 | 1;
 
+/** Product motion preferences also apply to JavaScript animations and removal timers. */
+export type MotionOptions = { durationMs?: number; easing?: string; reduced?: boolean };
+
 /** 记住一个数值上一次是变大还是变小：翻页时据此决定新内容从哪一侧推进来。 */
 export function useDir(value: number): Dir {
   const last = useRef(value);
@@ -53,7 +56,7 @@ export function useDir(value: number): Dir {
  * 伸缩：里面的内容变高变矮时，这一层的高度跟着平滑过渡，不跳。
  * 只有在过渡期间裁掉溢出，平时不裁，阴影和描边照常画在外面。
  */
-export function Morph({ children, className = "" }: { children: ReactNode; className?: string }) {
+export function Morph({ children, className = "", disabled = false }: { children: ReactNode; className?: string; disabled?: boolean }) {
   const outer = useRef<HTMLDivElement>(null);
   const inner = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
@@ -67,12 +70,13 @@ export function Morph({ children, className = "" }: { children: ReactNode; class
       o.style.overflow = "";
       o.removeAttribute("data-morphing");
     };
+    if (disabled) { done(); return; }
     const ro = new ResizeObserver(() => {
       const h = i.offsetHeight;
       if (h === last) return;
       const from = o.style.height ? o.getBoundingClientRect().height : last;
       last = h;
-      if (reduced()) return;
+      if (reduced()) { done(); return; }
       o.style.height = `${from}px`;
       o.style.overflow = "clip";
       o.setAttribute("data-morphing", "");
@@ -86,8 +90,9 @@ export function Morph({ children, className = "" }: { children: ReactNode; class
       ro.disconnect();
       o.removeEventListener("transitionend", done);
       o.removeEventListener("transitioncancel", done);
+      done();
     };
-  }, []);
+  }, [disabled]);
   return (
     <div ref={outer} className={`morph ${className}`}>
       <div ref={inner} className="flow-root">
@@ -247,14 +252,15 @@ type FlowEntry<T> = { key: string; item: T; phase: "enter" | "stay" | "leave" };
  * 留下的项从旧位置滑到新位置，离开的项原地收拢，新来的项撑开。
  * 列表的间距写在每一项里面（例如 py-3），不要用 gap：收拢的项仍占着一份 gap。
  */
-export function FlowList<T>({ items, keyOf, render, className = "", itemClassName = "" }: { items: readonly T[]; keyOf: (item: T) => string; render: (item: T, i: number) => ReactNode; className?: string; itemClassName?: string }) {
+export function FlowList<T>({ items, keyOf, render, className = "", itemClassName = "", motion, layout = "list" }: { items: readonly T[]; keyOf: (item: T) => string; render: (item: T, i: number) => ReactNode; className?: string; itemClassName?: string; motion?: MotionOptions; layout?: "list" | "grid" }) {
+  const duration = motion?.reduced || reduced() ? 0 : Math.max(0, motion?.durationMs ?? FLOW_MS);
   const [list, setList] = useState<FlowEntry<T>[]>(() => items.map((item) => ({ key: keyOf(item), item, phase: "stay" })));
   // 按 key 的顺序判断列表变没变。父组件每次重绘都会传来新数组（filter、slice），
   // 只看数组是不是同一个，就会把每次重绘都当成换了列表，用旧位置再滑一遍
   const sig = items.map(keyOf).join("\n");
   const [src, setSrc] = useState(sig);
   const box = useRef<HTMLDivElement>(null);
-  const tops = useRef(new Map<string, number>());
+  const positions = useRef(new Map<string, { top: number; left: number; width: number; height: number }>());
   // 上一次量位置时对应的那份列表。收尾那次重绘（卸下离开的项、新来的项转常驻）列表没变，只记位置不放动画
   const measured = useRef(sig);
 
@@ -283,35 +289,49 @@ export function FlowList<T>({ items, keyOf, render, className = "", itemClassNam
   useLayoutEffect(() => {
     const el = box.current;
     if (!el) return;
-    const quiet = reduced() || measured.current === src;
+    const quiet = duration === 0 || measured.current === src;
     measured.current = src;
     // 位置量的是相对列表本身（列表是定位容器），外层整体移动不算这几项换了位置
-    const easing = curve("--ease-nav");
-    const now = new Map<string, number>();
+    const easing = motion?.easing ?? curve("--ease-nav");
+    const now = new Map<string, { top: number; left: number; width: number; height: number }>();
     el.querySelectorAll<HTMLElement>(":scope > [data-flow]").forEach((node) => {
       const key = node.dataset.flow ?? "";
-      const top = node.offsetTop;
-      now.set(key, top);
-      const was = tops.current.get(key);
-      if (quiet || was === undefined || was === top || node.dataset.phase !== "stay") return;
-      node.animate([{ transform: `translate3d(0, ${was - top}px, 0)` }, { transform: "none" }], { duration: FLOW_MS, easing });
+      const was = positions.current.get(key);
+      // Grid removals leave the layout immediately, so neighbours move once rather than jumping after exit.
+      if (layout === "grid" && node.dataset.phase === "leave" && was) {
+        Object.assign(node.style, { position: "absolute", top: `${was.top}px`, left: `${was.left}px`, width: `${was.width}px`, height: `${was.height}px` });
+        now.set(key, was);
+        return;
+      }
+      Object.assign(node.style, { position: "", top: "", left: "", width: "", height: "" });
     });
-    tops.current = now;
+    el.querySelectorAll<HTMLElement>(":scope > [data-flow]").forEach((node) => {
+      const key = node.dataset.flow ?? "";
+      if (layout === "grid" && node.dataset.phase === "leave") return;
+      const position = { top: node.offsetTop, left: node.offsetLeft, width: node.offsetWidth, height: node.offsetHeight };
+      now.set(key, position);
+      const was = positions.current.get(key);
+      if (!duration) node.getAnimations?.().forEach(animation => animation.cancel());
+      if (quiet || !was || (was.top === position.top && was.left === position.left) || node.dataset.phase !== "stay") return;
+      node.getAnimations?.().forEach(animation => animation.cancel());
+      node.animate([{ transform: `translate3d(${was.left - position.left}px, ${was.top - position.top}px, 0)` }, { transform: "none" }], { duration, easing });
+    });
+    positions.current = now;
   });
 
   // 撑开、收拢放完之后：新来的项转为常驻，离开的项卸下。多等两帧，确保动画已经停在终点
   const moving = list.some((e) => e.phase !== "stay");
   useEffect(() => {
     if (!moving) return;
-    const id = window.setTimeout(() => setList((l) => l.filter((e) => e.phase !== "leave").map((e) => (e.phase === "enter" ? { ...e, phase: "stay" } : e))), FLOW_MS + 40);
+    const id = window.setTimeout(() => setList((l) => l.filter((e) => e.phase !== "leave").map((e) => (e.phase === "enter" ? { ...e, phase: "stay" } : e))), duration ? duration + 40 : 0);
     return () => window.clearTimeout(id);
-  }, [moving, list]);
+  }, [moving, list, duration]);
 
   // 条目内容（点赞数之类）随时可能更新：在场的项一律按 key 取最新的那份来画，离开的项照原样画完
   const current = new Map(items.map((it) => [keyOf(it), it]));
   let shown = 0;
   return (
-    <div ref={box} className={`relative ${className}`}>
+    <div ref={box} className={`relative ${className}`} data-flow-layout={layout} style={{ "--flow-ms": `${duration}ms`, ...(motion?.easing ? { "--ease-nav": motion.easing } : {}) } as CSSProperties}>
       {list.map((e) => (
         <div key={e.key} data-flow={e.key} data-phase={e.phase} inert={e.phase === "leave"} className={`flow-item ${e.phase === "leave" ? "flow-leave" : e.phase === "enter" ? "flow-enter" : ""}`}>
           {/* 间距放在里层：外层收拢到零时内边距跟着一起收，不会最后一下才跳没 */}

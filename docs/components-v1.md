@@ -31,6 +31,8 @@ Tailwind v4 应用的样式入口：
 - `PopupSelect` 提供自绘下拉列表，`Select` 保留原生选择框。`MenuPopup` 提供锚定菜单和关闭原因回调。
 - `Swap` 支持 `push` 和 `fade`；`stagger` 接受间隔与数量；`Collapse` 接受卸载延迟。产品通过参数保留已有节奏。
 - 页面顶部间距、菜单和依次出现的动效参数可以通过 CSS 变量配置。产品差异写在产品样式中，共用实现不在产品中修改。
+- 已有主题系统的产品可以只引用交互逻辑，不导入全局样式。`Tooltip` 的 `className` 替换面板外观，`triggerClassName` 设置触发区域，`exitMs` 对齐产品的退场时长。
+- `FlowList` 的 `motion` 接受 `durationMs`、`easing` 和 `reduced`，同时控制 JavaScript 动画和卸载时间；`layout="grid"` 支持网格的横纵换位。`Morph disabled` 关闭高度过渡。产品仍需提供对应的局部 CSS，并将这些参数连接到自己的主题设置。
 
 ## 构建与升级
 
