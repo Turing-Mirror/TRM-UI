@@ -90,14 +90,14 @@ export function Tooltip({
       const a = document.activeElement;
       if (a instanceof HTMLElement && anchor.current?.contains(a)) a.blur();
     };
-    window.addEventListener("keydown", onKey);
+    document.addEventListener("keydown", onKey);
     // 滚动和改窗口大小时直接收起，不追着锚点跑：追着跑要么卡，要么在
     // 内容滚出视野之后留下一个飘在半空的框。
     window.addEventListener("scroll", close, true);
     window.addEventListener("resize", close);
     window.addEventListener("blur", close);
     return () => {
-      window.removeEventListener("keydown", onKey);
+      document.removeEventListener("keydown", onKey);
       window.removeEventListener("scroll", close, true);
       window.removeEventListener("resize", close);
       window.removeEventListener("blur", close);
