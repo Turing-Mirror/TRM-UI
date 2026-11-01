@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, type Ref, type TextareaHTMLAttributes } from "react";
 
-export type ComposerInputProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "value" | "defaultValue"> & {
+export type ComposerInputProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "value" | "defaultValue" | "onSubmit"> & {
   value: string;
   ref?: Ref<HTMLTextAreaElement>;
   maxHeight?: number;
