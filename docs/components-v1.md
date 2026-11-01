@@ -28,6 +28,7 @@ Tailwind v4 应用的样式入口：
 - 产品已有语言状态时，以 `I18nScope value={{locale, setLocale, ready, t}}` 包裹内容。产品翻译优先；缺少通用键时使用包内对应语言的 `ui` 翻译。作用域切换不重挂子树。静态翻译调用方可同步 `setTLocale`。
 - 产品自己的页面、音频处理、引擎消息、术语表和配置存储不放入组件包。
 - `Block collapsible="稳定标识"` 保留可折叠分区及其本机收起状态。产品原有的 `trm.collapsed.<标识>` 设置继续生效。
+- `Pager showSinglePage` 在单页列表中保留当前页及禁用的前后翻页按钮，默认仍隐藏单页。固定页脚可通过 `--pager-margin-top` 调整顶部间距，默认 `2rem`。
 - `ModalLayer` 接受产品提供的面板；`Leave` 保留条件渲染内容直到退场完成；`Modal` 继续提供完整对话框。
 - `PopupSelect` 提供自绘下拉列表，`Select` 保留原生选择框。`MenuPopup` 提供锚定菜单和关闭原因回调。
 - `Swap` 支持 `push` 和 `fade`；`stagger` 接受间隔与数量；`Collapse` 接受卸载延迟。产品通过参数保留已有节奏。

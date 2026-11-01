@@ -220,10 +220,10 @@ export function Filters<T extends string>({ value, options, onChange }: { value:
 }
 
 /**
- * 翻页。只有一页时不显示；页码多时中间用省略号。
+ * 翻页。默认隐藏单页；持续显示页码的列表可设置 showSinglePage。
  * 换页时当前页的标记滑过去；留下的页码滑到新位置，新出现的页码淡入，离开的页码原地淡出，整排不跳。
  */
-export function Pager({ page, pages, onChange }: { page: number; pages: number; onChange: (p: number) => void }) {
+export function Pager({ page, pages, onChange, showSinglePage = false }: { page: number; pages: number; onChange: (p: number) => void; showSinglePage?: boolean }) {
   const { t } = useI18n();
   const look = useHoverStyle();
   const { box, pos, armed } = useSlider<HTMLDivElement>();
@@ -255,11 +255,11 @@ export function Pager({ page, pages, onChange }: { page: number; pages: number; 
     const id = window.setTimeout(() => setGhosts([]), FLOW_MS);
     return () => window.clearTimeout(id);
   }, [ghosts]);
-  if (pages <= 1) return null;
+  if (pages < 1 || (pages === 1 && !showSinglePage)) return null;
   const btn = "relative h-8 min-w-8 px-2 grid place-items-center rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[13px] tabular-nums transition-colors disabled:opacity-30 disabled:cursor-default";
   const hover = hoverInk(look);
   return (
-    <nav aria-label={t("ui.pager.label")} className="mt-8 flex items-center justify-center gap-1">
+    <nav aria-label={t("ui.pager.label")} className="mt-[var(--pager-margin-top,2rem)] flex items-center justify-center gap-1">
       <button type="button" aria-label={t("ui.pager.prev")} disabled={page <= 1} onClick={() => onChange(page - 1)} className={`${btn} text-[var(--ink-muted)] ${hover}`}>
         <Icon name="back" size={15} />
       </button>
