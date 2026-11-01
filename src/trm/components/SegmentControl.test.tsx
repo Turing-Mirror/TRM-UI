@@ -108,6 +108,33 @@ describe("SegmentControl 的指针收尾", () => {
     expect(frames.size).toBe(0);
   });
 
+  it("拖动后首次键盘激活仍可选择其他项", () => {
+    const { root, changed } = setup();
+    pointer(root, "pointerdown");
+    pointer(root, "pointermove", 140);
+    pointer(root, "pointerup", 140);
+    finishFrames();
+    expect(changed).toHaveBeenLastCalledWith("b");
+    act(() => root.querySelectorAll("button")[0].click());
+    finishFrames();
+    expect(changed).toHaveBeenLastCalledWith("a");
+  });
+
+  it("拖动后新的指针点击不会被上一轮拖动拦截", () => {
+    const { root, changed } = setup();
+    pointer(root, "pointerdown");
+    pointer(root, "pointermove", 140);
+    pointer(root, "pointerup", 140);
+    finishFrames();
+    vi.mocked(root.querySelector<HTMLElement>(".seg-thumb")!.getBoundingClientRect).mockReturnValue({ left: 103, right: 203 } as DOMRect);
+    const first = root.querySelectorAll("button")[0];
+    pointer(first, "pointerdown", 50);
+    pointer(first, "pointerup", 50);
+    act(() => first.dispatchEvent(new MouseEvent("click", { bubbles: true, detail: 1 })));
+    finishFrames();
+    expect(changed).toHaveBeenLastCalledWith("a");
+  });
+
   it("卸载时移除外部松手监听并取消在途动画", () => {
     const { root, changed } = setup();
     pointer(root, "pointerdown");

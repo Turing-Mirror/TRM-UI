@@ -99,6 +99,7 @@ export function SegmentControl<T extends string>({ options, value, onChange, cla
   }, [finishPointer]);
 
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    suppressClick.current = false;
     const s = sim.current;
     const thumb = thumbRef.current;
     if (compact || !s || !thumb || e.button !== 0 || e.pointerType === "touch" && !e.isPrimary) return;
@@ -160,10 +161,10 @@ export function SegmentControl<T extends string>({ options, value, onChange, cla
               if (el) btnRefs.current.set(opt.id, el);
               else btnRefs.current.delete(opt.id);
             }}
-            onClick={() => {
+            onClick={(event) => {
               if (suppressClick.current) {
                 suppressClick.current = false;
-                return;
+                if (event.detail !== 0) return;
               }
               if (opt.id === value) return;
               // 点击：滑块先弹过去，到达那一项上方时才切换；减弱动态效果时直接切换
