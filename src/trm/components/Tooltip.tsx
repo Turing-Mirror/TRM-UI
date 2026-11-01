@@ -1,9 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { usePresence } from "./overlay";
-
-/** 提示框收起的时长，与 index.css 的 .tooltip-out 一致。 */
-const TIP_OUT_MS = 160;
+import { OUT_MS, usePresence } from "./overlay";
 
 /**
  * 自己画的悬浮提示，替掉浏览器原生的 `title`。
@@ -26,7 +23,8 @@ const GAP = 9;
 /** 离窗口边缘至少留这么多，免得贴边显得要掉出去。 */
 const EDGE = 12;
 
-type Pos = { left: number; top: number; below: boolean };
+/** originX：问号中心相对提示框左边的距离。提示框从这一点长出来，收起时缩回这一点。 */
+type Pos = { left: number; top: number; below: boolean; originX: number };
 
 export function Tooltip({
   text,
@@ -46,7 +44,7 @@ export function Tooltip({
   const leaveTimer = useRef<number | null>(null);
   const [pos, setPos] = useState<Pos | null>(null);
   // 收起时照原位放完淡出再卸下，和出现时一样有过渡
-  const { mounted, leaving } = usePresence(open, TIP_OUT_MS);
+  const { mounted, leaving } = usePresence(open, OUT_MS);
 
   const place = useCallback(() => {
     const a = anchor.current?.getBoundingClientRect();
@@ -62,7 +60,7 @@ export function Tooltip({
       Math.max(raw, EDGE),
       Math.max(EDGE, window.innerWidth - b.width - EDGE),
     );
-    setPos({ left, top, below });
+    setPos({ left, top, below, originX: a.left + a.width / 2 - left });
   }, []);
 
   // 先挂上去（不可见）量一次尺寸，再定位。直接用估算的高度会在长文案上偏。
@@ -150,7 +148,7 @@ export function Tooltip({
                 top: pos?.top ?? -9999,
                 // 量尺寸的那一帧还没有位置，先藏着，免得左上角闪一下。
                 visibility: pos ? "visible" : "hidden",
-                transformOrigin: pos?.below ? "top center" : "bottom center",
+                transformOrigin: pos ? `${pos.originX}px ${pos.below ? "top" : "bottom"}` : undefined,
               }}
             >
               {text}

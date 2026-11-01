@@ -405,27 +405,21 @@ html[data-input="pointer"] :focus-visible {
   animation: spotlight 1.6s var(--ease) both;
 }
 
-/* 提示框入场。很短很轻 —— 提示是用户移过去就要看到的东西，
-   动画只是让它「浮上来」而不是「啪一下出现」，不能变成等待。 */
+/* 提示框从问号处长出来，收起时缩回问号。缩放原点由 Tooltip.tsx 按问号位置设定。
+   入场很短：提示是移过去就要看到的东西，不能变成等待。 */
 @keyframes tooltip-in {
-  from {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: none; }
 }
 .tooltip-in {
-  animation: tooltip-in 0.16s var(--ease) both;
+  animation: tooltip-in 0.2s var(--ease) both;
 }
 @keyframes tooltip-out {
   from { opacity: 1; transform: none; }
-  to { opacity: 0; transform: scale(0.97); }
+  to { opacity: 0; transform: scale(0.8); }
 }
 .tooltip-out {
-  animation: tooltip-out 0.16s var(--ease-out-quick) both;
+  animation: tooltip-out var(--out-ms) var(--ease-soft) both;
 }
 
 /* 邀请式提示的入场：从底下托上来，带一点点回弹。
