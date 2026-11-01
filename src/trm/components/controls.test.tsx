@@ -3,9 +3,23 @@ import { act } from "react";
 import { afterEach, expect, it, vi } from "vitest";
 import { mount, type Mounted } from "../test/dom";
 import { Slider, Toggle } from "./controls";
-import { AccordionGroup, ListItem } from "./ui";
+import { AccordionGroup, Block, ListItem } from "./ui";
 let m: Mounted;
 afterEach(() => m?.unmount());
+it("a collapsible section retains its state after remounting", () => {
+  const section = <Block title="Queue" collapsible="test.queue"><span>Pending item</span></Block>;
+  localStorage.removeItem("trm.collapsed.test.queue");
+  m = mount(section);
+  act(() => m.container.querySelector("button")!.click());
+  expect(m.container.querySelector("button")!.getAttribute("aria-expanded")).toBe("false");
+  expect(m.container.textContent).not.toContain("Pending item");
+  m.unmount();
+  m = mount(section);
+  expect(m.container.textContent).not.toContain("Pending item");
+  act(() => m.container.querySelector("button")!.click());
+  expect(m.container.textContent).toContain("Pending item");
+  localStorage.removeItem("trm.collapsed.test.queue");
+});
 it("forwards disabled and the accessible name through Slider", () => {
   m = mount(<Slider value={20} min={0} max={100} step={1} onChange={() => {}} ariaLabel="volume" disabled />);
   const input=m.container.querySelector("input")!;

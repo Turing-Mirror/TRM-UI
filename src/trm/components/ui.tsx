@@ -1,8 +1,22 @@
-import type { MouseEvent, ReactNode } from "react";
+import { useState, type MouseEvent, type ReactNode } from "react";
 import { HelpMark } from "./Tooltip";
 import { Icon } from "./Icon";
 import { useI18n } from "../i18n";
 import { Collapse } from "./motion";
+
+/** 可折叠一节的收起状态，按 key 记在本机，下次打开保持。 */
+function useCollapsed(key?: string): [boolean, () => void] {
+  const storeKey = key ? `trm.collapsed.${key}` : "";
+  const [collapsed, setCollapsed] = useState(() => {
+    if (!storeKey) return false;
+    try { return localStorage.getItem(storeKey) === "1"; } catch { return false; }
+  });
+  const toggle = () => setCollapsed((v) => {
+    try { localStorage.setItem(storeKey, v ? "0" : "1"); } catch { /* 存不了就只在本次生效 */ }
+    return !v;
+  });
+  return [collapsed, toggle];
+}
 
 /** 页面内容的左右留白。窄窗口下逐档收窄，不是一刀切。 */
 export function PagePad({
@@ -79,8 +93,11 @@ export function Block({
   children,
   className = "",
   id,
+  collapsible,
 }: {
   title?: string;
+  /** Persist a collapsible section under this stable product key. */
+  collapsible?: string;
   /** 标题后面的小问号。 */
   titleTip?: string;
   note?: string;
@@ -92,6 +109,7 @@ export function Block({
   className?: string;
   id?: string;
 }) {
+  const [collapsed, toggle] = useCollapsed(collapsible);
   return (
     <section id={id} className={`mt-[30px] ${className}`}>
       {(title || note || extra || action) && (
@@ -100,7 +118,14 @@ export function Block({
         <div className="flex items-center gap-[11px] mb-[15px] flex-wrap">
           {title ? (
             <h3 className="text-[15.5px] font-semibold m-0 inline-flex items-center gap-1.5 leading-none">
-              <span className="leading-normal">{title}</span>
+              {collapsible ? (
+                <button type="button" onClick={toggle} aria-expanded={!collapsed} className="inline-flex items-center gap-1 bg-transparent border-0 p-0 font-semibold text-inherit cursor-pointer">
+                  <Icon name="chevron" size={13} className={`text-[var(--meta)] transition-transform ${collapsed ? "" : "rotate-90"}`} />
+                  <span className="leading-normal">{title}</span>
+                </button>
+              ) : (
+                <span className="leading-normal">{title}</span>
+              )}
               {titleTip ? <HelpMark title={titleTip} /> : null}
             </h3>
           ) : null}
@@ -117,7 +142,7 @@ export function Block({
           ) : null}
         </div>
       )}
-      {children}
+      {collapsed ? null : children}
     </section>
   );
 }
