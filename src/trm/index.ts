@@ -100,3 +100,6 @@ export { ModalLayer, Leave, LeavingContext, useLeaving } from "./components/over
 export { Curtain, FADE_OUT_MS } from "./components/motion";
 export type { MotionOptions } from "./components/motion";
 export { lookup, interpolate, translate } from "./i18n/dict";
+
+export { ComposerInput, type ComposerInputProps } from "./components/ComposerInput";
+export { useMorphState, useLeavingValue } from "./hooks/useMorphState";
