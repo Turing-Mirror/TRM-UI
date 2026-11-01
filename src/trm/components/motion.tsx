@@ -208,6 +208,7 @@ export function Pane({ id, children, className = "" }: { id: string; children: R
  * 新内容里的 .rise 不再重放：一项项重新浮现会让整块像是重新加载了一遍。
  */
 export function Swap({ k, dir = 1, children, className = "", variant = "push" }: { k: string; dir?: Dir; children: ReactNode; className?: string; variant?: "push" | "fade" }) {
+  const outer = useContext(PaneOnCtx);
   const [cur, setCur] = useState({ k, node: children, seq: 0, dir });
   const [old, setOld] = useState<{ node: ReactNode; seq: number } | null>(null);
   if (cur.k !== k) {
@@ -225,9 +226,9 @@ export function Swap({ k, dir = 1, children, className = "", variant = "push" }:
     const vars = { "--swap-dx": `${dir * 18}px`, "--swap-ox": `${dir * -10}px` } as CSSProperties;
     return (
       <div className={`relative ${className}`} style={vars}>
-        <div key={cur.seq} className={cur.seq ? "swap-in" : ""}>{cur.node}</div>
-        {old ? <div key={`out-${old.seq}`} inert aria-hidden className="swap-out absolute inset-x-0 top-0 pointer-events-none">
-          <Frozen node={old.node} />
+        <div key={cur.seq} className={cur.seq ? "swap-in" : ""}><PaneOnCtx.Provider value={outer}><Frozen node={cur.node} /></PaneOnCtx.Provider></div>
+        {old ? <div key={old.seq} inert aria-hidden className="swap-out absolute inset-x-0 top-0 pointer-events-none">
+          <PaneOnCtx.Provider value={false}><Frozen node={old.node} /></PaneOnCtx.Provider>
         </div> : null}
       </div>
     );
@@ -236,7 +237,7 @@ export function Swap({ k, dir = 1, children, className = "", variant = "push" }:
     <Morph className={className}>
       <div className={`relative ${old ? "push-stage" : ""}`} style={pushStyle(cur.dir)}>
         {old ? (
-          <div key={`out-${old.seq}`} inert aria-hidden className="push-out absolute inset-x-0 top-0 pointer-events-none">
+          <div key={old.seq} inert aria-hidden className="push-out absolute inset-x-0 top-0 pointer-events-none">
             {/* 退出中的旧内容不再算露着：里面的页标题随之让位 */}
             <PaneOnCtx.Provider value={false}>
               <Frozen node={old.node} />
@@ -244,7 +245,7 @@ export function Swap({ k, dir = 1, children, className = "", variant = "push" }:
           </div>
         ) : null}
         <div key={cur.seq} className={cur.seq ? `${enterClass(cur.seq)} flow-quiet` : ""}>
-          {cur.node}
+          <PaneOnCtx.Provider value={outer}><Frozen node={cur.node} /></PaneOnCtx.Provider>
         </div>
       </div>
     </Morph>

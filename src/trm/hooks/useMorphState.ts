@@ -1,19 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 /** Keep the previous face alive for its exit motion, without owning its contents. */
 export function useLeavingValue<T>(value: T, durationMs: number, enabled = true): T | null {
-  const previous = useRef(value);
-  const [leaving, setLeaving] = useState<T | null>(null);
+  const [state, setState] = useState<{ value: T; leaving: T | null; seq: number }>({ value, leaving: null, seq: 0 });
+  if (!Object.is(state.value, value)) {
+    setState({ value, leaving: enabled ? state.value : null, seq: state.seq + 1 });
+  }
   useEffect(() => {
-    if (Object.is(previous.current, value)) { setLeaving(null); return; }
-    const old = previous.current;
-    previous.current = value;
-    setLeaving(enabled ? old : null);
-    if (!enabled) return;
-    const timer = window.setTimeout(() => setLeaving(null), durationMs);
+    if (state.leaving === null) return;
+    const timer = window.setTimeout(() => setState(current => current.seq === state.seq ? { ...current, leaving: null } : current), durationMs);
     return () => window.clearTimeout(timer);
-  }, [value, durationMs, enabled]);
-  return leaving;
+  }, [state.seq, state.leaving, durationMs]);
+  return enabled ? state.leaving : null;
 }
 
 /** Let the destination finish layout before changing a persistent container's shape. */
