@@ -48,4 +48,9 @@ it('allows product tooltip styles and connects the explanation to its trigger', 
   expect(button.getAttribute('aria-describedby')).toBe(tooltip.id);
   pressKey(button, 'Escape');
   expect(document.querySelector('[role="tooltip"]')).toBeNull();
+  expect(document.activeElement).toBe(button);
+  act(() => button.click());
+  expect(document.querySelector('[role="tooltip"]')).not.toBeNull();
+  act(() => mounted.root.render(<Tooltip text="Explanation" disabled><button>Help</button></Tooltip>));
+  expect(document.querySelector('[role="tooltip"]')).toBeNull();
 });

@@ -32,6 +32,7 @@ export function Tooltip({
   className,
   triggerClassName = "inline-flex items-center shrink-0 align-middle",
   exitMs,
+  disabled = false,
 }: {
   text: string;
   /** 触发提示的那个元素。整块都算悬停区。 */
@@ -40,6 +41,8 @@ export function Tooltip({
   className?: string;
   triggerClassName?: string;
   exitMs?: number;
+  /** Suppress the hint while the trigger's own panel is open. */
+  disabled?: boolean;
 }) {
   const id = useId();
   const anchor = useRef<HTMLSpanElement>(null);
@@ -48,7 +51,7 @@ export function Tooltip({
   // 以前一份 open 状态，鼠标一离开就关，点了问号拿到的焦点根本留不住说明。
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
-  const open = hovered || focused;
+  const open = !disabled && (hovered || focused);
   // 收起时放完收起动画再卸掉。
   const { mounted, leaving } = usePresence(open, exitMs);
   const leaveTimer = useRef<number | null>(null);
@@ -86,9 +89,7 @@ export function Tooltip({
       if (e.key !== "Escape" || e.defaultPrevented || e.isComposing) return;
       e.preventDefault();
       close();
-      // 焦点还在问号上的话一并放开，下一次点击/聚焦才能重新打开。
-      const a = document.activeElement;
-      if (a instanceof HTMLElement && anchor.current?.contains(a)) a.blur();
+      // 保留键盘焦点；再次点击时 onClickCapture 会重新显示说明。
     };
     document.addEventListener("keydown", onKey);
     // 滚动和改窗口大小时直接收起，不追着锚点跑：追着跑要么卡，要么在
