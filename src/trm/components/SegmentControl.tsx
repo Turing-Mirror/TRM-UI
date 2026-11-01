@@ -166,7 +166,7 @@ export function SegmentControl<T extends string>({ options, value, onChange, cla
                 suppressClick.current = false;
                 if (event.detail !== 0) return;
               }
-              if (opt.id === value) return;
+              // 当前选中项也可成为目标，用于中断尚未完成的切换。
               // 点击：滑块先弹过去，到达那一项上方时才切换；减弱动态效果时直接切换
               if (compact || !sim.current?.animated()) onChange(opt.id);
               else sim.current.target(opt.id, true);

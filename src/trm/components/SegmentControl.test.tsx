@@ -45,7 +45,7 @@ describe("SegmentControl 的指针收尾", () => {
     const thumb = root.querySelector<HTMLElement>(".seg-thumb")!;
     vi.spyOn(thumb, "getBoundingClientRect").mockReturnValue({ left: 3, right: 103 } as DOMRect);
     root.setPointerCapture = vi.fn();
-    return { root, changed };
+    return { root, changed, rerender: () => act(() => mounted!.root.render(<Example />)) };
   }
 
   function pointer(target: EventTarget, type: string, x = 50, id = 17) {
@@ -55,15 +55,15 @@ describe("SegmentControl 的指针收尾", () => {
     act(() => target.dispatchEvent(event));
   }
 
-  function finishFrames() {
-    act(() => {
-      for (let i = 0; i < 240 && frames.size; i++) {
+  function finishFrames(limit = 240) {
+    for (let i = 0; i < limit && frames.size; i++) {
+      act(() => {
         now += 16;
         const callbacks = [...frames.values()];
         frames.clear();
         callbacks.forEach((callback) => callback(now));
-      }
-    });
+      });
+    }
   }
 
   it.each(["pointerup", "pointercancel"])("按下后直接移出控件，在外部 %s 后结束动画循环", (ending) => {
@@ -82,6 +82,52 @@ describe("SegmentControl 的指针收尾", () => {
     pointer(root, "pointermove", 140);
     expect(root.setPointerCapture).toHaveBeenCalledWith(17);
     pointer(root, "lostpointercapture", 140);
+    finishFrames();
+    expect(changed).toHaveBeenCalledExactlyOnceWith("b");
+    expect(frames.size).toBe(0);
+  });
+
+  it("快速反向点击当前项会取消尚未完成的切换", () => {
+    const { root, changed } = setup();
+    const buttons = root.querySelectorAll("button");
+    act(() => buttons[1].click());
+    act(() => buttons[0].click());
+    finishFrames();
+    expect(changed).not.toHaveBeenCalled();
+    expect(buttons[0].getAttribute("aria-pressed")).toBe("true");
+    expect(frames.size).toBe(0);
+  });
+
+  it("动画尚未到达时可以反向回到原项", () => {
+    const { root } = setup();
+    const buttons = root.querySelectorAll("button");
+    act(() => buttons[1].click());
+    finishFrames(3);
+    act(() => buttons[0].click());
+    finishFrames();
+    expect(buttons[0].getAttribute("aria-pressed")).toBe("true");
+    expect(frames.size).toBe(0);
+  });
+
+  it("连续往返点击以后以最后一次选择为准", () => {
+    const { root } = setup();
+    const buttons = root.querySelectorAll("button");
+    for (let i = 0; i < 20; i++) {
+      act(() => buttons[1].click());
+      finishFrames(2);
+      act(() => buttons[0].click());
+      finishFrames(2);
+    }
+    finishFrames();
+    expect(buttons[0].getAttribute("aria-pressed")).toBe("true");
+    expect(frames.size).toBe(0);
+  });
+
+  it("父页面重绘不取消尚未完成的选择", () => {
+    const { root, changed, rerender } = setup();
+    act(() => root.querySelectorAll("button")[1].click());
+    finishFrames(2);
+    rerender();
     finishFrames();
     expect(changed).toHaveBeenCalledExactlyOnceWith("b");
     expect(frames.size).toBe(0);
