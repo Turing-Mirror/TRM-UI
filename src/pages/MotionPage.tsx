@@ -96,7 +96,7 @@ export function MotionPage() {
   const [fresh, setFresh] = useState(true);
   return (
     <PagePad>
-      <PageHead title={t("nav.motion")} sub={t("demo.motion.sub")} />
+      <PageHead title={t("nav.motion")} />
       <Curves />
 
       {MOTION_TERMS.map((term) => {

@@ -69,7 +69,7 @@ export function PatternsPage() {
 
   return (
     <PagePad>
-      <PageHead title={t("nav.patterns")} sub={t("demo.patterns.sub")} />
+      <PageHead title={t("nav.patterns")} />
 
       <Block title={t("demo.patterns.tabs")}>
         <div className="flex flex-col gap-4">

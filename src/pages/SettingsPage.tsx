@@ -84,7 +84,7 @@ export function SettingsPage({ look, onLook, mouseNav, onMouseNav }: { look: Loo
 
   return (
     <PagePad>
-      <PageHead title={t("nav.settings")} sub={t("demo.set.sub")} />
+      <PageHead title={t("nav.settings")} />
       <div className="mt-4">
         <Tabs value={tab} onChange={setTab} options={TABS.map((id) => ({ id, label: t(TAB_KEYS[id]) }))} />
       </div>

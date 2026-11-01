@@ -50,7 +50,7 @@ export function ListEditPattern() {
   }, [cur, shownSel]);
   const now = playing ? ENTRIES.find((e) => e.id === playing.id) : undefined;
   return (
-    <Block title={t("demo.more.board")} note={t("demo.more.boardSub")}>
+    <Block title={t("demo.more.board")}>
       <div className="grid grid-cols-[150px_minmax(0,1fr)_minmax(220px,280px)] gap-5 items-start max-[900px]:grid-cols-[minmax(0,1fr)_minmax(200px,240px)]">
         <div className="max-[900px]:hidden [&>aside]:w-full [&>aside]:mr-0">
           <Side>
@@ -189,7 +189,7 @@ export function StarterPattern() {
     return () => window.clearTimeout(id);
   }, [prog]);
   return (
-    <Block title={t("demo.more.starter")} note={t("demo.more.starterSub")}>
+    <Block title={t("demo.more.starter")}>
       <div className="grid grid-cols-3 gap-4 max-[720px]:grid-cols-1">
         {items.map((x, i) => {
           const p = prog[x.id];

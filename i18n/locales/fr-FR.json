@@ -134,12 +134,6 @@
       "sub": "Interface commune et exemples de contrôles pour applications de bureau",
       "whatTitle": "Présentation",
       "whatBody": "TRM UI est la base d'interface des applications de bureau : couleurs et tailles de texte communes, contrôles courants, textes d'interface en huit langues, fenêtre avec barre latérale et réglages de projet prêts à l'emploi.\nLe dossier src/trm/ peut être copié tel quel dans un nouveau projet.",
-      "whyTitle": "Utilité",
-      "whyBody": "Tous les produits utilisent la même interface : couleurs, contrôles et animations restent cohérents.\nLes améliorations sont faites d'abord dans TRM UI, puis reportées dans chaque produit.",
-      "ruleTitle": "Règles de base",
-      "rule1": "Les couleurs proviennent uniquement des variables de couleur communes, jamais de valeurs écrites en dur. Une couleur écrite en dur s'affiche mal dans l'autre thème.",
-      "rule2": "Les textes de l'interface proviennent uniquement des packs de langue. La compilation vérifie que les huit langues ont les mêmes entrées.",
-      "rule3": "Le dossier src/trm/ n'utilise que son propre code ; il peut donc être copié tel quel dans un autre projet.",
       "themeLabel": "Thème",
       "themeTip": "Avec « Suivre le système », l'interface suit le réglage clair ou sombre du système.",
       "langLabel": "Langue",
@@ -171,9 +165,7 @@
       "sourceLoading": "Chargement"
     },
     "components": {
-      "sub": "Tous les contrôles ci-dessous sont manipulables.",
       "buttons": "Boutons",
-      "buttonsNote": "Un bouton en cours de traitement affiche trois points qui rebondissent.",
       "fields": "Champs",
       "list": "Lignes de liste",
       "segment": "Contrôle segmenté",
@@ -225,7 +217,6 @@
       "groupArt": "Teintes d’aperçu"
     },
     "motion": {
-      "sub": "Courbes, noms et exemples d'animation.",
       "curves": "Sept courbes",
       "easeNav": "Pour les changements de page et les grands déplacements. Démarre vite, ralentit longuement et ne dépasse jamais l'arrivée.",
       "spring": "Pour les petits éléments comme les fenêtres contextuelles et les curseurs. Elle dépasse légèrement l'arrivée puis revient : elle ne sert pas aux éléments collés au bord de la fenêtre.",
@@ -273,7 +264,6 @@
       "glassHint": "Cliquez sur une option ou faites glisser le curseur. Tiré vite jusqu'à une extrémité, il s'écrase puis revient."
     },
     "patterns": {
-      "sub": "Motifs d'interface courants dans les applications de bureau. Tous sont manipulables.",
       "tabs": "Onglets et filtres",
       "tabA": "Tout",
       "tabB": "Favoris",
@@ -325,7 +315,6 @@
       "pagerNote": "Au changement de page, le contenu se déplace dans le sens de la pagination et les numéros rejoignent leur nouvelle place."
     },
     "inter": {
-      "sub": "Exemples de changement de vue, commentaires, guides pas à pas, avis, erreurs, graphiques en anneau, panneaux et boutons flottants.",
       "panes": "Poussée et liste fluide",
       "tab": {
         "a": "Tout",
@@ -383,7 +372,6 @@
       "panesNote": "Le changement d'onglet utilise la poussée ; le filtrage d'une même liste utilise la liste fluide."
     },
     "set": {
-      "sub": "Les réglages se répartissent en trois groupes : Apparence, Général et Raccourcis. Un changement qui nécessite un redémarrage affiche un avis en haut.",
       "tab": {
         "appearance": "Apparence",
         "general": "Général",
@@ -453,7 +441,6 @@
     },
     "more": {
       "board": "Liste et éditeur en trois colonnes",
-      "boardSub": "La colonne de gauche liste les sources, celle du milieu les éléments, celle de droite modifie l'élément choisi, et le bas affiche la lecture en cours.",
       "all": "Tout",
       "source1": "Favoris",
       "source2": "Ouvertures",
@@ -493,7 +480,6 @@
       "freed": "Terminé. {size} libérés.",
       "resetDemo": "Réinitialiser la démo",
       "starter": "Téléchargements recommandés",
-      "starterSub": "Des éléments recommandés s'affichent tant qu'il n'y a aucun contenu. La progression du téléchargement s'affiche sur place et peut être annulée à tout moment.",
       "pack1": "Pack de démarrage",
       "pack2": "Ressources courantes",
       "pack3": "Projet d’exemple",
@@ -501,13 +487,11 @@
       "installed": "Installé"
     },
     "text": {
-      "sub": "Règles de rédaction des textes de l'interface, avec un exemple incorrect et un exemple correct pour chacune.",
       "wrong": "Incorrect",
       "right": "Correct",
       "source": "Source : {v}"
     },
     "history": {
-      "sub": "Conceptions éprouvées qui ont été remplacées, des plus récentes aux plus anciennes.",
       "list": "Conceptions remplacées",
       "count": "{n} au total",
       "now": "Remplacé par : {v}",

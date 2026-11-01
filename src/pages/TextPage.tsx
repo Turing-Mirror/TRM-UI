@@ -6,7 +6,7 @@ export function TextPage() {
   const { t } = useI18n();
   return (
     <PagePad>
-      <PageHead title={t("nav.text")} sub={t("demo.text.sub")} />
+      <PageHead title={t("nav.text")} />
       {TEXT_RULES.map((rule) => (
         <RuleBlock key={rule.id} rule={rule} />
       ))}

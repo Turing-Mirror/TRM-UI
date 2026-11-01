@@ -13,7 +13,7 @@ export function HistoryPage() {
     .filter((e) => !needle || [e.date, e.old[locale], e.now[locale], e.why[locale]].some((s) => s.toLowerCase().includes(needle)));
   return (
     <PagePad>
-      <PageHead title={t("nav.history")} sub={t("demo.history.sub")} />
+      <PageHead title={t("nav.history")} />
       <Block title={t("demo.history.list")} note={t("demo.history.count", { n: shown.length })} extra={<SearchBox value={q} onChange={setQ} />}>
         <div className="bg-[var(--group)] rounded-[var(--r)] px-5">
           <FlowList

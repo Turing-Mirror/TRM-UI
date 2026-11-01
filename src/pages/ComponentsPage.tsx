@@ -31,9 +31,9 @@ export function ComponentsPage() {
 
   return (
     <PagePad>
-      <PageHead title={t("nav.components")} sub={t("demo.components.sub")} />
+      <PageHead title={t("nav.components")} />
 
-      <Block title={t("demo.components.buttons")} note={t("demo.components.buttonsNote")}>
+      <Block title={t("demo.components.buttons")}>
         <Group>
           <div className="py-4 flex items-center gap-2.5 flex-wrap">
             <Btn>{t("demo.btn.normal")}</Btn>

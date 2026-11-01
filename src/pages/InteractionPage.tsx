@@ -71,7 +71,7 @@ export function InteractionPage() {
 
   return (
     <PagePad>
-      <PageHead title={t("nav.interaction")} sub={t("demo.inter.sub")} />
+      <PageHead title={t("nav.interaction")} />
 
       {INTERACTION_RULES.map((rule) => {
         const Demo = RULE_DEMOS[rule.id];

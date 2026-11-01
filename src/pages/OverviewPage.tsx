@@ -7,7 +7,6 @@ import {
   Field,
   Select,
   Toggle,
-  ListItem,
   useI18n,
   LOCALES,
   inHost,
@@ -45,20 +44,6 @@ export function OverviewPage({
         <div className="text-sm text-[var(--ink-muted)] leading-relaxed whitespace-pre-line">
           {t("demo.overview.whatBody")}
         </div>
-      </Block>
-
-      <Block title={t("demo.overview.whyTitle")}>
-        <div className="text-sm text-[var(--ink-muted)] leading-relaxed whitespace-pre-line">
-          {t("demo.overview.whyBody")}
-        </div>
-      </Block>
-
-      <Block title={t("demo.overview.ruleTitle")}>
-        <Group>
-          <ListItem title="1" desc={t("demo.overview.rule1")} />
-          <ListItem title="2" desc={t("demo.overview.rule2")} />
-          <ListItem title="3" desc={t("demo.overview.rule3")} />
-        </Group>
       </Block>
 
       <Block title={t("demo.shell.title")}>
