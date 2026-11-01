@@ -238,6 +238,8 @@ export function FlowList<T>({ items, keyOf, render, className = "", itemClassNam
   const [src, setSrc] = useState(items);
   const box = useRef<HTMLDivElement>(null);
   const tops = useRef(new Map<string, number>());
+  // 上一次量位置时对应的那份列表。收尾那次重绘（卸下离开的项、新来的项转常驻）列表没变，只记位置不放动画
+  const measured = useRef(items);
 
   if (src !== items) {
     setSrc(items);
@@ -264,7 +266,8 @@ export function FlowList<T>({ items, keyOf, render, className = "", itemClassNam
   useLayoutEffect(() => {
     const el = box.current;
     if (!el) return;
-    const quiet = reduced();
+    const quiet = reduced() || measured.current === src;
+    measured.current = src;
     const easing = curve("--ease-nav");
     const now = new Map<string, number>();
     el.querySelectorAll<HTMLElement>(":scope > [data-flow]").forEach((node) => {
@@ -278,11 +281,11 @@ export function FlowList<T>({ items, keyOf, render, className = "", itemClassNam
     tops.current = now;
   });
 
-  // 撑开、收拢放完之后：新来的项转为常驻，离开的项卸下
+  // 撑开、收拢放完之后：新来的项转为常驻，离开的项卸下。多等两帧，确保动画已经停在终点
   const moving = list.some((e) => e.phase !== "stay");
   useEffect(() => {
     if (!moving) return;
-    const id = window.setTimeout(() => setList((l) => l.filter((e) => e.phase !== "leave").map((e) => (e.phase === "enter" ? { ...e, phase: "stay" } : e))), FLOW_MS);
+    const id = window.setTimeout(() => setList((l) => l.filter((e) => e.phase !== "leave").map((e) => (e.phase === "enter" ? { ...e, phase: "stay" } : e))), FLOW_MS + 40);
     return () => window.clearTimeout(id);
   }, [moving, list]);
 
