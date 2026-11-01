@@ -56,3 +56,7 @@ npm pack
 `ComposerInput` 是受控多行输入组件，自动伸缩、Enter 提交、Shift + Enter 换行，并保留输入法选字行为。草稿、附件、提交状态、按钮与样式由调用方持有。通过 `maxHeight`、`minHeight` 和 `onHeightChange` 连接已有布局。禁用或只读时不提交。
 
 `useMorphState` 在目标页面完成布局后切换容器形态，默认等待两帧；`useLeavingValue` 保留旧内容直到离场结束。容器应挂在路由内容之外，切换页面、输入类型或语言不重建草稿。调用方保留原有几何、拖动、动效类与持续时间。
+
+## 全高工作区
+
+`Panes layout="fill"` 用于画布、编辑器或占满父容器的工作区。父容器必须提供确定高度；此模式直接定位子视图，不经过按内容伸缩的 Morph 容器。默认 `layout="content"` 保持列表和设置页面的高度伸缩。离场完成后的 Pane 使用 hidden 和 inert，同时保留输入状态。

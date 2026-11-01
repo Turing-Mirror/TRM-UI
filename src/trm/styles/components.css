@@ -717,3 +717,7 @@ option {
   .step-now, .eq-bar { animation: none; }
   .eq-bar { height: 8px; }
 }
+
+/* Retained panes stay out of layout even when a consumer uses flex/grid. */
+[data-trm-pane][hidden] { display: none !important; }
+.trm-panes-fill { overflow: hidden; }

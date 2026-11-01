@@ -106,6 +106,7 @@ export function Morph({ children, className = "", disabled = false }: { children
 type Turn = { value: string; from: string | null; dir: Dir; seq: number; offset: number };
 
 const PanesCtx = createContext<Turn | null>(null);
+const PanesLayoutCtx = createContext<"content" | "fill">("content");
 /** 所在的视图此刻是否露着。嵌套的视图要外层也露着才算。 */
 const PaneOnCtx = createContext(true);
 export const usePaneOn = () => useContext(PaneOnCtx);
@@ -124,7 +125,7 @@ const pushStyle = (dir: Dir) => ({ "--push": String(dir || 1) }) as CSSPropertie
  * 一组互斥的视图。value 是当前那一个；order 决定方向：往后翻从右边推进来，往前翻从左边。
  * keepScroll：各视图记住自己的滚动位置，换过去时回到那里（列表与详情用它）。
  */
-export function Panes({ value, order, keepScroll = false, className = "", children }: { value: string; order?: readonly string[]; keepScroll?: boolean; className?: string; children: ReactNode }) {
+export function Panes({ value, order, keepScroll = false, className = "", children, layout = "content" }: { value: string; order?: readonly string[]; keepScroll?: boolean; className?: string; children: ReactNode; layout?: "content" | "fill" }) {
   const [turn, setTurn] = useState<Turn>({ value, from: null, dir: 0, seq: 0, offset: 0 });
   const box = useRef<HTMLDivElement>(null);
   const scrolls = useRef(new Map<string, number>());
@@ -155,10 +156,12 @@ export function Panes({ value, order, keepScroll = false, className = "", childr
     return () => window.clearTimeout(id);
   }, [turn.from, turn.seq]);
 
+  const contents = <PanesLayoutCtx.Provider value={layout}><PanesCtx.Provider value={turn}>{children}</PanesCtx.Provider></PanesLayoutCtx.Provider>;
+  if (layout === "fill") return <div ref={box} className={`trm-panes-fill relative min-h-0 ${className}`}>{contents}</div>;
   return (
     <Morph className={className}>
       <div ref={box} className={`relative ${turn.from ? "push-stage" : ""}`}>
-        <PanesCtx.Provider value={turn}>{children}</PanesCtx.Provider>
+        {contents}
       </div>
     </Morph>
   );
@@ -176,6 +179,7 @@ const Frozen = memo(function Frozen({ node }: { node: ReactNode }) {
 export function Pane({ id, children, className = "" }: { id: string; children: ReactNode; className?: string }) {
   const turn = useContext(PanesCtx);
   const outer = useContext(PaneOnCtx);
+  const layout = useContext(PanesLayoutCtx);
   const on = turn ? turn.value === id : true;
   const [kept, setKept] = useState(children);
   if (on && kept !== children) setKept(children);
@@ -184,9 +188,11 @@ export function Pane({ id, children, className = "" }: { id: string; children: R
   const state = on ? (entering ? `${enterClass(turn?.seq ?? 0)} flow-quiet` : "") : leaving ? "push-out absolute inset-x-0 pointer-events-none" : "hidden";
   return (
     <div
+      data-trm-pane={id}
+      hidden={!on && !leaving}
       aria-hidden={on ? undefined : true}
       inert={!on}
-      className={`${className} ${state}`}
+      className={`${layout === "fill" ? "absolute inset-0 min-h-0" : ""} ${className} ${state}`}
       style={{ ...pushStyle(turn?.dir ?? 1), top: leaving ? turn?.offset : undefined }}
     >
       <PaneOnCtx.Provider value={outer && on}>
