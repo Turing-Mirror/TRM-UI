@@ -5,9 +5,22 @@ import { useI18n } from "../i18n";
 import { Collapse } from "./motion";
 
 /** 页面内容的左右留白。窄窗口下逐档收窄，不是一刀切。 */
-export function PagePad({ children }: { children: ReactNode }) {
+export function PagePad({
+  children,
+  fill = false,
+}: {
+  children: ReactNode;
+  /**
+   * 整页不随内容滚动的布局（音频页）：撑满所在面板，内部各区块自己滚动。
+   * 同时挂成 inline-size 容器，页内尺寸可以用 cqw 随可用宽度收缩。
+   */
+  fill?: boolean;
+}) {
   return (
-    <div className="px-[30px] pb-[34px] max-[1020px]:px-[22px] max-[1020px]:pb-[30px] max-[720px]:px-4 max-[720px]:pb-[26px]">
+    // h-full 而不是 min-h-full：min-h 只保证至少那么高，grid 长列表照样把整页
+    // 撑高，「各栏内部滚动」就失效了；h-full 把可用高度卡死成面板高度。
+    // 撑满模式不留底边距：页面最下面那一栏直接贴着 Dock。
+    <div className={`px-[30px] max-[1020px]:px-[22px] max-[720px]:px-4 ${fill ? "h-full flex flex-col [container-type:inline-size]" : "pb-[34px] max-[1020px]:pb-[30px] max-[720px]:pb-[26px]"}`}>
       {children}
     </div>
   );
@@ -28,7 +41,7 @@ export function PageHead({
 }) {
   const { t } = useI18n();
   return (
-    <div className="pt-2 pb-1.5 flex items-end justify-between gap-4 flex-wrap">
+    <div className="pt-[var(--page-head-top,8px)] pb-1.5 flex items-end justify-between gap-4 flex-wrap">
       <div>
         <h2 className="text-[25px] font-semibold tracking-tight m-0 max-[860px]:text-[22px] flex items-center gap-1.5">
           {back ? (
@@ -62,6 +75,7 @@ export function Block({
   note,
   extra,
   action,
+  actionClassName = "ml-auto inline-flex items-center gap-2 flex-wrap",
   children,
   className = "",
   id,
@@ -73,6 +87,7 @@ export function Block({
   /** 紧跟在标题和计数后面的控件，比如这一块的搜索框。 */
   extra?: ReactNode;
   action?: ReactNode;
+  actionClassName?: string;
   children: ReactNode;
   className?: string;
   id?: string;
@@ -96,7 +111,7 @@ export function Block({
           {action ? (
             // 动作区可能塞多枚按钮（如资源包页的恢复默认/导出/导入），
             // span 里裸排会贴在一起，统一给横向间距。
-            <span className="ml-auto inline-flex items-center gap-2 flex-wrap">
+            <span className={actionClassName}>
               {action}
             </span>
           ) : null}
@@ -121,6 +136,8 @@ export function Btn({
   uw = false,
   disabled = false,
   busy = false,
+  dimDisabled = true,
+  noWrap = true,
   onClick,
   className = "",
   ariaLabel,
@@ -141,6 +158,8 @@ export function Btn({
    * 动的那三个点才是回执。
    */
   busy?: boolean;
+  dimDisabled?: boolean;
+  noWrap?: boolean;
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   className?: string;
   /** 按钮上只有图形没有字时（比如「⋯」）必须给，否则读屏读不出这是什么。 */
@@ -154,7 +173,8 @@ export function Btn({
       aria-label={ariaLabel}
       onClick={onClick}
       className={[
-        "text-[12.5px] border-0 rounded-[var(--rs)] cursor-pointer whitespace-nowrap",
+        "text-[12.5px] border-0 rounded-[var(--rs)] cursor-pointer",
+        noWrap ? "whitespace-nowrap" : "",
         "transition-[transform,background,color,box-shadow] duration-200 ease-[var(--ease)]",
         // 交互态一律写 enabled: 不写 disabled: 反向覆盖：前者在禁用下根本不匹配，
         // 后者要跟 Tailwind 的变体排序赌先后，赌输就是禁用按钮按下照样缩放。
@@ -165,7 +185,8 @@ export function Btn({
           : on
             ? "bg-transparent text-[var(--accent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--accent)_42%,transparent)]"
             : "bg-transparent text-[var(--ink-muted)] shadow-[inset_0_0_0_1px_var(--line)] enabled:hover:text-[var(--ink)] enabled:hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]",
-        disabled || busy ? "disabled:cursor-default disabled:opacity-40" : "",
+        disabled || busy ? "disabled:cursor-default" : "",
+        (disabled || busy) && dimDisabled ? "disabled:opacity-40" : "",
         className,
       ].join(" ")}
     >
@@ -185,6 +206,7 @@ export function ListItem({
   meta,
   right,
   rightInteractive = true,
+  collapseMs,
   children,
   clickable = false,
   expanded,
@@ -198,6 +220,7 @@ export function ListItem({
   right?: ReactNode;
   /** 仅含文字的右侧内容可设为 false，整行使用原生按钮。 */
   rightInteractive?: boolean;
+  collapseMs?: number;
   /** Body revealed under the row; only rendered when `expanded`. */
   children?: ReactNode;
   clickable?: boolean;
@@ -285,7 +308,7 @@ export function ListItem({
       {/* 正文和标题行之间要留出气口。原来是 -mt-1，正文顶边正好压在标题行
           悬停灰底的底边上 —— 鼠标停在标题上时，灰块下沿和文字挨成一条，
           看着像文字被切了一刀。 */}
-      <Collapse open={Boolean(expanded)}>
+      <Collapse open={Boolean(expanded)} ms={collapseMs}>
         {/* 别再往这儿加 `max-w-[NNch]`：`ch` 是「0」字形的宽度（12.5px 字号下
             实测 6.95px），只有一个汉字（12.5px）的一半。按拉丁文校准的 74ch
             折成中文就只剩 41 字、约容器宽度的 47%，一行话没走到一半就断了。
@@ -353,3 +376,42 @@ export function AccordionGroup({
 }
 
 export { HelpMark };
+
+/**
+ * 提醒：一枚橙色的三角图标加一行字，不铺底色。
+ * 需要用户处理的附一个按钮，放在行尾。
+ */
+export function Warn({
+  children,
+  action,
+  className = "",
+}: {
+  children: ReactNode;
+  action?: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      role="status"
+      className={`flex items-start gap-2 text-[12.5px] leading-relaxed text-[var(--ink-muted)] ${className}`}
+    >
+      <svg
+        aria-hidden
+        viewBox="0 0 16 16"
+        className="w-[14px] h-[14px] flex-none mt-[3px] text-[var(--notify)]"
+      >
+        <path
+          d="M8 1.9 14.6 13.4a.7.7 0 0 1-.6 1H2a.7.7 0 0 1-.6-1L8 1.9Z"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.4"
+          strokeLinejoin="round"
+        />
+        <path d="M8 6.2v3.6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="8" cy="11.9" r=".85" fill="currentColor" />
+      </svg>
+      <div className="min-w-0 flex-1">{children}</div>
+      {action ? <div className="flex-none -my-1">{action}</div> : null}
+    </div>
+  );
+}

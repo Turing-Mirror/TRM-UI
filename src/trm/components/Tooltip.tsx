@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { OUT_MS, usePresence } from "./overlay";
+import { usePresence } from "./overlay";
 
 /**
  * 自己画的悬浮提示，替掉浏览器原生的 `title`。
@@ -41,10 +41,10 @@ export function Tooltip({
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const open = hovered || focused;
+  // 收起时放完收起动画再卸掉。
+  const { mounted, leaving } = usePresence(open);
   const leaveTimer = useRef<number | null>(null);
   const [pos, setPos] = useState<Pos | null>(null);
-  // 收起时照原位放完淡出再卸下，和出现时一样有过渡
-  const { mounted, leaving } = usePresence(open, OUT_MS);
 
   const place = useCallback(() => {
     const a = anchor.current?.getBoundingClientRect();
@@ -133,7 +133,9 @@ export function Tooltip({
         ? createPortal(
             <div
               ref={bubble}
-              role="tooltip"
+              // 退场那一小段只是在淡出，已经不算提示了。
+              role={leaving ? undefined : "tooltip"}
+              aria-hidden={leaving || undefined}
               className={[
                 "fixed z-[300] pointer-events-none max-w-[320px]",
                 "rounded-[var(--rs)] bg-[var(--surface)] px-3 py-2",

@@ -1,0 +1,324 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+html {
+  background: var(--bg);
+  /* 根元素自己也不许滚。只把 body 设成 overflow:hidden 是不够的：根滚动容器
+     是视口（html），不是 body —— 只要有任何一个元素撑出视口，画出来的就是
+     **根**滚动条，body 上那句管不着。桌面软件是定高布局，不该有根滚动。 */
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  /* 桌面软件的默认观感：文字不可随手框选。需要可选的地方（错误详情、
+     日志、可复制的 ID）自己写 select-text。 */
+  user-select: none;
+}
+
+button {
+  font: inherit;
+}
+html[data-input="pointer"] :focus-visible {
+  outline: none !important;
+}
+
+* {
+  scrollbar-width: none; /* Firefox / 新版 Chromium */
+  -ms-overflow-style: none; /* 老 Edge */
+}
+
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+.seg-thumb { will-change: transform, width; }
+.seg-glass {
+  background: var(--seg-thumb);
+  -webkit-backdrop-filter: blur(10px) saturate(1.5);
+  backdrop-filter: blur(10px) saturate(1.5);
+  box-shadow:
+    var(--glass),
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.55),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.04);
+  will-change: transform;
+}
+.seg-lens { will-change: transform, left; }
+.btn-dots {
+  width: 1.1em;
+  height: 1em;
+  background-image: radial-gradient(currentColor 42%, transparent 45%);
+  background-size: 0.36em 0.36em;
+  background-repeat: repeat-x;
+  background-position: 0 center;
+  animation: btn-dots 0.9s linear infinite;
+  opacity: 0.7;
+}
+
+@keyframes btn-dots {
+  from {
+    background-position: 0 center;
+  }
+  to {
+    /* 走满一个点距，循环处接得上，看着就是一串点在往前挪。 */
+    background-position: 0.36em center;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+@keyframes leaveL {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-2.5%) scale(0.985);
+  }
+}
+@keyframes enterL {
+  from {
+    opacity: 0;
+    transform: translateX(6%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes leaveR {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(2.5%) scale(0.985);
+  }
+}
+@keyframes enterR {
+  from {
+    opacity: 0;
+    transform: translateX(-6%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.page-leave-l {
+  animation: leaveL 0.42s var(--ease-nav) forwards;
+}
+.page-enter-l {
+  animation: enterL 0.42s var(--ease-nav);
+}
+.page-leave-r {
+  animation: leaveR 0.42s var(--ease-nav) forwards;
+}
+.page-enter-r {
+  animation: enterR 0.42s var(--ease-nav);
+}
+@keyframes spotlight {
+  0% {
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+  70% {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  100% {
+    background: transparent;
+    box-shadow: inset 0 0 0 1px transparent;
+  }
+}
+.spotlight {
+  animation: spotlight 1.6s var(--ease) both;
+}
+@keyframes tooltip-in {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: none; }
+}
+.tooltip-in {
+  animation: tooltip-in 0.2s var(--ease) both;
+}
+@keyframes nudge-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.nudge-in {
+  animation: nudge-in 0.44s var(--spring) both;
+}
+
+:root[data-wallpaper] #root {
+  background: color-mix(
+    in srgb,
+    var(--bg)
+      calc(
+        (
+            var(--wp-scrim-min) +
+              (var(--wp-scrim-max) - var(--wp-scrim-min)) * var(--wp-detail, 0.5)
+          ) * (1 - 0.35 * var(--wp-clash)) * 100%
+      ),
+    transparent
+  );
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--wp-image, none);
+  background-size: cover;
+  background-position: center;
+  filter: blur(var(--wp-blur, 0px));
+  opacity: var(--wp-opacity, 0);
+  transform: scale(1.06); /* 盖住模糊产生的边 */
+}
+@keyframes flow-open {
+  from { grid-template-rows: 0fr; opacity: 0; }
+  to { grid-template-rows: 1fr; opacity: 1; }
+}
+@keyframes flow-close {
+  from { grid-template-rows: 1fr; opacity: 1; }
+  to { grid-template-rows: 0fr; opacity: 0; }
+}
+.flow-item { display: grid; grid-template-rows: 1fr; }
+.flow-body { min-height: 0; }
+.flow-enter, .flow-leave { overflow: clip; overflow-clip-margin: 6px; }
+.flow-enter { animation: flow-open var(--flow-ms) var(--ease-nav) both; }
+.flow-leave { animation: flow-close var(--flow-ms) var(--ease-nav) both; pointer-events: none; }
+.roll { display: inline-grid; overflow: clip; overflow-clip-margin: 2px; vertical-align: bottom; }
+.roll > span { grid-area: 1 / 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@keyframes roll-in {
+  from { transform: translate3d(0, -70%, 0); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes roll-out {
+  from { transform: none; opacity: 1; }
+  to { transform: translate3d(0, 70%, 0); opacity: 0; }
+}
+.roll-in { animation: roll-in var(--flow-ms) var(--ease-nav) both; }
+.roll-out { animation: roll-out var(--flow-ms) var(--ease-nav) both; }
+@keyframes curtain-in {
+  from { clip-path: inset(0 0 100% 0 round var(--r)); opacity: 0.6; }
+  to { clip-path: inset(0 0 0 0 round var(--r)); opacity: 1; }
+}
+@keyframes curtain-out {
+  from { clip-path: inset(0 0 0 0 round var(--r)); opacity: 1; }
+  to { clip-path: inset(0 0 100% 0 round var(--r)); opacity: 0.6; }
+}
+.curtain-in { animation: curtain-in 0.5s var(--ease-nav) both; }
+.curtain-out { animation: curtain-out var(--flow-ms) var(--ease-nav) both; }
+.collapse-area[data-open] { grid-template-rows: 1fr; opacity: 1; }
+@keyframes ring-grow { from { stroke-dasharray: 0 999; } }
+.ring-seg { animation: ring-grow 0.9s var(--spring-settle) both; }
+@keyframes eq-bar {
+  0%, 100% { height: 3px; }
+  50% { height: 12px; }
+}
+.eq-bar { height: 3px; animation: eq-bar 0.9s ease-in-out infinite; }
+@keyframes tooltip-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: scale(0.8); }
+}
+.tooltip-out { animation: tooltip-out var(--out-ms) var(--ease-soft) var(--overlay-exit-fill, both); }
+@keyframes menu-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes menu-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(var(--menu-exit-y, 0px)) scale(0.98); }
+}
+.menu-in { animation: menu-in var(--menu-enter-ms, 0.18s) var(--ease) both; transform-origin: var(--menu-origin, top left); }
+.menu-out { animation: menu-out var(--out-ms) var(--ease-soft) var(--overlay-exit-fill, both); pointer-events: none; }
+.collapse-area {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows var(--collapse-ms, var(--flow-ms)) var(--collapse-ease, var(--ease-nav)), opacity var(--collapse-opacity-ms, 0.3s) var(--collapse-opacity-ease, var(--ease-soft));
+}
+@keyframes rise {
+  from { opacity: 0; transform: translate3d(0, var(--rise-y, 14px), 0) scale(var(--rise-scale, 0.985)); }
+  to { opacity: 1; transform: none; }
+}
+.rise { animation: rise var(--rise-ms, 0.62s) var(--rise-ease, var(--ease-nav)) both; }
+@keyframes scrim-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes scrim-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+}
+@keyframes panel-out {
+  to {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+}
+.modal-scrim {
+  animation: scrim-in 0.26s var(--ease-soft) both;
+}
+.modal-scrim > * {
+  animation: panel-in 0.44s var(--spring-gentle) both;
+}
+.modal-scrim[data-leaving] {
+  animation: scrim-out var(--out-ms) var(--ease-soft) forwards;
+  pointer-events: none;
+}
+.modal-scrim[data-leaving] > * {
+  animation: panel-out var(--out-ms) var(--ease-soft) forwards;
+}
+@keyframes swap-in {
+  from { opacity: 0; transform: translate3d(var(--swap-dx, 0px), 8px, 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes swap-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translate3d(var(--swap-ox, 0px), 0, 0); }
+}
+.swap-in { animation: swap-in 0.46s var(--spring-settle) 0.04s both; }
+.swap-out { animation: swap-out 0.18s var(--ease-out-quick) both; }

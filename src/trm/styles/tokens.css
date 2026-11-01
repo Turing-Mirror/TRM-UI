@@ -1,0 +1,246 @@
+:root {
+  --bg-base: #f4f6f8;
+  --bg: var(--bg-base);
+  --surface: #ffffff;
+  --group-base: rgba(255, 255, 255, 0.6);
+  --group: var(--group-base);
+  /* 设了背景图时的两个量。见文件末尾 [data-wallpaper] 那一段。
+     scrim = 整块内容区那层磨砂的浓度区间，卡片实度不再逐个调。 */
+  --wp-scrim-min: 0.52;
+  --wp-scrim-max: 0.86;
+  /* 卡片实度的两端，由「冲突度」在其间取值。 */
+  --wp-group-a0: 0.72;
+  --wp-group-a1: 0.92;
+  --group-ink: #ffffff;
+  /* 冲突度：这张图的亮度贴近本主题底色的程度，0 = 离得远，1 = 几乎一样。
+     浅色主题的底是 #f4f6f8（亮度 0.96），所以图越亮越冲突。
+     不用 abs() —— 每个主题的底都在亮度的一端，一次线性钳位就够，
+     而 abs() 在这几个 webview 上的支持还不齐。 */
+  --wp-clash: clamp(0, calc((var(--wp-luma, 0.5) - 0.46) / 0.5), 1);
+  --ink: #1e242b;
+  --ink-muted: #5d6874;
+  --help: #8a949e;
+  --meta: #a3acb6;
+  --hairline: rgba(30, 36, 43, 0.1);
+  --line: rgba(30, 36, 43, 0.14);
+  --accent: #1289f0;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(18, 137, 240, 0.1);
+  --stage: #e8f4fd;
+  --notify: #ff9500;
+  --page-bg: #dfe4ea;
+  --ui:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei UI",
+    "PingFang SC", "Microsoft YaHei", sans-serif;
+  /* 字号只有 25 / 15.5 / 15 / 14 / 13 / 12.5 / 11.5 七档，见「排版」页。
+     不要用 ch 限制中文行宽：ch 是「0」的字宽，12.5px 下只有半个汉字宽，
+     按拉丁文定的 74ch 折成中文只剩 41 个字。数字成列时加 tabular-nums，
+     否则数值变化时那一列会左右抖。 */
+  /* 圆角只有两档：--r 给卡片和分组，--rs 给按钮、输入框和提示框。
+     要加第三档，先想清楚它和这两档的分工。 */
+  --r: 14px;
+  --rs: 8px;
+  --spring: cubic-bezier(0.34, 1.42, 0.64, 1);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* 换页专用曲线。起步快、收尾长，全程不冲过终点。
+     苹果自家的推入/面板动画就是这条形状：动作一开始就已经走掉一大半，
+     剩下的距离用很长的时间贴上去 —— 看着「快」，但停下来的那一刻没有硬边。
+     不要换成 --spring：那条会冲过终点，页面层贴着窗口边，冲过头就是一条缝。 */
+  --ease-nav: cubic-bezier(0.32, 0.72, 0, 1);
+  --glass:
+    0 2px 10px rgba(0, 0, 0, 0.1), inset 0 0 0 0.5px rgba(255, 255, 255, 0.6);
+  /* 深色底上要把近黑的字标压成白色剪影。用 invert 会把标志里的蓝色部分
+     拖成橙色，所以是 brightness(0) 打平之后再 invert。浅色下不处理。 */
+  --logo-filter: none;
+  /* 数值条把手的颜色。浅色下就是纸白 —— 比轨道亮，一眼看出是「能抓的那个」。 */
+  --knob: var(--surface);
+  /* 分段控件（顶部那排标签）滑块的底色。浅色下半透明的白就够亮了。 */
+  --seg-thumb: color-mix(in srgb, var(--surface) 86%, transparent);
+  /* 原生控件（<select> 展开的那张列表、右键菜单、日期选择器）的配色由这一项
+     决定，不由我们的 CSS 决定 —— 那张列表是系统画的，画在页面之外。
+     不声明的话 WebView2 一律按浅色画：深色模式下白底列表配我们设的浅色文字，
+     等于白底白字。data-theme 切换时下面两块会跟着改。 */
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-base: #171b22;
+    --bg: var(--bg-base);
+    --surface: #1f242d;
+    /* 卡片/分组底色。0.045 在深色底上几乎和背景一样，一屏设置看下来分不出
+       哪些项是一组的。抬到 0.075 刚好能看出边界，又不至于变成一块块灰砖。 */
+    --group-base: rgba(232, 240, 248, 0.075);
+    --group: var(--group-base);
+    /* 深色下的磨砂要更浓一点：浅色字压在一张亮照片上，比深色字压在暗照片上
+       更早读不出来。7.5% 的卡片色也抬一档 —— 底本身透了之后它更看不出来。 */
+    --wp-scrim-min: 0.58;
+    --wp-scrim-max: 0.90;
+    --wp-group-a0: 0.14;
+    --wp-group-a1: 0.48;
+    --group-ink: #e8f0f8;
+    /* 深色主题的底是 #171b22（亮度 0.11），所以图越暗越冲突。 */
+    --wp-clash: clamp(0, calc((0.59 - var(--wp-luma, 0.5)) / 0.5), 1);
+    --stage: #1e2837;
+    --ink: #e4e9ef;
+    --ink-muted: #a9b3be;
+    --help: #828c96;
+    --meta: #6e7883;
+    --hairline: rgba(232, 240, 248, 0.14);
+    --line: rgba(232, 240, 248, 0.22);
+    --accent: #4aa3f0;
+    --accent-ink: #0f1319;
+    --accent-soft: rgba(74, 163, 240, 0.14);
+    --notify: #ff9f0a;
+    --page-bg: #0c0f13;
+    --glass:
+      0 2px 12px rgba(0, 0, 0, 0.4), inset 0 0 0 0.5px rgba(255, 255, 255, 0.1);
+    --logo-filter: brightness(0) invert(1);
+    /* 深色下不能照抄 --surface：#1f242d 比轨道(≈#2b2f36)还暗，把手看着
+       不像把手，像轨道上破了个洞。要比轨道亮才抓得住。 */
+    --knob: #7c8794;
+    /* 深色下 --surface(#1f242d) 和 --bg(#171b22) 只差一点点，半透明之后滑块
+       几乎看不见 —— 选中的是哪个标签得靠猜。抬一档并且不再透。 */
+    --seg-thumb: #2b323e;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg-base: #171b22;
+  --bg: var(--bg-base);
+  --surface: #1f242d;
+  --group-base: rgba(232, 240, 248, 0.075);
+  --group: var(--group-base);
+    /* 深色下的磨砂要更浓一点：浅色字压在一张亮照片上，比深色字压在暗照片上
+       更早读不出来。7.5% 的卡片色也抬一档 —— 底本身透了之后它更看不出来。 */
+    --wp-scrim-min: 0.58;
+    --wp-scrim-max: 0.90;
+    --wp-group-a0: 0.14;
+    --wp-group-a1: 0.48;
+    --group-ink: #e8f0f8;
+    /* 深色主题的底是 #171b22（亮度 0.11），所以图越暗越冲突。 */
+    --wp-clash: clamp(0, calc((0.59 - var(--wp-luma, 0.5)) / 0.5), 1);
+  --stage: #1e2837;
+  --ink: #e4e9ef;
+  --ink-muted: #a9b3be;
+  --help: #828c96;
+  --meta: #6e7883;
+  --hairline: rgba(232, 240, 248, 0.14);
+  --line: rgba(232, 240, 248, 0.22);
+  --accent: #4aa3f0;
+  --accent-ink: #0f1319;
+  --accent-soft: rgba(74, 163, 240, 0.14);
+  --notify: #ff9f0a;
+  --page-bg: #0c0f13;
+  --glass:
+    0 2px 12px rgba(0, 0, 0, 0.4), inset 0 0 0 0.5px rgba(255, 255, 255, 0.1);
+  --logo-filter: brightness(0) invert(1);
+  --knob: #7c8794;
+  --seg-thumb: #2b323e;
+  color-scheme: dark;
+}
+:root[data-wallpaper] {
+  --bg: color-mix(in srgb, var(--bg-base) 90%, var(--wp-tint, transparent));
+  /* 图和主题底色撞亮度的时候，卡片要主动离开底色，不然一屏看下来分不清
+     哪些项是一组的（26.8.28 拿三张真图试出来的，最惨的一张卡片和底几乎同值）。 */
+  --wp-group-a: calc(
+    var(--wp-group-a0) + (var(--wp-group-a1) - var(--wp-group-a0)) * var(--wp-clash)
+  );
+  --group: color-mix(
+    in srgb,
+    color-mix(in srgb, var(--group-ink) 92%, var(--wp-tint, transparent))
+      calc(var(--wp-group-a) * 100%),
+    transparent
+  );
+  --hairline: color-mix(in srgb, var(--ink) 20%, transparent);
+  --line: color-mix(in srgb, var(--ink) 26%, transparent);
+  /* 次要文字各抬一档。这就是那条待办问的「要不要让组件更浓重」的正确版本：
+     浓的是**压在半透明底上的次要文字**，不是字号字重，也不是把每个控件描粗。
+     用 --ink 的透明度写，不写死颜色 —— 深浅两套主题的 --ink 本来就是反的，
+     写死会让其中一套彻底失效。今天的实际值约 72 / 55 / 44，这里各抬几个点。 */
+  --ink-muted: color-mix(in srgb, var(--ink) 78%, transparent);
+  --help: color-mix(in srgb, var(--ink) 62%, transparent);
+  --meta: color-mix(in srgb, var(--ink) 52%, transparent);
+}
+
+:root {
+  /* 预览色。图块、应用标在没有真图时的底色，浅而淡，六组轮换。 */
+  --art-1: #dcebfa;
+  --art-2: #e4f3ec;
+  --art-3: #f6ebdc;
+  --art-4: #eee6f6;
+  --art-5: #f7e3e6;
+  --art-6: #e3eef0;
+  --art-ink: rgba(30, 36, 43, 0.38);
+  /* 侧栏。比内容区稍深一点，靠底色分区，不画分隔线。 */
+  --rail: color-mix(in srgb, var(--bg) 88%, var(--ink) 3%);
+  /* 状态色：成功、提醒、危险。 */
+  --ok: #2f9e6a;
+  --ok-soft: rgba(47, 158, 106, 0.12);
+  /* 提醒用 macOS 的系统橙：图标、线条用 --warn，文字用深一档的 --warn-ink */
+  --warn: #ff9500;
+  --warn-ink: #c96a00;
+  --danger: #d0533f;
+  --danger-soft: rgba(208, 83, 63, 0.11);
+  --scrim: rgba(20, 26, 34, 0.28);
+  /* 输入框聚焦、控件悬停时的描边：比平时的描边深一档，不用强调色。
+     由 --ink 混出，深色模式跟着 --ink 走，不用另写。 */
+  --focus-line: color-mix(in srgb, var(--ink) 30%, transparent);
+  /* 补充的动效曲线。起步平缓、尾段慢慢停稳，不在第一帧就冲出大半路程；
+     离场用加速曲线，短而轻，让出位置给入场。 */
+  --ease-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out-quick: cubic-bezier(0.4, 0, 1, 1);
+  /* 弹簧曲线：阻尼振子取样而成。
+     settle 是临界阻尼，不过冲、尾段长而软，用于大跨度的变形，落定时不会抖；
+     gentle 过冲约 1%，只用于小位移；bouncy 过冲约 8%，只用于小幅度的缩放。 */
+  --spring-settle: linear(0, 0.0172, 0.0604, 0.1198, 0.1882, 0.2604, 0.3329, 0.4031, 0.4697, 0.5316, 0.5883, 0.6398, 0.6861, 0.7273, 0.7639, 0.7961, 0.8244, 0.8491, 0.8706, 0.8892, 0.9053, 0.9192, 0.9312, 0.9415, 0.9503, 0.9578, 0.9642, 0.9697, 0.9744, 0.9783, 0.9817, 0.9846, 0.987, 0.989, 0.9908, 0.9922, 0.9935, 0.9945, 0.9954, 0.9961, 0.9967, 0.9973, 0.9977, 0.9981, 0.9984, 0.9987, 0.9989, 0.9991, 1);
+  --spring-gentle: linear(0, 0.0104, 0.0382, 0.0791, 0.1294, 0.186, 0.2466, 0.3089, 0.3714, 0.4327, 0.492, 0.5485, 0.6016, 0.6511, 0.6968, 0.7385, 0.7763, 0.8104, 0.8407, 0.8677, 0.8914, 0.9121, 0.93, 0.9454, 0.9585, 0.9696, 0.9789, 0.9866, 0.9929, 0.9979, 1.0019, 1.005, 1.0073, 1.0089, 1.0101, 1.0107, 1.0111, 1.0111, 1.0109, 1.0105, 1.01, 1.0094, 1.0088, 1.0081, 1.0074, 1.0067, 1.006, 1.0054, 1);
+  --spring-bouncy: linear(0, 0.0106, 0.0396, 0.0834, 0.1386, 0.202, 0.271, 0.3433, 0.4167, 0.4897, 0.5607, 0.6286, 0.6927, 0.7521, 0.8066, 0.8558, 0.8996, 0.938, 0.9711, 0.9993, 1.0226, 1.0416, 1.0564, 1.0676, 1.0755, 1.0805, 1.0831, 1.0834, 1.0821, 1.0792, 1.0752, 1.0704, 1.0649, 1.0591, 1.053, 1.0468, 1.0408, 1.0349, 1.0293, 1.0241, 1.0193, 1.0149, 1.0109, 1.0074, 1.0043, 1.0016, 0.9994, 0.9976, 1);
+  --pop-shadow: 0 12px 40px rgba(20, 30, 45, 0.16), 0 0 0 0.5px rgba(30, 36, 43, 0.1);
+  /* 卡片被指到时向内收的阴影。 */
+  --sink: inset 0 3px 14px rgba(20, 30, 45, 0.2), inset 0 0 0 1px rgba(20, 30, 45, 0.06);
+  --sink-deep: inset 0 4px 18px rgba(20, 30, 45, 0.3), inset 0 0 0 1px rgba(20, 30, 45, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --art-1: #22324a;
+    --art-2: #213a31;
+    --art-3: #3a3226;
+    --art-4: #322a42;
+    --art-5: #3d2a30;
+    --art-6: #243639;
+    --art-ink: rgba(232, 240, 248, 0.4);
+    --ok: #5cc493;
+    --ok-soft: rgba(92, 196, 147, 0.14);
+    --warn: #ff9f0a;
+    --warn-ink: #ffb340;
+    --danger: #ec7b69;
+    --danger-soft: rgba(236, 123, 105, 0.14);
+    --scrim: rgba(0, 0, 0, 0.5);
+    --pop-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(232, 240, 248, 0.12);
+    --sink: inset 0 3px 14px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+    --sink-deep: inset 0 4px 18px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+  }
+}
+
+:root[data-theme="dark"] {
+  --art-1: #22324a;
+  --art-2: #213a31;
+  --art-3: #3a3226;
+  --art-4: #322a42;
+  --art-5: #3d2a30;
+  --art-6: #243639;
+  --art-ink: rgba(232, 240, 248, 0.4);
+  --ok: #5cc493;
+  --ok-soft: rgba(92, 196, 147, 0.14);
+  --warn: #ff9f0a;
+  --warn-ink: #ffb340;
+  --danger: #ec7b69;
+  --danger-soft: rgba(236, 123, 105, 0.14);
+  --scrim: rgba(0, 0, 0, 0.5);
+  --pop-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(232, 240, 248, 0.12);
+  --sink: inset 0 3px 14px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+  --sink-deep: inset 0 4px 18px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+:root { --flow-ms: 420ms; --out-ms: 260ms; }

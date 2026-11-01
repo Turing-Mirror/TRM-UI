@@ -1,0 +1,5 @@
+@import "./tokens.css";
+@import "./components.css";
+
+/* Tailwind consumers discover the classes used by the installed library. */
+@source "../index.js";

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { HelpMark } from "./Tooltip";
-import { t } from "../i18n/t";
+import { useI18n } from "../i18n";
 
 /**
  * 设置项：标签（+ 详细说明的问号）在上，控件在下。
@@ -88,6 +88,7 @@ export function Select({
   width?: number;
   disabled?: boolean;
 }) {
+  const { t } = useI18n();
   // 已保存的选项不在当前列表里（设备拔了、驱动重置了）时，原生 select 会画成
   // 一个**空框**：这一项看着像没设过，可后台仍然配着它。把它留在列表里并
   // 注明发生了什么，比装作没设过要诚实。
@@ -176,6 +177,7 @@ export function RangeBar({
   onChange,
   ticks = 5,
   defaultValue,
+  defaultMarkLabel,
   ariaLabel,
   disabled = false,
 }: {
@@ -188,9 +190,11 @@ export function RangeBar({
   ticks?: number;
   /** 初始/中性值位置。画成竖线；与之重合的刻度小点会跳过不画。 */
   defaultValue?: number;
+  defaultMarkLabel?: string;
   ariaLabel?: string;
   disabled?: boolean;
 }) {
+  const { t } = useI18n();
   const span = max - min || 1;
   const pct = Math.min(100, Math.max(0, ((value - min) / span) * 100));
   const defaultPct =
@@ -312,7 +316,7 @@ export function RangeBar({
       {defaultMarkLeft != null ? (
         <div
           aria-hidden
-          title={t("ui.range.defaultMark")}
+          title={defaultMarkLabel ?? t("ui.range.defaultMark")}
           className="absolute top-[4px] bottom-[4px] w-[2px] rounded-sm bg-[color-mix(in_srgb,var(--ink)_38%,transparent)] pointer-events-none"
           style={{ left: defaultMarkLeft, transform: "translateX(-50%)" }}
         />
@@ -352,6 +356,7 @@ export function Slider({
   onChange,
   format,
   defaultValue,
+  defaultMarkLabel,
   ariaLabel,
   disabled = false,
 }: {
@@ -363,6 +368,7 @@ export function Slider({
   /** 数值怎么显示（加单位、保留小数）。 */
   format?: (v: number) => string;
   defaultValue?: number;
+  defaultMarkLabel?: string;
   ariaLabel?: string;
   disabled?: boolean;
 }) {
@@ -380,6 +386,7 @@ export function Slider({
           step={step}
           onChange={onChange}
           defaultValue={defaultValue}
+          defaultMarkLabel={defaultMarkLabel}
           ariaLabel={ariaLabel}
           disabled={disabled}
         />
@@ -396,12 +403,14 @@ export function Toggle({
   label,
   tip,
   disabled = false,
+  appearance = "custom",
 }: {
   checked: boolean;
   onChange: (v: boolean) => void;
   label: string;
   tip?: string;
   disabled?: boolean;
+  appearance?: "custom" | "native";
 }) {
   return (
     // 问号不能待在 <label> 里：button 也是 labelable 元素，排在复选框前面
@@ -413,7 +422,7 @@ export function Toggle({
       <label className={`flex items-center gap-[11px] select-none ${disabled ? "cursor-default" : "cursor-pointer"}`}>
         {/* 纯视觉的框：点击由 label 转发给真正的 input，不再自己切一次 —
             否则 label 激活会再点一下 input，一次点击切两回。 */}
-        <span
+        {appearance === "custom" ? <span
           aria-hidden="true"
           className={[
             "w-[15px] h-[15px] rounded grid place-items-center flex-none transition-colors",
@@ -425,10 +434,10 @@ export function Toggle({
           {checked ? (
             <span className="text-[10px] leading-none text-[var(--accent-ink)]">✓</span>
           ) : null}
-        </span>
+        </span> : null}
         <input
           type="checkbox"
-          className="sr-only"
+          className={appearance === "custom" ? "sr-only" : undefined}
           checked={checked}
           disabled={disabled}
           onChange={(e) => onChange(e.target.checked)}

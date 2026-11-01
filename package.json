@@ -1,8 +1,8 @@
 {
   "name": "trm-ui",
   "private": false,
-  "version": "0.1.0",
-  "description": "Turing Mirror 桌面产品的 UI/UX 模板：设计令牌、组件库、八语言 i18n",
+  "version": "1.0.0",
+  "description": "Turing Mirror shared React components, design tokens and interaction primitives",
   "license": "MIT",
   "type": "module",
   "repository": {
@@ -18,12 +18,12 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build"
+    "tauri:build": "tauri build",
+    "build:lib": "node scripts/build_library.mjs && tsc -p tsconfig.lib.json",
+    "prepare": "npm run build:lib"
   },
   "dependencies": {
-    "@tauri-apps/api": "^2",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "@tauri-apps/api": "^2"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
@@ -38,6 +38,31 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.65.0",
     "vite": "^7.0.4",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js"
+    },
+    "./styles.css": "./lib/styles/index.css",
+    "./tokens.css": "./lib/styles/tokens.css",
+    "./components.css": "./lib/styles/components.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "peerDependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   }
 }

@@ -1,6 +1,6 @@
 # TRM UI
 
-Shared frontend foundation and reference design system for the Turing Mirror family of desktop applications. **It contains no product code.**
+Shared component package and reference design system for the Turing Mirror family of desktop applications. **It contains no product code.**
 
 [中文](./README.md)
 
@@ -21,15 +21,15 @@ TRM UI has no separate specification documents. The interface is the example and
    | Interaction | Interaction rules, each with a working wrong and right demo | `src/pages/interactionRules.ts`, `src/pages/ruleDemos.tsx`, `src/pages/InteractionPage.tsx` |
    | Copy | How interface text is written, with wrong and right examples | `src/pages/textRules.ts` |
    | Typography | Font size scale | `src/pages/TypePage.tsx` |
-   | Color | Colour variables and what each is for | `src/pages/colorRoles.ts`, `src/index.css` |
-   | Motion | Curves, plus the name, description and demo of each motion | `src/pages/motionTerms.ts`, `src/pages/MotionPage.tsx`, `src/trm/components/motion.tsx`, `src/index.css` |
+   | Color | Colour variables and what each is for | `src/pages/colorRoles.ts`, `src/trm/styles/tokens.css` |
+   | Motion | Curves, plus the name, description and demo of each motion | `src/pages/motionTerms.ts`, `src/pages/MotionPage.tsx`, `src/trm/components/motion.tsx`, `src/trm/styles/` |
    | History | Established designs that were replaced, by date | `src/pages/historyEntries.ts` |
    | Settings | How a settings page is built | `src/pages/SettingsPage.tsx` |
 
-3. **When building a product interface:** take components from `src/trm/`, use only the variables in `src/index.css` for colour, write text by `textRules.ts`, handle interaction by `interactionRules.ts`, and use the names in `motionTerms.ts` when discussing motion.
+3. **When building a product interface:** import components from `trm-ui`, use only the variables in `src/trm/styles/tokens.css` for colour, write text by `textRules.ts`, handle interaction by `interactionRules.ts`, and use the names in `motionTerms.ts` when discussing motion.
 4. **When replacing an established design:** add an entry to `historyEntries.ts` with the date, the old design, the new one and the reason.
 5. **When changing a rule:** edit its data file and fill in all eight languages; `tsc` fails if one is missing, and the gallery page updates by itself. Do not add Markdown documents and do not copy rules into product repositories.
-6. **When changing a component:** `app/src/trm/` in each product repository is a copy of `src/trm/` here. After changing it here, copy the changed files over.
+6. **When changing a component:** update `src/trm/`, build and test the package, then upgrade the product’s pinned `trm-ui` dependency. See [component package v1](docs/components-v1.md).
 7. **When done:** run `npm run build`, which runs eslint, tsc, the i18n check and vite build in order and stops at the first failure.
 
 The reasons behind each choice are in code comments, most of them explaining why a more obvious-looking version does not work. Each one comes from a problem that already happened; do not delete them.
@@ -37,11 +37,13 @@ The reasons behind each choice are in code comments, most of them explaining why
 ## Layout
 
 ```
-src/trm/                 the interface template that products copy
+src/trm/                 shared source used by the gallery and the package
 ├── components/          all components; entry point is src/trm/index.ts
 ├── i18n/                eight languages, bundled at build time, switched synchronously
 └── lib/                 navigation, clipboard, appearance, the shell bridge (host.ts), hotkeys, mouse side buttons
-src/index.css            colours, radii, curves, three-state theme, animation classes
+src/trm/styles/          shared tokens, themes and component styles
+src/index.css            gallery stylesheet entry
+lib/                     generated package output (not committed)
 src/pages/               gallery pages and rule data
 i18n/locales/*.json      eight locale packs, shared by the interface and the shell
 scripts/check_i18n.mjs   checks locale structure, placeholders and references from code
@@ -65,7 +67,9 @@ src-tauri/src/           desktop shell
 ```bash
 npm install && npm run dev          # interface only, no Rust needed
 npm install && npm run tauri:dev    # with the desktop shell
-npm run build                       # eslint, tsc, i18n check, vite build
+npm run build                       # eslint, tsc, i18n check, gallery build
+npm run build:lib                   # package, declarations and styles
+npm test                           # component and interaction regressions
 npm run tauri:build                 # all of the above plus the installer
 cargo test --manifest-path src-tauri/Cargo.toml
 ```
@@ -78,7 +82,7 @@ cargo test --manifest-path src-tauri/Cargo.toml
 
 ## Starting a new product
 
-1. Copy `src/trm/`, `src/index.css`, `i18n/`, `scripts/`, `src-tauri/` and the build configuration. The gallery pages and rule data stay in TRM UI; come back here to read them.
+1. Install the package and import its styles as described in [component package v1](docs/components-v1.md). Use `src-tauri/` and the build configuration as a starting point when a desktop shell is needed. Product translations remain in the product; gallery pages and rule data stay here.
 2. Change `name` in `package.json`, `<title>` in `index.html` and the port in `vite.config.ts`. Each product needs its own port, otherwise WebView2's per-port cache gets mixed up.
 3. Change the six commented places in the shell:
 
@@ -91,7 +95,7 @@ cargo test --manifest-path src-tauri/Cargo.toml
    | `src-tauri/src/config.rs` | add the product's own keys in `defaults()` |
    | `src-tauri/icons/` | `npx tauri icon your-logo.png -o src-tauri/icons` |
 
-4. Keep only `ui` and `locale` in the locale packs; `demo` belongs to the gallery.
+4. Keep product copy in product locale packs. Shared `ui` and `locale` strings come with the package; connect existing language state through `I18nScope`.
 5. List the pages in `createNav` in `src/App.tsx`. The order sets the direction of the page transition.
 
 ## Licence

@@ -13,16 +13,19 @@
  */
 import { createContext, memo, useContext, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
+import { usePresence } from "./overlay";
+
 /** 推移、伸缩、流动列表共用的时长。与 index.css 的 --flow-ms 一致。 */
 export const FLOW_MS = 420;
 /** 旧名，等同于 FLOW_MS。 */
 export const SWAP_OUT_MS = FLOW_MS;
+export const FADE_OUT_MS = 180;
 /** 依次浮现时相邻两项的间隔与最多排几项，多出的与最后一项同时出现。 */
 const STAGGER = { step: 38, max: 10 };
 
 /** 第 i 项依次浮现的延迟。列表与网格第一次出现时用它，节奏一致。 */
-export function stagger(i: number): CSSProperties {
-  return { animationDelay: `${Math.min(i, STAGGER.max) * STAGGER.step}ms` };
+export function stagger(i: number, timing: { step: number; max: number } = STAGGER): CSSProperties {
+  return { animationDelay: `${Math.min(i, timing.max) * timing.step}ms` };
 }
 
 /** 读一条曲线令牌的实际值，给 Web Animations 用；取不到时退回 ease-out。 */
@@ -193,7 +196,7 @@ export function Pane({ id, children, className = "" }: { id: string; children: R
  * 外层底板只伸缩高度。dir 给出方向（翻到下一页为 1，上一页为 -1），不给时从右边进。
  * 新内容里的 .rise 不再重放：一项项重新浮现会让整块像是重新加载了一遍。
  */
-export function Swap({ k, dir = 1, children, className = "" }: { k: string; dir?: Dir; children: ReactNode; className?: string }) {
+export function Swap({ k, dir = 1, children, className = "", variant = "push" }: { k: string; dir?: Dir; children: ReactNode; className?: string; variant?: "push" | "fade" }) {
   const [cur, setCur] = useState({ k, node: children, seq: 0, dir });
   const [old, setOld] = useState<{ node: ReactNode; seq: number } | null>(null);
   if (cur.k !== k) {
@@ -204,9 +207,20 @@ export function Swap({ k, dir = 1, children, className = "" }: { k: string; dir?
   }
   useEffect(() => {
     if (!old) return;
-    const id = window.setTimeout(() => setOld(null), FLOW_MS);
+    const id = window.setTimeout(() => setOld(null), variant === "fade" ? FADE_OUT_MS : FLOW_MS);
     return () => window.clearTimeout(id);
-  }, [old]);
+  }, [old, variant]);
+  if (variant === "fade") {
+    const vars = { "--swap-dx": `${dir * 18}px`, "--swap-ox": `${dir * -10}px` } as CSSProperties;
+    return (
+      <div className={`relative ${className}`} style={vars}>
+        <div key={cur.seq} className={cur.seq ? "swap-in" : ""}>{cur.node}</div>
+        {old ? <div key={`out-${old.seq}`} inert aria-hidden className="swap-out absolute inset-x-0 top-0 pointer-events-none">
+          <Frozen node={old.node} />
+        </div> : null}
+      </div>
+    );
+  }
   return (
     <Morph className={className}>
       <div className={`relative ${old ? "push-stage" : ""}`} style={pushStyle(cur.dir)}>
@@ -343,16 +357,16 @@ export function Roll({ value, className = "" }: { value: string; className?: str
 /**
  * 折叠：open 变化时高度平滑过渡。收起放完才卸下内容，收起过程中显示的是最后一次展开时的样子。
  */
-export function Collapse({ open, children, className = "" }: { open: boolean; children: ReactNode; className?: string }) {
+export function Collapse({ open, children, className = "", ms = FLOW_MS }: { open: boolean; children: ReactNode; className?: string; ms?: number }) {
   const [mounted, setMounted] = useState(open);
   const last = useRef<ReactNode>(null);
   if (open) last.current = children;
   if (open && !mounted) setMounted(true);
   useEffect(() => {
     if (open) return;
-    const id = window.setTimeout(() => setMounted(false), FLOW_MS);
+    const id = window.setTimeout(() => setMounted(false), ms);
     return () => window.clearTimeout(id);
-  }, [open]);
+  }, [open, ms]);
   return (
     <div className={`collapse-area ${className}`} data-open={open || undefined} inert={!open}>
       <div className="min-h-0 overflow-hidden">{mounted ? (open ? children : last.current) : null}</div>
@@ -401,4 +415,22 @@ export function useSlider<T extends HTMLElement>() {
 export function sliderStyle(pos: { x: number; y: number; w: number; h: number }, kind: "bar" | "box"): CSSProperties {
   if (kind === "bar") return { width: 100, transformOrigin: "left", transform: `translate3d(${pos.x}px, 0, 0) scaleX(${pos.w / 100})` };
   return { width: pos.w, height: pos.h, transform: `translate3d(${pos.x}px, ${pos.y}px, 0)` };
+}
+
+/** Reveal or retract a selected detail panel while retaining its last content. */
+export function Curtain({ children, fallback, className = "" }: { children: ReactNode; fallback: ReactNode; className?: string }) {
+  const present = children !== null && children !== undefined && children !== false;
+  const { mounted } = usePresence(present, FLOW_MS);
+  const last = useRef<ReactNode>(null);
+  if (present) last.current = children;
+  // 每出现一次换一个 key：重新出现时再拉开一次，出现期间内容更新不重放
+  const [round, setRound] = useState({ present, n: 0 });
+  if (round.present !== present) setRound({ present, n: present ? round.n + 1 : round.n });
+  if (present) return <div key={`c${round.n}`} className={`curtain-in ${className}`}>{children}</div>;
+  if (mounted) return (
+    <div key={`o${round.n}`} inert aria-hidden className={`curtain-out ${className}`}>
+      <Frozen node={last.current} />
+    </div>
+  );
+  return <div key="empty" className={`rise ${className}`}>{fallback}</div>;
 }

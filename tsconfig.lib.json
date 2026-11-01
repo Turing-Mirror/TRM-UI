@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "rootDir": "src/trm",
+    "outDir": "lib",
+    "types": [
+      "vite/client"
+    ]
+  },
+  "include": [
+    "src/trm"
+  ],
+  "exclude": [
+    "src/trm/**/*.test.ts",
+    "src/trm/**/*.test.tsx",
+    "src/trm/test"
+  ],
+  "references": []
+}

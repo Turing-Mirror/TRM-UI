@@ -2,7 +2,7 @@
  * TRM UI — 出口。
  *
  * 这个目录**不引用它自己以外的任何东西**（除了 react 和语言包），
- * 所以可以整个复制到别的工程里，也可以将来直接发成 npm 包。
+ * 产品通过 trm-ui 包引用，画廊直接引用同一份源码。
  * 往里加东西时请守住这条：一旦引了产品自己的模块，模板就退化成了「某个
  * 产品的一部分」，而这正是它要解决的问题。
  */
@@ -45,6 +45,7 @@ export {
 
 export {
   I18nProvider,
+  I18nScope,
   useI18n,
   t,
   setTLocale,
@@ -90,3 +91,11 @@ export { comboFromEvent, comboLabel, typingInto } from "./lib/hotkeys";
 export { useMouseNav } from "./lib/mouseNav";
 export { StepBar } from "./components/StepBar";
 export { PickList, type PickItem } from "./components/PickList";
+
+export { Warn } from "./components/ui";
+export { PopupSelect, TOOL_BOX, type SelectOption } from "./components/PopupSelect";
+export { MenuPopup, type PopupMenuItem, type PopupMenuCloseReason } from "./components/MenuPopup";
+export { placePopup, type PopupAnchor, type PopupBox } from "./lib/popupPos";
+export { ModalLayer, Leave, LeavingContext, useLeaving } from "./components/overlay";
+export { Curtain, FADE_OUT_MS } from "./components/motion";
+export { lookup, interpolate, translate } from "./i18n/dict";

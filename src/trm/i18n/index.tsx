@@ -142,6 +142,22 @@ export function I18nProvider({
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
+/** A controlled locale scope for products that already own language state. */
+export function I18nScope({ value, children }: {
+  value: Pick<I18nCtx, "locale" | "setLocale" | "ready"> & { t?: TranslateFn };
+  children: ReactNode;
+}) {
+  const { locale, setLocale, ready, t: override } = value;
+  const t = useCallback<TranslateFn>((key, vars) => {
+    const custom = override?.(key, vars);
+    return custom !== undefined && custom !== key
+      ? custom
+      : translate(packOf(locale), fallbackPack(), key, vars);
+  }, [locale, override]);
+  const context = useMemo(() => ({ locale, setLocale, ready, t }), [locale, setLocale, ready, t]);
+  return <Ctx.Provider value={context}>{children}</Ctx.Provider>;
+}
+
 export function useI18n(): I18nCtx {
   const v = useContext(Ctx);
   if (!v) {
