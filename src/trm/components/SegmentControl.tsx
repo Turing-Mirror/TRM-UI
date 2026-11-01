@@ -126,7 +126,10 @@ export function SegmentControl<T extends string>({ options, value, onChange, cla
       onPointerMove={onPointerMove}
       onPointerUp={finishPointer}
       onPointerCancel={finishPointer}
-      onLostPointerCapture={finishPointer}
+      onLostPointerCapture={(event) => {
+        // 子按钮的隐式触摸捕获转移到控件时，也会冒泡此事件。
+        if (event.target === event.currentTarget) finishPointer(event);
+      }}
       className={[
         // inline-flex + w-fit：块级的 flex 容器会撑满父元素，于是字变短之后
         // 药丸还是原来那么长（四个字的标签，条子却按八个字的宽度画）。

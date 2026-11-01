@@ -48,9 +48,9 @@ describe("SegmentControl 的指针收尾", () => {
     return { root, changed, rerender: () => act(() => mounted!.root.render(<Example />)) };
   }
 
-  function pointer(target: EventTarget, type: string, x = 50, id = 17) {
+  function pointer(target: EventTarget, type: string, x = 50, id = 17, pointerType = "mouse") {
     now += 50;
-    const event = new PointerEvent(type, { bubbles: true, pointerId: id, pointerType: "mouse", isPrimary: true, button: 0, clientX: x });
+    const event = new PointerEvent(type, { bubbles: true, pointerId: id, pointerType, isPrimary: true, button: 0, clientX: x });
     Object.defineProperty(event, "timeStamp", { value: now });
     act(() => target.dispatchEvent(event));
   }
@@ -82,6 +82,33 @@ describe("SegmentControl 的指针收尾", () => {
     pointer(root, "pointermove", 140);
     expect(root.setPointerCapture).toHaveBeenCalledWith(17);
     pointer(root, "lostpointercapture", 140);
+    finishFrames();
+    expect(changed).toHaveBeenCalledExactlyOnceWith("b");
+    expect(frames.size).toBe(0);
+  });
+
+  it("触摸捕获从子按钮转移到控件时不会提前结束拖动", () => {
+    const { root, changed } = setup();
+    const button = root.querySelectorAll("button")[0];
+    pointer(button, "pointerdown", 50, 17, "touch");
+    pointer(root, "pointermove", 55, 17, "touch");
+    pointer(button, "lostpointercapture", 55, 17, "touch");
+    pointer(root, "pointermove", 140, 17, "touch");
+    finishFrames(1);
+    const transform = root.querySelector<HTMLElement>(".seg-thumb")!.style.transform;
+    expect(Number.parseFloat(transform.replace("translate3d(", ""))).toBeGreaterThan(50);
+    pointer(root, "pointerup", 140, 17, "touch");
+    finishFrames();
+    expect(changed).toHaveBeenCalledExactlyOnceWith("b");
+    expect(frames.size).toBe(0);
+  });
+
+  it.each(["pointercancel", "lostpointercapture"])("触摸拖动在控件上 %s 时仍能正确收尾", (ending) => {
+    const { root, changed } = setup();
+    pointer(root.querySelectorAll("button")[0], "pointerdown", 50, 17, "touch");
+    pointer(root, "pointermove", 140, 17, "touch");
+    pointer(root, ending, 140, 17, "touch");
+    pointer(root, "pointerup", 140, 17, "touch");
     finishFrames();
     expect(changed).toHaveBeenCalledExactlyOnceWith("b");
     expect(frames.size).toBe(0);
