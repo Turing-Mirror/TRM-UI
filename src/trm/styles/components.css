@@ -622,8 +622,8 @@ option {
 .meter-bar { animation: meter 0.8s ease-in-out infinite; }
 
 /* 推移：两层同一条曲线、同样的时长。位移和淡入淡出分开写：位移走 --ease-nav，
-   淡入淡出按时间线性分段，旧的在前四成时间里淡完，新的在四分之一之后才出现，
-   两层几乎不同时半透明，不留残影。方向由 --push 给出（1 从右进，-1 从左进）。 */
+   淡入淡出按时间线性分段，旧的在前四成时间里淡完，新的在旧内容完全淡出后才出现，
+   两层不会同时半透明，避免文字重叠。方向由 --push 给出（1 从右进，-1 从左进）。 */
 @keyframes push-move-in {
   from { transform: translate3d(calc(var(--push, 1) * 32px), 0, 0); }
   to { transform: none; }
@@ -633,7 +633,7 @@ option {
   to { transform: translate3d(calc(var(--push, 1) * -14px), 0, 0) scale(0.99); }
 }
 @keyframes push-fade-in {
-  0%, 25% { opacity: 0; }
+  0%, 40% { opacity: 0; }
   100% { opacity: 1; }
 }
 @keyframes push-fade-out {
