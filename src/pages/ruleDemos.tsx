@@ -16,6 +16,8 @@ import {
   stagger,
   useDir,
   useI18n,
+  useLatest,
+  usePresence,
   type Anchor,
   type HoverStyle,
   type IconName,
@@ -86,6 +88,9 @@ function AnchorDemo() {
   const { t } = useI18n();
   const [open, setOpen] = useState<{ which: "wrong" | "right"; anchor: Anchor; trigger: Element } | null>(null);
   const row = useRef<HTMLDivElement>(null);
+  // 收起时按原位置放完收起动画再卸下
+  const { mounted } = usePresence(Boolean(open));
+  const shown = useLatest(open);
   const items = ICONS.map((x) => (
     <div key={x.icon} className="flex items-center gap-2.5 h-8 px-2.5 text-[13px] text-[var(--ink)]">
       <Icon name={x.icon} size={15} className="text-[var(--ink-muted)]" />
@@ -111,8 +116,8 @@ function AnchorDemo() {
           </div>
         }
       />
-      {open ? (
-        <Popover anchor={open.anchor} trigger={open.trigger} onClose={() => setOpen(null)}>
+      {mounted && shown ? (
+        <Popover anchor={shown.anchor} trigger={shown.trigger} leaving={!open} onClose={() => setOpen(null)}>
           {items}
         </Popover>
       ) : null}
@@ -212,7 +217,9 @@ function PairedDemo() {
 
 function ArrowDemo() {
   const { t } = useI18n();
-  const [open, setOpen] = useState<HTMLElement | null>(null);
+  const [open, setOpen] = useState<{ anchor: Anchor; trigger: Element } | null>(null);
+  const { mounted } = usePresence(Boolean(open));
+  const shown = useLatest(open);
   const items = [
     { id: "open", label: t("demo.patterns.open"), icon: "external" as const },
     { id: "rename", label: t("demo.patterns.rename"), icon: "edit" as const },
@@ -221,7 +228,7 @@ function ArrowDemo() {
     <>
       <Pair
         wrong={
-          <Btn onClick={(e) => setOpen(open ? null : e.currentTarget)}>
+          <Btn onClick={(e) => setOpen(open ? null : { anchor: anchorOf(e.currentTarget), trigger: e.currentTarget })}>
             <span className="inline-flex items-center gap-1.5">
               {t("demo.patterns.menuBtn")}
               <Icon name="down" size={14} />
@@ -230,8 +237,8 @@ function ArrowDemo() {
         }
         right={<MenuBtn label={t("demo.patterns.menuBtn")} items={items} />}
       />
-      {open ? (
-        <Popover anchor={anchorOf(open)} trigger={open} onClose={() => setOpen(null)}>
+      {mounted && shown ? (
+        <Popover anchor={shown.anchor} trigger={shown.trigger} leaving={!open} onClose={() => setOpen(null)}>
           {items.map((x) => (
             <div key={x.id} className="flex items-center gap-2.5 h-8 px-2.5 text-[13px]">
               <Icon name={x.icon} size={15} className="text-[var(--ink-muted)]" />

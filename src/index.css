@@ -716,22 +716,22 @@ body::before {
   from { opacity: 1; transform: none; }
   to { opacity: 0; transform: translateY(4px) scale(0.985); }
 }
-.pop-out { animation: pop-out 0.2s var(--ease-out-quick) both; }
+.pop-out { animation: pop-out var(--out-ms) var(--ease-soft) both; }
 @keyframes fade-out {
   from { opacity: 1; }
   to { opacity: 0; }
 }
-.fade-out { animation: fade-out 0.2s var(--ease-soft) both; }
+.fade-out { animation: fade-out var(--out-ms) var(--ease-soft) both; }
 @keyframes drawer-out {
   from { opacity: 1; transform: none; }
   to { opacity: 0; transform: translateX(28px); }
 }
-.drawer-out { animation: drawer-out 0.2s var(--ease-out-quick) both; }
+.drawer-out { animation: drawer-out var(--out-ms) var(--ease-soft) both; }
 @keyframes menu-out {
   from { opacity: 1; transform: none; }
   to { opacity: 0; transform: scale(0.98); }
 }
-.menu-out { animation: menu-out 0.16s var(--ease-out-quick) both; }
+.menu-out { animation: menu-out var(--out-ms) var(--ease-soft) both; }
 
 @keyframes fade-in {
   from { opacity: 0; }
@@ -920,7 +920,7 @@ body::before {
 /* 页内动效（motion.tsx）。名字与用途见画廊「动效」页的「名词」一节。
    推移、伸缩、流动列表共用一个时长（--flow-ms，与 motion.tsx 的 FLOW_MS 一致）和一条曲线（--ease-nav），
    所以同一次切换里几样东西同时起步、同时停稳，看上去是一个动作。 */
-:root { --flow-ms: 420ms; }
+:root { --flow-ms: 420ms; --out-ms: 260ms; }
 
 /* 推移：两层同一条曲线、同样的时长。位移和淡入淡出分开写：位移走 --ease-nav，
    淡入淡出按时间线性分段，旧的在前四成时间里淡完，新的在四分之一之后才出现，

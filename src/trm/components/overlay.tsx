@@ -6,8 +6,8 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { useModalKeys } from "../hooks/useModalKeys";
 
-/** 浮层收起的时长，与 index.css 里 .pop-out、.fade-out、.drawer-out、.menu-out 一致。 */
-export const OUT_MS = 200;
+/** 浮层收起的时长，与 index.css 的 --out-ms 一致（.pop-out、.fade-out、.drawer-out、.menu-out 都用它）。 */
+export const OUT_MS = 260;
 
 /**
  * 让浮层有退场：关掉后再挂一小会儿，放完收起的动画才卸下。

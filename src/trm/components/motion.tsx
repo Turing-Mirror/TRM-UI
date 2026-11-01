@@ -235,14 +235,17 @@ type FlowEntry<T> = { key: string; item: T; phase: "enter" | "stay" | "leave" };
  */
 export function FlowList<T>({ items, keyOf, render, className = "", itemClassName = "" }: { items: readonly T[]; keyOf: (item: T) => string; render: (item: T, i: number) => ReactNode; className?: string; itemClassName?: string }) {
   const [list, setList] = useState<FlowEntry<T>[]>(() => items.map((item) => ({ key: keyOf(item), item, phase: "stay" })));
-  const [src, setSrc] = useState(items);
+  // 按 key 的顺序判断列表变没变。父组件每次重绘都会传来新数组（filter、slice），
+  // 只看数组是不是同一个，就会把每次重绘都当成换了列表，用旧位置再滑一遍
+  const sig = items.map(keyOf).join("\n");
+  const [src, setSrc] = useState(sig);
   const box = useRef<HTMLDivElement>(null);
   const tops = useRef(new Map<string, number>());
   // 上一次量位置时对应的那份列表。收尾那次重绘（卸下离开的项、新来的项转常驻）列表没变，只记位置不放动画
-  const measured = useRef(items);
+  const measured = useRef(sig);
 
-  if (src !== items) {
-    setSrc(items);
+  if (src !== sig) {
+    setSrc(sig);
     const next = new Set(items.map(keyOf));
     const prev = list.filter((e) => e.phase !== "leave" || !next.has(e.key));
     const had = new Map(prev.filter((e) => e.phase !== "leave").map((e) => [e.key, e]));
@@ -268,6 +271,7 @@ export function FlowList<T>({ items, keyOf, render, className = "", itemClassNam
     if (!el) return;
     const quiet = reduced() || measured.current === src;
     measured.current = src;
+    // 位置量的是相对列表本身（列表是定位容器），外层整体移动不算这几项换了位置
     const easing = curve("--ease-nav");
     const now = new Map<string, number>();
     el.querySelectorAll<HTMLElement>(":scope > [data-flow]").forEach((node) => {
@@ -289,12 +293,17 @@ export function FlowList<T>({ items, keyOf, render, className = "", itemClassNam
     return () => window.clearTimeout(id);
   }, [moving, list]);
 
+  // 条目内容（点赞数之类）随时可能更新：在场的项一律按 key 取最新的那份来画，离开的项照原样画完
+  const current = new Map(items.map((it) => [keyOf(it), it]));
   let shown = 0;
   return (
-    <div ref={box} className={className}>
+    <div ref={box} className={`relative ${className}`}>
       {list.map((e) => (
         <div key={e.key} data-flow={e.key} data-phase={e.phase} inert={e.phase === "leave"} className={`flow-item ${e.phase === "leave" ? "flow-leave" : e.phase === "enter" ? "flow-enter" : ""}`}>
-          <div className={`flow-body ${itemClassName}`}>{render(e.item, e.phase === "leave" ? -1 : shown++)}</div>
+          {/* 间距放在里层：外层收拢到零时内边距跟着一起收，不会最后一下才跳没 */}
+          <div className="flow-body">
+            <div className={itemClassName}>{render(e.phase === "leave" ? e.item : (current.get(e.key) ?? e.item), e.phase === "leave" ? -1 : shown++)}</div>
+          </div>
         </div>
       ))}
     </div>
