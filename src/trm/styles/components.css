@@ -621,9 +621,8 @@ option {
 }
 .meter-bar { animation: meter 0.8s ease-in-out infinite; }
 
-/* 推移：两层同一条曲线、同样的时长。位移和淡入淡出分开写：位移走 --ease-nav，
-   淡入淡出按时间线性分段，旧的在前四成时间里淡完，新的在旧内容完全淡出后才出现，
-   两层不会同时半透明，避免文字重叠。方向由 --push 给出（1 从右进，-1 从左进）。 */
+/* 推移：位移与淡入淡出立即开始，沿同一曲线交接，不在中间插入全空白的等待。
+   方向由 --push 给出（1 从右进，-1 从左进）。 */
 @keyframes push-move-in {
   from { transform: translate3d(calc(var(--push, 1) * 32px), 0, 0); }
   to { transform: none; }
@@ -633,16 +632,16 @@ option {
   to { transform: translate3d(calc(var(--push, 1) * -14px), 0, 0) scale(0.99); }
 }
 @keyframes push-fade-in {
-  0%, 40% { opacity: 0; }
-  100% { opacity: 1; }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 @keyframes push-fade-out {
-  0% { opacity: 1; }
-  40%, 100% { opacity: 0; }
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
-.push-in, .push-in-b { animation: push-move-in var(--flow-ms) var(--ease-nav) both, push-fade-in var(--flow-ms) linear both; }
+.push-in, .push-in-b { animation: push-move-in var(--flow-ms) var(--ease-nav) both, push-fade-in var(--flow-ms) var(--ease-nav) both; }
 .push-in-b { animation-name: push-move-in, push-fade-in; }
-.push-out { animation: push-move-out var(--flow-ms) var(--ease-nav) both, push-fade-out var(--flow-ms) linear both; }
+.push-out { animation: push-move-out var(--flow-ms) var(--ease-nav) both, push-fade-out var(--flow-ms) var(--ease-nav) both; }
 /* 推移期间左右的位移裁在内容区以内，上下不裁 */
 .push-stage { overflow-x: clip; overflow-clip-margin: 8px; }
 /* 推进来的新内容里，各项不再一项项重新浮现 */

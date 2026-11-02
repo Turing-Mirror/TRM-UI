@@ -66,3 +66,25 @@ it("reverses from the currently painted opacity and transform", () => {
   expect(keyframes.find(frames => "opacity" in frames[0])?.[0].opacity).toBe(0.18);
   expect(keyframes.find(frames => "transform" in frames[0])?.[0].transform).toBe("matrix(1, 0, 0, 1, 8, 0)");
 });
+
+it("hands content over immediately with complementary fades and no transparent hold", () => {
+  vi.useFakeTimers();
+  const animated = vi.spyOn(HTMLElement.prototype, "animate");
+  const render = (value: string) => <Panes value={value}><Pane id="list">List</Pane><Pane id="detail">Detail</Pane></Panes>;
+  view = mount(render("list"));
+  // happy-dom omits the browser default computed opacity of 1.
+  view.container.querySelector<HTMLElement>('[data-trm-pane="list"]')!.style.opacity = "1";
+  act(() => view.root.render(render("detail")));
+  const fades = animated.mock.calls.filter(([frames]) => "opacity" in (frames as Keyframe[])[0]);
+  expect(fades).toHaveLength(2);
+  const frames = fades.map(([keyframes]) => keyframes as Keyframe[]);
+  expect(frames).toContainEqual([{ opacity: 1 }, { opacity: 0 }]);
+  expect(frames).toContainEqual([{ opacity: 0 }, { opacity: 1 }]);
+  expect(fades[0][1]).toEqual(fades[1][1]);
+  expect(fades[0][1]).toMatchObject({ duration: FLOW_MS, fill: "both" });
+  // For every eased progress value, outgoing and incoming visibility hand off together.
+  for (const progress of [0, .01, .1, .25, .4, .5, .75, .99, 1]) {
+    const visibility = frames.reduce((sum, pair) => sum + Number(pair[0].opacity) * (1 - progress) + Number(pair[1].opacity) * progress, 0);
+    expect(visibility).toBeCloseTo(1);
+  }
+});

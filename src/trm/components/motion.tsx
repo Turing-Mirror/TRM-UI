@@ -2,7 +2,7 @@
  * 页内动效，全站共用一套。名字与用途见画廊「动效」页的「名词」一节。
  *
  * - 伸缩（Morph）：内容区的底板不重画，只把高度平滑地伸长或缩短。
- * - 推移（Swap、Panes）：换一批内容时，旧的朝来处退一小步、先淡掉，新的从去向那一侧推进来，
+ * - 推移（Swap、Panes）：换一批内容时，旧的朝来处退一小步并淡出，新的同时从去向那一侧推进来，
  *   两层同一条曲线、同样的时长，外面的底板同时伸缩。不再让每一项重新浮现一遍。
  * - 流动列表（FlowList）：同一份列表筛选、排序、展开时，留下的项滑到新位置，
  *   离开的项收拢、新来的项撑开，整块区域不重载。
@@ -153,12 +153,12 @@ function usePushMotion(phase: PushPhase, seq: number, dir: Dir) {
     el.style.opacity = String(target);
     el.style.transform = endTransform;
     if (typeof el.animate !== "function" || reduced()) return;
-    const fades: Keyframe[] = leaving
-      ? [{ opacity, offset: 0 }, { opacity: 0, offset: .4 }, { opacity: 0, offset: 1 }]
-      : [{ opacity, offset: 0 }, { opacity, offset: .4 }, { opacity: 1, offset: 1 }];
+    // Both views move and fade immediately on the same curve. A staged fade creates
+    // an empty interval even when the destination content is already available.
+    const fades: Keyframe[] = [{ opacity }, { opacity: target }];
     animations.current = [
       el.animate([{ transform }, { transform: endTransform }], { duration: FLOW_MS, easing: curve("--ease-nav"), fill: "both" }),
-      el.animate(fades, { duration: FLOW_MS, easing: "linear", fill: "both" }),
+      el.animate(fades, { duration: FLOW_MS, easing: curve("--ease-nav"), fill: "both" }),
     ];
     // Retargeting intentionally cancels the previous animation's finished promise.
     animations.current.forEach(animation => { void animation.finished.catch(() => undefined); });
