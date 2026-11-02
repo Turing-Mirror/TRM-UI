@@ -64,6 +64,7 @@ export function Morph({ children, className = "", disabled = false }: { children
     const i = inner.current;
     if (!o || !i || typeof ResizeObserver === "undefined") return;
     let last = i.offsetHeight;
+    let hidden = !i.getClientRects().length;
     const done = (e?: TransitionEvent) => {
       if (e && (e.target !== o || e.propertyName !== "height")) return;
       o.style.height = "";
@@ -72,7 +73,11 @@ export function Morph({ children, className = "", disabled = false }: { children
     };
     if (disabled) { done(); return; }
     const ro = new ResizeObserver(() => {
+      // An inactive ancestor has no layout. Zero is not its new content height.
+      // On reveal, establish the natural height before a surrounding pane restores scroll.
+      if (!i.getClientRects().length) { hidden = true; done(); return; }
       const h = i.offsetHeight;
+      if (hidden || last === 0) { hidden = false; last = h; done(); return; }
       if (h === last) return;
       const from = o.style.height ? o.getBoundingClientRect().height : last;
       last = h;
@@ -85,11 +90,9 @@ export function Morph({ children, className = "", disabled = false }: { children
     });
     ro.observe(i);
     o.addEventListener("transitionend", done);
-    o.addEventListener("transitioncancel", done);
     return () => {
       ro.disconnect();
       o.removeEventListener("transitionend", done);
-      o.removeEventListener("transitioncancel", done);
       done();
     };
   }, [disabled]);
@@ -121,6 +124,58 @@ const enterClass = (seq: number) => (seq % 2 ? "push-in" : "push-in-b");
 
 const pushStyle = (dir: Dir) => ({ "--push": String(dir || 1) }) as CSSProperties;
 
+type PushPhase = "enter" | "leave" | "shown" | "hidden";
+
+/** Retarget a running push from its painted state instead of restarting at full opacity. */
+function usePushMotion(phase: PushPhase, seq: number, dir: Dir) {
+  const node = useRef<HTMLDivElement>(null);
+  const previous = useRef<PushPhase | null>(null);
+  const animations = useRef<Animation[]>([]);
+  useLayoutEffect(() => {
+    const el = node.current;
+    if (!el) return;
+    const painted = getComputedStyle(el);
+    const continuing = previous.current !== null && previous.current !== "hidden";
+    const opacity = continuing ? Number(painted.opacity) : (phase === "enter" ? 0 : 1);
+    const transform = continuing ? painted.transform : `translate3d(${(dir || 1) * 32}px, 0, 0)`;
+    animations.current.forEach(animation => animation.cancel());
+    animations.current = [];
+    previous.current = phase;
+    if (phase === "hidden" || phase === "shown") {
+      el.style.opacity = "";
+      el.style.transform = "";
+      return;
+    }
+    const leaving = phase === "leave";
+    const target = leaving ? 0 : 1;
+    const endTransform = leaving ? `translate3d(${(dir || 1) * -14}px, 0, 0) scale(0.99)` : "none";
+    // Inline endpoints also provide an immediate fallback without Web Animations.
+    el.style.opacity = String(target);
+    el.style.transform = endTransform;
+    if (typeof el.animate !== "function" || reduced()) return;
+    const fades: Keyframe[] = leaving
+      ? [{ opacity, offset: 0 }, { opacity: 0, offset: .4 }, { opacity: 0, offset: 1 }]
+      : [{ opacity, offset: 0 }, { opacity, offset: .4 }, { opacity: 1, offset: 1 }];
+    animations.current = [
+      el.animate([{ transform }, { transform: endTransform }], { duration: FLOW_MS, easing: curve("--ease-nav"), fill: "both" }),
+      el.animate(fades, { duration: FLOW_MS, easing: "linear", fill: "both" }),
+    ];
+    // Retargeting intentionally cancels the previous animation's finished promise.
+    animations.current.forEach(animation => { void animation.finished.catch(() => undefined); });
+  }, [phase, seq, dir]);
+  useLayoutEffect(() => () => {
+    animations.current.forEach(animation => animation.cancel());
+    animations.current = [];
+    previous.current = null;
+  }, []);
+  return node;
+}
+
+function PushLayer({ phase, seq, dir, className = "", children }: { phase: PushPhase; seq: number; dir: Dir; className?: string; children: ReactNode }) {
+  const node = usePushMotion(phase, seq, dir);
+  return <div ref={node} inert={phase === "leave"} aria-hidden={phase === "leave" || undefined} className={className} style={{ animation: "none" }}>{children}</div>;
+}
+
 /**
  * 一组互斥的视图。value 是当前那一个；order 决定方向：往后翻从右边推进来，往前翻从左边。
  * keepScroll：各视图记住自己的滚动位置，换过去时回到那里（列表与详情用它）。
@@ -129,6 +184,7 @@ export function Panes({ value, order, keepScroll = false, className = "", childr
   const [turn, setTurn] = useState<Turn>({ value, from: null, dir: 0, seq: 0, offset: 0 });
   const box = useRef<HTMLDivElement>(null);
   const scrolls = useRef(new Map<string, number>());
+  const restored = useRef(0);
 
   if (turn.value !== value) {
     const a = order ? order.indexOf(turn.value) : -1;
@@ -137,14 +193,26 @@ export function Panes({ value, order, keepScroll = false, className = "", childr
     setTurn({ value, from: turn.value, dir, seq: turn.seq + 1, offset: 0 });
   }
 
+  // Capture settled scroll positions before replacing the layout. Reading only after
+  // the commit can record a position the browser has already clamped to a shorter page.
+  useLayoutEffect(() => {
+    if (!keepScroll || turn.from) return;
+    const el = scroller(box.current);
+    if (!el) return;
+    const remember = () => scrolls.current.set(turn.value, el.scrollTop);
+    remember();
+    el.addEventListener("scroll", remember, { passive: true });
+    return () => el.removeEventListener("scroll", remember);
+  }, [keepScroll, turn.value, turn.from]);
+
   // 列表与详情：离开时记下位置，进来时回到记下的位置，没来过就从头看。
   // 旧的那一层随之挪回原来看到的地方，退出时不会跟着跳一下。
   useLayoutEffect(() => {
-    if (!keepScroll || !turn.from || turn.offset) return;
+    if (!keepScroll || !turn.from || restored.current === turn.seq) return;
     const el = scroller(box.current);
     if (!el) return;
-    const before = el.scrollTop;
-    scrolls.current.set(turn.from, before);
+    restored.current = turn.seq;
+    const before = scrolls.current.get(turn.from) ?? el.scrollTop;
     el.scrollTop = scrolls.current.get(turn.value) ?? 0;
     const moved = el.scrollTop - before;
     if (moved) setTurn((t) => (t.seq === turn.seq ? { ...t, offset: moved } : t));
@@ -159,7 +227,7 @@ export function Panes({ value, order, keepScroll = false, className = "", childr
   const contents = <PanesLayoutCtx.Provider value={layout}><PanesCtx.Provider value={turn}>{children}</PanesCtx.Provider></PanesLayoutCtx.Provider>;
   if (layout === "fill") return <div ref={box} className={`trm-panes-fill relative min-h-0 ${className}`}>{contents}</div>;
   return (
-    <Morph className={className}>
+    <Morph className={className} disabled={keepScroll}>
       <div ref={box} className={`relative ${turn.from ? "push-stage" : ""}`}>
         {contents}
       </div>
@@ -185,15 +253,17 @@ export function Pane({ id, children, className = "" }: { id: string; children: R
   if (on && kept !== children) setKept(children);
   const leaving = Boolean(turn && turn.from === id);
   const entering = Boolean(turn && on && turn.seq > 0);
+  const motion = usePushMotion(on ? entering ? "enter" : "shown" : leaving ? "leave" : "hidden", turn?.seq ?? 0, turn?.dir ?? 1);
   const state = on ? (entering ? `${enterClass(turn?.seq ?? 0)} flow-quiet` : "") : leaving ? "push-out absolute inset-x-0 pointer-events-none" : "hidden";
   return (
     <div
+      ref={motion}
       data-trm-pane={id}
       hidden={!on && !leaving}
       aria-hidden={on ? undefined : true}
       inert={!on}
       className={`${layout === "fill" ? "absolute inset-0 min-h-0" : ""} ${className} ${state}`}
-      style={{ ...pushStyle(turn?.dir ?? 1), top: leaving ? turn?.offset : undefined }}
+      style={{ ...pushStyle(turn?.dir ?? 1), animation: "none", top: leaving ? turn?.offset : undefined }}
     >
       <PaneOnCtx.Provider value={outer && on}>
         <Frozen node={on ? children : kept} />
@@ -237,16 +307,16 @@ export function Swap({ k, dir = 1, children, className = "", variant = "push" }:
     <Morph className={className}>
       <div className={`relative ${old ? "push-stage" : ""}`} style={pushStyle(cur.dir)}>
         {old ? (
-          <div key={old.seq} inert aria-hidden className="push-out absolute inset-x-0 top-0 pointer-events-none">
+          <PushLayer key={old.seq} phase="leave" seq={cur.seq} dir={cur.dir} className="push-out absolute inset-x-0 top-0 pointer-events-none">
             {/* 退出中的旧内容不再算露着：里面的页标题随之让位 */}
             <PaneOnCtx.Provider value={false}>
               <Frozen node={old.node} />
             </PaneOnCtx.Provider>
-          </div>
+          </PushLayer>
         ) : null}
-        <div key={cur.seq} className={cur.seq ? `${enterClass(cur.seq)} flow-quiet` : ""}>
+        <PushLayer key={cur.seq} phase={cur.seq ? "enter" : "shown"} seq={cur.seq} dir={cur.dir} className={cur.seq ? `${enterClass(cur.seq)} flow-quiet` : ""}>
           <PaneOnCtx.Provider value={outer}><Frozen node={cur.node} /></PaneOnCtx.Provider>
-        </div>
+        </PushLayer>
       </div>
     </Morph>
   );
