@@ -144,7 +144,12 @@ function Row({ n, onClose }: { n: Notice; onClose: () => void }) {
             role={tip ? "status" : "button"}
             tabIndex={tip ? undefined : 0}
             onClick={open}
-            onKeyDown={(e) => e.key === "Enter" && open()}
+            onKeyDown={(e) => {
+              // 只认卡片自己：在关闭按钮上按回车是关闭，不能冒到卡片上把它打开
+              if (e.target !== e.currentTarget || (e.key !== "Enter" && e.key !== " ")) return;
+              e.preventDefault();
+              open();
+            }}
             className={`group relative notice-card pointer-events-auto ${n.leaving ? "notice-out pointer-events-none" : "notice-in"} ${tip ? "" : "cursor-pointer"}`}
           >
             <div className={`flex items-start gap-3 rounded-[16px] bg-[var(--surface)] shadow-[var(--pop-shadow)] ${tip ? "px-3.5 py-3" : "p-3.5"}`}>

@@ -117,7 +117,7 @@ function Shell() {
 
   return (
     <HoverStyleProvider value={look.hover}>
-    <div className="h-full flex flex-col">
+    <div className="page-shell h-full flex flex-col">
       <AppBar
         brand="TRM UI"
         sidebarOpen={!collapsed}
@@ -137,7 +137,7 @@ function Shell() {
           <SidebarHead label={t("demo.shell.running")} collapsed={collapsed} />
           <Activity collapsed={collapsed} />
         </Sidebar>
-        <main className="relative flex-1 min-w-0 flex flex-col">
+        <main className="page-workspace relative flex-1 min-w-0 flex flex-col">
           {ready ? (
             <PageHost nav={nav} page={page} axis="y">
               {(id) => {

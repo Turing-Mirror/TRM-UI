@@ -9,6 +9,8 @@ import { createPortal } from "react-dom";
 import { useI18n } from "../i18n";
 import { Icon, type IconName } from "./Icon";
 import { Modal, OUT_MS, useLatest, usePresence } from "./overlay";
+import { usePaneOn } from "./motion";
+import { usePageActive } from "./PageHost";
 import { Btn } from "./ui";
 
 export type Anchor = { x: number; y: number; w: number; h: number };
@@ -49,6 +51,14 @@ export function Popover({
   trigger?: Element | null;
 }) {
   const box = useRef<HTMLDivElement>(null);
+  // 所在的页或分栏被切走：浮层跟着收起，不留在别的页上面
+  const pageOn = usePageActive();
+  const paneOn = usePaneOn();
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+  useEffect(() => {
+    if (!pageOn || !paneOn) closeRef.current();
+  }, [pageOn, paneOn]);
   const [pos, setPos] = useState<{ left: number; top: number; up: boolean } | null>(null);
 
   useLayoutEffect(() => {
@@ -85,16 +95,24 @@ export function Popover({
       if (e.key === "Escape") {
         e.stopPropagation();
         onClose();
+        // 焦点回到打开它的控件，键盘用户不会丢掉位置
+        if (trigger instanceof HTMLElement) trigger.focus({ preventScroll: true });
       }
     };
     const blur = () => onClose();
+    // 外面滚动时浮层会和控件错开，直接收起；浮层自己里面的滚动不算
+    const scroll = (e: Event) => {
+      if (!(e.target instanceof Element && e.target.closest("[data-popover]"))) onClose();
+    };
     window.addEventListener("pointerdown", down, true);
     window.addEventListener("keydown", key, true);
     window.addEventListener("resize", blur);
+    window.addEventListener("scroll", scroll, true);
     return () => {
       window.removeEventListener("pointerdown", down, true);
       window.removeEventListener("keydown", key, true);
       window.removeEventListener("resize", blur);
+      window.removeEventListener("scroll", scroll, true);
     };
   }, [onClose, leaving, trigger]);
 
@@ -103,9 +121,10 @@ export function Popover({
       ref={box}
       data-popover
       role="menu"
+      inert={leaving}
       aria-label={label}
       className={`fixed z-[70] p-1 bg-[var(--surface)] rounded-[calc(var(--rs)+4px)] shadow-[var(--pop-shadow)] ${pos ? (leaving ? "menu-out pointer-events-none" : pos.up ? "menu-in-up" : "menu-in") : "invisible"}`}
-      style={{ left: pos?.left ?? 0, top: pos?.top ?? 0, minWidth: Math.max(minWidth ?? 0, 180) }}
+      style={{ left: pos?.left ?? 0, top: pos?.top ?? 0, minWidth: Math.min(window.innerWidth - EDGE * 2, Math.max(minWidth ?? 0, 180)), maxWidth: `calc(100vw - ${EDGE * 2}px)`, maxHeight: `calc(100vh - ${EDGE * 2}px)`, overflowY: "auto" }}
     >
       {children}
     </div>,
@@ -134,6 +153,7 @@ export function Menu({ anchor, items, onClose, side, leaving, trigger }: { ancho
   const subItems = sub ? items.find((i) => i.id === sub.id) : undefined;
   return (
     <Popover anchor={anchor} onClose={onClose} side={side} leaving={leaving} trigger={trigger}>
+      <MenuKeys>
       {items.map((it) =>
         "gap" in it ? (
           <div key={it.id} className="h-1.5" />
@@ -168,10 +188,34 @@ export function Menu({ anchor, items, onClose, side, leaving, trigger }: { ancho
           </button>
         ),
       )}
+      </MenuKeys>
       {sub && subItems && "items" in subItems && subItems.items ? (
         <Menu anchor={sub.anchor} items={subItems.items} onClose={onClose} side="right" leaving={leaving} />
       ) : null}
     </Popover>
+  );
+}
+
+/** 菜单项的键盘操作：打开时第一项获得焦点，方向键、Home、End 在项之间移动。 */
+function MenuKeys({ children }: { children: ReactNode }) {
+  const box = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    box.current?.querySelector<HTMLButtonElement>("button:not(:disabled)")?.focus({ preventScroll: true });
+  }, []);
+  return (
+    <div
+      ref={box}
+      onKeyDown={(e) => {
+        if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(e.key)) return;
+        e.preventDefault();
+        const buttons = [...e.currentTarget.querySelectorAll<HTMLButtonElement>(":scope > button:not(:disabled)")];
+        const at = buttons.indexOf(document.activeElement as HTMLButtonElement);
+        const next = e.key === "Home" ? 0 : e.key === "End" ? buttons.length - 1 : (at + (e.key === "ArrowUp" ? -1 : 1) + buttons.length) % buttons.length;
+        buttons[next]?.focus();
+      }}
+    >
+      {children}
+    </div>
   );
 }
 
@@ -182,6 +226,10 @@ export function useMenu() {
   const [state, setState] = useState<MenuState | null>(null);
   // setState 的 updater 不保证当场执行，要同步读当前状态得自己留一份
   const cur = useRef<MenuState | null>(null);
+  // 上一次收起留下的计时器。不清掉的话，收起、重开、再收起时，
+  // 旧计时器会提前把正在收起的菜单卸下，动画放到一半就没了。
+  const timer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
   const set = (next: MenuState | null | ((s: MenuState | null) => MenuState | null)) => {
     const v = typeof next === "function" ? next(cur.current) : next;
     cur.current = v;
@@ -190,9 +238,11 @@ export function useMenu() {
   // 收起时先标为收起中，放完动画再卸下
   const close = () => {
     set((st) => (st ? { ...st, leaving: true } : st));
-    window.setTimeout(() => set((st) => (st?.leaving ? null : st)), OUT_MS);
+    window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => set((st) => (st?.leaving ? null : st)), OUT_MS);
   };
   const open = (from: MouseEvent | Element, items: MenuItem[]) => {
+    window.clearTimeout(timer.current);
     if (from instanceof Element) {
       const st = cur.current;
       // 菜单开着时再点同一个按钮是收起；换个按钮则挪过去接着开
@@ -301,7 +351,7 @@ export function Dropdown<T extends string>({
           <div
             role="listbox"
             tabIndex={-1}
-            ref={(el) => el?.focus()}
+            ref={(el) => { if (el && anchor && !el.contains(document.activeElement)) el.focus({ preventScroll: true }); }}
             onKeyDown={(e) => {
               if (e.key === "ArrowDown") { e.preventDefault(); setHi((h) => Math.min(options.length - 1, h + 1)); }
               if (e.key === "ArrowUp") { e.preventDefault(); setHi((h) => Math.max(0, h - 1)); }

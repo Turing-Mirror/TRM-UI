@@ -110,3 +110,25 @@ export function markReady(): void {
   if (!inHost) return;
   void call("ui_ready");
 }
+
+/**
+ * 把一个页面单独开成一扇窗。`params` 拼进新窗口的地址，界面按它决定显示什么。
+ * 桌面版由壳开一扇和主窗口同样外观的窗，从当前窗口往右下错开；
+ * 浏览器预览里是浏览器的新窗口。打不开时返回 false。
+ */
+export async function openWindow(
+  params: Record<string, string>,
+  options?: { position?: [number, number]; name?: string },
+): Promise<boolean> {
+  const query = new URLSearchParams(params).toString();
+  if (inHost) {
+    // call 失败时返回 null；成功时命令本身没有返回值，也是 null，所以用 try 判断
+    try {
+      await tauriInvoke("open_window", { query, position: options?.position });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  return Boolean(window.open(`${location.pathname}?${query}`, options?.name ?? "_blank", "popup,width=1180,height=780"));
+}

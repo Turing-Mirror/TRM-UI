@@ -21,6 +21,7 @@ mod ui_assets;
 mod window_watch;
 
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Mutex;
 
 use serde_json::{Map, Value};
@@ -99,6 +100,50 @@ fn autostart_set(enabled: bool) -> Result<(), String> {
     autostart::set(enabled)
 }
 
+/// 把一个页面单独开成一扇窗，和浏览器里的「在新窗口打开」一样。
+///
+/// 网页视图里的 `window.open` 在壳里没人接，点了没有任何反应，所以由壳来开。
+/// `query` 是界面拼好的地址参数（`window=settings&…`）：新窗口加载同一份界面，
+/// 界面按参数决定显示哪个页面。外观与主窗口相同：无边框、圆角、自己的窗口按钮。
+/// 新窗口的标签是 `win-1`、`win-2`…，capabilities/default.json 按这个前缀放行。
+///
+/// 必须是 async：Windows 上在同步命令里建窗会和 WebView2 互相等，整个界面卡死。
+#[tauri::command]
+async fn open_window(
+    app: AppHandle,
+    caller: tauri::WebviewWindow,
+    query: String,
+    position: Option<[f64; 2]>,
+) -> Result<(), String> {
+    static SEQ: AtomicUsize = AtomicUsize::new(0);
+    let label = format!("win-{}", SEQ.fetch_add(1, Ordering::Relaxed) + 1);
+    let url = format!("{}?{query}", ui_url());
+
+    // 从调用它的那扇窗往右下错开一点：一眼看得出是新开了一扇，而不是原窗换了页。
+    let scale = caller.scale_factor().unwrap_or(1.0);
+    let at = position.map(|p| (p[0], p[1])).or_else(|| {
+        caller
+            .outer_position()
+            .ok()
+            .map(|p| p.to_logical::<f64>(scale))
+            .map(|p| (p.x + CASCADE, p.y + CASCADE))
+    });
+
+    let mut builder = window_builder(&app, &label, &url)?;
+    builder = match at {
+        Some((x, y)) => builder.position(x, y),
+        None => builder.center(),
+    };
+    let win = builder.build().map_err(|e| e.to_string())?;
+    shell_log!("新窗口 {label}：{query}");
+
+    // 错开之后可能顶出屏幕（调用的窗口本来就贴在右下角）
+    window_watch::rescue_if_offscreen(&win);
+    window_watch::round_corners(&win);
+    follow_resize(&win);
+    Ok(())
+}
+
 // ───────────────────────── 启动 ─────────────────────────
 
 pub fn run() {
@@ -135,6 +180,7 @@ pub fn run() {
             ui_source,
             autostart_get,
             autostart_set,
+            open_window,
         ])
         .setup(move |app| {
             let root = setup_root;
@@ -144,34 +190,12 @@ pub fn run() {
             let cfg = config::read(&root);
             asset_scope::grant_file(app.handle(), &config::str_of(&cfg, "wallpaper_path"));
 
-            // 窗口 URL 必须用上面注册的自定义协议。
-            //
-            // WebView2 根本不能注册非标准 scheme，所以 wry 把 `trm://localhost/x`
-            // 改写成 `http://trm.localhost/x` 再拦截。Windows 这一支单独写出来，
-            // 是为了和 WebView 实际报告的 origin 对上 —— 对不上就是 CSP 拦截，
-            // 表现为白屏。
-            #[cfg(windows)]
-            let url = format!("http://{}.localhost/index.html", ui_assets::SCHEME);
-            #[cfg(not(windows))]
-            let url = format!("{}://localhost/index.html", ui_assets::SCHEME);
+            let url = ui_url();
             shell_log!("窗口 URL：{url}");
 
-            let win = tauri::WebviewWindowBuilder::new(
-                app,
-                "main",
-                tauri::WebviewUrl::CustomProtocol(url.parse().expect("窗口 URL")),
-            )
-            .title(APP_TITLE)
-            .inner_size(1180.0, 780.0)
-            .min_inner_size(880.0, 640.0)
-            .resizable(true)
-            .decorations(false)
-            // Windows 上投影不走 tao 的 shadow：它会带出一条 1px 系统白边，
-            // 投影由 window_watch::round_corners 经 DWM 要回来。macOS 上
-            // shadow 就是系统原生投影，直接开。
-            .shadow(cfg!(target_os = "macos"))
-            .center()
-            .build()?;
+            let win = window_builder(app.handle(), "main", &url)?
+                .center()
+                .build()?;
 
             // `.center()` 只认主显示器。多显示器的人主屏未必是他正在看的那块，
             // 窗口连同任务栏按钮一起去了另一块屏，这头看起来就跟没启动一样。
@@ -194,17 +218,76 @@ pub fn run() {
         .expect("启动失败");
 }
 
-/// 窗口事件：圆角重裁 + 关闭行为。
-fn install_window_events(win: &tauri::WebviewWindow, root: PathBuf) {
+/// 新窗口从调用它的那扇窗往右下错开多少（逻辑像素）。
+const CASCADE: f64 = 32.0;
+
+/// 界面的地址。必须用上面注册的自定义协议。
+///
+/// WebView2 根本不能注册非标准 scheme，所以 wry 把 `trm://localhost/x`
+/// 改写成 `http://trm.localhost/x` 再拦截。Windows 这一支单独写出来，
+/// 是为了和 WebView 实际报告的 origin 对上 —— 对不上就是 CSP 拦截，
+/// 表现为白屏。
+fn ui_url() -> String {
+    if cfg!(windows) {
+        format!("http://{}.localhost/index.html", ui_assets::SCHEME)
+    } else {
+        format!("{}://localhost/index.html", ui_assets::SCHEME)
+    }
+}
+
+/// 主窗口和单独开的窗口共用的外观。位置由调用方定。
+fn window_builder<'a, M: Manager<tauri::Wry>>(
+    manager: &'a M,
+    label: &str,
+    url: &str,
+) -> Result<tauri::WebviewWindowBuilder<'a, tauri::Wry, M>, String> {
+    let url = url.parse().map_err(|e| format!("窗口 URL 无效：{e}"))?;
+    Ok(
+        tauri::WebviewWindowBuilder::new(manager, label, tauri::WebviewUrl::CustomProtocol(url))
+            // 关掉 WebView 自己的文件拖放拦截，网页里的拖放（拖文件进输入框、
+            // 拖条目换位置）才收得到事件
+            .disable_drag_drop_handler()
+            .title(APP_TITLE)
+            .inner_size(1180.0, 780.0)
+            .min_inner_size(880.0, 640.0)
+            .resizable(true)
+            .decorations(false)
+            // Windows 上投影不走 tao 的 shadow：它会带出一条 1px 系统白边，
+            // 投影由 window_watch::round_corners 经 DWM 要回来。macOS 上
+            // shadow 就是系统原生投影，直接开。
+            .shadow(cfg!(target_os = "macos"))
+            // 任务栏里的名字跟着页面标题走，几扇窗才分得清哪扇是哪个页面
+            .on_document_title_changed(|w, title| {
+                let _ = w.set_title(&title);
+            }),
+    )
+}
+
+/// 尺寸或缩放变了：Win10 的圆角是拿 GDI 区域裁出来的，按像素算，
+/// 窗口一改大小就得重套。Win11 走 DWM 那条时这里是空操作。
+fn follow_resize(win: &tauri::WebviewWindow) {
     let w = win.clone();
     win.on_window_event(move |event| {
-        // 尺寸或缩放变了：Win10 的圆角是拿 GDI 区域裁出来的，按像素算，
-        // 窗口一改大小就得重套。Win11 走 DWM 那条时这里是空操作。
         if matches!(
             event,
             tauri::WindowEvent::Resized(_) | tauri::WindowEvent::ScaleFactorChanged { .. }
         ) {
             window_watch::refresh_corners(&w);
+        }
+    });
+}
+
+/// 主窗口的事件：圆角重裁 + 关闭行为。
+fn install_window_events(win: &tauri::WebviewWindow, root: PathBuf) {
+    follow_resize(win);
+    let w = win.clone();
+    win.on_window_event(move |event| {
+        // 主窗口真的关掉了：整个退出。单独开的窗口是附属的，主窗口没了还留着它们，
+        // 进程就一直在后台 —— 和「点了 X 就是退出」对不上。
+        if matches!(event, tauri::WindowEvent::Destroyed) {
+            shell_log!("主窗口已关闭，退出");
+            w.app_handle().exit(0);
+            return;
         }
         let tauri::WindowEvent::CloseRequested { api, .. } = event else {
             return;

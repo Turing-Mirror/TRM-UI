@@ -11,7 +11,7 @@ export { PagePad, PageHead, Block, Group, Btn, ListItem, HelpMark } from "./comp
 export { Field, Select, RangeBar, Slider, Toggle } from "./components/controls";
 export { SegmentControl, type SegmentOption } from "./components/SegmentControl";
 export { Tooltip } from "./components/Tooltip";
-export { PageHost } from "./components/PageHost";
+export { PageHost, PageActive, usePageActive } from "./components/PageHost";
 export { TitleBar, WinBtn, type WindowControls } from "./components/TitleBar";
 export { ErrorBoundary } from "./components/ErrorBoundary";
 
@@ -27,6 +27,7 @@ export {
   hostWindowControls,
   logToHost,
   markReady,
+  openWindow,
   type HostConfig,
 } from "./lib/host";
 export {

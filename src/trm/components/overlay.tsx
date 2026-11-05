@@ -66,21 +66,22 @@ function ModalBody({ onClose, children, width, label, leaving }: { onClose: () =
 
 /** 右侧抽屉：看一件东西的详情，不离开当前页。 */
 export function Drawer({ open, onClose, children, label, width = 460 }: { open: boolean; onClose: () => void; children: ReactNode; label: string; width?: number }) {
-  useEffect(() => {
-    if (!open) return;
-    const k = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", k);
-    return () => window.removeEventListener("keydown", k);
-  }, [open, onClose]);
+  // 和弹窗一样：Esc 关闭，Tab 只在抽屉里转，关掉后焦点回到原处
+  const ref = useRef<HTMLElement>(null);
+  useModalKeys(open, ref, { onEscape: onClose });
   const { mounted, leaving } = usePresence(open);
   if (!mounted) return null;
   return createPortal(
     <div className={`fixed inset-0 z-30 bg-[var(--scrim)] ${leaving ? "fade-out pointer-events-none" : "fade-in"}`} onPointerDown={onClose}>
       <aside
+        ref={ref}
+        tabIndex={-1}
+        inert={leaving}
         role="dialog"
+        aria-modal="true"
         aria-label={label}
         onPointerDown={(e) => e.stopPropagation()}
-        className={`${leaving ? "drawer-out" : "drawer-in"} absolute right-0 top-0 bottom-0 bg-[var(--surface)] shadow-[var(--pop-shadow)] overflow-y-auto`}
+        className={`${leaving ? "drawer-out" : "drawer-in"} absolute right-0 top-0 bottom-0 bg-[var(--surface)] shadow-[var(--pop-shadow)] overflow-y-auto outline-none`}
         style={{ width: `min(${width}px, 92vw)` }}
       >
         {children}

@@ -9,6 +9,7 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { useI18n } from "../i18n";
+import { usePageActive } from "./PageHost";
 import { Icon } from "./Icon";
 import { usePaneOn } from "./motion";
 
@@ -52,7 +53,8 @@ export type TitleProps = {
 export function PageTitle(props: TitleProps) {
   const host = useContext(HostCtx);
   // 页面露着、所在的视图也露着才算：列表与详情各放一个标题，谁露着显示谁
-  const pageOn = props.active ?? true;
+  const ctxOn = usePageActive();
+  const pageOn = props.active ?? ctxOn;
   const paneOn = usePaneOn();
   const active = pageOn && paneOn;
   // 预先挂好、还没露过面的页不放退场，免得标题栏里闪一下

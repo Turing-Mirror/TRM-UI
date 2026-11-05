@@ -101,9 +101,12 @@ function NavBtn({ label, onClick, flip = false }: { label: string; onClick: () =
 export function useAnchoredPop() {
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
+  /** 浮层画到别处（比如挂到 body 上）时，把它也登记进来，点它不算点外面。 */
+  const layer = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!open) return;
-    const down = (e: PointerEvent) => box.current && !box.current.contains(e.target as Node) && setOpen(false);
+    const inside = (n: Node) => Boolean(box.current?.contains(n) || layer.current?.contains(n));
+    const down = (e: PointerEvent) => box.current && !inside(e.target as Node) && setOpen(false);
     const key = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("pointerdown", down, true);
     window.addEventListener("keydown", key);
@@ -114,5 +117,5 @@ export function useAnchoredPop() {
   }, [open]);
   // 收起时也放一段动画再卸下
   const { mounted, leaving } = usePresence(open);
-  return { open, setOpen, box, mounted, leaving };
+  return { open, setOpen, box, layer, mounted, leaving };
 }

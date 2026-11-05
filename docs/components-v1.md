@@ -36,6 +36,12 @@ Tailwind v4 应用的样式入口：
 - 已有主题系统的产品可以只引用交互逻辑，不导入全局样式。`Tooltip` 的 `className` 替换面板外观，`triggerClassName` 设置触发区域，`exitMs` 对齐产品的退场时长。触发按钮已经打开详情面板时可设置 `disabled`，避免重复提示；Escape 关闭说明并保留按钮焦点。
 - `FlowList` 的 `motion` 接受 `durationMs`、`easing` 和 `reduced`，同时控制 JavaScript 动画和卸载时间；`layout="grid"` 支持网格的横纵换位。`Morph disabled` 关闭高度过渡。产品仍需提供对应的局部 CSS，并将这些参数连接到自己的主题设置。
 
+## 外壳与窗口
+
+- 根容器加 `page-shell`，内容区加 `page-workspace`：标题栏与侧栏使用 `--shell-bg`，内容区使用 `--workspace-bg`，右侧与底部留出 `--shell-gap` 并带圆角。没有侧栏的单独窗口再加 `page-workspace-detached`。设置背景图时外壳与内容区自动改为半透明。
+- `openWindow(params)` 把一个页面开成单独的窗口。桌面版由壳的 `open_window` 命令开窗，外观与主窗口相同，标签为 `win-1`、`win-2` 等；浏览器预览中打开浏览器窗口。关闭主窗口时整个程序退出。
+- 产品自己管理页面时，用 `PageActive value={是否显示}` 包裹页面内容。`PageHost` 已自动提供。菜单、下拉与页标题读取 `usePageActive()`，页面被切走时浮层自动收起。
+
 ## 构建与升级
 
 ```sh

@@ -74,6 +74,16 @@ const PATHS = {
   file: "M6.5 3.5h7l4 4V20a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5zM13.5 3.5V7.5h4",
   tag: "M4 4h7.5l8.5 8.5-7.5 7.5L4 11.5zM8 8h.01",
   scan: "M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M4 12h16",
+  pause: "M8 5v14M16 5v14",
+  volume: "M4 9h4l5-4v14l-5-4H4zM16 8q4 4 0 8M18.5 5q7 7 0 14",
+  volumeOff: "M4 9h4l5-4v14l-5-4H4zM17 9l5 6M22 9l-5 6",
+  minus: "M5 12h14",
+  info: "M12 3.5a8.5 8.5 0 1 1 0 17 8.5 8.5 0 0 1 0-17zM12 11v5.5M12 7.8h.01",
+  node: "M4.5 6h15v12h-15zM4.5 10h15M2.5 13h2M19.5 15h2",
+  waves: "M3 9c3-3 6 3 9 0s6 3 9 0M3 15c3-3 6 3 9 0s6 3 9 0",
+  linked: "M5 6.5h5v4H5zM14 13.5h5v4h-5zM10 8.5h2a2 2 0 0 1 2 2v5",
+  cycle: "M4 7.5h11.5l-3-3M20 16.5H8.5l3 3M15.5 7.5a4.5 4.5 0 0 1 4.5 4.5M8.5 16.5A4.5 4.5 0 0 1 4 12",
+  linkedSide: "M4 6h6v5H4zM14 13h6v5h-6zM10 8.5h2a2 2 0 0 1 2 2v5M4 16h5",
 } as const;
 
 export type IconName = keyof typeof PATHS;

@@ -1,4 +1,6 @@
 import {
+  createContext,
+  useContext,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -15,6 +17,19 @@ import type { Nav } from "../lib/nav";
  * 旧页在淡出到七成的时候被砍掉。
  */
 const LEAVE_MS = 420;
+
+const PageActiveCtx = createContext(true);
+
+/**
+ * 这一页此刻是否正显示着。换页离场、或产品让页面常驻但藏起来时为 false。
+ * 菜单、下拉这类浮层读它：页被切走时跟着收起，不留在别的页上面。
+ */
+export const usePageActive = () => useContext(PageActiveCtx);
+
+/** 产品自己管页面（常驻、分标签页）时，用它告诉里面的组件这一页是否正显示着。 */
+export function PageActive({ value, children }: { value: boolean; children: ReactNode }) {
+  return <PageActiveCtx.Provider value={value}>{children}</PageActiveCtx.Provider>;
+}
 
 type Props<T extends string> = {
   nav: Nav<T>;
@@ -105,7 +120,7 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x" }: 
               ? `absolute inset-0 overflow-hidden pointer-events-none z-[1] ${leaveCls}`
               : `absolute inset-0 overflow-y-auto z-[2] ${enterCls}`}
           >
-            {children(id)}
+            <PageActive value={!leaving}>{children(id)}</PageActive>
           </div>
         );
       })}

@@ -161,6 +161,9 @@
   --ink-muted: color-mix(in srgb, var(--ink) 78%, transparent);
   --help: color-mix(in srgb, var(--ink) 62%, transparent);
   --meta: color-mix(in srgb, var(--ink) 52%, transparent);
+  /* 有背景图时外壳只轻轻提亮，内容区透出 #root 那层磨砂，背景图不被盖住。 */
+  --shell-bg: color-mix(in srgb, var(--surface) 40%, transparent);
+  --workspace-bg: transparent;
 }
 
 :root {
@@ -174,6 +177,11 @@
   --art-ink: rgba(30, 36, 43, 0.38);
   /* 侧栏。比内容区稍深一点，靠底色分区，不画分隔线。 */
   --rail: color-mix(in srgb, var(--bg) 88%, var(--ink) 3%);
+  /* 外壳。标题栏与侧栏用浮层的底色，内容区用窗口底色、向内收一圈并带圆角，
+     两块靠底色分开，不画分隔线。用法见 components.css 的 .page-shell。 */
+  --shell-bg: var(--surface);
+  --workspace-bg: var(--bg);
+  --shell-gap: 8px;
   /* 状态色：成功、提醒、危险。 */
   --ok: #2f9e6a;
   --ok-soft: rgba(47, 158, 106, 0.12);

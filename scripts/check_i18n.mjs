@@ -23,7 +23,10 @@ const ROOT = join(HERE, "..");
 const LOCALES_DIR = join(ROOT, "i18n", "locales");
 const SRC_DIR = join(ROOT, "src");
 const BASE = "zh-CN";
-const OTHERS = ["zh-TW", "en-US", "ja-JP", "ko-KR", "es-ES", "fr-FR", "ru-RU"];
+// 其余语言按目录发现，和界面加载语言包的方式一致（src/trm/i18n/packs.ts）。
+const OTHERS = readdirSync(LOCALES_DIR)
+  .filter((f) => f.endsWith(".json") && f !== `${BASE}.json`)
+  .map((f) => f.slice(0, -".json".length));
 
 const TOKEN = /\{[^{}]*\}/g;
 
@@ -118,6 +121,8 @@ for (const file of walk(SRC_DIR)) {
   let m;
   while ((m = CALL.exec(code)) !== null) {
     const key = m[1];
+    // 模板字符串拼出来的 key 看不出取值，和变量 key 一样只能靠人看。
+    if (key.includes("${")) continue;
     if (!baseKeys.has(key)) {
       problems.push(`${rel}: 引用了 ${BASE} 里没有的 key「${key}」`);
     }

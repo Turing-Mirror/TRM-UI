@@ -19,6 +19,40 @@ export type HistoryEntry = {
 
 export const HISTORY: HistoryEntry[] = [
   {
+    id: "shell-surface",
+    date: "2026-11-05",
+    old: {
+      "zh-CN": "整扇窗口使用同一种底色，标题栏、侧栏与内容区之间没有区分",
+      "zh-TW": "整扇視窗使用同一種底色，標題列、側欄與內容區之間沒有區分",
+      "en-US": "The whole window used one background; the title bar, sidebar and content area were not distinguished",
+      "ja-JP": "ウィンドウ全体が一つの背景色で、タイトルバー、サイドバー、内容エリアの区別がない",
+      "ko-KR": "창 전체가 한 가지 배경색이라 제목 표시줄, 사이드바, 내용 영역이 구분되지 않음",
+      "fr-FR": "Toute la fenêtre avait un seul fond ; la barre de titre, la barre latérale et le contenu ne se distinguaient pas",
+      "es-ES": "Toda la ventana usaba un solo fondo; la barra de título, la barra lateral y el contenido no se distinguían",
+      "ru-RU": "Всё окно имело один фон; строка заголовка, боковая панель и содержимое не различались",
+    },
+    now: {
+      "zh-CN": "标题栏与侧栏为白色，内容区为灰白色，四周留出间距并带圆角",
+      "zh-TW": "標題列與側欄為白色，內容區為灰白色，四周留出間距並帶圓角",
+      "en-US": "The title bar and sidebar are white; the content area is off-white, inset with a margin and rounded corners",
+      "ja-JP": "タイトルバーとサイドバーは白、内容エリアは灰白色で、周囲に余白と角丸を設ける",
+      "ko-KR": "제목 표시줄과 사이드바는 흰색, 내용 영역은 회백색이며 둘레에 여백과 둥근 모서리를 둠",
+      "fr-FR": "La barre de titre et la barre latérale sont blanches ; le contenu est gris clair, en retrait, avec des coins arrondis",
+      "es-ES": "La barra de título y la barra lateral son blancas; el contenido es gris claro, con margen y esquinas redondeadas",
+      "ru-RU": "Строка заголовка и боковая панель белые; область содержимого светло-серая, с отступом и скруглёнными углами",
+    },
+    why: {
+      "zh-CN": "导航与内容分区清楚，内容区的范围一眼可见。该设计先在图灵枢中使用",
+      "zh-TW": "導覽與內容分區清楚，內容區的範圍一眼可見。該設計先在圖靈樞中使用",
+      "en-US": "Navigation and content are clearly separated, and the content area is visible at a glance. The design was first used in TRM Nexus",
+      "ja-JP": "ナビゲーションと内容がはっきり分かれ、内容エリアの範囲がひと目で分かる。この設計は TRM Nexus で先に使われた",
+      "ko-KR": "탐색과 내용이 뚜렷이 나뉘고 내용 영역의 범위가 한눈에 보임. 이 디자인은 TRM Nexus에서 먼저 쓰였음",
+      "fr-FR": "La navigation et le contenu sont nettement séparés, et la zone de contenu se voit d'un coup d'œil. Cette conception a d'abord servi dans TRM Nexus",
+      "es-ES": "La navegación y el contenido quedan claramente separados y el área de contenido se ve de un vistazo. El diseño se usó primero en TRM Nexus",
+      "ru-RU": "Навигация и содержимое чётко разделены, границы области содержимого видны сразу. Решение сначала применили в TRM Nexus",
+    },
+  },
+  {
     id: "crossfade",
     date: "2026-11-01",
     old: {

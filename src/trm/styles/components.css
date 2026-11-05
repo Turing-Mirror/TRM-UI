@@ -195,6 +195,18 @@ html[data-input="pointer"] :focus-visible {
     transparent
   );
 }
+/* 外壳：标题栏与侧栏在 .page-shell 上，内容区是 .page-workspace。
+   内容区右侧和底部留出 --shell-gap，左侧紧贴侧栏；最大化时也保留这圈留白。
+   没有侧栏的单独窗口加 .page-workspace-detached，左侧也留白。 */
+.page-shell { background: var(--shell-bg); }
+.page-workspace {
+  margin-inline-end: var(--shell-gap);
+  margin-block-end: var(--shell-gap);
+  border-radius: var(--r);
+  background: var(--workspace-bg);
+  overflow: hidden;
+}
+.page-workspace-detached { margin-inline-start: var(--shell-gap); }
 body::before {
   content: "";
   position: fixed;

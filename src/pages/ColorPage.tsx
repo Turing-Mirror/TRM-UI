@@ -1,7 +1,7 @@
 import { PagePad, PageHead, Block, Group, useI18n } from "../trm";
 import { COLOR_ROLES } from "./colorRoles";
 
-const CORE = ["--bg", "--surface", "--rail", "--group", "--stage", "--page-bg", "--scrim"];
+const CORE = ["--shell-bg", "--bg", "--surface", "--rail", "--group", "--stage", "--page-bg", "--scrim"];
 const INK = ["--ink", "--ink-muted", "--help", "--meta", "--hairline", "--line", "--focus-line"];
 const ACCENT = ["--accent", "--accent-ink", "--accent-soft", "--knob", "--notify"];
 const STATE = ["--ok", "--ok-soft", "--warn", "--warn-ink", "--danger", "--danger-soft"];

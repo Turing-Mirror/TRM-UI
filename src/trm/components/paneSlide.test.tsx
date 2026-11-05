@@ -42,7 +42,7 @@ it("slides adjacent categories horizontally without fading or scaling and retain
   select("a");
   expect(pane("a").querySelector("input")).toBe(input);
   expect(input.value).toBe("saved");
-  expect(calls.at(-1)!.frames[1].transform).toBe("translate3d(100%, 0, 0)");
+  expect(calls[calls.length - 1].frames[1].transform).toBe("translate3d(100%, 0, 0)");
 });
 it("reverses from the painted positions and cancels the interrupted animations", () => {
   const { calls, positions, pane, select } = setup();
@@ -66,7 +66,7 @@ it("finishes the visible pair before opening the latest third category", () => {
   expect(pane("a").hidden).toBe(true);
   expect(pane("b").hidden).toBe(false);
   expect(pane("c").hidden).toBe(false);
-  expect(calls.at(-1)!.frames[0].transform).toBe("translate3d(100%, 0, 0)");
+  expect(calls[calls.length - 1].frames[0].transform).toBe("translate3d(100%, 0, 0)");
 });
 it("leaves the existing default push animation unchanged", () => {
   const { calls, render } = setup();
