@@ -110,6 +110,9 @@ type Turn = { value: string; from: string | null; dir: Dir; seq: number; offset:
 
 const PanesCtx = createContext<Turn | null>(null);
 const PanesLayoutCtx = createContext<"content" | "fill">("content");
+type PaneTransition = "push" | "slide";
+const PanesTransitionCtx = createContext<PaneTransition>("push");
+const PanesRequestedCtx = createContext<string | null>(null);
 /** 所在的视图此刻是否露着。嵌套的视图要外层也露着才算。 */
 const PaneOnCtx = createContext(true);
 export const usePaneOn = () => useContext(PaneOnCtx);
@@ -127,7 +130,7 @@ const pushStyle = (dir: Dir) => ({ "--push": String(dir || 1) }) as CSSPropertie
 type PushPhase = "enter" | "leave" | "shown" | "hidden";
 
 /** Retarget a running push from its painted state instead of restarting at full opacity. */
-function usePushMotion(phase: PushPhase, seq: number, dir: Dir) {
+function usePushMotion(phase: PushPhase, seq: number, dir: Dir, transition: PaneTransition = "push") {
   const node = useRef<HTMLDivElement>(null);
   const previous = useRef<PushPhase | null>(null);
   const animations = useRef<Animation[]>([]);
@@ -136,8 +139,9 @@ function usePushMotion(phase: PushPhase, seq: number, dir: Dir) {
     if (!el) return;
     const painted = getComputedStyle(el);
     const continuing = previous.current !== null && previous.current !== "hidden";
-    const opacity = continuing ? Number(painted.opacity) : (phase === "enter" ? 0 : 1);
-    const transform = continuing ? painted.transform : `translate3d(${(dir || 1) * 32}px, 0, 0)`;
+    const sliding = transition === "slide";
+    const opacity = sliding ? 1 : continuing ? Number(painted.opacity) : (phase === "enter" ? 0 : 1);
+    const transform = continuing ? painted.transform : `translate3d(${(dir || 1) * (sliding ? 100 : 32)}${sliding ? "%" : "px"}, 0, 0)`;
     animations.current.forEach(animation => animation.cancel());
     animations.current = [];
     previous.current = phase;
@@ -147,8 +151,8 @@ function usePushMotion(phase: PushPhase, seq: number, dir: Dir) {
       return;
     }
     const leaving = phase === "leave";
-    const target = leaving ? 0 : 1;
-    const endTransform = leaving ? `translate3d(${(dir || 1) * -14}px, 0, 0) scale(0.99)` : "none";
+    const target = sliding ? 1 : leaving ? 0 : 1;
+    const endTransform = leaving ? sliding ? `translate3d(${(dir || 1) * -100}%, 0, 0)` : `translate3d(${(dir || 1) * -14}px, 0, 0) scale(0.99)` : "none";
     // Inline endpoints also provide an immediate fallback without Web Animations.
     el.style.opacity = String(target);
     el.style.transform = endTransform;
@@ -158,11 +162,11 @@ function usePushMotion(phase: PushPhase, seq: number, dir: Dir) {
     const fades: Keyframe[] = [{ opacity }, { opacity: target }];
     animations.current = [
       el.animate([{ transform }, { transform: endTransform }], { duration: FLOW_MS, easing: curve("--ease-nav"), fill: "both" }),
-      el.animate(fades, { duration: FLOW_MS, easing: curve("--ease-nav"), fill: "both" }),
+      ...(sliding ? [] : [el.animate(fades, { duration: FLOW_MS, easing: curve("--ease-nav"), fill: "both" })]),
     ];
     // Retargeting intentionally cancels the previous animation's finished promise.
     animations.current.forEach(animation => { void animation.finished.catch(() => undefined); });
-  }, [phase, seq, dir]);
+  }, [phase, seq, dir, transition]);
   useLayoutEffect(() => () => {
     animations.current.forEach(animation => animation.cancel());
     animations.current = [];
@@ -178,15 +182,18 @@ function PushLayer({ phase, seq, dir, className = "", children }: { phase: PushP
 
 /**
  * 一组互斥的视图。value 是当前那一个；order 决定方向：往后翻从右边推进来，往前翻从左边。
+ * transition="slide"：分类内容整页水平平移，不淡出、不缩放。默认推移不变。
  * keepScroll：各视图记住自己的滚动位置，换过去时回到那里（列表与详情用它）。
  */
-export function Panes({ value, order, keepScroll = false, className = "", children, layout = "content" }: { value: string; order?: readonly string[]; keepScroll?: boolean; className?: string; children: ReactNode; layout?: "content" | "fill" }) {
+export function Panes({ value, order, keepScroll = false, className = "", children, layout = "content", transition = "push" }: { value: string; order?: readonly string[]; keepScroll?: boolean; className?: string; children: ReactNode; layout?: "content" | "fill"; transition?: PaneTransition }) {
   const [turn, setTurn] = useState<Turn>({ value, from: null, dir: 0, seq: 0, offset: 0 });
   const box = useRef<HTMLDivElement>(null);
   const scrolls = useRef(new Map<string, number>());
   const restored = useRef(0);
 
-  if (turn.value !== value) {
+  // Reverse immediately; finish the visible pair before moving to a third pane.
+  // The latest requested value wins, without removing a still-visible layer.
+  if (turn.value !== value && !(transition === "slide" && !reduced() && turn.from && value !== turn.from)) {
     const a = order ? order.indexOf(turn.value) : -1;
     const b = order ? order.indexOf(value) : -1;
     const dir: Dir = a < 0 || b < 0 ? 1 : b > a ? 1 : -1;
@@ -220,15 +227,15 @@ export function Panes({ value, order, keepScroll = false, className = "", childr
 
   useEffect(() => {
     if (!turn.from) return;
-    const id = window.setTimeout(() => setTurn((t) => (t.seq === turn.seq ? { ...t, from: null, offset: 0 } : t)), FLOW_MS);
+    const id = window.setTimeout(() => setTurn((t) => (t.seq === turn.seq ? { ...t, from: null, offset: 0 } : t)), transition === "slide" && reduced() ? 0 : FLOW_MS);
     return () => window.clearTimeout(id);
-  }, [turn.from, turn.seq]);
+  }, [turn.from, turn.seq, transition]);
 
-  const contents = <PanesLayoutCtx.Provider value={layout}><PanesCtx.Provider value={turn}>{children}</PanesCtx.Provider></PanesLayoutCtx.Provider>;
+  const contents = <PanesRequestedCtx.Provider value={value}><PanesTransitionCtx.Provider value={transition}><PanesLayoutCtx.Provider value={layout}><PanesCtx.Provider value={turn}>{children}</PanesCtx.Provider></PanesLayoutCtx.Provider></PanesTransitionCtx.Provider></PanesRequestedCtx.Provider>;
   if (layout === "fill") return <div ref={box} className={`trm-panes-fill relative min-h-0 ${className}`}>{contents}</div>;
   return (
     <Morph className={className} disabled={keepScroll}>
-      <div ref={box} className={`relative ${turn.from ? "push-stage" : ""}`}>
+      <div ref={box} className={`relative ${transition === "slide" ? "slide-stage" : turn.from ? "push-stage" : ""}`}>
         {contents}
       </div>
     </Morph>
@@ -248,12 +255,14 @@ export function Pane({ id, children, className = "" }: { id: string; children: R
   const turn = useContext(PanesCtx);
   const outer = useContext(PaneOnCtx);
   const layout = useContext(PanesLayoutCtx);
+  const transition = useContext(PanesTransitionCtx);
+  const requested = useContext(PanesRequestedCtx);
   const on = turn ? turn.value === id : true;
   const [kept, setKept] = useState(children);
   if (on && kept !== children) setKept(children);
   const leaving = Boolean(turn && turn.from === id);
   const entering = Boolean(turn && on && turn.seq > 0);
-  const motion = usePushMotion(on ? entering ? "enter" : "shown" : leaving ? "leave" : "hidden", turn?.seq ?? 0, turn?.dir ?? 1);
+  const motion = usePushMotion(on ? entering ? "enter" : "shown" : leaving ? "leave" : "hidden", turn?.seq ?? 0, turn?.dir ?? 1, transition);
   const state = on ? (entering ? `${enterClass(turn?.seq ?? 0)} flow-quiet` : "") : leaving ? "push-out absolute inset-x-0 pointer-events-none" : "hidden";
   return (
     <div
@@ -265,7 +274,7 @@ export function Pane({ id, children, className = "" }: { id: string; children: R
       className={`${layout === "fill" ? "absolute inset-0 min-h-0" : ""} ${className} ${state}`}
       style={{ ...pushStyle(turn?.dir ?? 1), animation: "none", top: leaving ? turn?.offset : undefined }}
     >
-      <PaneOnCtx.Provider value={outer && on}>
+      <PaneOnCtx.Provider value={outer && on && (requested === null || requested === id)}>
         <Frozen node={on ? children : kept} />
       </PaneOnCtx.Provider>
     </div>
