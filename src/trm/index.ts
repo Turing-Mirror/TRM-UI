@@ -67,7 +67,7 @@ export { AccordionGroup, type AccordionItem } from "./components/ui";
 export { Icon, ICON_NAMES, isIconName, type IconName } from "./components/Icon";
 export { Tag, Meta, Mark, Bar, Section, IconBtn, Empty, Tabs, Filters, Pager, pageList, usePaged, type Art, type Tone } from "./components/display";
 export { Modal, Drawer, usePresence, useLatest, OUT_MS } from "./components/overlay";
-export { Popover, Menu, MenuBtn, useMenu, Dropdown, PromptDialog, anchorOf, type Anchor, type MenuItem } from "./components/Menu";
+export { Popover, PopoverOwner, Menu, MenuBtn, useMenu, Dropdown, PromptDialog, anchorOf, type Anchor, type MenuItem } from "./components/Menu";
 export { Calendar, dayKey, useAnchoredPop } from "./components/Calendar";
 export { NoticeProvider, useNotify, Notices, NOTICE_OUT_MS, type Notice, type NoticeInput } from "./components/Notices";
 export { AppBar, Sidebar, SidebarItem, SidebarHead, SidebarHeadBtn, ActivityRow, SIDEBAR_W } from "./components/Sidebar";

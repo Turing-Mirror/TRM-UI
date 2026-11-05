@@ -40,6 +40,7 @@ Tailwind v4 应用的样式入口：
 
 - 根容器加 `page-shell`，内容区加 `page-workspace`：标题栏与侧栏使用 `--shell-bg`，内容区使用 `--workspace-bg`，右侧与底部留出 `--shell-gap` 并带圆角。没有侧栏的单独窗口再加 `page-workspace-detached`。设置背景图时外壳与内容区自动改为半透明。
 - `openWindow(params)` 把一个页面开成单独的窗口。桌面版由壳的 `open_window` 命令开窗，外观与主窗口相同，标签为 `win-1`、`win-2` 等；浏览器预览中打开浏览器窗口。关闭主窗口时整个程序退出。
+- 菜单与下拉挂在 body 上。悬停展开的侧栏这类区域要把从自己这里打开的浮层算作内部时，用 `PopoverOwner value={标识}` 包裹，再读取浮层的 `data-popover-owner`。
 - 产品自己管理页面时，用 `PageActive value={是否显示}` 包裹页面内容。`PageHost` 已自动提供。菜单、下拉与页标题读取 `usePageActive()`，页面被切走时浮层自动收起。
 
 ## 构建与升级

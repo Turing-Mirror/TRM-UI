@@ -4,7 +4,7 @@
  * 下拉一律从控件下方展开、左边对齐，不像系统原生列表那样盖在控件上、
  * 只露一个尖角。下方放不下时改从上方展开。
  */
-import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { useI18n } from "../i18n";
 import { Icon, type IconName } from "./Icon";
@@ -21,6 +21,12 @@ export const anchorOf = (el: Element): Anchor => {
 };
 const pointAnchor = (x: number, y: number): Anchor => ({ x, y, w: 0, h: 0 });
 
+/**
+ * 浮层归哪一块区域。浮层挂在 body 上，不在打开它的区域里；区域要判断「指针还在不在我这儿」
+ * （比如悬停展开的侧栏）时，给里面包一层 PopoverOwner，再认浮层上的 data-popover-owner。
+ */
+export const PopoverOwner = createContext<string | undefined>(undefined);
+
 const GAP = 6;
 const EDGE = 8;
 
@@ -33,6 +39,7 @@ export function Popover({
   side = "below",
   label,
   leaving = false,
+  autoFocus = false,
   trigger,
 }: {
   anchor: Anchor;
@@ -43,6 +50,8 @@ export function Popover({
   label?: string;
   /** 正在收起：放完收起动画再卸下，这期间不接鼠标。 */
   leaving?: boolean;
+  /** 显示后把焦点放进来：优先 [data-autofocus]，否则第一个可用按钮。 */
+  autoFocus?: boolean;
   /**
    * 打开这个浮层的控件。点在它身上不算「点外面」——否则按下那一刻浮层先收、
    * 同一个 click 接着落在按钮上又把它打开，想收起反而重播一遍展开动画。
@@ -50,6 +59,7 @@ export function Popover({
    */
   trigger?: Element | null;
 }) {
+  const owner = useContext(PopoverOwner);
   const box = useRef<HTMLDivElement>(null);
   // 所在的页或分栏被切走：浮层跟着收起，不留在别的页上面
   const pageOn = usePageActive();
@@ -60,6 +70,14 @@ export function Popover({
     if (!pageOn || !paneOn) closeRef.current();
   }, [pageOn, paneOn]);
   const [pos, setPos] = useState<{ left: number; top: number; up: boolean } | null>(null);
+
+  // 第一帧还没摆好位置、是隐藏的，那时设焦点会落空，所以等位置算好再设
+  useEffect(() => {
+    const el = box.current;
+    if (!autoFocus || !pos || !el || el.contains(document.activeElement)) return;
+    const target = el.querySelector<HTMLElement>("[data-autofocus]") ?? el.querySelector<HTMLElement>("button:not(:disabled)");
+    target?.focus({ preventScroll: true });
+  }, [autoFocus, pos]);
 
   useLayoutEffect(() => {
     const el = box.current;
@@ -120,6 +138,7 @@ export function Popover({
     <div
       ref={box}
       data-popover
+      data-popover-owner={owner}
       role="menu"
       inert={leaving}
       aria-label={label}
@@ -152,7 +171,7 @@ export function Menu({ anchor, items, onClose, side, leaving, trigger }: { ancho
   const [sub, setSub] = useState<{ id: string; anchor: Anchor } | null>(null);
   const subItems = sub ? items.find((i) => i.id === sub.id) : undefined;
   return (
-    <Popover anchor={anchor} onClose={onClose} side={side} leaving={leaving} trigger={trigger}>
+    <Popover anchor={anchor} onClose={onClose} side={side} leaving={leaving} trigger={trigger} autoFocus={side !== "right"}>
       <MenuKeys>
       {items.map((it) =>
         "gap" in it ? (
@@ -196,15 +215,10 @@ export function Menu({ anchor, items, onClose, side, leaving, trigger }: { ancho
   );
 }
 
-/** 菜单项的键盘操作：打开时第一项获得焦点，方向键、Home、End 在项之间移动。 */
+/** 菜单项的键盘操作：方向键、Home、End 在项之间移动。打开时的焦点由 Popover 设。 */
 function MenuKeys({ children }: { children: ReactNode }) {
-  const box = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    box.current?.querySelector<HTMLButtonElement>("button:not(:disabled)")?.focus({ preventScroll: true });
-  }, []);
   return (
     <div
-      ref={box}
       onKeyDown={(e) => {
         if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(e.key)) return;
         e.preventDefault();
@@ -347,11 +361,11 @@ export function Dropdown<T extends string>({
         <Icon name="down" size={14} className={`text-[var(--meta)] transition-transform duration-300 ease-[var(--ease)] ${anchor ? "rotate-180" : ""}`} />
       </button>
       {mounted && shown ? (
-        <Popover anchor={shown} onClose={() => setAnchor(null)} minWidth={shown.w} label={label} leaving={!anchor} trigger={btn.current}>
+        <Popover anchor={shown} onClose={() => setAnchor(null)} minWidth={shown.w} label={label} leaving={!anchor} trigger={btn.current} autoFocus>
           <div
             role="listbox"
             tabIndex={-1}
-            ref={(el) => { if (el && anchor && !el.contains(document.activeElement)) el.focus({ preventScroll: true }); }}
+            data-autofocus
             onKeyDown={(e) => {
               if (e.key === "ArrowDown") { e.preventDefault(); setHi((h) => Math.min(options.length - 1, h + 1)); }
               if (e.key === "ArrowUp") { e.preventDefault(); setHi((h) => Math.max(0, h - 1)); }
