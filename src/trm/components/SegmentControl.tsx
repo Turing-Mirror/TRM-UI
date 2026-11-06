@@ -207,7 +207,7 @@ export function SegmentControl<T extends string>({ options, value, onChange, cla
 }
 
 /** 一帧要画的样子：滑块左边、宽度、速度、被按住、撞墙压扁的量。 */
-type Frame = { x: number; w: number; v: number; held: boolean; squash: number };
+type Frame = { x: number; w: number; v: number; held: boolean; squash: number; moving: boolean };
 
 /** 镜片放大倍数：平时与按住时。 */
 const LENS = { rest: 1.08, held: 1.16 };
@@ -215,17 +215,21 @@ const LENS = { rest: 1.08, held: 1.16 };
 function paint(p: Frame, thumb: HTMLElement | null, glass: HTMLElement | null, lens: HTMLElement | null) {
   if (!thumb || !glass || !lens) return;
   thumb.style.opacity = p.w > 0 ? "1" : "0";
-  thumb.style.width = `${p.w}px`;
-  thumb.style.transform = `translate3d(${p.x}px, 0, 0)`;
+  // 静止时撤掉合成层、位置取整，文字按最终倍数重新绘制，不会发糊。
+  if (p.moving) thumb.setAttribute("data-moving", "");
+  else thumb.removeAttribute("data-moving");
+  const x = p.moving ? p.x : Math.round(p.x);
+  thumb.style.width = `${p.moving ? p.w : Math.round(p.w)}px`;
+  thumb.style.transform = p.moving ? `translate3d(${x}px, 0, 0)` : `translateX(${x}px)`;
   // 速度越快拉得越长、压得越扁；按住时整体微微鼓起；撞墙时横向被压、纵向鼓出
   const speed = Math.min(Math.abs(p.v) / 2600, 1);
   const lift = p.held ? 1.05 : 1;
   const sx = lift * (1 + speed * 0.16) * (1 - p.squash * 0.5);
   const sy = lift * (1 - speed * 0.12) * (1 + p.squash * 0.35);
-  glass.style.transform = `scale(${sx.toFixed(4)}, ${sy.toFixed(4)})`;
+  glass.style.transform = p.moving ? `scale(${sx.toFixed(4)}, ${sy.toFixed(4)})` : "none";
   const k = p.held ? LENS.held : LENS.rest;
-  lens.style.left = `${-p.x}px`;
-  lens.style.transformOrigin = `${p.x + p.w / 2}px 50%`;
+  lens.style.left = `${-x}px`;
+  lens.style.transformOrigin = `${x + p.w / 2}px 50%`;
   lens.style.transform = `scale(${k / sx}, ${k / sy})`;
 }
 
@@ -351,7 +355,10 @@ class Sim {
     const { s } = this.bounds();
     const center = this.x + this.w / 2 + this.v * PROJECT;
     const pick = nearest(s, center);
-    if (!pick) return;
+    if (!pick) {
+      this.draw();
+      return;
+    }
     this.goal = pick.id;
     this.tx = pick.x;
     this.tw = pick.w;
@@ -379,8 +386,8 @@ class Sim {
         this.x = this.tx;
         this.w = this.tw;
         this.v = this.vw = 0;
-        this.draw();
         this.raf = 0;
+        this.draw();
         return;
       }
       this.raf = requestAnimationFrame(step);
@@ -422,7 +429,7 @@ class Sim {
       x = max - w;
     }
     const squash = this.w ? Math.min(over / this.w, 0.4) : 0;
-    this.io.paint({ x, w, v: this.v, held: this.held, squash });
+    this.io.paint({ x, w, v: this.v, held: this.held, squash, moving: this.held || this.raf !== 0 });
   }
 }
 

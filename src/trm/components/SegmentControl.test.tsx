@@ -76,6 +76,20 @@ describe("SegmentControl 的指针收尾", () => {
     expect(frames.size).toBe(0);
   });
 
+  it("滑块动画结束后撤掉合成层并把位置取整，文字不会发糊", () => {
+    const { root } = setup();
+    const thumb = root.querySelector<HTMLElement>(".seg-thumb")!;
+    const glass = root.querySelector<HTMLElement>(".seg-glass")!;
+    expect(thumb.hasAttribute("data-moving")).toBe(false);
+    act(() => root.querySelectorAll("button")[1].click());
+    act(() => { now += 16; const callbacks = [...frames.values()]; frames.clear(); callbacks.forEach((callback) => callback(now)); });
+    expect(thumb.hasAttribute("data-moving")).toBe(true);
+    finishFrames();
+    expect(thumb.hasAttribute("data-moving")).toBe(false);
+    expect(thumb.style.transform).toBe("translateX(103px)");
+    expect(glass.style.transform).toBe("none");
+  });
+
   it("拖动时失去 pointer capture 也会落定选择并结束动画循环", () => {
     const { root, changed } = setup();
     pointer(root, "pointerdown");
