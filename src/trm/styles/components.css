@@ -494,7 +494,10 @@ option {
 .page-leave-d { animation: leaveD 0.42s var(--ease-nav) forwards; }
 .page-enter-u { animation: enterU 0.42s var(--ease-nav) both; }
 .page-enter-d { animation: enterD 0.42s var(--ease-nav) both; }
-.page-leave-u, .page-enter-u, .page-leave-d, .page-enter-d { will-change: transform, opacity; }
+/* 长期图层只给 WebKit（见文件末尾说明）；Chromium 动画结束后撤层，文字按原样重画。 */
+@supports (hanging-punctuation: first) {
+  .page-leave-u, .page-enter-u, .page-leave-d, .page-enter-d { will-change: transform, opacity; }
+}
 
 /* 页内局部视图的浮现。整页导航使用上面的同步推移。 */
 @keyframes view-in {
@@ -644,7 +647,10 @@ option {
 
 /* 卡片：指到时不上浮，而是向内收一点，像要按进去；按下时再深一点。
    阴影画在最上面一层，盖得住卡片里的图。 */
-.sink { transform: translateZ(0); will-change: transform; transition: transform 0.36s var(--ease-nav); }
+.sink { transition: transform 0.36s var(--ease-nav); }
+@supports (hanging-punctuation: first) {
+  .sink { transform: translateZ(0); will-change: transform; }
+}
 .sink::after {
   content: "";
   position: absolute;
@@ -682,7 +688,9 @@ option {
 .notice-row { display: grid; grid-template-rows: 1fr; animation: notice-row-in 0.36s var(--ease-soft) both; }
 /* 先滑出，滑出之后再合上 */
 .notice-row-out { animation: notice-row-out 0.26s var(--ease-soft) 0.34s both; }
-.notice-card { will-change: transform; }
+@supports (hanging-punctuation: first) {
+  .notice-card { will-change: transform; }
+}
 .notice-in { animation: notice-in 0.56s cubic-bezier(0.32, 0.72, 0, 1) both; }
 .notice-out { animation: notice-out 0.36s cubic-bezier(0.55, 0, 0.85, 0.36) both; }
 
@@ -789,9 +797,12 @@ option {
 .step-now { animation: step-now 1.2s ease-in-out infinite; }
 
 /* WebKit（Safari 与 macOS 上的 WebView）在带位移的动画放完时会把元素从独立图层撤回页面重画，
-   看起来就是动画刚到位又闪一下。入场与退场的元素从头到尾留在自己的图层上，放完不撤。 */
-.push-in, .push-in-b, .push-out, .rise, .pop-in, .pop-out, .fade-in, .fade-out,
-.drawer-in, .drawer-out, .menu-in, .menu-out, .title-in, .title-out { will-change: transform, opacity; }
+   看起来就是动画刚到位又闪一下。入场与退场的元素从头到尾留在自己的图层上，放完不撤。
+   hanging-punctuation 只有 WebKit 支持，用它区分内核。Chromium（WebView2）上长期图层会让静止的文字发糊，所以不加。 */
+@supports (hanging-punctuation: first) {
+  .push-in, .push-in-b, .push-out, .rise, .pop-in, .pop-out, .fade-in, .fade-out,
+  .drawer-in, .drawer-out, .menu-in, .menu-out, .title-in, .title-out { will-change: transform, opacity; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .step-now, .eq-bar { animation: none; }
