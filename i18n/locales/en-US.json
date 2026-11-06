@@ -137,6 +137,23 @@
   },
   "demo": {
     "workbench": {
+      "chat": {
+        "title": "Conversation workbench",
+        "queue": "Conversations",
+        "choose": "Choose a conversation",
+        "access": "Alex",
+        "export": "Morgan",
+        "invite": "Sam",
+        "platform": "Channel: Website",
+        "waiting": "Awaiting reply",
+        "replied": "Replied",
+        "showNotice": "Show notice",
+        "hideNotice": "Hide notice",
+        "notice": "Confirm the customer’s question before replying.",
+        "placeholder": "Write a reply",
+        "send": "Send reply",
+        "reply": "Staff reply"
+      },
       "title": "Review workbench",
       "pending": "Pending",
       "approved": "Approved",

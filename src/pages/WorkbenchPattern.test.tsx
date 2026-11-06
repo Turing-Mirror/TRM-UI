@@ -49,7 +49,7 @@ it("keeps edited answers when changing selection and records rejection separatel
   start();
   select("access");
   click("Edit");
-  expect(view.container.querySelector(".collapse-area")?.hasAttribute("data-open")).toBe(true);
+  expect(view.container.querySelector(".trm-workbench-body .collapse-area[data-open]")).not.toBeNull();
   const textarea = view.container.querySelector("textarea")!;
   act(() => {
     Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!.call(textarea, "Revised answer");
@@ -65,13 +65,48 @@ it("keeps edited answers when changing selection and records rejection separatel
   expect(view.container.querySelector('[data-flow="access"]')?.textContent).toContain("Rejected");
 });
 
+it("appends replies locally, keeps drafts per conversation and toggles the notice", () => {
+  start();
+  const chat = view.container.querySelectorAll<HTMLElement>(".trm-workbench")[1];
+  const choose = (i: number) => {
+    act(() => chat.querySelectorAll<HTMLButtonElement>(".trm-workbench-item")[i].click());
+    act(() => vi.advanceTimersByTime(FLOW_MS + 1));
+  };
+  const type = (value: string) => act(() => {
+    const area = chat.querySelector("textarea")!;
+    Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!.call(area, value);
+    area.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  choose(0);
+  type("A saved draft");
+  choose(1);
+  expect(chat.querySelector("textarea")!.value).toBe("");
+  choose(0);
+  expect(chat.querySelector("textarea")!.value).toBe("A saved draft");
+  click("Hide notice");
+  act(() => vi.advanceTimersByTime(FLOW_MS + 1));
+  expect(chat.querySelector(".trm-workbench-notice")?.textContent).toBe("");
+  click("Show notice");
+  expect(chat.querySelector(".trm-workbench-notice[data-open]")?.textContent).toContain("Confirm");
+  act(() => chat.querySelector("textarea")!
+    .dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true })));
+  expect(chat.querySelector('[role="log"]')?.textContent).toBe("A saved draft");
+  expect(chat.querySelector("textarea")!.value).toBe("");
+  expect(chat.querySelector(".trm-workbench-field .roll-in")?.textContent).toBe("Replied");
+  expect(chat.querySelector('.trm-workbench-detail > .trm-workbench-foot[data-mode="pinned"]')).not.toBeNull();
+});
+
 it("resolves dynamic demo keys in all eight locales", () => {
   start();
+  act(() => view.container.querySelectorAll(".trm-workbench")[1]
+    .querySelector<HTMLButtonElement>(".trm-workbench-item")!.click());
+  act(() => vi.advanceTimersByTime(FLOW_MS + 1));
   for (const { id } of LOCALES) {
     act(() => view.root.render(<I18nScope value={{ locale: id, setLocale: () => {}, ready: true }}>
       <WorkbenchPattern />
     </I18nScope>));
     expect(view.container.textContent).not.toContain("demo.workbench.");
     expect(view.container.textContent).not.toContain("{n}");
+    expect(view.container.querySelector("textarea")!.placeholder).not.toContain("demo.workbench.");
   }
 });

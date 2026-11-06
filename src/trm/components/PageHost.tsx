@@ -10,7 +10,7 @@ import {
 import type { Nav } from "../lib/nav";
 
 /**
- * 离场层挂多久。**必须和 index.css 里 `.page-leave-*` 的动画时长一致。**
+ * 离场层挂多久。**必须和 styles/components.css 里 `.page-leave-*` 的动画时长一致。**
  *
  * 短了就是动画放到一半节点被拔掉，旧页「啪」一下消失；长了则是一个已经看不见
  * 的图层继续占着，白白多一层。这里曾经写死 300ms 而动画是 420ms，

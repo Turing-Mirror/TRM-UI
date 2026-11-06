@@ -131,21 +131,44 @@ npm pack
 | 导出 | 参数 |
 | --- | --- |
 | `Workbench` / `WorkbenchProps` | `list`、`detail`、`selected: string \| null`、`order: readonly string[]`、`onBack`。 |
-| Workbench 可选参数 | `listWidth`、`narrowAt`、`empty`、`className`。 |
+| Workbench 可选参数 | `listHead`、`listWidth`、`narrowAt`、`empty`、`className`。 |
 | `WorkbenchItem` / `WorkbenchItemProps` | `title`、`selected`、`onClick`；可选 `meta`、`preview`、`tag`、`avatar`。 |
-| `WorkbenchDetail` / `WorkbenchDetailProps` | `title`、`children`；可选 `sub`、`actions`、`foot`。 |
+| `WorkbenchDetail` / `WorkbenchDetailProps` | `title`、`children`；可选 `sub`、`actions`、`notice`、`foot`、`footMode`。 |
+| `ChatComposer` / `ChatComposerProps` | `value`、`onChange`、`onSend`、`placeholder`、`sendLabel`。 |
+| ChatComposer 可选参数 | `ariaLabel`、`disabled`、`sending`、`maxHeight`、`className`。 |
 
-父容器需提供确定高度。列表默认宽度由 `--workbench-list-width`（340px）控制；`listWidth` 接受像素数值或 CSS 长度。
+父容器需提供确定高度。列表宽度由 `--workbench-list-width: clamp(280px, 28%, 380px)` 自适应；
+`listWidth` 接受像素数值或 CSS 长度，覆盖默认变量。
+工作台在给定高度内保留等量上下留白 `--workbench-space`（16px），列表底部不贴窗口边缘。
+列表标题和筛选放在 `listHead`，与列表共用分组底色；原有 `list` 内的标题、筛选组合仍可使用。
+详情保留页面底色，不增加卡片。标题、正文、提示和底部横向占满详情，统一使用 `--workbench-padding`（16px）。
+原有 `.trm-workbench-read` 类继续保留，但不再限宽和居中。阅读宽度上限只加在单独的段落或字段上，靠起始边对齐；
+聊天消息示例最大宽度为正文的 70%。
 `narrowAt` 默认为 900，视口宽度不大于该值时，列表与详情使用两个全高 `Panes`。
 `onBack` 由调用方将 `selected` 设为 null；返回按钮使用通用语言包，列表保留滚动与输入状态，并恢复操作焦点。
 跨越宽窄断点会重新挂载插槽；需要跨断点保留的草稿、筛选与业务状态应由调用方持有。
 
-`order` 是业务列表的键顺序，决定 `useDir` 与 `Swap` 的详情推移方向；键不是标题，也不按字符串大小推断顺序。
+`order` 是业务列表的键顺序，决定 `useDir` 与详情分块进入方向；键不是标题，也不按字符串大小推断顺序。
 空字符串也是有效键；只有 null 显示 `empty`。传入 `<Empty icon="chat" title={chooseText} />` 即可显示居中的图标与文字。
 `WorkbenchItem` 是原生按钮，用 `aria-pressed` 表达选中状态，支持 Enter 与空格。插槽中不要嵌套交互控件。
-`WorkbenchDetail` 固定头部与可选底部，中间独立滚动；正文通过 `--page-w-read` 限宽，并使用 `Morph` 处理高度变化。
+`WorkbenchDetail` 固定头部，正文独立滚动，并使用 `Morph` 处理内容高度变化。
+`footMode` 默认 `inline`，表单操作紧跟字段；聊天输入框使用 `pinned`，固定在详情底部。
+旧版固定底部的调用方需显式传入 `footMode="pinned"`，其他既有参数继续支持。
+`sub` 可传单个节点或数组，数组各项独立排列，字符串和数值自动用 `Roll` 更新；自定义节点中的文字变化由调用方包裹 `Roll`。
+`notice` 位于标题之后、正文之前，用 `Collapse` 显示和移除。同一条目更新不会重播分块入场。
+正文每个顶层子节点是一个独立动效分块，使用稳定的 key 保留更新状态；嵌套内容作为一个块处理。
+选中另一条目时，标题、各子字段、操作、提示和前几个正文块依次使用 `stagger()` / `.rise`，
+8px 水平位移跟随列表方向，6px 上浮，无缩放，时长使用 `--flow-ms`，曲线使用 `--ease-nav`。
+`Swap variant="parts"` 只为旧详情执行短促淡出，进入层不整块移动；窄屏继续使用 `Panes` 推移。
 
-列表插槽按 `.trm-workbench-heading`、`.trm-workbench-filters`、`.trm-workbench-rows` 组合，最后一项独立滚动。
+`ChatComposer` 基于 `ComposerInput`，输入高度自动增长至 `maxHeight`（默认 200px），清空后自动收缩。
+Enter 与发送按钮调用 `onSend`；Shift + Enter 换行，输入法确认不发送；空白草稿、禁用和发送中均禁止发送。
+`sending` 显示按钮忙碌状态并禁用输入。草稿与发送结果由调用方维护，组件不会自行清空；占位符和按钮名称由语言包传入。
+
+`listHead` 内使用 `.trm-workbench-heading`、`.trm-workbench-filters`，`list` 使用 `.trm-workbench-rows` 独立滚动。
+工作台按实际行顺序标记 `data-divider`，忽略退出中的 FlowList 行；最后一项不画线。
+分隔线是文字列的伪元素，自动避开头像与两侧内边距，悬停或选中行两侧的线隐藏。
+分隔线适用范围以 `interactionRules.ts` 的 `denseListDividers` 为准；设置行卡片已移除外框与行间边框。
 筛选与加载更多在同一个 `FlowList` 内更新；初次出现用 `stagger()` / `.rise`，计数用 `Roll`，编辑器展开用 `Collapse`。
 这些动效沿用共享原语的减少动态效果规则。完整示例见 `src/pages/WorkbenchPattern.tsx`，规则见 `interactionRules.ts`。
 
@@ -165,7 +188,8 @@ npm pack
 ```
 
 样式类统一使用 `trm-workbench` 前缀，主要包括 `-list`、`-main`、`-panes`、`-swap`、`-empty`、`-back`、
-`-item`、`-item-line`、`-item-title`、`-preview`、`-meta`、`-tag`、`-avatar`、`-detail`、`-heading`、`-body`、`-read`、`-foot`。
+`-item`、`-item-line`、`-item-title`、`-preview`、`-meta`、`-tag`、`-avatar`、`-detail`、`-heading`、`-body`、`-read`、`-foot`，
+以及 `-list-head`、`-part`、`-field`、`-block`、`-notice`。回复输入框使用 `trm-chat-composer` 和 `trm-chat-composer-input`。
 
 `Panes layout="fill"` 用于画布、编辑器或占满父容器的工作区。父容器必须提供确定高度；此模式直接定位子视图，不经过按内容伸缩的 Morph 容器。默认 `layout="content"` 保持列表和设置页面的高度伸缩。离场完成后的 Pane 使用 hidden 和 inert，同时保留输入状态。
 

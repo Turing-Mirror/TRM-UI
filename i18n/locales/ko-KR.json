@@ -137,6 +137,23 @@
   },
   "demo": {
     "workbench": {
+      "chat": {
+        "title": "대화 작업대",
+        "queue": "대화",
+        "choose": "대화 선택",
+        "access": "김민수",
+        "export": "이지우",
+        "invite": "박서연",
+        "platform": "채널: 웹사이트",
+        "waiting": "답변 대기",
+        "replied": "답변 완료",
+        "showNotice": "안내 표시",
+        "hideNotice": "안내 숨기기",
+        "notice": "답변하기 전에 고객의 질문을 확인하십시오.",
+        "placeholder": "답변 입력",
+        "send": "답변 보내기",
+        "reply": "담당자 답변"
+      },
       "title": "검토 작업대",
       "pending": "검토 대기",
       "approved": "승인됨",

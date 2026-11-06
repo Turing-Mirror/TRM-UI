@@ -111,6 +111,7 @@ export type { MotionOptions } from "./components/motion";
 export { lookup, interpolate, translate } from "./i18n/dict";
 
 export { ComposerInput, type ComposerInputProps } from "./components/ComposerInput";
+export { ChatComposer, type ChatComposerProps } from "./components/ChatComposer";
 export { useMorphState, useLeavingValue } from "./hooks/useMorphState";
 export {
   Workbench, WorkbenchItem, WorkbenchDetail,

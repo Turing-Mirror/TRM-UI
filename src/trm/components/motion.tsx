@@ -286,7 +286,9 @@ export function Pane({ id, children, className = "" }: { id: string; children: R
  * 外层底板只伸缩高度。dir 给出方向（翻到下一页为 1，上一页为 -1），不给时从右边进。
  * 新内容里的 .rise 不再重放：一项项重新浮现会让整块像是重新加载了一遍。
  */
-export function Swap({ k, dir = 1, children, className = "", variant = "push" }: { k: string; dir?: Dir; children: ReactNode; className?: string; variant?: "push" | "fade" }) {
+export function Swap({ k, dir = 1, children, className = "", variant = "push" }: {
+  k: string; dir?: Dir; children: ReactNode; className?: string; variant?: "push" | "fade" | "parts";
+}) {
   const outer = useContext(PaneOnCtx);
   const [cur, setCur] = useState({ k, node: children, seq: 0, dir });
   const [old, setOld] = useState<{ node: ReactNode; seq: number } | null>(null);
@@ -298,14 +300,19 @@ export function Swap({ k, dir = 1, children, className = "", variant = "push" }:
   }
   useEffect(() => {
     if (!old) return;
-    const id = window.setTimeout(() => setOld(null), variant === "fade" ? FADE_OUT_MS : FLOW_MS);
+    const id = window.setTimeout(() => setOld(null), variant === "push" ? FLOW_MS : FADE_OUT_MS);
     return () => window.clearTimeout(id);
   }, [old, variant]);
-  if (variant === "fade") {
-    const vars = { "--swap-dx": `${dir * 18}px`, "--swap-ox": `${dir * -10}px` } as CSSProperties;
+  if (variant !== "push") {
+    // Workbench parts enter independently; the retained old detail still exits as one short fade.
+    const vars = {
+      "--push": dir, "--swap-dx": `${dir * 18}px`, "--swap-ox": `${dir * -10}px`,
+    } as CSSProperties;
     return (
       <div className={`relative ${className}`} style={vars}>
-        <div key={cur.seq} className={cur.seq ? "swap-in" : ""}><PaneOnCtx.Provider value={outer}><Frozen node={cur.node} /></PaneOnCtx.Provider></div>
+        <div key={cur.seq} className={cur.seq && variant === "fade" ? "swap-in" : ""}>
+          <PaneOnCtx.Provider value={outer}><Frozen node={cur.node} /></PaneOnCtx.Provider>
+        </div>
         {old ? <div key={old.seq} inert aria-hidden className="swap-out absolute inset-x-0 top-0 pointer-events-none">
           <PaneOnCtx.Provider value={false}><Frozen node={old.node} /></PaneOnCtx.Provider>
         </div> : null}

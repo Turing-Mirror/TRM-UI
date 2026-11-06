@@ -1,7 +1,9 @@
 :root {
   --page-w-read: 760px;
   --page-w-wide: 1160px;
-  --workbench-list-width: 340px;
+  --workbench-list-width: clamp(280px, 28%, 380px);
+  --workbench-padding: 16px;
+  --workbench-space: 16px;
   --bg-base: #f4f6f8;
   --bg: var(--bg-base);
   --surface: #ffffff;

@@ -19,6 +19,78 @@ export type HistoryEntry = {
 
 export const HISTORY: HistoryEntry[] = [
 {
+  id: "vertical-page-push",
+  date: "2026-11-06",
+  old: {
+    "zh-CN": "纵向切页时旧页快速淡出，新页按弹簧曲线浮入。",
+    "zh-TW": "縱向切頁時舊頁快速淡出，新頁按彈簧曲線浮入。",
+    "en-US": "Vertical page switches used a quick fade-out and a spring float-in.",
+    "ja-JP": "縦のページ切り替えでは旧ページが素早く消え、新ページがばねの動きで浮かび入っていた。",
+    "ko-KR": "세로 페이지 전환에서 이전 페이지는 빠르게 사라지고 새 페이지는 스프링 곡선으로 떠올랐다.",
+    "fr-FR": "Le changement vertical associait un fondu rapide à une entrée flottante avec ressort.",
+    "es-ES": "El cambio vertical combinaba una salida rápida en fundido y una entrada flotante con resorte.",
+    "ru-RU": "При вертикальном переходе старая страница быстро гасла, а новая всплывала с пружинным движением.",
+  },
+  now: {
+    "zh-CN": "纵向切页改为与横向一致的直接推移，新旧页同时运动。",
+    "zh-TW": "縱向切頁改為與橫向一致的直接推移，新舊頁同時運動。",
+    "en-US": "Vertical page switches use a direct push matching the horizontal one, with both pages moving together.",
+    "ja-JP": "縦の切り替えも横と同じ直接的な押し移動にし、新旧ページを同時に動かす。",
+    "ko-KR": "세로 전환도 가로와 같은 직접 밀기로 바꾸고 두 페이지를 동시에 움직인다.",
+    "fr-FR": "Le changement vertical utilise la même poussée directe que l’horizontal ; les deux pages bougent ensemble.",
+    "es-ES": "El cambio vertical usa el mismo empuje directo que el horizontal; ambas páginas se mueven juntas.",
+    "ru-RU": "Вертикальный переход использует такой же прямой сдвиг, как горизонтальный; обе страницы движутся вместе.",
+  },
+  why: {
+    "zh-CN": "两页没有同时运动，切换像弹出，方向不清楚。",
+    "zh-TW": "兩頁沒有同時運動，切換像彈出，方向不清楚。",
+    "en-US": "The two pages did not move together, so the switch felt like a pop and its direction was unclear.",
+    "ja-JP": "二つのページが同時に動かず、突然飛び出すように見えて切り替えの方向が不明確だった。",
+    "ko-KR": "두 페이지가 함께 움직이지 않아 전환이 갑자기 튀어나오는 듯했고 방향도 불명확했다.",
+    "fr-FR": "Les deux pages ne bougeaient pas ensemble ; le changement semblait surgir et sa direction était floue.",
+    "es-ES": "Las dos páginas no se movían juntas; el cambio parecía una aparición repentina y su dirección no era clara.",
+    "ru-RU": "Страницы двигались не вместе, поэтому переход выглядел как внезапное появление без ясного направления.",
+  },
+},
+{
+  "id": "row-card-dividers",
+  "date": "2026-11-06",
+  "old": {
+    "zh-CN": "设置行卡片使用外边框与行间分隔线。",
+    "zh-TW": "設定列卡片使用外框與列間分隔線。",
+    "en-US": "Settings row cards used outer borders and lines between rows.",
+    "ja-JP": "設定行カードに外枠と行間の区切り線を使っていた。",
+    "ko-KR": "설정 행 카드에 외곽선과 행 구분선을 사용했다.",
+    "fr-FR": "Les cartes de paramètres avaient une bordure et des lignes entre les rangées.",
+    "es-ES": "Las tarjetas de ajustes tenían borde exterior y líneas entre filas.",
+    "ru-RU": "Карточки настроек имели внешнюю рамку и линии между строками."
+  },
+  "now": {
+    "zh-CN": "设置行只用分组底色与间距；密集列表保留内缩分隔线。",
+    "zh-TW": "設定列只用群組底色與間距；密集清單保留內縮分隔線。",
+    "en-US": "Settings rows use group surfaces and spacing; dense lists keep inset dividers.",
+    "ja-JP": "設定行は背景と余白で分け、密な一覧だけに内側の区切り線を残す。",
+    "ko-KR": "설정 행은 그룹 배경과 여백으로 나누고 조밀한 목록에만 안쪽 구분선을 남긴다.",
+    "fr-FR": "Les paramètres utilisent le fond et l’espacement ; les listes denses gardent des séparateurs en retrait.",
+    "es-ES": "Los ajustes usan fondo y espacio; las listas densas conservan separadores con margen.",
+    "ru-RU": "Строки настроек разделяются фоном и отступами; плотные списки сохраняют разделители с отступами."
+  },
+  "why": {
+    "zh-CN": "会话与审核队列的反馈暴露了分隔线使用不一致；统一分组方式，避免把表单切成碎片。",
+    "zh-TW": "對話與審核佇列的回饋暴露了分隔線使用不一致；統一群組方式，避免把表單切成碎片。",
+    "en-US": "Conversation and review queues exposed inconsistent dividers; consistent grouping keeps " +
+      "forms visually connected.",
+    "ja-JP": "会話とレビューの画面で区切り線の不統一が判明したため、フォームのまとまりを保つ方式に統一した。",
+    "ko-KR": "대화와 검토 화면에서 구분선의 불일치가 드러나 양식의 시각적 연결을 유지하도록 그룹 방식을 통일했다.",
+    "fr-FR": "Les files de conversations et de révisions ont révélé des séparateurs incohérents ; les " +
+      "formulaires restent ainsi unifiés.",
+    "es-ES": "Las colas de conversaciones y revisiones revelaron separadores incoherentes; la agrupación " +
+      "uniforme mantiene unidos los formularios.",
+    "ru-RU": "Очереди диалогов и проверок выявили непоследовательность разделителей; единая группировка " +
+      "сохраняет целостность форм."
+  }
+},
+{
   "id": "setting-switch",
   "date": "2026-11-06",
   "old": {

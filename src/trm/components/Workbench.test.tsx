@@ -27,7 +27,7 @@ function render(selected: string | null) {
   return <Workbench selected={selected} order={order} onBack={() => {}} list={<input defaultValue="Filter" />}
     empty={<Empty icon="chat" title="Choose an item" />} listWidth="22rem"
     detail={<WorkbenchDetail title={`Title ${selected}`} sub="Subtitle" actions={<button>Edit</button>}
-      foot={<button>Approve</button>}><p>{`Body ${selected}`}</p></WorkbenchDetail>} />;
+      footMode="pinned" foot={<button>Approve</button>}><p>{`Body ${selected}`}</p></WorkbenchDetail>} />;
 }
 
 it("renders the selected detail with header actions, a reading body and a separate foot", () => {
@@ -58,17 +58,82 @@ it("renders the supplied empty icon and text only for null, including after clea
   expect(view.container.textContent).toContain("Choose an item");
 });
 
-it("pushes details in list order, including immediate reversal, and makes the departing detail inert", () => {
+it("stages details in list order, including immediate reversal, and makes the departing detail inert", () => {
   view = mount(render("z"));
   act(() => view.root.render(render("a")));
-  const stage = () => view.container.querySelector<HTMLElement>(".trm-workbench-swap [style*='--push']")!;
+  const stage = () => view.container.querySelector<HTMLElement>(".trm-workbench-swap")!;
   expect(stage().style.getPropertyValue("--push")).toBe("1");
-  expect(view.container.querySelector(".trm-workbench-swap [inert]")?.textContent).toContain("Body z");
+  expect(view.container.querySelector(".trm-workbench-swap > .swap-out[inert]")?.textContent).toContain("Body z");
   act(() => view.root.render(render("z")));
   expect(stage().style.getPropertyValue("--push")).toBe("-1");
   act(() => vi.advanceTimersByTime(FLOW_MS + 1));
   expect(view.container.querySelectorAll(".trm-workbench-detail")).toHaveLength(1);
   expect(view.container.textContent).toContain("Body z");
+});
+
+it("renders separate sub fields and body parts with ordered delays, retaining them for value changes", () => {
+  const detail = (status: string) => <WorkbenchDetail title="Question" sub={["Website", status]}
+    actions={<button>Edit</button>} notice="Check the question"><p>Answer</p><p>Sources</p></WorkbenchDetail>;
+  const queue = (status: string) => <Workbench selected="z" order={order} onBack={() => {}}
+    listHead={<h3>Queue</h3>} list={null} detail={detail(status)} />;
+  view = mount(queue("Pending"));
+  const fields = view.container.querySelectorAll<HTMLElement>(".trm-workbench-field");
+  expect(Array.from(fields, node => node.textContent)).toEqual(["Website", "Pending"]);
+  const parts = view.container.querySelectorAll<HTMLElement>(".trm-workbench-part");
+  expect(Array.from(parts, node => node.style.animationDelay)).toEqual([
+    "0ms", "38ms", "76ms", "114ms", "152ms", "190ms", "228ms",
+  ]);
+  expect(view.container.querySelector(".trm-workbench-list .trm-workbench-list-head")?.textContent).toBe("Queue");
+  act(() => view.root.render(queue("Approved")));
+  expect(view.container.querySelectorAll(".trm-workbench-field")[1]).toBe(fields[1]);
+  expect(fields[1].querySelector(".roll-in")?.textContent).toBe("Approved");
+  expect(view.container.querySelector(".swap-out")).toBeNull();
+});
+
+it("collapses a notice without remounting the title or replaying its entrance", () => {
+  const detail = (notice?: string) => <WorkbenchDetail title="Question" notice={notice}><p>Body</p></WorkbenchDetail>;
+  view = mount(detail());
+  const title = view.container.querySelector("h3");
+  const part = view.container.querySelector(".trm-workbench-notice")?.parentElement;
+  act(() => view.root.render(detail("Check the question")));
+  expect(view.container.querySelector(".trm-workbench-notice[data-open]")?.textContent).toBe("Check the question");
+  expect(view.container.querySelector(".trm-workbench-notice")?.parentElement).toBe(part);
+  act(() => view.root.render(detail()));
+  expect(view.container.querySelector(".trm-workbench-notice[inert]")).not.toBeNull();
+  act(() => vi.advanceTimersByTime(FLOW_MS + 1));
+  expect(view.container.textContent).not.toContain("Check the question");
+  expect(view.container.querySelector("h3")).toBe(title);
+});
+
+it("places form actions after the content by default and pins only the requested foot", () => {
+  const detail = (footMode?: "inline" | "pinned") => <WorkbenchDetail title="Question" footMode={footMode}
+    foot={<button>Approve</button>}><p>Fields</p></WorkbenchDetail>;
+  view = mount(detail());
+  const foot = view.container.querySelector(".trm-workbench-foot")!;
+  expect(foot.closest(".trm-workbench-body")).not.toBeNull();
+  expect(foot.previousElementSibling?.textContent).toBe("Fields");
+  act(() => view.root.render(detail("pinned")));
+  expect(view.container.querySelector(".trm-workbench-detail > .trm-workbench-foot")).not.toBeNull();
+});
+
+it("insets only between rendered rows, including FlowList removal and hover/selection neighbours", () => {
+  const queue = (items: string[], selected: string | null = null) => <Workbench selected={selected}
+    order={order} onBack={() => {}} detail={null} list={<FlowList items={items} keyOf={id => id}
+      render={id => <WorkbenchItem title={id} avatar={<span>Avatar</span>}
+        selected={selected === id} onClick={() => {}} />} />} />;
+  view = mount(queue(["z", "a", ""]));
+  const rows = () => view.container.querySelectorAll<HTMLButtonElement>(".trm-workbench-item");
+  expect(Array.from(rows(), row => row.hasAttribute("data-divider"))).toEqual([true, true, false]);
+  act(() => rows()[1].dispatchEvent(new PointerEvent("pointerover", { bubbles: true })));
+  expect(rows()[0].hasAttribute("data-next-hovered")).toBe(true);
+  act(() => rows()[1].dispatchEvent(new PointerEvent("pointerout", { bubbles: true, relatedTarget: document.body })));
+  expect(rows()[0].hasAttribute("data-next-hovered")).toBe(false);
+  act(() => view.root.render(queue(["z", "a", ""], "a")));
+  expect(rows()[0].hasAttribute("data-next-selected")).toBe(true);
+  act(() => view.root.render(queue(["z", "a"], "a")));
+  expect(rows()[1].hasAttribute("data-divider")).toBe(false);
+  act(() => vi.advanceTimersByTime(FLOW_MS + 40));
+  expect(rows()).toHaveLength(2);
 });
 
 it("uses native button semantics for selected state, click, Enter and Space", () => {

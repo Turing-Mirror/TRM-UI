@@ -137,6 +137,23 @@
   },
   "demo": {
     "workbench": {
+      "chat": {
+        "title": "對話工作台",
+        "queue": "對話",
+        "choose": "選擇對話",
+        "access": "林安",
+        "export": "陳寧",
+        "invite": "周悅",
+        "platform": "管道：網站",
+        "waiting": "等待回覆",
+        "replied": "已回覆",
+        "showNotice": "顯示提示",
+        "hideNotice": "隱藏提示",
+        "notice": "回覆前請確認使用者的問題。",
+        "placeholder": "輸入回覆",
+        "send": "傳送回覆",
+        "reply": "工作人員回覆"
+      },
       "title": "審核工作台",
       "pending": "待審核",
       "approved": "已核准",

@@ -9,17 +9,35 @@ export type MotionTerm = { id: string; code: string; name: Text; desc: Text };
 export const MOTION_TERMS: MotionTerm[] = [
   {
     id: "push",
-    code: "Swap, Panes",
+    code: "Swap, Panes, PageHost",
     name: { "zh-CN": "推移", "zh-TW": "推移", "en-US": "Push", "ja-JP": "プッシュ", "ko-KR": "밀기", "fr-FR": "Poussée", "es-ES": "Empuje", "ru-RU": "Сдвиг" },
     desc: {
-      "zh-CN": "用于切换分栏、翻页与切换步骤。旧内容向来处后退并淡出，新内容从前进方向推入，两层使用相同的曲线与时长。向后翻时新内容从右侧进入，向前翻时从左侧进入。",
-      "zh-TW": "用於切換分欄、翻頁與切換步驟。舊內容向來處後退並淡出，新內容從前進方向推入，兩層使用相同的曲線與時長。向後翻時新內容從右側進入，向前翻時從左側進入。",
-      "en-US": "Used for tab, page and step changes. The old content moves back towards where it came from and fades out, while the new content pushes in from the direction of travel; both layers use the same curve and duration. Moving forward, new content enters from the right; moving back, from the left.",
-      "ja-JP": "タブ、ページ、手順の切り替えに使います。古い内容は来た方向へ下がりながら消え、新しい内容は進む方向から押し込まれます。二層は同じ曲線と時間で動きます。先へ進むと右から、戻ると左から入ります。",
-      "ko-KR": "탭, 페이지, 단계 전환에 씁니다. 이전 내용은 온 쪽으로 물러나며 사라지고, 새 내용은 나아가는 쪽에서 밀려 들어옵니다. 두 층은 같은 곡선과 시간을 씁니다. 앞으로 가면 오른쪽에서, 뒤로 가면 왼쪽에서 들어옵니다.",
-      "fr-FR": "Sert aux changements d'onglet, de page et d'étape. L'ancien contenu recule vers son origine et s'efface, le nouveau entre poussé depuis le sens du déplacement ; les deux couches ont la même courbe et la même durée. Vers l'avant, le nouveau contenu entre par la droite ; vers l'arrière, par la gauche.",
-      "es-ES": "Se usa al cambiar de pestaña, página o paso. El contenido anterior retrocede hacia su origen y se desvanece, y el nuevo entra empujado desde la dirección del avance; ambas capas usan la misma curva y duración. Hacia delante, el nuevo contenido entra por la derecha; hacia atrás, por la izquierda.",
-      "ru-RU": "Применяется при смене вкладки, страницы и шага. Старое содержимое отходит туда, откуда пришло, и гаснет, новое вдвигается со стороны движения; оба слоя используют одну кривую и длительность. Вперёд новое содержимое входит справа, назад слева.",
+      "zh-CN": "用于切换分栏、页面与步骤。新旧内容同时推移并淡入淡出，使用相同曲线与时长。横向前进从右侧进入，返回从左侧进入。" +
+        "侧栏向下导航时新页从下方进入，向上时反向；纵向切页为 420ms，无缩放、弹簧或延迟。",
+      "zh-TW": "用於切換分欄、頁面與步驟。新舊內容同時推移並淡入淡出，使用相同曲線與時長。橫向前進從右側進入，返回從左側進入。" +
+        "側欄向下導覽時新頁從下方進入，向上時反向；縱向切頁為 420ms，無縮放、彈簧或延遲。",
+      "en-US": "Used for tab, page and step changes. Both layers move and fade together with the same curve " +
+        "and duration. Forward horizontal navigation enters from the right; back enters from the left. " +
+        "Moving down the sidebar brings the new page from below; moving up reverses it. Vertical page " +
+        "switches take 420ms, with no scale, spring or delay.",
+      "ja-JP": "タブ、ページ、手順の切り替えに使います。新旧の内容は同じ曲線と時間で同時に移動し、フェードします。" +
+        "横方向では進むと右から、戻ると左から入ります。サイドバーを下へ進むと新しいページは下から入り、上へ戻ると逆になります。" +
+        "縦の切り替えは 420ms で、拡大縮小、ばね、遅延はありません。",
+      "ko-KR": "탭, 페이지, 단계 전환에 씁니다. 두 층이 같은 곡선과 시간으로 동시에 이동하며 나타나고 사라집니다. " +
+        "가로 이동은 앞으로 갈 때 오른쪽에서, 뒤로 갈 때 왼쪽에서 들어옵니다. 사이드바에서 아래로 이동하면 새 페이지가 " +
+        "아래에서 들어오며 위로 이동하면 반대입니다. 세로 전환은 420ms이며 크기 변화, 스프링, 지연이 없습니다.",
+      "fr-FR": "Pour les changements d’onglet, de page et d’étape, les deux couches se déplacent et " +
+        "s’estompent ensemble, avec la même courbe et la même durée. À l’horizontale, avancer fait entrer " +
+        "par la droite, revenir par la gauche. Descendre dans la barre latérale fait entrer la page " +
+        "par le bas ; monter inverse le sens. Le changement vertical dure 420ms, sans zoom, ressort ni délai.",
+      "es-ES": "Al cambiar de pestaña, página o paso, ambas capas se mueven y se funden a la vez, con la " +
+        "misma curva y duración. En horizontal, avanzar entra por la derecha y volver por la izquierda. " +
+        "Al bajar por la barra lateral, la página entra desde abajo; al subir, se invierte el sentido. " +
+        "El cambio vertical dura 420ms, sin escala, resorte ni retraso.",
+      "ru-RU": "При смене вкладки, страницы и шага оба слоя движутся и меняют прозрачность одновременно, " +
+        "с одной кривой и длительностью. По горизонтали движение вперёд вводит страницу справа, назад — " +
+        "слева. При переходе вниз по боковой панели новая страница входит снизу, вверх — наоборот. " +
+        "Вертикальный переход длится 420ms, без масштабирования, пружины и задержки.",
     },
   },
   {
@@ -132,14 +150,26 @@ export const MOTION_TERMS: MotionTerm[] = [
     code: "stagger(), .rise",
     name: { "zh-CN": "依次浮现", "zh-TW": "依次浮現", "en-US": "Staggered rise", "ja-JP": "順に浮かぶ", "ko-KR": "차례로 떠오름", "fr-FR": "Apparition décalée", "es-ES": "Aparición escalonada", "ru-RU": "Поочерёдное появление" },
     desc: {
-      "zh-CN": "一组卡片或条目首次出现时逐项浮现。之后切换筛选或翻页时不再重复。",
-      "zh-TW": "一組卡片或條目首次出現時逐項浮現。之後切換篩選或翻頁時不再重複。",
-      "en-US": "A group of cards or items rises one by one when it first appears. It is not repeated on later filter or page changes.",
-      "ja-JP": "カードや項目のまとまりが初めて表示されるとき、一つずつ浮かび上がります。その後の絞り込みやページ切り替えでは繰り返しません。",
-      "ko-KR": "카드나 항목 묶음이 처음 나타날 때 하나씩 떠오릅니다. 이후 필터나 페이지를 바꿀 때는 반복하지 않습니다.",
-      "fr-FR": "Un groupe de cartes ou d'éléments apparaît un par un lors de sa première apparition. L'effet n'est pas répété lors des changements de filtre ou de page.",
-      "es-ES": "Un grupo de tarjetas o elementos aparece uno a uno la primera vez que se muestra. No se repite en cambios posteriores de filtro o de página.",
-      "ru-RU": "Группа карточек или элементов при первом показе появляется по одному. При последующей смене фильтра или страницы это не повторяется.",
+      "zh-CN": "一组卡片或条目首次出现时逐项浮现。之后切换筛选或翻页时不再重复。 工作台切换条目时，标题、子字段、操作、提示和正文分块依次浮现；同一条目的更新使用滚字或折叠。",
+      "zh-TW": "一組卡片或條目首次出現時逐項浮現。之後切換篩選或翻頁時不再重複。 工作台切換項目時，標題、子欄位、操作、提示和正文分塊依次浮現；同一項目的更新使用滾字或摺疊。",
+      "en-US": "A group of cards or items rises one by one when it first appears. It is not repeated on " +
+        "later filter or page changes. On workbench selection changes, the title, sub fields, " +
+        "actions, notice and body blocks rise in sequence; updates to the same item use Roll or " +
+        "Collapse.",
+      "ja-JP": "カードや項目のまとまりが初めて表示されるとき、一つずつ浮かび上がります。その後の絞り込みやページ切り替えでは繰り返しません。 " +
+        "作業台で項目を切り替えると、タイトル、補足項目、操作、案内、本文が順に現れる。同じ項目の更新には Roll または Collapse を使う。",
+      "ko-KR": "카드나 항목 묶음이 처음 나타날 때 하나씩 떠오릅니다. 이후 필터나 페이지를 바꿀 때는 반복하지 않습니다. 작업대 항목을 바꾸면 제목, 하위 필드, 작업, 안내, " +
+        "본문이 차례로 나타난다. 같은 항목의 갱신에는 Roll 또는 Collapse를 쓴다.",
+      "fr-FR": "Un groupe de cartes ou d'éléments apparaît un par un lors de sa première apparition. L'effet " +
+        "n'est pas répété lors des changements de filtre ou de page. Dans l’espace de travail, titre, " +
+        "champs, actions, avis et blocs apparaissent en séquence ; les mises à jour utilisent Roll ou " +
+        "Collapse.",
+      "es-ES": "Un grupo de tarjetas o elementos aparece uno a uno la primera vez que se muestra. No se " +
+        "repite en cambios posteriores de filtro o de página. Al cambiar de elemento, título, campos, " +
+        "acciones, aviso y bloques aparecen en secuencia; las actualizaciones usan Roll o Collapse.",
+      "ru-RU": "Группа карточек или элементов при первом показе появляется по одному. При последующей смене " +
+        "фильтра или страницы это не повторяется. При выборе элемента заголовок, поля, действия, " +
+        "уведомление и блоки появляются по очереди; обновления используют Roll или Collapse.",
     },
   },
 ];

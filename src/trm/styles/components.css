@@ -351,7 +351,10 @@ body::before {
   transition: grid-template-rows var(--collapse-ms, var(--flow-ms)) var(--collapse-ease, var(--ease-nav)), opacity var(--collapse-opacity-ms, 0.3s) var(--collapse-opacity-ease, var(--ease-soft));
 }
 @keyframes rise {
-  from { opacity: 0; transform: translate3d(0, var(--rise-y, 14px), 0) scale(var(--rise-scale, 0.985)); }
+  from {
+    opacity: 0;
+    transform: translate3d(var(--rise-x, 0px), var(--rise-y, 14px), 0) scale(var(--rise-scale, 0.985));
+  }
   to { opacity: 1; transform: none; }
 }
 .rise { animation: rise var(--rise-ms, 0.62s) var(--rise-ease, var(--ease-nav)) both; }
@@ -468,32 +471,32 @@ option {
   }
 }
 
-/* 侧栏导航用的竖向换页。旧页很快淡出、只挪一点点，让出位置；新页随即从一小段
-   距离外浮上来，按弹簧曲线收住，尾段有一点点回弹。位移用固定像素，不按页面高度算。
-   配 PageHost 的 axis="y"。 */
+/* 侧栏导航配 PageHost axis="y"：新旧页同时沿纵轴推移，与横向切页共用时长和曲线。
+   向下导航时旧页上移淡出，新页从下方进入；反向时镜像。无缩放、弹簧或延迟，
+   避免两层先后运动像弹出。离场 420ms 必须与 PageHost 的 LEAVE_MS 一致。 */
 @keyframes leaveU {
   from { opacity: 1; transform: none; }
-  to { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 0; transform: translateY(-2.5%); }
 }
 @keyframes enterU {
-  from { opacity: 0; transform: translateY(22px) scale(0.994); }
+  from { opacity: 0; transform: translateY(6%); }
   to { opacity: 1; transform: none; }
 }
 @keyframes leaveD {
   from { opacity: 1; transform: none; }
-  to { opacity: 0; transform: translateY(6px); }
+  to { opacity: 0; transform: translateY(2.5%); }
 }
 @keyframes enterD {
-  from { opacity: 0; transform: translateY(-22px) scale(0.994); }
+  from { opacity: 0; transform: translateY(-6%); }
   to { opacity: 1; transform: none; }
 }
-.page-leave-u { animation: leaveU 0.18s var(--ease-out-quick) forwards; }
-.page-leave-d { animation: leaveD 0.18s var(--ease-out-quick) forwards; }
-.page-enter-u { animation: enterU 0.62s var(--spring-gentle) 0.04s both; }
-.page-enter-d { animation: enterD 0.62s var(--spring-gentle) 0.04s both; }
+.page-leave-u { animation: leaveU 0.42s var(--ease-nav) forwards; }
+.page-leave-d { animation: leaveD 0.42s var(--ease-nav) forwards; }
+.page-enter-u { animation: enterU 0.42s var(--ease-nav) both; }
+.page-enter-d { animation: enterD 0.42s var(--ease-nav) both; }
 .page-leave-u, .page-enter-u, .page-leave-d, .page-enter-d { will-change: transform, opacity; }
 
-/* 一页之内换视图：列表与详情之间切换。与换页同一种入场。 */
+/* 页内局部视图的浮现。整页导航使用上面的同步推移。 */
 @keyframes view-in {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: none; }
@@ -801,12 +804,14 @@ option {
 
 /* The parent supplies height; only the list and detail body scroll, leaving actions reachable. */
 .trm-workbench {
+  box-sizing: border-box;
   display: flex;
   flex: 1;
   gap: 20px;
   min-width: 0;
   min-height: 0;
   height: 100%;
+  padding-block: var(--workbench-space);
   overflow: hidden;
   color: var(--ink);
 }
@@ -819,15 +824,32 @@ option {
   min-height: 0;
   overflow-y: auto;
 }
-.trm-workbench-main { display: flex; flex: 1; flex-direction: column; min-width: 0; min-height: 0; }
+.trm-workbench-list { background: var(--group); border-radius: var(--r); }
+.trm-workbench-list-head { flex: none; padding-inline: 8px; }
+.trm-workbench-main {
+  display: flex; flex: 1; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden;
+}
 .trm-workbench-panes { flex: 1; }
 .trm-workbench[data-narrow] .trm-workbench-list { width: 100%; height: 100%; }
 .trm-workbench[data-narrow] .trm-workbench-main { height: 100%; }
 .trm-workbench-swap { flex: 1; min-height: 0; }
-/* Swap's fixed viewport must propagate through its motion layers to the scrolling detail body. */
-.trm-workbench-swap > .flow-root,
-.trm-workbench-swap > .flow-root > div,
-.trm-workbench-swap > .flow-root > div > div { height: 100%; min-height: 0; }
+/* Only parts enter; the detail viewport never moves or resizes. */
+.trm-workbench-swap > div { height: 100%; min-height: 0; }
+.trm-workbench-part.rise {
+  --rise-x: calc(var(--push, 1) * 8px); --rise-y: 6px; --rise-scale: 1; --rise-ms: var(--flow-ms);
+  animation: rise var(--rise-ms) var(--ease-nav) both;
+}
+/* Narrow navigation already pushes the retained pane; do not layer another entrance over that push. */
+.trm-workbench[data-narrow] .flow-quiet .trm-workbench-part { animation: none; }
+.trm-workbench-block + .trm-workbench-block { margin-top: 16px; }
+.trm-workbench-notice-content { padding-bottom: 16px; }
+.trm-workbench-swap > .swap-out .rise { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .trm-workbench .rise, .trm-workbench .swap-out { animation: none; }
+  .trm-workbench .roll-in, .trm-workbench .roll-out { animation: none; }
+  .trm-workbench .roll-out, .trm-workbench-swap > .swap-out { visibility: hidden; }
+  .trm-workbench .collapse-area, .trm-workbench .morph { transition: none; }
+}
 .trm-workbench-empty { display: grid; place-items: center; height: 100%; text-align: center; }
 .trm-workbench-heading {
   display: flex;
@@ -839,16 +861,19 @@ option {
   padding: 12px 8px;
 }
 .trm-workbench-heading h3 { margin: 0; font-size: 15.5px; font-weight: 600; }
-.trm-workbench-title { min-width: 0; overflow-wrap: anywhere; }
-.trm-workbench-sub { margin-top: 6px; font-size: 12.5px; color: var(--ink-muted); }
+.trm-workbench-title { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.trm-workbench-title .roll { max-width: 100%; }
+.trm-workbench-title .roll > span { white-space: normal; overflow-wrap: anywhere; }
+.trm-workbench-field { min-width: 0; max-width: 100%; }
+.trm-workbench-sub {
+  display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 6px; font-size: 12.5px; color: var(--ink-muted);
+}
 .trm-workbench-actions, .trm-workbench-foot { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .trm-workbench-filters { flex: none; padding: 0 0 12px; }
 .trm-workbench-rows {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  background: var(--group);
-  border-radius: var(--r);
 }
 .trm-workbench-item {
   display: flex;
@@ -857,7 +882,6 @@ option {
   width: 100%;
   padding: 10px 12px;
   border: 0;
-  border-bottom: 1px solid var(--line);
   background: transparent;
   color: var(--ink);
   font: inherit;
@@ -874,7 +898,17 @@ option {
   outline-offset: -2px;
 }
 .trm-workbench-avatar { flex: none; }
-.trm-workbench-item-text { flex: 1; min-width: 0; }
+.trm-workbench-item-text {
+  position: relative; display: flex; flex: 1; flex-direction: column; justify-content: center;
+  align-self: stretch; min-width: 0;
+}
+/* Anchoring to the text column automatically accounts for any caller-supplied avatar width. */
+.trm-workbench-item[data-divider] .trm-workbench-item-text::after {
+  content: ""; position: absolute; inset-inline: 0; bottom: -10px; height: 1px;
+  background: var(--line); pointer-events: none;
+}
+.trm-workbench-item:is(:hover, [aria-pressed="true"], [data-next-selected], [data-next-hovered])
+  .trm-workbench-item-text::after { visibility: hidden; }
 .trm-workbench-item-line { display: flex; gap: 8px; align-items: center; }
 .trm-workbench-item-line + .trm-workbench-item-line { margin-top: 4px; }
 .trm-workbench-item-title, .trm-workbench-preview {
@@ -890,17 +924,18 @@ option {
 .trm-workbench-preview { font-size: 12.5px; }
 .trm-workbench-tag { flex: none; }
 .trm-workbench-detail { display: flex; flex-direction: column; height: 100%; min-height: 0; }
-.trm-workbench-body { flex: 1; min-height: 0; overflow-y: auto; padding: 12px 16px 24px; }
+.trm-workbench-body {
+  flex: 1; min-height: 0; overflow-y: auto; padding: 12px var(--workbench-padding) 24px;
+}
 .trm-workbench-body, .trm-workbench-rows, .trm-workbench-list { overscroll-behavior: contain; }
-.trm-workbench-read { max-width: var(--page-w-read); margin-inline: auto; overflow-wrap: anywhere; }
-.trm-workbench-foot { flex: none; padding: 12px 16px 16px; }
-/* 详情的标题、正文与底部操作共用一条阅读栏，左边缘对齐；底部靠留白分开，不画分隔线。 */
+.trm-workbench-read { min-width: 0; overflow-wrap: anywhere; }
+.trm-workbench-foot { flex: none; padding-block: 16px; }
+/* Full-width details share one inset. Reading limits belong to individual blocks, never the workspace. */
 .trm-workbench-detail > .trm-workbench-heading,
 .trm-workbench-detail > .trm-workbench-foot {
-  box-sizing: border-box; width: 100%; max-width: calc(var(--page-w-read) + 32px); margin-inline: auto;
-  padding-inline: 16px;
+  box-sizing: border-box; width: 100%; padding-inline: var(--workbench-padding);
 }
-.trm-workbench-navigation { flex: none; padding: 0 0 4px; }
+.trm-workbench-navigation { flex: none; padding: 8px 8px 0; }
 .trm-workbench-back {
   display: inline-flex;
   align-items: center;
@@ -927,8 +962,7 @@ option {
 .trm-row-heading h3 { margin: 0; font-size: 15.5px; font-weight: 600; }
 .trm-row-heading p { margin: 6px 0 0; font-size: 12.5px; color: var(--meta); }
 .trm-row-action { margin-inline-start: auto; display: flex; gap: 8px; flex-wrap: wrap; }
-.trm-row-card { background: var(--group); border: 1px solid var(--line); border-radius: var(--r); }
-.trm-row-card > .trm-row + .trm-row { border-block-start: 1px solid var(--line); }
+.trm-row-card { background: var(--group); border-radius: var(--r); }
 .trm-row { container: trm-row / inline-size; min-inline-size: 0; }
 .trm-row-main { display: flex; align-items: center; gap: 20px; padding: 16px 20px; inline-size: 100%; box-sizing: border-box; }
 .trm-row-text { display: block; flex: 1; min-inline-size: 0; overflow-wrap: anywhere; }
@@ -975,6 +1009,8 @@ option {
 .trm-input:disabled, .trm-chip-input[data-disabled] { opacity: 0.5; cursor: default; }
 .trm-input::placeholder, .trm-chip-input input::placeholder { color: var(--meta); }
 .trm-textarea { resize: vertical; }
+.trm-chat-composer { display: flex; align-items: flex-end; gap: 8px; width: 100%; min-width: 0; }
+.trm-chat-composer-input { flex: 1; resize: none; line-height: 1.6; overflow-y: auto; }
 .trm-chip-input {
   display: flex;
   flex-wrap: wrap;

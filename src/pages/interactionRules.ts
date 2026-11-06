@@ -3,6 +3,24 @@ import type { Rule } from "./rules";
 /** 交互约定。「交互」页照这份数据渲染，下面的演示就是照这些约定做的。 */
 export const INTERACTION_RULES: Rule[] = [
 {
+  "id": "denseListDividers",
+  "title": {
+    "zh-CN": "分隔线只用于密集列表，两端内缩，不接触边缘；其他分组使用底色与留白。",
+    "zh-TW": "分隔線只用於密集清單，兩端內縮，不接觸邊緣；其他群組使用底色與留白。",
+    "en-US": "Dividers belong only in dense lists, inset at both ends, never edge to edge; other groups " +
+      "use surface and spacing.",
+    "ja-JP": "区切り線は密な一覧だけに使い、両端を内側に収める。他のグループは背景と余白で分ける。",
+    "ko-KR": "구분선은 조밀한 목록에만 쓰며 양 끝을 가장자리에서 띄운다. 다른 그룹은 배경과 여백으로 나눈다.",
+    "fr-FR": "Les séparateurs sont réservés aux listes denses, en retrait aux deux bouts ; ailleurs, " +
+      "utiliser le fond et l’espacement.",
+    "es-ES": "Los separadores solo se usan en listas densas, con margen en ambos extremos; los demás " +
+      "grupos usan fondo y espacio.",
+    "ru-RU": "Разделители допустимы только в плотных списках, с отступами от обоих краёв; остальные группы " +
+      "разделяются фоном и отступами."
+  },
+  "examples": []
+},
+{
   id: "workbench",
   title: {
     "zh-CN": "会话、审核和工单等工作队列使用列表详情工作台；配置使用阅读宽度的设置行。",

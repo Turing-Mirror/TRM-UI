@@ -137,6 +137,23 @@
   },
   "demo": {
     "workbench": {
+      "chat": {
+        "title": "会话工作台",
+        "queue": "会话",
+        "choose": "选择会话",
+        "access": "林安",
+        "export": "陈宁",
+        "invite": "周悦",
+        "platform": "渠道：网站",
+        "waiting": "等待回复",
+        "replied": "已回复",
+        "showNotice": "显示提示",
+        "hideNotice": "隐藏提示",
+        "notice": "回复前请确认用户的问题。",
+        "placeholder": "输入回复",
+        "send": "发送回复",
+        "reply": "工作人员回复"
+      },
       "title": "审核工作台",
       "pending": "待审核",
       "approved": "已批准",

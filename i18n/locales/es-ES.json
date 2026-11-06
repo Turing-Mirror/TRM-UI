@@ -137,6 +137,23 @@
   },
   "demo": {
     "workbench": {
+      "chat": {
+        "title": "Espacio de conversaciones",
+        "queue": "Conversaciones",
+        "choose": "Seleccione una conversación",
+        "access": "Álex",
+        "export": "María",
+        "invite": "Sam",
+        "platform": "Canal: sitio web",
+        "waiting": "Pendiente de respuesta",
+        "replied": "Respuesta enviada",
+        "showNotice": "Mostrar aviso",
+        "hideNotice": "Ocultar aviso",
+        "notice": "Confirme la pregunta del cliente antes de responder.",
+        "placeholder": "Escriba una respuesta",
+        "send": "Enviar respuesta",
+        "reply": "Respuesta del personal"
+      },
       "title": "Área de revisión",
       "pending": "Pendiente",
       "approved": "Aprobado",

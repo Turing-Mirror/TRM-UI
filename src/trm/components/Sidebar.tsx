@@ -5,7 +5,7 @@
  *
  * 侧栏与内容区靠底色区分，不画分隔线。侧栏可以收起成图标列，宽度变化有过渡。
  * 导航项、小节标题、进行中的事，各有一个组件。
- * 换页配 PageHost 的 axis="y"：导航竖着排，页面就上下推。
+ * 换页配 PageHost 的 axis="y"：导航竖着排，新旧页同时上下推移，向下导航时新页从下方进入。
  */
 import type { MouseEvent, ReactNode } from "react";
 import { useI18n } from "../i18n";

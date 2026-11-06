@@ -11,10 +11,12 @@ function Page({id}: {id: "a" | "b"}) {
   useEffect(() => { mounted(id); return () => { removed(id); }; }, [id]);
   return <input aria-label={id} defaultValue={id} />;
 }
-const host = (page: "a" | "b") => <PageHost nav={nav} page={page}>{id => <Page id={id} />}</PageHost>;
 let m: Mounted;
 afterEach(() => { m?.unmount(); vi.useRealTimers(); vi.clearAllMocks(); vi.restoreAllMocks(); });
-describe("PageHost", () => {
+describe.each(["x", "y"] as const)("PageHost axis=%s", axis => {
+  const host = (page: "a" | "b") => <PageHost nav={nav} page={page} axis={axis}>
+    {id => <Page id={id} />}
+  </PageHost>;
   it("enabling reduced motion clears the outgoing layer immediately", () => {
     const media=window.matchMedia("(prefers-reduced-motion: reduce)");
     let reduce=false;
@@ -25,7 +27,7 @@ describe("PageHost", () => {
     expect(m.container.querySelectorAll("input")).toHaveLength(2);
     act(() => { reduce=true; media.dispatchEvent(new Event("change")); });
     expect(m.container.querySelectorAll("input")).toHaveLength(1);
-    expect(m.container.querySelector(".page-enter-l")).toBeNull();
+    expect(m.container.querySelector('[class*="page-enter-"]')).toBeNull();
   });
   it("keeps the outgoing subtree and its state during a quick return", () => {
     vi.useFakeTimers();
@@ -33,12 +35,18 @@ describe("PageHost", () => {
     const a = m.container.querySelector("input")!;
     a.value = "edited";
     act(() => m.root.render(host("b")));
+    expect(m.container.querySelector(`.page-enter-${axis === "y" ? "u" : "l"}`)).not.toBeNull();
+    expect(m.container.querySelector(`.page-leave-${axis === "y" ? "u" : "l"}`)).not.toBeNull();
     expect(mounted.mock.calls).toEqual([["a"], ["b"]]);
     expect(a.closest("[inert]")).not.toBeNull();
     act(() => m.root.render(host("a")));
+    expect(m.container.querySelector(`.page-enter-${axis === "y" ? "d" : "r"}`)).not.toBeNull();
+    expect(m.container.querySelector(`.page-leave-${axis === "y" ? "d" : "r"}`)).not.toBeNull();
     expect(m.container.querySelector('input[aria-label="a"]')).toBe(a);
     expect(a.value).toBe("edited");
-    act(() => vi.advanceTimersByTime(500));
+    act(() => vi.advanceTimersByTime(419));
+    expect(m.container.querySelectorAll("input")).toHaveLength(2);
+    act(() => vi.advanceTimersByTime(1));
     expect(removed.mock.calls).toEqual([["b"]]);
     expect(m.container.querySelectorAll("input")).toHaveLength(1);
   });

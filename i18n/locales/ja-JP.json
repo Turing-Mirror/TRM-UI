@@ -137,6 +137,23 @@
   },
   "demo": {
     "workbench": {
+      "chat": {
+        "title": "会話ワークベンチ",
+        "queue": "会話",
+        "choose": "会話を選択",
+        "access": "佐藤",
+        "export": "田中",
+        "invite": "鈴木",
+        "platform": "窓口：ウェブサイト",
+        "waiting": "返信待ち",
+        "replied": "返信済み",
+        "showNotice": "案内を表示",
+        "hideNotice": "案内を隠す",
+        "notice": "返信する前に利用者の質問を確認してください。",
+        "placeholder": "返信を入力",
+        "send": "返信を送信",
+        "reply": "担当者の返信"
+      },
       "title": "レビュー作業台",
       "pending": "確認待ち",
       "approved": "承認済み",
