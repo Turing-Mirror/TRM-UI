@@ -798,6 +798,122 @@ option {
 [data-trm-pane][hidden] { display: none !important; }
 .trm-panes-fill { overflow: hidden; }
 
+/* The parent supplies height; only the list and detail body scroll, leaving actions reachable. */
+.trm-workbench {
+  display: flex;
+  flex: 1;
+  gap: 20px;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  color: var(--ink);
+}
+.trm-workbench-list {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 var(--workbench-list-width);
+  width: var(--workbench-list-width);
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+}
+.trm-workbench-main { display: flex; flex: 1; flex-direction: column; min-width: 0; min-height: 0; }
+.trm-workbench-panes { flex: 1; }
+.trm-workbench[data-narrow] .trm-workbench-list { width: 100%; height: 100%; }
+.trm-workbench[data-narrow] .trm-workbench-main { height: 100%; }
+.trm-workbench-swap { flex: 1; min-height: 0; }
+/* Swap's fixed viewport must propagate through its motion layers to the scrolling detail body. */
+.trm-workbench-swap > .flow-root,
+.trm-workbench-swap > .flow-root > div,
+.trm-workbench-swap > .flow-root > div > div { height: 100%; min-height: 0; }
+.trm-workbench-empty { display: grid; place-items: center; height: 100%; text-align: center; }
+.trm-workbench-heading {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 8px;
+}
+.trm-workbench-heading h3 { margin: 0; font-size: 15.5px; font-weight: 600; }
+.trm-workbench-title { min-width: 0; overflow-wrap: anywhere; }
+.trm-workbench-sub { margin-top: 6px; font-size: 12.5px; color: var(--ink-muted); }
+.trm-workbench-actions, .trm-workbench-foot { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.trm-workbench-filters { flex: none; padding: 0 0 12px; }
+.trm-workbench-rows {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--group);
+  border-radius: var(--r);
+}
+.trm-workbench-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.trm-workbench-item:hover, .trm-workbench-back:hover {
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+.trm-workbench-item[aria-pressed="true"] { background: var(--accent-soft); }
+.trm-workbench-item[aria-pressed="true"] .trm-workbench-item-title { color: var(--accent); }
+.trm-workbench-item:focus-visible, .trm-workbench-back:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.trm-workbench-avatar { flex: none; }
+.trm-workbench-item-text { flex: 1; min-width: 0; }
+.trm-workbench-item-line { display: flex; gap: 8px; align-items: center; }
+.trm-workbench-item-line + .trm-workbench-item-line { margin-top: 4px; }
+.trm-workbench-item-title, .trm-workbench-preview {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.trm-workbench-item-title { font-size: 13px; font-weight: 500; }
+.trm-workbench-meta { flex: none; font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.trm-workbench-meta, .trm-workbench-preview { color: var(--ink-muted); }
+.trm-workbench-preview { font-size: 12.5px; }
+.trm-workbench-tag { flex: none; }
+.trm-workbench-detail { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.trm-workbench-body { flex: 1; min-height: 0; overflow-y: auto; padding: 12px 16px 24px; }
+.trm-workbench-body, .trm-workbench-rows, .trm-workbench-list { overscroll-behavior: contain; }
+.trm-workbench-read { max-width: var(--page-w-read); margin-inline: auto; overflow-wrap: anywhere; }
+.trm-workbench-foot { flex: none; padding: 12px 16px 16px; }
+/* 详情的标题、正文与底部操作共用一条阅读栏，左边缘对齐；底部靠留白分开，不画分隔线。 */
+.trm-workbench-detail > .trm-workbench-heading,
+.trm-workbench-detail > .trm-workbench-foot {
+  box-sizing: border-box; width: 100%; max-width: calc(var(--page-w-read) + 32px); margin-inline: auto;
+  padding-inline: 16px;
+}
+.trm-workbench-navigation { flex: none; padding: 0 0 4px; }
+.trm-workbench-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border: 0;
+  border-radius: var(--rs);
+  background: transparent;
+  color: var(--ink-muted);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
 /* Horizontal category panes share one clipped viewport. */
 .slide-stage { overflow-x: clip; }
 

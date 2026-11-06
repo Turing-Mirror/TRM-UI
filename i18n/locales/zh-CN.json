@@ -136,6 +136,36 @@
     "history": "历史"
   },
   "demo": {
+    "workbench": {
+      "title": "审核工作台",
+      "pending": "待审核",
+      "approved": "已批准",
+      "rejected": "已拒绝",
+      "all": "全部",
+      "choose": "选择一项进行审核",
+      "clear": "暂无待审核项目",
+      "more": "加载更多",
+      "edit": "编辑",
+      "done": "完成",
+      "approve": "批准",
+      "reject": "拒绝",
+      "answer": "建议回答",
+      "hits": "命中次数：{n}",
+      "sources": "来源",
+      "source": "帮助中心",
+      "access": {
+        "question": "如何恢复访问？",
+        "answer": "打开登录页面，选择重置密码。"
+      },
+      "export": {
+        "question": "可以导出记录吗？",
+        "answer": "打开记录，选中所需条目，然后选择导出。"
+      },
+      "invite": {
+        "question": "如何邀请团队成员？",
+        "answer": "打开成员页面，选择邀请，再输入对方的电子邮箱。"
+      }
+    },
     "webShell": {
       "title": "网页布局",
       "brand": "管理台",

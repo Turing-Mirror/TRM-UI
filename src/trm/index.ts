@@ -112,3 +112,7 @@ export { lookup, interpolate, translate } from "./i18n/dict";
 
 export { ComposerInput, type ComposerInputProps } from "./components/ComposerInput";
 export { useMorphState, useLeavingValue } from "./hooks/useMorphState";
+export {
+  Workbench, WorkbenchItem, WorkbenchDetail,
+  type WorkbenchProps, type WorkbenchItemProps, type WorkbenchDetailProps,
+} from "./components/Workbench";

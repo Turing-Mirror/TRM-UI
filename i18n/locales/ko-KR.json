@@ -136,6 +136,36 @@
     "history": "기록"
   },
   "demo": {
+    "workbench": {
+      "title": "검토 작업대",
+      "pending": "검토 대기",
+      "approved": "승인됨",
+      "rejected": "거절됨",
+      "all": "전체",
+      "choose": "검토할 항목을 선택하세요",
+      "clear": "검토 대기 항목이 없습니다",
+      "more": "더 불러오기",
+      "edit": "편집",
+      "done": "완료",
+      "approve": "승인",
+      "reject": "거절",
+      "answer": "추천 답변",
+      "hits": "일치 횟수: {n}",
+      "sources": "출처",
+      "source": "도움말 센터",
+      "access": {
+        "question": "접근 권한을 복구하려면 어떻게 하나요?",
+        "answer": "로그인 페이지에서 비밀번호 재설정을 선택하세요."
+      },
+      "export": {
+        "question": "기록을 내보낼 수 있나요?",
+        "answer": "기록에서 필요한 항목을 선택한 다음 내보내기를 선택하세요."
+      },
+      "invite": {
+        "question": "팀원을 초대하려면 어떻게 하나요?",
+        "answer": "멤버 페이지에서 초대를 선택하고 상대방의 이메일 주소를 입력하세요."
+      }
+    },
     "webShell": {
       "title": "웹 레이아웃",
       "brand": "관리",

@@ -136,6 +136,36 @@
     "history": "History"
   },
   "demo": {
+    "workbench": {
+      "title": "Review workbench",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "all": "All",
+      "choose": "Select an item to review",
+      "clear": "No pending items",
+      "more": "Load more",
+      "edit": "Edit",
+      "done": "Done",
+      "approve": "Approve",
+      "reject": "Reject",
+      "answer": "Suggested answer",
+      "hits": "Hits: {n}",
+      "sources": "Sources",
+      "source": "Help center",
+      "access": {
+        "question": "How do I regain access?",
+        "answer": "Open the sign-in page and select Reset password."
+      },
+      "export": {
+        "question": "Can I export my records?",
+        "answer": "Open Records, select the entries, then choose Export."
+      },
+      "invite": {
+        "question": "How do I invite a teammate?",
+        "answer": "Open Members and choose Invite. Enter their email address."
+      }
+    },
     "webShell": {
       "title": "Web layout",
       "brand": "Admin",

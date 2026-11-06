@@ -136,6 +136,36 @@
     "history": "Historial"
   },
   "demo": {
+    "workbench": {
+      "title": "Área de revisión",
+      "pending": "Pendiente",
+      "approved": "Aprobado",
+      "rejected": "Rechazado",
+      "all": "Todo",
+      "choose": "Seleccione un elemento para revisar",
+      "clear": "No hay elementos pendientes",
+      "more": "Cargar más",
+      "edit": "Editar",
+      "done": "Listo",
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "answer": "Respuesta sugerida",
+      "hits": "Coincidencias: {n}",
+      "sources": "Fuentes",
+      "source": "Centro de ayuda",
+      "access": {
+        "question": "¿Cómo recupero el acceso?",
+        "answer": "En la página de inicio de sesión, seleccione Restablecer contraseña."
+      },
+      "export": {
+        "question": "¿Puedo exportar mis registros?",
+        "answer": "Abra Registros, seleccione los elementos y elija Exportar."
+      },
+      "invite": {
+        "question": "¿Cómo invito a un compañero?",
+        "answer": "En Miembros, elija Invitar e introduzca su correo electrónico."
+      }
+    },
     "webShell": {
       "title": "Diseño web",
       "brand": "Administración",

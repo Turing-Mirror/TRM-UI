@@ -3,6 +3,24 @@ import type { Rule } from "./rules";
 /** 交互约定。「交互」页照这份数据渲染，下面的演示就是照这些约定做的。 */
 export const INTERACTION_RULES: Rule[] = [
 {
+  id: "workbench",
+  title: {
+    "zh-CN": "会话、审核和工单等工作队列使用列表详情工作台；配置使用阅读宽度的设置行。",
+    "zh-TW": "對話、審核和工單等工作佇列使用清單詳情工作台；設定使用閱讀寬度的設定列。",
+    "en-US": "Work queues (conversations, reviews, tickets) use the list-detail workbench; " +
+      "configuration uses the read column of setting rows.",
+    "ja-JP": "会話・レビュー・チケットの作業キューは一覧と詳細の作業台を使い、設定は読みやすい幅の設定行に並べる。",
+    "ko-KR": "대화·검토·티켓 작업 대기열은 목록과 상세 작업대를 사용하고, 설정은 읽기 너비의 설정 행을 사용한다.",
+    "fr-FR": "Les files de conversations, révisions et tickets utilisent une vue liste-détail ; " +
+      "la configuration utilise des lignes de paramètres à largeur de lecture.",
+    "es-ES": "Las colas de conversaciones, revisiones y tickets usan la vista de lista y detalle; " +
+      "la configuración usa filas de ajustes con ancho de lectura.",
+    "ru-RU": "Очереди диалогов, проверок и заявок используют список с деталями; " +
+      "настройки располагаются строками в колонке для чтения.",
+  },
+  examples: [],
+},
+{
   "id": "webShell",
   "title": {
     "zh-CN": "网页不绘制标题栏。",

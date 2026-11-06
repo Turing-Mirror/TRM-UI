@@ -29,6 +29,7 @@ import {
   type Art,
 } from "../trm";
 import { CleanupPattern, ListEditPattern, StarterPattern, LayoutPatterns } from "./MorePatterns";
+import { WorkbenchPattern } from "./WorkbenchPattern";
 
 /** 翻页演示里每页几项。 */
 const PER_PAGE = 4;
@@ -71,6 +72,7 @@ export function PatternsPage() {
     <PagePad>
       <PageHead title={t("nav.patterns")} />
       <LayoutPatterns />
+      <WorkbenchPattern />
 
       <Block title={t("demo.patterns.tabs")}>
         <div className="flex flex-col gap-4">

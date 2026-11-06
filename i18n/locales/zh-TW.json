@@ -136,6 +136,36 @@
     "history": "歷史"
   },
   "demo": {
+    "workbench": {
+      "title": "審核工作台",
+      "pending": "待審核",
+      "approved": "已核准",
+      "rejected": "已拒絕",
+      "all": "全部",
+      "choose": "選擇一項進行審核",
+      "clear": "暫無待審核項目",
+      "more": "載入更多",
+      "edit": "編輯",
+      "done": "完成",
+      "approve": "核准",
+      "reject": "拒絕",
+      "answer": "建議回答",
+      "hits": "命中次數：{n}",
+      "sources": "來源",
+      "source": "說明中心",
+      "access": {
+        "question": "如何恢復存取？",
+        "answer": "開啟登入頁面，選擇重設密碼。"
+      },
+      "export": {
+        "question": "可以匯出紀錄嗎？",
+        "answer": "開啟紀錄，選取所需項目，然後選擇匯出。"
+      },
+      "invite": {
+        "question": "如何邀請團隊成員？",
+        "answer": "開啟成員頁面，選擇邀請，再輸入對方的電子郵件地址。"
+      }
+    },
     "webShell": {
       "title": "網頁佈局",
       "brand": "管理台",

@@ -126,6 +126,47 @@ npm pack
 
 ## 全高工作区
 
+### 列表详情工作台
+
+| 导出 | 参数 |
+| --- | --- |
+| `Workbench` / `WorkbenchProps` | `list`、`detail`、`selected: string \| null`、`order: readonly string[]`、`onBack`。 |
+| Workbench 可选参数 | `listWidth`、`narrowAt`、`empty`、`className`。 |
+| `WorkbenchItem` / `WorkbenchItemProps` | `title`、`selected`、`onClick`；可选 `meta`、`preview`、`tag`、`avatar`。 |
+| `WorkbenchDetail` / `WorkbenchDetailProps` | `title`、`children`；可选 `sub`、`actions`、`foot`。 |
+
+父容器需提供确定高度。列表默认宽度由 `--workbench-list-width`（340px）控制；`listWidth` 接受像素数值或 CSS 长度。
+`narrowAt` 默认为 900，视口宽度不大于该值时，列表与详情使用两个全高 `Panes`。
+`onBack` 由调用方将 `selected` 设为 null；返回按钮使用通用语言包，列表保留滚动与输入状态，并恢复操作焦点。
+跨越宽窄断点会重新挂载插槽；需要跨断点保留的草稿、筛选与业务状态应由调用方持有。
+
+`order` 是业务列表的键顺序，决定 `useDir` 与 `Swap` 的详情推移方向；键不是标题，也不按字符串大小推断顺序。
+空字符串也是有效键；只有 null 显示 `empty`。传入 `<Empty icon="chat" title={chooseText} />` 即可显示居中的图标与文字。
+`WorkbenchItem` 是原生按钮，用 `aria-pressed` 表达选中状态，支持 Enter 与空格。插槽中不要嵌套交互控件。
+`WorkbenchDetail` 固定头部与可选底部，中间独立滚动；正文通过 `--page-w-read` 限宽，并使用 `Morph` 处理高度变化。
+
+列表插槽按 `.trm-workbench-heading`、`.trm-workbench-filters`、`.trm-workbench-rows` 组合，最后一项独立滚动。
+筛选与加载更多在同一个 `FlowList` 内更新；初次出现用 `stagger()` / `.rise`，计数用 `Roll`，编辑器展开用 `Collapse`。
+这些动效沿用共享原语的减少动态效果规则。完整示例见 `src/pages/WorkbenchPattern.tsx`，规则见 `interactionRules.ts`。
+
+以下为十行 JSX 示例。`rows`、`current`、`selected`、`select`、`approve`、`reject` 由产品提供，文案来自产品语言包。
+
+```tsx
+<Workbench selected={selected} order={rows.map(row => row.id)} onBack={() => select(null)}
+  empty={<Empty icon="chat" title={t("review.choose")} />}
+  list={<FlowList className="trm-workbench-rows" items={rows} keyOf={row => row.id}
+    render={(row, i) => <div className="rise" style={stagger(i)}>
+      <WorkbenchItem title={row.question} preview={row.answer} selected={selected === row.id}
+        onClick={() => select(row.id)} /></div>} />}
+  detail={current && <WorkbenchDetail title={current.question}
+    foot={<><Btn primary onClick={approve}>{t("review.approve")}</Btn>
+      <Btn onClick={reject}>{t("review.reject")}</Btn></>}>
+    <p>{current.answer}</p></WorkbenchDetail>} />
+```
+
+样式类统一使用 `trm-workbench` 前缀，主要包括 `-list`、`-main`、`-panes`、`-swap`、`-empty`、`-back`、
+`-item`、`-item-line`、`-item-title`、`-preview`、`-meta`、`-tag`、`-avatar`、`-detail`、`-heading`、`-body`、`-read`、`-foot`。
+
 `Panes layout="fill"` 用于画布、编辑器或占满父容器的工作区。父容器必须提供确定高度；此模式直接定位子视图，不经过按内容伸缩的 Morph 容器。默认 `layout="content"` 保持列表和设置页面的高度伸缩。离场完成后的 Pane 使用 hidden 和 inert，同时保留输入状态。
 
 推移动效让旧内容淡出与新内容淡入同时开始，沿同一曲线交接，不在中间插入空白等待。中途反向时从当前显示状态继续。全高画布使用 `Panes layout="fill"`，不为其外层测量内容高度。

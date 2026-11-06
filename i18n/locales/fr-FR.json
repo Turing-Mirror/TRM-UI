@@ -136,6 +136,36 @@
     "history": "Historique"
   },
   "demo": {
+    "workbench": {
+      "title": "Espace de révision",
+      "pending": "À examiner",
+      "approved": "Approuvé",
+      "rejected": "Rejeté",
+      "all": "Tout",
+      "choose": "Sélectionnez un élément à examiner",
+      "clear": "Aucun élément à examiner",
+      "more": "Charger plus",
+      "edit": "Modifier",
+      "done": "Terminer",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "answer": "Réponse suggérée",
+      "hits": "Occurrences : {n}",
+      "sources": "Sources",
+      "source": "Centre d’aide",
+      "access": {
+        "question": "Comment rétablir mon accès ?",
+        "answer": "Sur la page de connexion, choisissez Réinitialiser le mot de passe."
+      },
+      "export": {
+        "question": "Puis-je exporter mes données ?",
+        "answer": "Ouvrez les données, sélectionnez les éléments, puis choisissez Exporter."
+      },
+      "invite": {
+        "question": "Comment inviter un collègue ?",
+        "answer": "Dans Membres, choisissez Inviter et saisissez son adresse e-mail."
+      }
+    },
     "webShell": {
       "title": "Interface web",
       "brand": "Administration",
