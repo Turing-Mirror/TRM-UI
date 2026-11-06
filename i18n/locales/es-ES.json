@@ -136,6 +136,12 @@
     "history": "Historial"
   },
   "demo": {
+    "webShell": {
+      "title": "Diseño web",
+      "brand": "Administración",
+      "sub": "Área de trabajo",
+      "status": "Conectado"
+    },
     "shared": {
       "title": "Datos y entradas",
       "notes": "Notas",

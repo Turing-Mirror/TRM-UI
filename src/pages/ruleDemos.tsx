@@ -1,4 +1,5 @@
 import { useRef, useState, type ReactNode } from "react";
+import { WebShellDemo } from "./WebShellDemo";
 import {
   Btn,
   Filters,
@@ -11,6 +12,10 @@ import {
   Pager,
   Popover,
   Swap,
+  Row,
+  RowGroup,
+  Switch,
+  Toggle,
   anchorOf,
   hoverInk,
   stagger,
@@ -28,6 +33,8 @@ import {
  * 错误示范是故意照错的写法做的，只用在这一页。
  */
 export const RULE_DEMOS: Record<string, () => ReactNode> = {
+  webShell: () => <Pair wrong={<WebShellDemo desktop compact />} right={<WebShellDemo compact />} />,
+  settingSwitch: SettingSwitchDemo,
   iconBtn: IconBtnDemo,
   anchor: AnchorDemo,
   hoverStyle: HoverStyleDemo,
@@ -36,6 +43,21 @@ export const RULE_DEMOS: Record<string, () => ReactNode> = {
   arrow: ArrowDemo,
   paging: PagingDemo,
 };
+
+function SettingSwitchDemo() {
+  const { t } = useI18n();
+  const [wrong, setWrong] = useState(false);
+  const [right, setRight] = useState(false);
+  const label = t("demo.set.prewarm");
+  return <Pair
+    wrong={<RowGroup><Row title={label} control={
+      <Toggle checked={wrong} onChange={setWrong} label={label} />
+    } /></RowGroup>}
+    right={<RowGroup><Row title={label} control={
+      <Switch checked={right} onChange={setRight} label={label} />
+    } /></RowGroup>}
+  />;
+}
 
 /** 一左一右两格：默认左边错误示范、右边正确示范；两边都可用时由 labels 换成各自的名字。 */
 function Pair({ wrong, right, labels }: { wrong: ReactNode; right: ReactNode; labels?: [string, string] }) {

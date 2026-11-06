@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { WebShellDemo } from "./WebShellDemo";
 import {
   PagePad,
   PageHead,
@@ -44,6 +45,10 @@ export function OverviewPage({
         <div className="text-sm text-[var(--ink-muted)] leading-relaxed whitespace-pre-line">
           {t("demo.overview.whatBody")}
         </div>
+      </Block>
+
+      <Block title={t("demo.webShell.title")}>
+        <WebShellDemo />
       </Block>
 
       <Block title={t("demo.shell.title")}>

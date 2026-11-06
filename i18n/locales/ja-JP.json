@@ -136,6 +136,12 @@
     "history": "履歴"
   },
   "demo": {
+    "webShell": {
+      "title": "ウェブレイアウト",
+      "brand": "管理画面",
+      "sub": "ワークスペース",
+      "status": "接続済み"
+    },
     "shared": {
       "title": "データと入力",
       "notes": "メモ",

@@ -136,6 +136,12 @@
     "history": "History"
   },
   "demo": {
+    "webShell": {
+      "title": "Web layout",
+      "brand": "Admin",
+      "sub": "Workspace",
+      "status": "Connected"
+    },
     "shared": {
       "title": "Data and inputs",
       "notes": "Notes",

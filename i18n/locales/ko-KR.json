@@ -136,6 +136,12 @@
     "history": "기록"
   },
   "demo": {
+    "webShell": {
+      "title": "웹 레이아웃",
+      "brand": "관리",
+      "sub": "작업 공간",
+      "status": "연결됨"
+    },
     "shared": {
       "title": "데이터와 입력",
       "notes": "메모",

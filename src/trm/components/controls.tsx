@@ -400,6 +400,29 @@ export function Slider({
   );
 }
 
+/** Row 已提供可见标题，因此开关只保留读屏名称，避免重复文字。 */
+export function Switch({ checked, onChange, label, disabled = false }: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  label: string;
+  disabled?: boolean;
+}) {
+  return (
+    <span className="trm-switch">
+      <input
+        type="checkbox"
+        role="switch"
+        aria-label={label}
+        aria-checked={checked}
+        checked={checked}
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.checked)}
+      />
+      <span className="trm-switch-track" aria-hidden="true" />
+    </span>
+  );
+}
+
 export function Toggle({
   checked,
   onChange,

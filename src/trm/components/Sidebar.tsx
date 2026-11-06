@@ -1,7 +1,10 @@
 /**
- * 侧栏式外壳：顶上一条细的标题栏，左边一列侧栏，右边是页面。
+ * 桌面窗口默认使用 AppBar + Sidebar + .page-workspace，保留拖动区与内嵌页面。
+ * 浏览器页面省略 AppBar，将 SidebarBrand 放入 Sidebar.head，内容使用 .page-workspace-flush。
+ * 网页操作放入 PageHead.actions，状态放入 Sidebar.foot；浏览器已有窗口边框，不再重复画一层。
  *
- * 侧栏与内容区同一底色，不画分隔线。可以收起成只剩图标的一列，宽度变化有过渡。导航项、小节标题、进行中的事，各有一个组件。
+ * 侧栏与内容区靠底色区分，不画分隔线。侧栏可以收起成图标列，宽度变化有过渡。
+ * 导航项、小节标题、进行中的事，各有一个组件。
  * 换页配 PageHost 的 axis="y"：导航竖着排，页面就上下推。
  */
 import type { MouseEvent, ReactNode } from "react";
@@ -72,10 +75,16 @@ export function AppBar({
 }
 
 /**
- * 侧栏本体。main 放上面可滚动的部分，foot 固定在最下面。
+ * 侧栏本体。head 和 foot 固定在两端，children 是中间可滚动的导航。
  * 收起与展开时各项的图标留在原位，只有宽度变化、文字淡出淡入；不换排法，所以不会先跳一下再收。
  */
-export function Sidebar({ collapsed, label, children, foot }: { collapsed: boolean; label: string; children: ReactNode; foot?: ReactNode }) {
+export function Sidebar({ collapsed, label, head, children, foot }: {
+  collapsed: boolean;
+  label: string;
+  head?: ReactNode;
+  children: ReactNode;
+  foot?: ReactNode;
+}) {
   return (
     <nav
       aria-label={label}
@@ -83,9 +92,29 @@ export function Sidebar({ collapsed, label, children, foot }: { collapsed: boole
       className="flex-none flex flex-col pb-3 transition-[width] duration-[380ms] ease-[var(--ease-nav)]"
       style={{ width: collapsed ? SIDEBAR_W.collapsed : SIDEBAR_W.open }}
     >
+      {head ? <div className="sidebar-head">{head}</div> : null}
       <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-2.5 pt-1 flex flex-col gap-0.5">{children}</div>
       {foot ? <div className="flex-none px-2.5 pt-2 flex flex-col gap-0.5">{foot}</div> : null}
     </nav>
+  );
+}
+
+/** 网页的品牌与侧栏开关放在导航顶部，收起后仍可从同一列展开。 */
+export function SidebarBrand({ brand, collapsed, onToggle }: {
+  brand: ReactNode;
+  collapsed: boolean;
+  onToggle: () => void;
+}) {
+  const { t } = useI18n();
+  return (
+    <div className="sidebar-brand" data-collapsed={collapsed || undefined}>
+      {!collapsed ? <span className="sidebar-brand-text">{brand}</span> : null}
+      <IconBtn
+        icon="sidebar"
+        label={t(collapsed ? "ui.sidebar.expand" : "ui.sidebar.collapse")}
+        onClick={onToggle}
+      />
+    </div>
   );
 }
 

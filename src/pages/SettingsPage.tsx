@@ -10,6 +10,7 @@ import {
   TextInput,
   Slider,
   Toggle,
+  Switch,
   SegmentControl,
   Tabs,
   Swap,
@@ -201,12 +202,14 @@ export function SettingsPage({ look, onLook, mouseNav, onMouseNav }: { look: Loo
                 />
               }
             />
-            <Row title={t("demo.set.autostart")} control={<Toggle checked={auto} onChange={setAuto} label={t("demo.set.autostart")} />} />
+            <Row title={t("demo.set.autostart")} control={
+              <Switch checked={auto} onChange={setAuto} label={t("demo.set.autostart")} />
+            } />
             <Row
               title={t("demo.set.compat")}
               tip={t("demo.set.compatTip")}
               control={
-                <Toggle
+                <Switch
                   checked={compat}
                   onChange={(v) => {
                     setCompat(v);
@@ -216,9 +219,15 @@ export function SettingsPage({ look, onLook, mouseNav, onMouseNav }: { look: Loo
                 />
               }
             />
-            <Row title={t("demo.set.prewarm")} desc={t("demo.set.prewarmDesc")} control={<Toggle checked={prewarm} onChange={setPrewarm} label={t("demo.set.prewarm")} />} />
-            <Row title={t("demo.set.stats")} desc={t("demo.set.statsDesc")} control={<Toggle checked={stats} onChange={setStats} label={t("demo.set.stats")} />} />
-            <Row title={t("demo.set.mouse")} desc={t("demo.set.mouseDesc")} control={<Toggle checked={mouseNav} onChange={onMouseNav} label={t("demo.set.mouse")} />} />
+            <Row title={t("demo.set.prewarm")} desc={t("demo.set.prewarmDesc")} control={
+              <Switch checked={prewarm} onChange={setPrewarm} label={t("demo.set.prewarm")} />
+            } />
+            <Row title={t("demo.set.stats")} desc={t("demo.set.statsDesc")} control={
+              <Switch checked={stats} onChange={setStats} label={t("demo.set.stats")} />
+            } />
+            <Row title={t("demo.set.mouse")} desc={t("demo.set.mouseDesc")} control={
+              <Switch checked={mouseNav} onChange={onMouseNav} label={t("demo.set.mouse")} />
+            } />
             <Row
               title={t("demo.set.update")}
               desc={updateLine || t("demo.set.version", { v: "1.6.0" })}

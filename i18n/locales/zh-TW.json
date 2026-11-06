@@ -136,6 +136,12 @@
     "history": "歷史"
   },
   "demo": {
+    "webShell": {
+      "title": "網頁佈局",
+      "brand": "管理台",
+      "sub": "工作區",
+      "status": "已連線"
+    },
     "shared": {
       "title": "資料與輸入",
       "notes": "備註",

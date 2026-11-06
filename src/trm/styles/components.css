@@ -207,6 +207,71 @@ html[data-input="pointer"] :focus-visible {
   overflow: hidden;
 }
 .page-workspace-detached { margin-inline-start: var(--shell-gap); }
+/* 网页没有标题栏或内嵌窗口边框；父级提供确定高度，内容独立滚动。 */
+.page-workspace-flush {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  margin: 0;
+  border-radius: 0;
+  background: var(--workspace-bg);
+  overflow: auto;
+}
+.sidebar-head { flex: none; }
+.sidebar-brand {
+  height: 52px;
+  padding-inline: 23.5px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sidebar-brand[data-collapsed] { padding-inline: 0; justify-content: center; }
+.sidebar-brand-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 15px;
+  font-weight: 600;
+}
+.trm-switch { position: relative; display: inline-flex; flex: none; width: 36px; height: 20px; }
+.trm-switch input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.trm-switch-track {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--line);
+  pointer-events: none;
+  transition: background-color 180ms var(--ease);
+}
+.trm-switch-track::before {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin: 2px;
+  border-radius: 50%;
+  background: var(--surface);
+  transition: transform 180ms var(--ease);
+}
+.trm-switch input:checked + .trm-switch-track { background: var(--accent); }
+.trm-switch input:checked + .trm-switch-track::before { transform: translateX(16px); }
+.trm-switch input:focus-visible + .trm-switch-track { outline: 2px solid var(--accent); outline-offset: 3px; }
+.trm-switch input:disabled { cursor: default; }
+.trm-switch input:disabled + .trm-switch-track { opacity: 0.5; }
+@media (prefers-reduced-motion: reduce) {
+  .trm-switch-track, .trm-switch-track::before { transition: none; }
+}
 body::before {
   content: "";
   position: fixed;

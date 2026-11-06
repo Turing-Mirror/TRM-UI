@@ -136,6 +136,12 @@
     "history": "历史"
   },
   "demo": {
+    "webShell": {
+      "title": "网页布局",
+      "brand": "管理台",
+      "sub": "工作区",
+      "status": "已连接"
+    },
     "shared": {
       "title": "数据与输入",
       "notes": "备注",

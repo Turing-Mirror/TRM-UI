@@ -96,6 +96,34 @@ npm pack
 
 布局规则统一维护在 `src/pages/interactionRules.ts`，模式页提供三种宽度与确认密钥的可操作示例。
 
+## 网页外壳与设置开关
+
+| 导出 | 参数 |
+| --- | --- |
+| `Sidebar` | `collapsed`、`label`、`children`、`head?: ReactNode`、`foot?: ReactNode`。 |
+| `SidebarBrand` | `brand: ReactNode`、`collapsed: boolean`、`onToggle: () => void`。 |
+| `Switch` | `checked: boolean`、`onChange: (value: boolean) => void`、`label: string`、`disabled?: boolean`。 |
+
+`Sidebar.head` 与 `foot` 固定，导航内容单独滚动。`SidebarBrand` 高 52px，收起时只显示居中的开关。
+`Switch.label` 仅作为无障碍名称，使用原生复选框的 Space 行为，提供焦点环并遵循减少动态效果设置。
+`Toggle` 保留原有的可见标签接口。
+
+浏览器页面使用如下结构；父容器需有确定高度。操作传入已有的 `PageHead.actions`，状态放入 `foot`。
+
+```tsx
+<div className="page-shell flex h-full min-h-0">
+  <Sidebar collapsed={collapsed} label={navLabel} foot={status}
+    head={<SidebarBrand brand={brand} collapsed={collapsed} onToggle={toggle} />}>{items}</Sidebar>
+  <main className="page-workspace-flush">
+    <PagePad><PageHead title={title} actions={actions} />{content}</PagePad>
+  </main>
+</div>
+```
+
+`.page-workspace-flush` 可单独使用或与 `.page-workspace` 组合，取消外边距与圆角，提供全高滚动区。
+新增内部类为 `.sidebar-head`、`.sidebar-brand`、`.sidebar-brand-text`、`.trm-switch`、`.trm-switch-track`。
+桌面窗口继续使用原有 `AppBar` 与 `.page-workspace`，默认行为不变。
+
 ## 全高工作区
 
 `Panes layout="fill"` 用于画布、编辑器或占满父容器的工作区。父容器必须提供确定高度；此模式直接定位子视图，不经过按内容伸缩的 Morph 容器。默认 `layout="content"` 保持列表和设置页面的高度伸缩。离场完成后的 Pane 使用 hidden 和 inert，同时保留输入状态。

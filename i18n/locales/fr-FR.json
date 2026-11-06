@@ -136,6 +136,12 @@
     "history": "Historique"
   },
   "demo": {
+    "webShell": {
+      "title": "Interface web",
+      "brand": "Administration",
+      "sub": "Espace de travail",
+      "status": "Connecté"
+    },
     "shared": {
       "title": "Données et saisie",
       "notes": "Notes",

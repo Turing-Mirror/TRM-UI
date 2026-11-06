@@ -19,6 +19,40 @@ export type HistoryEntry = {
 
 export const HISTORY: HistoryEntry[] = [
 {
+  "id": "setting-switch",
+  "date": "2026-11-06",
+  "old": {
+    "zh-CN": "设置行使用带可见标签的复选框，重复显示标题。",
+    "zh-TW": "設定列使用帶可見標籤的核取方塊，重複顯示標題。",
+    "en-US": "Settings rows repeated the title beside a checkbox.",
+    "ja-JP": "設定行のチェックボックスの横にタイトルを重複表示していた。",
+    "ko-KR": "설정 행의 체크박스 옆에 제목이 반복되었다.",
+    "es-ES": "Las filas de ajustes repetían el título junto a una casilla.",
+    "fr-FR": "Les lignes de paramètres répétaient le titre à côté d’une case.",
+    "ru-RU": "Строки настроек повторяли заголовок рядом с флажком."
+  },
+  "now": {
+    "zh-CN": "设置行使用 Switch，选项列表保留 Toggle。",
+    "zh-TW": "設定列使用 Switch，選項清單保留 Toggle。",
+    "en-US": "Settings rows use Switch; option lists keep Toggle.",
+    "ja-JP": "設定行には Switch、選択肢一覧には引き続き Toggle を使う。",
+    "ko-KR": "설정 행에는 Switch를 쓰고 옵션 목록에는 Toggle을 유지한다.",
+    "es-ES": "Las filas usan Switch; las listas de opciones conservan Toggle.",
+    "fr-FR": "Les lignes utilisent Switch ; les listes d’options conservent Toggle.",
+    "ru-RU": "Строки настроек используют Switch; списки вариантов сохраняют Toggle."
+  },
+  "why": {
+    "zh-CN": "行标题已经说明设置，开关无需再次显示文字。",
+    "zh-TW": "列標題已經說明設定，開關無需再次顯示文字。",
+    "en-US": "The row title names the setting, so the switch needs no visible label.",
+    "ja-JP": "行のタイトルが設定を説明するため、スイッチに同じ文字は不要。",
+    "ko-KR": "행 제목이 설정을 설명하므로 스위치에 같은 문구가 필요 없다.",
+    "es-ES": "El título de la fila ya nombra el ajuste; el interruptor no necesita texto visible.",
+    "fr-FR": "Le titre de la ligne nomme le paramètre ; aucun texte visible n’est nécessaire sur le commutateur.",
+    "ru-RU": "Заголовок строки уже называет настройку, поэтому переключателю не нужен видимый текст."
+  }
+},
+{
   "id": "settingsLayout",
   "date": "2026-11-06",
   "old": {

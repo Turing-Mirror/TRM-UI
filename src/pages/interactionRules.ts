@@ -3,6 +3,34 @@ import type { Rule } from "./rules";
 /** 交互约定。「交互」页照这份数据渲染，下面的演示就是照这些约定做的。 */
 export const INTERACTION_RULES: Rule[] = [
 {
+  "id": "webShell",
+  "title": {
+    "zh-CN": "网页不绘制标题栏。",
+    "zh-TW": "網頁不繪製標題列。",
+    "en-US": "Web pages do not draw a title bar.",
+    "ja-JP": "ウェブページにタイトルバーを描画しない。",
+    "ko-KR": "웹 페이지에는 제목 표시줄을 그리지 않는다.",
+    "es-ES": "Las páginas web no dibujan una barra de título.",
+    "fr-FR": "Les pages web ne dessinent pas de barre de titre.",
+    "ru-RU": "Веб-страницы не рисуют строку заголовка."
+  },
+  "examples": []
+},
+{
+  "id": "settingSwitch",
+  "title": {
+    "zh-CN": "有标题的设置行使用 Switch；Toggle 用于自带标签的选项列表。",
+    "zh-TW": "有標題的設定列使用 Switch；Toggle 用於自帶標籤的選項清單。",
+    "en-US": "Titled settings rows use Switch; option lists with their own labels use Toggle.",
+    "ja-JP": "タイトル付きの設定行には Switch、独自のラベルを持つ選択肢一覧には Toggle を使う。",
+    "ko-KR": "제목이 있는 설정 행에는 Switch를, 자체 레이블이 있는 옵션 목록에는 Toggle을 쓴다.",
+    "es-ES": "Las filas tituladas usan Switch; las listas de opciones con etiqueta propia usan Toggle.",
+    "fr-FR": "Les lignes titrées utilisent Switch ; les options avec leur propre libellé utilisent Toggle.",
+    "ru-RU": "Строки настроек с заголовком используют Switch; списки с отдельными подписями — Toggle."
+  },
+  "examples": []
+},
+{
   "id": "tableSurface",
   "title": {
     "zh-CN": "表格自带分组底色",

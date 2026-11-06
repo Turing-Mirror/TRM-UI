@@ -8,7 +8,7 @@
  */
 
 export { PagePad, PageHead, Block, Group, Btn, ListItem, HelpMark } from "./components/ui";
-export { Field, Select, RangeBar, Slider, Toggle } from "./components/controls";
+export { Field, Select, RangeBar, Slider, Toggle, Switch } from "./components/controls";
 export { TextInput, TextArea, type TextInputProps, type TextAreaProps } from "./components/inputs";
 export { ChipInput, type ChipInputProps } from "./components/ChipInput";
 export { DataTable, type DataColumn, type DataTableProps } from "./components/DataTable";
@@ -76,7 +76,9 @@ export { Modal, Drawer, usePresence, useLatest, OUT_MS } from "./components/over
 export { Popover, PopoverOwner, Menu, MenuBtn, useMenu, Dropdown, PromptDialog, anchorOf, type Anchor, type MenuItem } from "./components/Menu";
 export { Calendar, dayKey, useAnchoredPop } from "./components/Calendar";
 export { NoticeProvider, useNotify, Notices, NOTICE_OUT_MS, type Notice, type NoticeInput } from "./components/Notices";
-export { AppBar, Sidebar, SidebarItem, SidebarHead, SidebarHeadBtn, ActivityRow, SIDEBAR_W } from "./components/Sidebar";
+export {
+  AppBar, Sidebar, SidebarBrand, SidebarItem, SidebarHead, SidebarHeadBtn, ActivityRow, SIDEBAR_W,
+} from "./components/Sidebar";
 export { Side, SideHead, SideItem, SearchBox, MoreBtn, afterDrag } from "./components/listing";
 export { Panes, Pane, Swap, Morph, FlowList, Roll, Collapse, usePaneOn, useDir, useSlider, sliderStyle, stagger, curve, FLOW_MS, SWAP_OUT_MS } from "./components/motion";
 export { HoverStyleProvider, useHoverStyle, hoverInk, hoverAccent, type HoverStyle } from "./lib/hoverStyle";
