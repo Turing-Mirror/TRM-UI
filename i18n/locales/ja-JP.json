@@ -10,6 +10,12 @@
     "ru-RU": "Русский"
   },
   "ui": {
+    "chart": {
+      "chart": "グラフ",
+      "table": "表",
+      "label": "日付",
+      "value": "件数"
+    },
     "select": {
       "empty": "選択肢がありません",
       "missing": "（利用不可）"
@@ -44,6 +50,7 @@
       "copyFailed": "コピーできませんでした。手動で選択してコピーしてください"
     },
     "common": {
+      "removeItem": "{name} を削除",
       "close": "閉じる",
       "cancel": "キャンセル",
       "confirm": "OK",
@@ -129,6 +136,18 @@
     "history": "履歴"
   },
   "demo": {
+    "shared": {
+      "title": "データと入力",
+      "notes": "メモ",
+      "notesPlaceholder": "メモを追加",
+      "tags": "タグ",
+      "tagsPlaceholder": "タグをカンマで区切って入力",
+      "daily": "日別件数",
+      "clearTags": "タグをクリア",
+      "confirmTitle": "すべてのタグをクリアしますか？",
+      "confirmText": "現在のタグを削除します。",
+      "selected": "選択中：{name}"
+    },
     "overview": {
       "title": "TRM UI",
       "sub": "デスクトップアプリ共通の画面とコントロールの例",
@@ -504,6 +523,19 @@
       "item": "項目 {n}",
       "tipLabel": "出力音量",
       "tipText": "スピーカーやヘッドホンへの出力音量を調整します。"
+    },
+    "layout": {
+      "widths": "ページ幅",
+      "full": "全幅",
+      "wide": "広い列",
+      "read": "読みやすい列",
+      "preview": "設定プレビュー",
+      "key": "キー",
+      "keyDesc": "続行するにはキーを入力してください。",
+      "details": "読みやすい配置を表示",
+      "panel": "中央パネル",
+      "confirmKey": "キーを確認",
+      "confirmed": "デモ用キーを確認しました。"
     }
   }
 }

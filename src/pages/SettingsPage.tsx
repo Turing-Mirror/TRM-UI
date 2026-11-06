@@ -3,10 +3,11 @@ import {
   PagePad,
   PageHead,
   Block,
-  Group,
+  RowGroup,
+  Row,
   Btn,
-  Field,
   Select,
+  TextInput,
   Slider,
   Toggle,
   SegmentControl,
@@ -83,7 +84,7 @@ export function SettingsPage({ look, onLook, mouseNav, onMouseNav }: { look: Loo
   };
 
   return (
-    <PagePad>
+    <PagePad width="read">
       <PageHead title={t("nav.settings")} />
       <div className="mt-4">
         <Tabs value={tab} onChange={setTab} options={TABS.map((id) => ({ id, label: t(TAB_KEYS[id]) }))} />
@@ -115,146 +116,129 @@ export function SettingsPage({ look, onLook, mouseNav, onMouseNav }: { look: Loo
 
       <Swap k={tab} dir={tabDir} className="mt-2">
         {tab === "appearance" ? (
-          <Block title={t("demo.set.tab.appearance")}>
-            <Group>
-              <div className="py-4 flex flex-col gap-6">
-                <Field inline label={t("demo.set.language")} control={<Select value={locale} onChange={(v) => setLocale(v as LocaleCode)} options={LOCALES.map((l) => ({ id: l.id, label: t(l.labelKey) }))} width={180} />} />
-                <Field
-                  inline
-                  label={t("demo.set.theme")}
-                  control={
-                    <SegmentControl
-                      value={look.theme}
-                      onChange={(v) => onLook({ ...look, theme: v as ThemeMode })}
-                      options={[
-                        { id: "system", label: t("demo.set.themeSystem") },
-                        { id: "light", label: t("demo.set.themeLight") },
-                        { id: "dark", label: t("demo.set.themeDark") },
-                      ]}
-                    />
-                  }
+          <RowGroup title={t("demo.set.tab.appearance")}>
+            <Row title={t("demo.set.language")} control={<Select ariaLabel={t("demo.set.language")} value={locale} onChange={(v) => setLocale(v as LocaleCode)} options={LOCALES.map((l) => ({ id: l.id, label: t(l.labelKey) }))} width={180} />} />
+            <Row
+              title={t("demo.set.theme")}
+              control={
+                <SegmentControl
+                  value={look.theme}
+                  onChange={(v) => onLook({ ...look, theme: v as ThemeMode })}
+                  options={[
+                    { id: "system", label: t("demo.set.themeSystem") },
+                    { id: "light", label: t("demo.set.themeLight") },
+                    { id: "dark", label: t("demo.set.themeDark") },
+                  ]}
                 />
-                <Field
-                  inline
-                  label={t("demo.set.hover")}
-                  note={t("demo.set.hoverNote")}
-                  control={
-                    <SegmentControl
-                      value={look.hover}
-                      onChange={(v) => onLook({ ...look, hover: v })}
-                      options={[
-                        { id: "soft" as const, label: t("demo.set.hoverSoft") },
-                        { id: "plain" as const, label: t("demo.set.hoverPlain") },
-                      ]}
-                    />
-                  }
+              }
+            />
+            <Row
+              title={t("demo.set.hover")}
+              desc={t("demo.set.hoverNote")}
+              control={
+                <SegmentControl
+                  value={look.hover}
+                  onChange={(v) => onLook({ ...look, hover: v })}
+                  options={[
+                    { id: "soft" as const, label: t("demo.set.hoverSoft") },
+                    { id: "plain" as const, label: t("demo.set.hoverPlain") },
+                  ]}
                 />
-                <Field
-                  inline
-                  label={t("demo.set.wallpaper")}
-                  note={t("demo.set.wallpaperNote")}
-                  control={
-                    <span className="flex items-center gap-2">
-                      <span className="text-[12.5px] text-[var(--meta)] max-w-[160px] truncate">{look.wallpaper ? t("demo.set.wallpaperSet") : t("demo.set.none")}</span>
-                      <Btn onClick={() => file.current?.click()}>{t("demo.set.pick")}</Btn>
-                      {look.wallpaper ? <Btn onClick={() => onLook({ ...look, wallpaper: "" })}>{t("demo.set.clear")}</Btn> : null}
-                      <input
-                        ref={file}
-                        type="file"
-                        accept="image/*"
-                        hidden
-                        onChange={(e) => {
-                          const f = e.target.files?.[0];
-                          if (f) onLook({ ...look, wallpaper: URL.createObjectURL(f) });
-                          e.target.value = "";
-                        }}
-                      />
-                    </span>
-                  }
+              }
+            />
+            <Row
+              title={t("demo.set.wallpaper")}
+              desc={t("demo.set.wallpaperNote")}
+              control={
+                <span className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[12.5px] text-[var(--meta)] max-w-[160px] truncate">{look.wallpaper ? t("demo.set.wallpaperSet") : t("demo.set.none")}</span>
+                  <Btn onClick={() => file.current?.click()}>{t("demo.set.pick")}</Btn>
+                  {look.wallpaper ? <Btn onClick={() => onLook({ ...look, wallpaper: "" })}>{t("demo.set.clear")}</Btn> : null}
+                  <input
+                    ref={file}
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) onLook({ ...look, wallpaper: URL.createObjectURL(f) });
+                      e.target.value = "";
+                    }}
+                  />
+                </span>
+              }
+            />
+            <Row stacked title={t("demo.set.blur")} control={<Slider ariaLabel={t("demo.set.blur")} value={look.blur} min={0} max={100} step={1} onChange={(v) => onLook({ ...look, blur: v })} />} />
+            <Row stacked title={t("demo.set.opacity")} control={<Slider ariaLabel={t("demo.set.opacity")} value={look.opacity} min={0} max={100} step={1} onChange={(v) => onLook({ ...look, opacity: v })} />} />
+            <Row
+              stacked title={t("demo.set.banner")}
+              desc={t("demo.set.bannerHint")}
+              control={
+                <TextInput
+                  aria-label={t("demo.set.banner")}
+                  value={banner}
+                  onChange={setBanner}
+                  placeholder={t("demo.set.bannerPh")}
                 />
-                <Field label={t("demo.set.blur")} control={<Slider value={look.blur} min={0} max={100} step={1} onChange={(v) => onLook({ ...look, blur: v })} />} />
-                <Field label={t("demo.set.opacity")} control={<Slider value={look.opacity} min={0} max={100} step={1} onChange={(v) => onLook({ ...look, opacity: v })} />} />
-                <Field
-                  label={t("demo.set.banner")}
-                  note={t("demo.set.bannerHint")}
-                  control={
-                    <input
-                      value={banner}
-                      onChange={(e) => setBanner(e.target.value)}
-                      placeholder={t("demo.set.bannerPh")}
-                      className="w-full max-w-[420px] text-[13px] text-[var(--ink)] bg-transparent px-3.5 py-2 rounded-[var(--rs)] shadow-[inset_0_0_0_1px_var(--line)] outline-none focus:shadow-[inset_0_0_0_1px_var(--accent)]"
-                    />
-                  }
-                />
-              </div>
-            </Group>
-          </Block>
+              }
+            />
+          </RowGroup>
         ) : tab === "general" ? (
-          <Block title={t("demo.set.tab.general")}>
-            <Group>
-              <div className="py-4 flex flex-col gap-6">
-                <Field
-                  inline
-                  label={t("demo.set.close")}
-                  control={
-                    <Select
-                      value={close}
-                      onChange={setClose}
-                      width={160}
-                      options={[
-                        { id: "ask", label: t("demo.set.closeAsk") },
-                        { id: "tray", label: t("demo.set.closeTray") },
-                        { id: "quit", label: t("demo.set.closeQuit") },
-                      ]}
-                    />
-                  }
+          <RowGroup title={t("demo.set.tab.general")}>
+            <Row
+              title={t("demo.set.close")}
+              control={
+                <Select
+                  ariaLabel={t("demo.set.close")}
+                  value={close}
+                  onChange={setClose}
+                  width={160}
+                  options={[
+                    { id: "ask", label: t("demo.set.closeAsk") },
+                    { id: "tray", label: t("demo.set.closeTray") },
+                    { id: "quit", label: t("demo.set.closeQuit") },
+                  ]}
                 />
-                <Field inline label={t("demo.set.autostart")} control={<Toggle checked={auto} onChange={setAuto} label={t("demo.set.autostart")} />} />
-                <Field
-                  inline
+              }
+            />
+            <Row title={t("demo.set.autostart")} control={<Toggle checked={auto} onChange={setAuto} label={t("demo.set.autostart")} />} />
+            <Row
+              title={t("demo.set.compat")}
+              tip={t("demo.set.compatTip")}
+              control={
+                <Toggle
+                  checked={compat}
+                  onChange={(v) => {
+                    setCompat(v);
+                    setRestart(true);
+                  }}
                   label={t("demo.set.compat")}
-                  tip={t("demo.set.compatTip")}
-                  control={
-                    <Toggle
-                      checked={compat}
-                      onChange={(v) => {
-                        setCompat(v);
-                        setRestart(true);
-                      }}
-                      label={t("demo.set.compat")}
-                    />
-                  }
                 />
-                <Field inline label={t("demo.set.prewarm")} note={t("demo.set.prewarmDesc")} control={<Toggle checked={prewarm} onChange={setPrewarm} label={t("demo.set.prewarm")} />} />
-                <Field inline label={t("demo.set.stats")} note={t("demo.set.statsDesc")} control={<Toggle checked={stats} onChange={setStats} label={t("demo.set.stats")} />} />
-                <Field inline label={t("demo.set.mouse")} note={t("demo.set.mouseDesc")} control={<Toggle checked={mouseNav} onChange={onMouseNav} label={t("demo.set.mouse")} />} />
-                <Field
-                  inline
-                  label={t("demo.set.update")}
-                  desc={updateLine || t("demo.set.version", { v: "1.6.0" })}
-                  control={<Btn busy={checking} onClick={check}>{checking ? t("demo.set.checking") : t("demo.set.check")}</Btn>}
-                />
-              </div>
-            </Group>
-          </Block>
+              }
+            />
+            <Row title={t("demo.set.prewarm")} desc={t("demo.set.prewarmDesc")} control={<Toggle checked={prewarm} onChange={setPrewarm} label={t("demo.set.prewarm")} />} />
+            <Row title={t("demo.set.stats")} desc={t("demo.set.statsDesc")} control={<Toggle checked={stats} onChange={setStats} label={t("demo.set.stats")} />} />
+            <Row title={t("demo.set.mouse")} desc={t("demo.set.mouseDesc")} control={<Toggle checked={mouseNav} onChange={onMouseNav} label={t("demo.set.mouse")} />} />
+            <Row
+              title={t("demo.set.update")}
+              desc={updateLine || t("demo.set.version", { v: "1.6.0" })}
+              control={<Btn busy={checking} onClick={check}>{checking ? t("demo.set.checking") : t("demo.set.check")}</Btn>}
+            />
+          </RowGroup>
         ) : (
           <Block title={t("demo.set.tab.keys")} action={<Toggle checked={globalOn} onChange={setGlobalOn} label={t("demo.set.keysOn")} />}>
             <div className="max-w-[360px] mb-3">
               <SearchBox value={q} onChange={setQ} />
             </div>
-            <Group>
-              <div className="py-2">
                 {shown.length === 0 ? <p className="m-0 py-3 text-[12.5px] text-[var(--meta)]">{t("demo.set.keysNone")}</p> : null}
                 {(["main", "nav"] as const).map((g) => {
                   const rows = shown.filter((h) => h.group === g);
                   if (!rows.length) return null;
                   return (
-                    <div key={g} className="py-1">
-                      <p className="m-0 pt-2 pb-1 text-[12px] text-[var(--meta)]">{t(GROUP_KEYS[g])}</p>
+                    <RowGroup key={g} title={t(GROUP_KEYS[g])}>
                       {rows.map((h) => (
-                        <div key={h.id} className={`flex items-center gap-3 py-2 ${globalOn ? "" : "opacity-50"}`}>
-                          <span className="text-[13px]">{t(h.labelKey)}</span>
-                          <span className="ml-auto flex items-center gap-3">
+                        <Row key={h.id} title={t(h.labelKey)} control={
+                          <span className={`flex items-center gap-3 flex-wrap ${globalOn ? "" : "opacity-50"}`}>
                             {combos[h.id] !== h.combo ? (
                               <button type="button" disabled={!globalOn} onClick={() => setCombo(h.id, h.combo)} className="h-7 px-2 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[12px] text-[var(--meta)] hover:text-[var(--ink)] disabled:cursor-default disabled:hover:text-[var(--meta)]">
                                 {t("demo.set.reset")}
@@ -268,13 +252,11 @@ export function SettingsPage({ look, onLook, mouseNav, onMouseNav }: { look: Loo
                             ) : null}
                             <HotkeyInput value={combos[h.id]} onChange={(c) => setCombo(h.id, c)} label={t(h.labelKey)} disabled={!globalOn} />
                           </span>
-                        </div>
+                        } />
                       ))}
-                    </div>
+                    </RowGroup>
                   );
                 })}
-              </div>
-            </Group>
             <p className="mt-3 mb-0 text-[12px] text-[var(--help)] leading-relaxed">{t("demo.set.keysHint")}</p>
           </Block>
         )}

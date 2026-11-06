@@ -22,8 +22,10 @@ function useCollapsed(key?: string): [boolean, () => void] {
 export function PagePad({
   children,
   fill = false,
+  width = "full",
 }: {
   children: ReactNode;
+  width?: "full" | "wide" | "read";
   /**
    * 整页不随内容滚动的布局（音频页）：撑满所在面板，内部各区块自己滚动。
    * 同时挂成 inline-size 容器，页内尺寸可以用 cqw 随可用宽度收缩。
@@ -34,7 +36,7 @@ export function PagePad({
     // h-full 而不是 min-h-full：min-h 只保证至少那么高，grid 长列表照样把整页
     // 撑高，「各栏内部滚动」就失效了；h-full 把可用高度卡死成面板高度。
     // 撑满模式不留底边距：页面最下面那一栏直接贴着 Dock。
-    <div className={`px-[30px] max-[1020px]:px-[22px] max-[720px]:px-4 ${fill ? "h-full flex flex-col [container-type:inline-size]" : "pb-[34px] max-[1020px]:pb-[30px] max-[720px]:pb-[26px]"}`}>
+    <div className={`trm-page-${width} px-[30px] max-[1020px]:px-[22px] max-[720px]:px-4 ${fill ? "h-full flex flex-col [container-type:inline-size]" : "pb-[34px] max-[1020px]:pb-[30px] max-[720px]:pb-[26px]"}`}>
       {children}
     </div>
   );

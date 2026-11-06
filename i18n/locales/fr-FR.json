@@ -10,6 +10,12 @@
     "ru-RU": "Русский"
   },
   "ui": {
+    "chart": {
+      "chart": "Graphique",
+      "table": "Tableau",
+      "label": "Date",
+      "value": "Nombre"
+    },
     "select": {
       "empty": "Aucune option disponible",
       "missing": " (indisponible)"
@@ -44,6 +50,7 @@
       "copyFailed": "Échec de la copie. Sélectionnez le texte et copiez-le manuellement"
     },
     "common": {
+      "removeItem": "Supprimer {name}",
       "close": "Fermer",
       "cancel": "Annuler",
       "confirm": "OK",
@@ -129,6 +136,18 @@
     "history": "Historique"
   },
   "demo": {
+    "shared": {
+      "title": "Données et saisie",
+      "notes": "Notes",
+      "notesPlaceholder": "Ajouter des notes",
+      "tags": "Étiquettes",
+      "tagsPlaceholder": "Saisissez des étiquettes séparées par des virgules",
+      "daily": "Nombre par jour",
+      "clearTags": "Effacer les étiquettes",
+      "confirmTitle": "Effacer toutes les étiquettes ?",
+      "confirmText": "Les étiquettes actuelles seront supprimées.",
+      "selected": "Sélection : {name}"
+    },
     "overview": {
       "title": "TRM UI",
       "sub": "Interface commune et exemples de contrôles pour applications de bureau",
@@ -504,6 +523,19 @@
       "item": "Élément {n}",
       "tipLabel": "Volume de sortie",
       "tipText": "Règle le volume envoyé aux haut-parleurs ou au casque."
+    },
+    "layout": {
+      "widths": "Largeurs de page",
+      "full": "Complète",
+      "wide": "Large",
+      "read": "Lecture",
+      "preview": "Aperçu des paramètres",
+      "key": "Clé",
+      "keyDesc": "Saisissez une clé pour continuer.",
+      "details": "Voir la disposition de lecture",
+      "panel": "Panneau centré",
+      "confirmKey": "Confirmer la clé",
+      "confirmed": "Clé de démonstration confirmée."
     }
   }
 }

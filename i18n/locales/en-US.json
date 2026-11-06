@@ -10,6 +10,12 @@
     "ru-RU": "Русский"
   },
   "ui": {
+    "chart": {
+      "chart": "Chart",
+      "table": "Table",
+      "label": "Date",
+      "value": "Count"
+    },
     "select": {
       "empty": "No options available",
       "missing": " (unavailable)"
@@ -44,6 +50,7 @@
       "copyFailed": "Copy failed. Please select the text and copy it manually"
     },
     "common": {
+      "removeItem": "Remove {name}",
       "close": "Close",
       "cancel": "Cancel",
       "confirm": "OK",
@@ -129,6 +136,18 @@
     "history": "History"
   },
   "demo": {
+    "shared": {
+      "title": "Data and inputs",
+      "notes": "Notes",
+      "notesPlaceholder": "Add notes",
+      "tags": "Tags",
+      "tagsPlaceholder": "Enter tags separated by commas",
+      "daily": "Daily count",
+      "clearTags": "Clear tags",
+      "confirmTitle": "Clear all tags?",
+      "confirmText": "This removes the current tags.",
+      "selected": "Selected: {name}"
+    },
     "overview": {
       "title": "TRM UI",
       "sub": "A shared interface and control examples for desktop apps",
@@ -504,6 +523,19 @@
       "item": "Item {n}",
       "tipLabel": "Output volume",
       "tipText": "Adjusts the volume sent to speakers or headphones."
+    },
+    "layout": {
+      "widths": "Page widths",
+      "full": "Full",
+      "wide": "Wide",
+      "read": "Read",
+      "preview": "Settings preview",
+      "key": "Key",
+      "keyDesc": "Enter a key to continue.",
+      "details": "View reading layout",
+      "panel": "Centered panel",
+      "confirmKey": "Confirm key",
+      "confirmed": "Demo key confirmed."
     }
   }
 }

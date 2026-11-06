@@ -10,6 +10,12 @@
     "ru-RU": "Русский"
   },
   "ui": {
+    "chart": {
+      "chart": "图表",
+      "table": "表格",
+      "label": "日期",
+      "value": "数量"
+    },
     "select": {
       "empty": "无可用选项",
       "missing": "（不可用）"
@@ -44,6 +50,7 @@
       "copyFailed": "复制失败，请手动选中复制"
     },
     "common": {
+      "removeItem": "移除 {name}",
       "close": "关闭",
       "cancel": "取消",
       "confirm": "确定",
@@ -129,6 +136,18 @@
     "history": "历史"
   },
   "demo": {
+    "shared": {
+      "title": "数据与输入",
+      "notes": "备注",
+      "notesPlaceholder": "添加备注",
+      "tags": "标签",
+      "tagsPlaceholder": "输入标签，以逗号分隔",
+      "daily": "每日数量",
+      "clearTags": "清空标签",
+      "confirmTitle": "清空所有标签？",
+      "confirmText": "此操作会移除当前标签。",
+      "selected": "已选择：{name}"
+    },
     "overview": {
       "title": "TRM UI",
       "sub": "桌面应用的统一界面与控件示例",
@@ -504,6 +523,19 @@
       "item": "第 {n} 项",
       "tipLabel": "输出音量",
       "tipText": "调整输出到扬声器或耳机的音量。"
+    },
+    "layout": {
+      "widths": "页面宽度",
+      "full": "全宽",
+      "wide": "宽栏",
+      "read": "阅读栏",
+      "preview": "设置预览",
+      "key": "密钥",
+      "keyDesc": "输入密钥以继续。",
+      "details": "查看阅读布局",
+      "panel": "居中面板",
+      "confirmKey": "确认密钥",
+      "confirmed": "演示密钥已确认。"
     }
   }
 }

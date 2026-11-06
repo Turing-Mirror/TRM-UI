@@ -79,6 +79,7 @@ export function Select({
   onChange,
   full = false,
   width,
+  ariaLabel,
   disabled = false,
 }: {
   value: string;
@@ -86,6 +87,7 @@ export function Select({
   onChange: (v: string) => void;
   full?: boolean;
   width?: number;
+  ariaLabel?: string;
   disabled?: boolean;
 }) {
   const { t } = useI18n();
@@ -95,6 +97,7 @@ export function Select({
   const missing = Boolean(value) && !options.some((o) => o.id === value);
   return (
     <select
+      aria-label={ariaLabel}
       value={value}
       disabled={disabled}
       onChange={(e) => onChange(e.target.value)}

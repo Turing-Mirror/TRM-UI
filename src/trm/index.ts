@@ -9,6 +9,12 @@
 
 export { PagePad, PageHead, Block, Group, Btn, ListItem, HelpMark } from "./components/ui";
 export { Field, Select, RangeBar, Slider, Toggle } from "./components/controls";
+export { TextInput, TextArea, type TextInputProps, type TextAreaProps } from "./components/inputs";
+export { ChipInput, type ChipInputProps } from "./components/ChipInput";
+export { DataTable, type DataColumn, type DataTableProps } from "./components/DataTable";
+export { BarChart, niceTick, type BarChartItem, type BarChartProps } from "./components/BarChart";
+export { ConfirmDialog, type ConfirmDialogProps } from "./components/ConfirmDialog";
+export { RowGroup, Row, CenterPanel, type RowGroupProps, type RowProps, type CenterPanelProps } from "./components/rows";
 export { SegmentControl, type SegmentOption } from "./components/SegmentControl";
 export { Tooltip } from "./components/Tooltip";
 export { PageHost, PageActive, usePageActive } from "./components/PageHost";

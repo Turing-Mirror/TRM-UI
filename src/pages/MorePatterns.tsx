@@ -1,8 +1,54 @@
 import { useEffect, useState } from "react";
+import { PagePad, PageHead, RowGroup, Row, CenterPanel, SegmentControl, Field, TextInput } from "../trm";
 import { Block, Btn, Ring, PickList, FlowList, Roll, SearchBox, Slider, Side, SideItem, stagger, useI18n, useNotify, type PickItem } from "../trm";
 
 const GB = 1024 ** 3;
 const MB = 1024 ** 2;
+
+export function LayoutPatterns() {
+  const { t } = useI18n();
+  const [width, setWidth] = useState<"full" | "wide" | "read">("read");
+  const [key, setKey] = useState("");
+  const [confirmed, setConfirmed] = useState(false);
+  return <>
+    <Block title={t("demo.layout.widths")}>
+      <SegmentControl value={width} onChange={setWidth} options={(["full", "wide", "read"] as const).map((id) => ({ id, label: t(`demo.layout.${id}`) }))} />
+      <div className="mt-4 border border-[var(--line)] rounded-[var(--r)]">
+        <PagePad width={width}>
+          <PageHead title={t("demo.layout.preview")} />
+          <RowGroup title={t("demo.set.tab.general")}>
+            <Row
+              title={t("demo.layout.key")}
+              desc={t("demo.layout.keyDesc")}
+              control={
+                <TextInput aria-label={t("demo.layout.key")} value={key}
+                  onChange={(value) => { setKey(value); setConfirmed(false); }} />
+              }
+            />
+            <Row title={t("demo.layout.details")} onClick={() => setWidth("read")} />
+          </RowGroup>
+        </PagePad>
+      </div>
+    </Block>
+    <Block title={t("demo.layout.panel")}>
+      <div className="h-[420px] overflow-auto rounded-[var(--r)] bg-[var(--group)]">
+        <CenterPanel title={t("demo.layout.confirmKey")} sub={t("demo.layout.keyDesc")} foot={<Btn primary disabled={!key.trim() || confirmed} onClick={() => setConfirmed(true)}>{t("ui.common.confirm")}</Btn>}>
+          <Field
+            label={t("demo.layout.key")}
+            control={
+              <TextInput
+                aria-label={t("demo.layout.key")}
+                value={key}
+                onChange={(value) => { setKey(value); setConfirmed(false); }}
+              />
+            }
+          />
+          {confirmed ? <p role="status" className="text-[12.5px] text-[var(--meta)]">{t("demo.layout.confirmed")}</p> : null}
+        </CenterPanel>
+      </div>
+    </Block>
+  </>;
+}
 
 function human(n: number) {
   if (n >= GB) return `${(n / GB).toFixed(2)} GB`;

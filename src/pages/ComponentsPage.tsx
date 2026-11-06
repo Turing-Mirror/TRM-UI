@@ -12,6 +12,12 @@ import {
   Slider,
   Toggle,
   SegmentControl,
+  TextInput,
+  TextArea,
+  ChipInput,
+  DataTable,
+  BarChart,
+  ConfirmDialog,
   useI18n,
 } from "../trm";
 
@@ -28,6 +34,18 @@ export function ComponentsPage() {
   const [autostart, setAutostart] = useState(false);
   const [seg, setSeg] = useState<"a" | "b" | "c">("a");
   const [expanded, setExpanded] = useState(false);
+  const [notes, setNotes] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmBusy, setConfirmBusy] = useState(false);
+  const [selected, setSelected] = useState("");
+  const confirmTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (confirmTimer.current !== null) clearTimeout(confirmTimer.current);
+  }, []);
+  const daily = [8, 12, 5, 18, 24, 16, 21].map((value, index) => ({
+    label: `2026-11-${String(index + 1).padStart(2, "0")}`, value,
+  }));
 
   return (
     <PagePad>
@@ -62,14 +80,11 @@ export function ComponentsPage() {
               label={t("demo.field.name")}
               tip={t("demo.field.nameTip")}
               control={
-                <input
+                <TextInput
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className={[
-                    "text-[13px] text-[var(--ink)] bg-transparent w-full max-w-[340px]",
-                    "px-3.5 py-[7px] rounded-[var(--rs)] shadow-[inset_0_0_0_1px_var(--line)]",
-                    "outline-none focus:shadow-[inset_0_0_0_1px_var(--accent)] select-text",
-                  ].join(" ")}
+                  onChange={setName}
+                  aria-label={t("demo.field.name")}
+                  className="max-w-[340px]"
                 />
               }
             />
@@ -112,6 +127,51 @@ export function ComponentsPage() {
             />
           </div>
         </Group>
+      </Block>
+
+      <Block title={t("demo.shared.title")}>
+        <div className="flex flex-col gap-6">
+          <Field
+            label={t("demo.shared.notes")}
+            control={<TextArea value={notes} onChange={setNotes} aria-label={t("demo.shared.notes")}
+              placeholder={t("demo.shared.notesPlaceholder")} />}
+          />
+          <Field
+            label={t("demo.shared.tags")}
+            control={<ChipInput value={tags} onChange={setTags} label={t("demo.shared.tags")}
+              placeholder={t("demo.shared.tagsPlaceholder")} />}
+          />
+          <div><Btn onClick={() => setConfirmOpen(true)}>{t("demo.shared.clearTags")}</Btn></div>
+          <DataTable
+            label={t("demo.shared.daily")}
+            rows={daily}
+            keyOf={(row) => row.label}
+            columns={[
+              { key: "label", label: t("ui.chart.label"), render: (row) => row.label },
+              { key: "value", label: t("ui.chart.value"), render: (row) => row.value, align: "end" },
+            ]}
+            onRowClick={(row) => setSelected(row.label)}
+          />
+          {selected ? <p role="status">{t("demo.shared.selected", { name: selected })}</p> : null}
+          <BarChart title={t("demo.shared.daily")} data={daily} formatLabel={(label) => label.slice(5)} showTableToggle />
+        </div>
+        <ConfirmDialog
+          open={confirmOpen}
+          title={t("demo.shared.confirmTitle")}
+          text={t("demo.shared.confirmText")}
+          confirm={t("demo.shared.clearTags")}
+          danger
+          busy={confirmBusy}
+          onClose={() => setConfirmOpen(false)}
+          onConfirm={() => {
+            setConfirmBusy(true);
+            confirmTimer.current = setTimeout(() => {
+              setTags([]);
+              setConfirmBusy(false);
+              setConfirmOpen(false);
+            }, 900);
+          }}
+        />
       </Block>
 
       <Block title={t("demo.components.segment")} note={t("demo.components.segmentNote")}>

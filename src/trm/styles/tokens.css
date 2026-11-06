@@ -1,4 +1,6 @@
 :root {
+  --page-w-read: 760px;
+  --page-w-wide: 1160px;
   --bg-base: #f4f6f8;
   --bg: var(--bg-base);
   --surface: #ffffff;

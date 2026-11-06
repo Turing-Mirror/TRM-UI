@@ -10,6 +10,12 @@
     "ru-RU": "Русский"
   },
   "ui": {
+    "chart": {
+      "chart": "Gráfico",
+      "table": "Tabla",
+      "label": "Fecha",
+      "value": "Cantidad"
+    },
     "select": {
       "empty": "Sin opciones disponibles",
       "missing": " (no disponible)"
@@ -44,6 +50,7 @@
       "copyFailed": "No se pudo copiar. Selecciona el texto y cópialo manualmente"
     },
     "common": {
+      "removeItem": "Eliminar {name}",
       "close": "Cerrar",
       "cancel": "Cancelar",
       "confirm": "Aceptar",
@@ -129,6 +136,18 @@
     "history": "Historial"
   },
   "demo": {
+    "shared": {
+      "title": "Datos y entradas",
+      "notes": "Notas",
+      "notesPlaceholder": "Añadir notas",
+      "tags": "Etiquetas",
+      "tagsPlaceholder": "Escriba etiquetas separadas por comas",
+      "daily": "Cantidad diaria",
+      "clearTags": "Borrar etiquetas",
+      "confirmTitle": "¿Borrar todas las etiquetas?",
+      "confirmText": "Se eliminarán las etiquetas actuales.",
+      "selected": "Seleccionado: {name}"
+    },
     "overview": {
       "title": "TRM UI",
       "sub": "Interfaz común y ejemplos de controles para aplicaciones de escritorio",
@@ -504,6 +523,19 @@
       "item": "Elemento {n}",
       "tipLabel": "Volumen de salida",
       "tipText": "Ajusta el volumen que se envía a los altavoces o los auriculares."
+    },
+    "layout": {
+      "widths": "Anchos de página",
+      "full": "Completo",
+      "wide": "Amplio",
+      "read": "Lectura",
+      "preview": "Vista previa de ajustes",
+      "key": "Clave",
+      "keyDesc": "Introduzca una clave para continuar.",
+      "details": "Ver diseño de lectura",
+      "panel": "Panel centrado",
+      "confirmKey": "Confirmar clave",
+      "confirmed": "Clave de demostración confirmada."
     }
   }
 }

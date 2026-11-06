@@ -28,7 +28,7 @@ import {
   useI18n,
   type Art,
 } from "../trm";
-import { CleanupPattern, ListEditPattern, StarterPattern } from "./MorePatterns";
+import { CleanupPattern, ListEditPattern, StarterPattern, LayoutPatterns } from "./MorePatterns";
 
 /** 翻页演示里每页几项。 */
 const PER_PAGE = 4;
@@ -70,6 +70,7 @@ export function PatternsPage() {
   return (
     <PagePad>
       <PageHead title={t("nav.patterns")} />
+      <LayoutPatterns />
 
       <Block title={t("demo.patterns.tabs")}>
         <div className="flex flex-col gap-4">

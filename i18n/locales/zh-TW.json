@@ -10,6 +10,12 @@
     "ru-RU": "Русский"
   },
   "ui": {
+    "chart": {
+      "chart": "圖表",
+      "table": "表格",
+      "label": "日期",
+      "value": "數量"
+    },
     "select": {
       "empty": "無可用選項",
       "missing": "（不可用）"
@@ -44,6 +50,7 @@
       "copyFailed": "複製失敗，請手動選取複製"
     },
     "common": {
+      "removeItem": "移除 {name}",
       "close": "關閉",
       "cancel": "取消",
       "confirm": "確定",
@@ -129,6 +136,18 @@
     "history": "歷史"
   },
   "demo": {
+    "shared": {
+      "title": "資料與輸入",
+      "notes": "備註",
+      "notesPlaceholder": "新增備註",
+      "tags": "標籤",
+      "tagsPlaceholder": "輸入標籤，以逗號分隔",
+      "daily": "每日數量",
+      "clearTags": "清空標籤",
+      "confirmTitle": "清空所有標籤？",
+      "confirmText": "此操作會移除目前的標籤。",
+      "selected": "已選擇：{name}"
+    },
     "overview": {
       "title": "TRM UI",
       "sub": "桌面應用的統一介面與控制元件示例",
@@ -504,6 +523,19 @@
       "item": "第 {n} 項",
       "tipLabel": "輸出音量",
       "tipText": "調整輸出到喇叭或耳機的音量。"
+    },
+    "layout": {
+      "widths": "頁面寬度",
+      "full": "全寬",
+      "wide": "寬欄",
+      "read": "閱讀欄",
+      "preview": "設定預覽",
+      "key": "金鑰",
+      "keyDesc": "輸入金鑰以繼續。",
+      "details": "檢視閱讀佈局",
+      "panel": "置中面板",
+      "confirmKey": "確認金鑰",
+      "confirmed": "示範金鑰已確認。"
     }
   }
 }

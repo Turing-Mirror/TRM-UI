@@ -2,6 +2,221 @@ import type { Rule } from "./rules";
 
 /** 交互约定。「交互」页照这份数据渲染，下面的演示就是照这些约定做的。 */
 export const INTERACTION_RULES: Rule[] = [
+{
+  "id": "tableSurface",
+  "title": {
+    "zh-CN": "表格自带分组底色",
+    "zh-TW": "表格自帶群組底色",
+    "en-US": "Tables include their group surface",
+    "ja-JP": "表にはグループの背景を含める",
+    "ko-KR": "표에 그룹 배경을 포함한다",
+    "es-ES": "Las tablas incluyen su fondo de grupo",
+    "fr-FR": "Les tableaux incluent leur fond de groupe",
+    "ru-RU": "Таблицы включают фон группы"
+  },
+  "lead": [
+    {
+      "zh-CN": "DataTable 内置圆角与横向滚动，不再额外包一层底色；行操作支持键盘。",
+      "zh-TW": "DataTable 內建圓角與橫向捲動，不再額外包一層底色；列操作支援鍵盤。",
+      "en-US": "DataTable includes rounded corners and horizontal scrolling; no extra surface wrapper is needed. Row actions support the keyboard.",
+      "ja-JP": "DataTable は角丸と横スクロールを備え、背景用のラッパーは不要です。行の操作はキーボードに対応します。",
+      "ko-KR": "DataTable은 모서리 둥글림과 가로 스크롤을 포함하므로 배경 래퍼가 필요 없다. 행 작업은 키보드를 지원한다.",
+      "es-ES": "DataTable incluye esquinas redondeadas y desplazamiento horizontal, sin otra capa de fondo. Las acciones de fila admiten teclado.",
+      "fr-FR": "DataTable inclut les coins arrondis et le défilement horizontal, sans fond supplémentaire. Les actions de ligne sont accessibles au clavier.",
+      "ru-RU": "DataTable включает скругления и горизонтальную прокрутку без дополнительного фона. Действия строк доступны с клавиатуры."
+    }
+  ],
+  "examples": []
+},
+{
+  "id": "readWidth",
+  "title": {
+    "zh-CN": "表单与设置使用阅读宽度",
+    "zh-TW": "表單與設定使用閱讀寬度",
+    "en-US": "Forms and settings use reading width",
+    "ja-JP": "フォームと設定には読みやすい幅を使う",
+    "ko-KR": "양식과 설정에는 읽기 너비를 사용한다",
+    "fr-FR": "Les formulaires et paramètres utilisent la largeur de lecture",
+    "es-ES": "Los formularios y ajustes usan el ancho de lectura",
+    "ru-RU": "Формы и настройки используют ширину для чтения"
+  },
+  "lead": [
+    {
+      "zh-CN": "表单和设置必须使用 PagePad width=\"read\"，不可使用 full；宽列表可用 wide。",
+      "zh-TW": "表單和設定必須使用 PagePad width=\"read\"，不可使用 full；寬列表可用 wide。",
+      "en-US": "Forms and settings must use PagePad width=\"read\", never full; wide lists can use wide.",
+      "ja-JP": "フォームと設定には必ず PagePad width=\"read\" を使い、full は使わない。幅広い一覧には wide を使える。",
+      "ko-KR": "양식과 설정은 반드시 PagePad width=\"read\"를 사용하며 full은 사용하지 않는다. 넓은 목록에는 wide를 사용할 수 있다.",
+      "fr-FR": "Les formulaires et paramètres utilisent PagePad width=\"read\", jamais full ; les listes larges peuvent utiliser wide.",
+      "es-ES": "Los formularios y ajustes usan PagePad width=\"read\", nunca full; las listas amplias pueden usar wide.",
+      "ru-RU": "Формы и настройки используют PagePad width=\"read\", никогда full; широкие списки могут использовать wide."
+    }
+  ],
+  "examples": [
+    {
+      "pairs": {
+        "zh-CN": [
+          "设置和表单铺满工作区，标题与控件相距过远。",
+          "表单和设置必须使用 PagePad width=\"read\"，不可使用 full；宽列表可用 wide。"
+        ],
+        "zh-TW": [
+          "設定和表單鋪滿工作區，標題與控制項相距過遠。",
+          "表單和設定必須使用 PagePad width=\"read\"，不可使用 full；寬列表可用 wide。"
+        ],
+        "en-US": [
+          "Settings and forms span the full workspace, separating labels from controls.",
+          "Forms and settings must use PagePad width=\"read\", never full; wide lists can use wide."
+        ],
+        "ja-JP": [
+          "設定やフォームが全幅に広がり、ラベルと操作部が離れている。",
+          "フォームと設定には必ず PagePad width=\"read\" を使い、full は使わない。幅広い一覧には wide を使える。"
+        ],
+        "ko-KR": [
+          "설정과 양식이 전체 작업 공간에 펼쳐져 제목과 컨트롤이 멀어진다.",
+          "양식과 설정은 반드시 PagePad width=\"read\"를 사용하며 full은 사용하지 않는다. 넓은 목록에는 wide를 사용할 수 있다."
+        ],
+        "fr-FR": [
+          "Les paramètres et formulaires occupent toute la largeur et éloignent les libellés des contrôles.",
+          "Les formulaires et paramètres utilisent PagePad width=\"read\", jamais full ; les listes larges peuvent utiliser wide."
+        ],
+        "es-ES": [
+          "Los ajustes y formularios ocupan todo el espacio y alejan las etiquetas de los controles.",
+          "Los formularios y ajustes usan PagePad width=\"read\", nunca full; las listas amplias pueden usar wide."
+        ],
+        "ru-RU": [
+          "Настройки и формы занимают всю ширину, отдаляя подписи от элементов управления.",
+          "Формы и настройки используют PagePad width=\"read\", никогда full; широкие списки могут использовать wide."
+        ]
+      }
+    }
+  ]
+},
+{
+  "id": "settingRows",
+  "title": {
+    "zh-CN": "一行只放一项设置",
+    "zh-TW": "一列只放一項設定",
+    "en-US": "One setting per row",
+    "ja-JP": "一行に一つの設定を置く",
+    "ko-KR": "한 행에 설정 하나를 배치한다",
+    "fr-FR": "Un paramètre par ligne",
+    "es-ES": "Un ajuste por fila",
+    "ru-RU": "Одна настройка в строке"
+  },
+  "lead": [
+    {
+      "zh-CN": "RowGroup 内每个 Row 只放一项设置，左侧标题与说明，右侧控件。长控件使用 stacked，窄容器自动换行。",
+      "zh-TW": "RowGroup 內每個 Row 只放一項設定，左側標題與說明，右側控制項。長控制項使用 stacked，窄容器自動換行。",
+      "en-US": "Each Row in a RowGroup contains one setting: title and description left, control right. Use stacked for long controls; narrow containers wrap automatically.",
+      "ja-JP": "RowGroup の各 Row に設定を一つ置き、左にタイトルと説明、右に操作部を配置する。長い操作部は stacked にし、狭いコンテナーでは自動で折り返す。",
+      "ko-KR": "RowGroup의 각 Row에는 설정 하나를 놓고 왼쪽에 제목과 설명, 오른쪽에 컨트롤을 배치한다. 긴 컨트롤에는 stacked를 사용하며 좁은 컨테이너에서는 자동으로 줄을 바꾼다.",
+      "fr-FR": "Chaque Row dans un RowGroup contient un paramètre : titre et description à gauche, contrôle à droite. Utiliser stacked pour les contrôles longs ; les conteneurs étroits passent automatiquement à la ligne.",
+      "es-ES": "Cada Row de un RowGroup contiene un ajuste: título y descripción a la izquierda, control a la derecha. Use stacked para controles largos; los contenedores estrechos ajustan las filas automáticamente.",
+      "ru-RU": "Каждый Row в RowGroup содержит одну настройку: заголовок и описание слева, управление справа. Для длинных элементов используется stacked; в узком контейнере перенос выполняется автоматически."
+    }
+  ],
+  "examples": [
+    {
+      "pairs": {
+        "zh-CN": [
+          "多个设置挤在一行，标题、说明与控件上下散排。",
+          "RowGroup 内每个 Row 只放一项设置，左侧标题与说明，右侧控件。长控件使用 stacked，窄容器自动换行。"
+        ],
+        "zh-TW": [
+          "多個設定擠在一列，標題、說明與控制項上下散排。",
+          "RowGroup 內每個 Row 只放一項設定，左側標題與說明，右側控制項。長控制項使用 stacked，窄容器自動換行。"
+        ],
+        "en-US": [
+          "Several settings share a row, with titles, descriptions and controls scattered vertically.",
+          "Each Row in a RowGroup contains one setting: title and description left, control right. Use stacked for long controls; narrow containers wrap automatically."
+        ],
+        "ja-JP": [
+          "複数の設定を一行に詰め、タイトル、説明、操作部を上下にばらばらに置く。",
+          "RowGroup の各 Row に設定を一つ置き、左にタイトルと説明、右に操作部を配置する。長い操作部は stacked にし、狭いコンテナーでは自動で折り返す。"
+        ],
+        "ko-KR": [
+          "여러 설정을 한 행에 넣고 제목, 설명, 컨트롤을 위아래로 흩어 놓는다.",
+          "RowGroup의 각 Row에는 설정 하나를 놓고 왼쪽에 제목과 설명, 오른쪽에 컨트롤을 배치한다. 긴 컨트롤에는 stacked를 사용하며 좁은 컨테이너에서는 자동으로 줄을 바꾼다."
+        ],
+        "fr-FR": [
+          "Plusieurs paramètres partagent une ligne avec titres, descriptions et contrôles dispersés.",
+          "Chaque Row dans un RowGroup contient un paramètre : titre et description à gauche, contrôle à droite. Utiliser stacked pour les contrôles longs ; les conteneurs étroits passent automatiquement à la ligne."
+        ],
+        "es-ES": [
+          "Varios ajustes comparten una fila con títulos, descripciones y controles dispersos.",
+          "Cada Row de un RowGroup contiene un ajuste: título y descripción a la izquierda, control a la derecha. Use stacked para controles largos; los contenedores estrechos ajustan las filas automáticamente."
+        ],
+        "ru-RU": [
+          "Несколько настроек в одной строке, а заголовки, описания и элементы управления разбросаны.",
+          "Каждый Row в RowGroup содержит одну настройку: заголовок и описание слева, управление справа. Для длинных элементов используется stacked; в узком контейнере перенос выполняется автоматически."
+        ]
+      }
+    }
+  ]
+},
+{
+  "id": "singleTaskPanel",
+  "title": {
+    "zh-CN": "单项任务使用居中面板",
+    "zh-TW": "單項任務使用置中面板",
+    "en-US": "Single tasks use a centered panel",
+    "ja-JP": "単一タスクには中央パネルを使う",
+    "ko-KR": "단일 작업에는 가운데 패널을 사용한다",
+    "fr-FR": "Une tâche unique utilise un panneau centré",
+    "es-ES": "Las tareas únicas usan un panel centrado",
+    "ru-RU": "Одиночные задачи используют центральную панель"
+  },
+  "lead": [
+    {
+      "zh-CN": "登录、确认密钥等单项任务使用 CenterPanel，在工作区内居中。",
+      "zh-TW": "登入、確認金鑰等單項任務使用 CenterPanel，在工作區內置中。",
+      "en-US": "Use CenterPanel for single tasks such as sign-in or key confirmation, centered in the workspace.",
+      "ja-JP": "ログインやキー確認などの単一タスクには CenterPanel を使い、作業領域内で中央に配置する。",
+      "ko-KR": "로그인이나 키 확인 같은 단일 작업에는 작업 공간 가운데 배치되는 CenterPanel을 사용한다.",
+      "fr-FR": "Utiliser CenterPanel pour une connexion ou une confirmation de clé, au centre de l’espace de travail.",
+      "es-ES": "Use CenterPanel para tareas únicas como acceder o confirmar una clave, centrado en el espacio de trabajo.",
+      "ru-RU": "Для входа или подтверждения ключа используется CenterPanel, расположенный по центру рабочей области."
+    }
+  ],
+  "examples": [
+    {
+      "pairs": {
+        "zh-CN": [
+          "登录或密钥输入框孤立在整页左上角。",
+          "登录、确认密钥等单项任务使用 CenterPanel，在工作区内居中。"
+        ],
+        "zh-TW": [
+          "登入或金鑰輸入框孤立在整頁左上角。",
+          "登入、確認金鑰等單項任務使用 CenterPanel，在工作區內置中。"
+        ],
+        "en-US": [
+          "A login or key input sits alone in the upper-left corner of a page.",
+          "Use CenterPanel for single tasks such as sign-in or key confirmation, centered in the workspace."
+        ],
+        "ja-JP": [
+          "ログインやキー入力欄だけをページの左上に置く。",
+          "ログインやキー確認などの単一タスクには CenterPanel を使い、作業領域内で中央に配置する。"
+        ],
+        "ko-KR": [
+          "로그인 또는 키 입력란만 페이지 왼쪽 위에 놓는다.",
+          "로그인이나 키 확인 같은 단일 작업에는 작업 공간 가운데 배치되는 CenterPanel을 사용한다."
+        ],
+        "fr-FR": [
+          "Un champ de connexion ou de clé reste seul en haut à gauche de la page.",
+          "Utiliser CenterPanel pour une connexion ou une confirmation de clé, au centre de l’espace de travail."
+        ],
+        "es-ES": [
+          "Un campo de acceso o clave queda solo en la esquina superior izquierda.",
+          "Use CenterPanel para tareas únicas como acceder o confirmar una clave, centrado en el espacio de trabajo."
+        ],
+        "ru-RU": [
+          "Поле входа или ключа одиноко расположено в левом верхнем углу страницы.",
+          "Для входа или подтверждения ключа используется CenterPanel, расположенный по центру рабочей области."
+        ]
+      }
+    }
+  ]
+},
   {
     id: "iconBtn",
     title: {

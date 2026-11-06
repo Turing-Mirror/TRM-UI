@@ -64,6 +64,38 @@ npm pack
 
 `useMorphState` 在目标页面完成布局后切换容器形态，默认等待两帧；`useLeavingValue` 保留旧内容直到离场结束。容器应挂在路由内容之外，切换页面、输入类型或语言不重建草稿。调用方保留原有几何、拖动、动效类与持续时间。
 
+## 通用输入与数据组件
+
+| 导出 | 参数 |
+| --- | --- |
+| `TextInput` / `TextInputProps` | `value: string`、`onChange(string)`、`invalid?`、原生输入属性；`type` 支持 text、password、number。 |
+| `TextArea` / `TextAreaProps` | `value: string`、`onChange(string)`、`invalid?`、原生 textarea 属性；默认 3 行。 |
+| `ChipInput` / `ChipInputProps` | `value: string[]`、`onChange`、`label`、`disabled?`、`placeholder?`、`separators?`；默认中英文逗号。 |
+| `DataTable<T>` / `DataTableProps<T>` | `rows`、`columns`、`keyOf`、`label`、`onRowClick?`。 |
+| `DataColumn<T>` | `key`、`label`、`render(row)`、`align?: "start" \| "end"`、`width?: string`。 |
+| `BarChart` / `BarChartProps` | `title`、`data: BarChartItem[]`、`formatValue?`、`formatLabel?`、`describe?`、`showTableToggle?`。 |
+| `BarChartItem` / `niceTick(max)` | 数据项为 `{ label: string; value: number }`；`niceTick` 返回适合三段纵轴的刻度间隔。 |
+| `ConfirmDialog` / `ConfirmDialogProps` | `open`、`title`、`text`、`confirm`、`danger?`、`busy`、`onClose`、`onConfirm`。 |
+
+`ChipInput` 在输入法组合期间保留草稿，逗号、Enter 或失焦提交并去重，空草稿下 Backspace 移除末项。
+`DataTable` 自带分组底色、圆角与横向滚动，行回调支持点击、Enter 和空格；单元格内的控件独立响应。
+`BarChart` 用于非负单序列数据，负值按零高度显示；`formatLabel` 接收标签字符串，`describe` 接收数据项。
+`showTableToggle` 默认关闭，启用后提供图表与表格切换。密集序列保留 2px 柱间距并横向滚动。
+`ConfirmDialog` 复用 `Modal` 和 `Btn`；忙碌时取消、遮罩与 Escape 均不关闭，确认操作不重复触发。
+`PromptDialog` 仍用于输入名称，两者不混用。配套样式随 `trm-ui/styles.css` 提供。
+
+## 页面宽度与设置行
+
+`PagePad` 新增 `width?: "full" | "wide" | "read"`，默认 `full` 保持现有布局。`read` 和 `wide` 居中，最大宽度分别由 `--page-w-read`（760px）和 `--page-w-wide`（1160px）控制，包含原有响应式左右留白。内部 `PageHead` 自动跟随；三种宽度均支持 `fill`。
+
+`RowGroup({ title?, note?, action?, children })` 在标题与备注下面显示分组卡片，相邻 `Row` 之间使用细线。`Row({ title, desc?, tip?, control?, stacked?, onClick?, children? })` 左侧显示标题与说明，右侧显示控件；`stacked` 将控件置于下方并占满宽度，容器不足 560px 时普通行也换行。`children` 用于行下方补充内容。
+
+只传 `onClick` 而不传 `control` 时，行使用原生按钮和右箭头，支持 Enter 与空格；此时 `tip` 使用原生提示，避免按钮嵌套。原生控件自动关联标题与说明，保留调用方显式标签；复合控件置于有名称的 group 内，调用方仍应提供控件自身的 `label` 或 `ariaLabel`。`Field`、`Group` 和 `Block` 保持原有接口。参考实现见 `src/pages/SettingsPage.tsx`。
+
+`CenterPanel({ title, sub?, width?, children, foot? })` 在父工作区内居中，默认卡片宽度 400px；`width` 接受像素数值或 CSS 长度。父容器需提供确定高度，内容过长时自然增长，由父容器滚动。它使用普通 section，不创建遮罩、焦点陷阱或 portal。
+
+布局规则统一维护在 `src/pages/interactionRules.ts`，模式页提供三种宽度与确认密钥的可操作示例。
+
 ## 全高工作区
 
 `Panes layout="fill"` 用于画布、编辑器或占满父容器的工作区。父容器必须提供确定高度；此模式直接定位子视图，不经过按内容伸缩的 Morph 容器。默认 `layout="content"` 保持列表和设置页面的高度伸缩。离场完成后的 Pane 使用 hidden 和 inert，同时保留输入状态。

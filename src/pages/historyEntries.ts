@@ -18,6 +18,40 @@ export type HistoryEntry = {
 };
 
 export const HISTORY: HistoryEntry[] = [
+{
+  "id": "settingsLayout",
+  "date": "2026-11-06",
+  "old": {
+    "zh-CN": "全宽页面中上下堆叠字段，登录输入框位于左上角。",
+    "zh-TW": "全寬頁面中上下堆疊欄位，登入輸入框位於左上角。",
+    "en-US": "Full-width pages with vertically stacked fields and a login input at the upper left.",
+    "ja-JP": "全幅ページで入力項目を縦に積み、ログイン欄を左上に配置していた。",
+    "ko-KR": "전체 너비 페이지에 필드를 세로로 쌓고 로그인 입력란을 왼쪽 위에 배치했다.",
+    "fr-FR": "Pages pleine largeur avec champs empilés et connexion en haut à gauche.",
+    "es-ES": "Páginas de ancho completo con campos apilados y acceso en la esquina superior izquierda.",
+    "ru-RU": "Страницы полной ширины с полями друг под другом и входом в левом верхнем углу."
+  },
+  "now": {
+    "zh-CN": "阅读宽度居中显示设置行卡片，单项任务使用 CenterPanel。",
+    "zh-TW": "閱讀寬度置中顯示設定列卡片，單項任務使用 CenterPanel。",
+    "en-US": "Centered reading-width settings cards with rows; CenterPanel for single tasks.",
+    "ja-JP": "読みやすい幅の設定カードを中央に置き、単一タスクには CenterPanel を使用する。",
+    "ko-KR": "읽기 너비의 설정 행 카드를 가운데 배치하고 단일 작업에는 CenterPanel을 사용한다.",
+    "fr-FR": "Cartes de paramètres centrées à largeur de lecture ; CenterPanel pour les tâches uniques.",
+    "es-ES": "Tarjetas de ajustes centradas con ancho de lectura; CenterPanel para tareas únicas.",
+    "ru-RU": "Центрированные карточки настроек с шириной для чтения; CenterPanel для одиночных задач."
+  },
+  "why": {
+    "zh-CN": "店铺客服管理控制台暴露了标签与控件距离过远、登录页空散的问题。参考 ChatGPT 网页设置的居中分组卡片与 Claude 网页设置的紧凑行布局。",
+    "zh-TW": "商店客服管理控制台暴露了標籤與控制項距離過遠、登入頁空散的問題。參考 ChatGPT 網頁設定的置中分組卡片與 Claude 網頁設定的緊湊列佈局。",
+    "en-US": "A shop customer-service admin console exposed distant labels and controls and a sparse login page. The references were centered grouped cards in ChatGPT web settings and compact rows in Claude web settings.",
+    "ja-JP": "店舗カスタマーサポート管理画面で、ラベルと操作部が離れ、ログイン画面が散漫になる問題が見つかった。ChatGPT のウェブ設定の中央カードと Claude のウェブ設定のコンパクトな行を参考にした。",
+    "ko-KR": "매장 고객 지원 관리 콘솔에서 제목과 컨트롤이 멀리 떨어지고 로그인 화면이 흩어진 문제가 드러났다. ChatGPT 웹 설정의 가운데 그룹 카드와 Claude 웹 설정의 간결한 행 배치를 참고했다.",
+    "fr-FR": "Une console de service client de boutique a révélé des libellés éloignés des contrôles et une connexion dispersée. Les références sont les cartes centrées des paramètres web de ChatGPT et les lignes compactes de Claude.",
+    "es-ES": "Una consola de atención al cliente de tienda mostró etiquetas alejadas de los controles y un acceso disperso. Se tomaron como referencia las tarjetas centradas de ajustes web de ChatGPT y las filas compactas de Claude.",
+    "ru-RU": "Консоль поддержки клиентов магазина выявила удалённость подписей от управления и пустой экран входа. Ориентиры: центральные группы карточек настроек ChatGPT и компактные строки веб-настроек Claude."
+  }
+},
   {
     id: "shell-surface",
     date: "2026-11-05",
