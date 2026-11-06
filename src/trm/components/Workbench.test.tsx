@@ -58,6 +58,22 @@ it("renders the supplied empty icon and text only for null, including after clea
   expect(view.container.textContent).toContain("Choose an item");
 });
 
+it.each([false, true])("never overlaps empty and detail, including rapid changes (reduced=%s)", preference => {
+  reduced = preference;
+  view = mount(render(null));
+  for (const selected of ["", null, "z", "a", null]) {
+    act(() => view.root.render(render(selected)));
+    const empty = view.container.querySelector(".trm-workbench-empty");
+    const detail = view.container.querySelector(".trm-workbench-detail");
+    expect(Boolean(empty)).toBe(selected === null);
+    expect(Boolean(detail)).toBe(selected !== null);
+    if (selected === null) expect(view.container.querySelector(".swap-out")).toBeNull();
+  }
+  act(() => vi.advanceTimersByTime(FLOW_MS + 1));
+  expect(view.container.querySelector(".trm-workbench-detail")).toBeNull();
+  expect(view.container.querySelector(".trm-workbench-empty")?.textContent).toBe("Choose an item");
+});
+
 it("stages details in list order, including immediate reversal, and makes the departing detail inert", () => {
   view = mount(render("z"));
   act(() => view.root.render(render("a")));

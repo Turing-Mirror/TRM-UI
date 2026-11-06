@@ -90,7 +90,9 @@ export function Workbench({
         <Icon name="back" size={18} />{t("ui.common.back")}
       </button>
     </div> : null}
-    <Swap k={selected === null ? "empty" : `item:${selected}`} dir={dir}
+    {/* Empty is a different view, not a queue item; discard its outgoing layer before showing detail. */}
+    <Swap key={selected === null ? "empty" : "detail"}
+      k={selected === null ? "empty" : `item:${selected}`} dir={dir}
       variant="parts" className="trm-workbench-swap">
       {selected === null ? <div className="trm-workbench-empty">{empty}</div> : detail}
     </Swap>
@@ -156,7 +158,12 @@ export function WorkbenchDetail({
   const id = useId();
   const fields = Children.toArray(sub);
   const bodyStart = fields.length + 3;
-  const footer = foot != null ? <footer className="trm-workbench-foot" data-mode={footMode}>{foot}</footer> : null;
+  const blocks = Children.toArray(children).length;
+  // Form actions act on the fields above them, so they enter after the last body part instead of before it.
+  const footer = foot == null ? null : footMode === "inline"
+    ? <footer className="trm-workbench-foot trm-workbench-part rise" data-mode={footMode}
+      style={stagger(bodyStart + Math.min(blocks, 4))}>{foot}</footer>
+    : <footer className="trm-workbench-foot" data-mode={footMode}>{foot}</footer>;
   return <section className="trm-workbench-detail" aria-labelledby={id}>
     <header className="trm-workbench-heading">
       <div className="trm-workbench-title">
