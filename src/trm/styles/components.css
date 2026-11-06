@@ -294,7 +294,8 @@ body::before {
   to { grid-template-rows: 0fr; opacity: 0; }
 }
 .flow-item { display: grid; grid-template-rows: 1fr; }
-.flow-body { min-height: 0; }
+/* 网格子项默认 min-width: auto，长文字会把条目撑得比列表还宽，省略号与行尾标签都会失效。 */
+.flow-body { min-height: 0; min-width: 0; }
 .flow-enter, .flow-leave { overflow: clip; overflow-clip-margin: 6px; }
 .flow-enter { animation: flow-open var(--flow-ms) var(--ease-nav) both; }
 .flow-leave { animation: flow-close var(--flow-ms) var(--ease-nav) both; pointer-events: none; }
