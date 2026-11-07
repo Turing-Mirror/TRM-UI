@@ -2,11 +2,11 @@ import { cloneElement, createContext, isValidElement, useContext, useEffect, use
 import { HelpMark } from "./Tooltip";
 import { Icon } from "./Icon";
 
-export type RowGroupProps = { title?: string; note?: string; action?: ReactNode; children: ReactNode };
+export type RowGroupProps = { id?: string; title?: string; note?: string; action?: ReactNode; children: ReactNode };
 const RowGroupContext = createContext(false);
 
 /** Settings cards deliberately have separators; the older Field/Group pattern remains unchanged. */
-export function RowGroup({ title, note, action, children }: RowGroupProps) {
+export function RowGroup({ id: anchor, title, note, action, children }: RowGroupProps) {
   const id = useId();
   const nested = useContext(RowGroupContext);
   const warned = useRef(false);
@@ -17,7 +17,7 @@ export function RowGroup({ title, note, action, children }: RowGroupProps) {
     }
   }, [nested]);
   const Heading = nested ? "h4" : "h3";
-  return <RowGroupContext.Provider value={true}><section className={nested ? "trm-row-subgroup" : "trm-row-group"} aria-labelledby={title ? id : undefined}>
+  return <RowGroupContext.Provider value={true}><section id={anchor} className={nested ? "trm-row-subgroup" : "trm-row-group"} aria-labelledby={title ? id : undefined}>
     {title || note || action ? <div className="trm-row-heading">
       <div>{title ? <Heading id={id}>{title}</Heading> : null}{note ? <p>{note}</p> : null}</div>
       {action ? <div className="trm-row-action">{action}</div> : null}

@@ -109,11 +109,13 @@ npm pack
 
 `PagePad` 新增 `width?: "full" | "wide" | "read"`，默认 `full` 保持现有布局。`read` 和 `wide` 居中，最大宽度分别由 `--page-w-read`（760px）和 `--page-w-wide`（1160px）控制，包含原有响应式左右留白。内部 `PageHead` 自动跟随；三种宽度均支持 `fill`。
 
-`RowGroup({ title?, note?, action?, children })` 在标题与备注下面显示分组卡片，相邻 `Row` 之间使用细线。`Row({ title, desc?, tip?, control?, stacked?, onClick?, children? })` 左侧显示标题与说明，右侧显示控件；`stacked` 将控件置于下方并占满宽度，容器不足 560px 时普通行也换行。`children` 用于行下方补充内容。
+`RowGroup({ id?, title?, note?, action?, children })` 在标题与备注下面显示分组卡片，相邻 `Row` 之间使用细线。`Row({ title, desc?, tip?, control?, stacked?, onClick?, children? })` 左侧显示标题与说明，右侧显示控件；`stacked` 将控件置于下方并占满宽度，容器不足 560px 时普通行也换行。`children` 用于行下方补充内容。
 
 多个 `RowGroup` 连续排列，可放在同一个普通章节标题下，不得互相嵌套。误嵌套时，内部组自动展平为父卡片中的小标题与行，不再生成第二个卡片底色；开发环境输出一次提示。
 
 只传 `onClick` 而不传 `control` 时，行使用原生按钮和右箭头，支持 Enter 与空格；此时 `tip` 使用原生提示，避免按钮嵌套。原生控件自动关联标题与说明，保留调用方显式标签；复合控件置于有名称的 group 内，调用方仍应提供控件自身的 `label` 或 `ariaLabel`。`Field`、`Group` 和 `Block` 保持原有接口。参考实现见 `src/pages/SettingsPage.tsx`。
+
+`Outline({ items, label, offset? })` 是分组较多的读宽页面的快捷菜单，`items` 为 `{ id, label }`，`id` 对应页内元素，`RowGroup` 可用 `id` 直接作为目标。读宽内容左侧放得下时，菜单停在左上角并随滚动保持可见；放不下时排在内容上方。点击平滑滚到对应章节，减少动态效果时直接跳转；选中项跟随当前章节，点击后立即选中，滚动途中不经过中间各项。`offset` 为章节标题停在滚动区顶边下方的距离，默认 24px。
 
 `CenterPanel({ title, sub?, width?, children, foot? })` 在父工作区内居中，默认卡片宽度 400px；`width` 接受像素数值或 CSS 长度。父容器需提供确定高度，内容过长时自然增长，由父容器滚动。它使用普通 section，不创建遮罩、焦点陷阱或 portal。
 

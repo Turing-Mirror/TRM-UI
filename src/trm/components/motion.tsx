@@ -625,7 +625,7 @@ export function useSlider<T extends HTMLElement>() {
   const [pos, setPos] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
   const [armed, setArmed] = useState(false);
   const measure = () => {
-    const el = box.current?.querySelector<HTMLElement>(':scope > [aria-selected="true"], :scope > [aria-pressed="true"], :scope > [aria-checked="true"], :scope > [aria-current="page"]');
+    const el = box.current?.querySelector<HTMLElement>(':scope > [aria-selected="true"], :scope > [aria-pressed="true"], :scope > [aria-checked="true"], :scope > [aria-current="page"], :scope > [aria-current="location"]');
     const next = el ? { x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight } : null;
     setPos((p) => (p && next && p.x === next.x && p.y === next.y && p.w === next.w && p.h === next.h ? p : next));
   };

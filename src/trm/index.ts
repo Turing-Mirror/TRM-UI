@@ -101,6 +101,7 @@ export { useSnapDrag, type SnapPos } from "./lib/snapDrag";
 export { HotkeyInput } from "./components/HotkeyInput";
 export { comboFromEvent, comboLabel, typingInto } from "./lib/hotkeys";
 export { useMouseNav } from "./lib/mouseNav";
+export { Outline, type OutlineItem, type OutlineProps } from "./components/Outline";
 export { StepBar } from "./components/StepBar";
 export { PickList, type PickItem } from "./components/PickList";
 
