@@ -300,7 +300,10 @@ body::before {
 .flow-enter { animation: flow-open var(--flow-ms) var(--ease-nav) both; }
 .flow-leave { animation: flow-close var(--flow-ms) var(--ease-nav) both; pointer-events: none; }
 .trm-queue-list { min-height: 0; overflow: auto; overflow-anchor: none; overscroll-behavior: contain; }
+/* Clip the horizontal journey without disabling vertical queue scrolling. */
+.trm-queue-list[data-switching] { overflow-x: hidden; }
 .trm-queue-stage { position: relative; isolation: isolate; }
+.trm-queue-list[data-switching] .trm-queue-stage > div { overflow-x: clip; }
 .trm-queue-out { position: absolute; inset-inline: 0; pointer-events: none; }
 /* Freeze unfinished outgoing row heights instead of restarting them when a scope replaces the list. */
 .trm-queue-out .flow-item { animation-play-state: paused; }

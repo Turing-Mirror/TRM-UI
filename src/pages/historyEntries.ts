@@ -19,6 +19,40 @@ export type HistoryEntry = {
 
 export const HISTORY: HistoryEntry[] = [
 {
+  id: "queue-opaque-slide",
+  date: "2026-11-07",
+  old: {
+    "zh-CN": "QueueList 筛选切换使用短距离位移与交叉淡入淡出。",
+    "zh-TW": "QueueList 篩選切換使用短距離位移與交叉淡入淡出。",
+    "en-US": "QueueList filter changes used short offsets and a crossfade.",
+    "ja-JP": "QueueList の絞り込み切替は短い移動とクロスフェードを使っていた。",
+    "ko-KR": "QueueList 필터 전환은 짧은 이동과 교차 페이드를 사용했다.",
+    "fr-FR": "Les filtres de QueueList utilisaient un court déplacement avec fondu croisé.",
+    "es-ES": "Los filtros de QueueList usaban desplazamientos cortos con fundido cruzado.",
+    "ru-RU": "Фильтры QueueList сменялись с коротким сдвигом и перекрёстным затуханием.",
+  },
+  now: {
+    "zh-CN": "两层全程不透明，并排平移一整宽；横向裁切，沿用 420ms 导航曲线。",
+    "zh-TW": "兩層全程不透明，並排平移一整寬；橫向裁切，沿用 420ms 導覽曲線。",
+    "en-US": "Opaque layers slide side by side a full width, clipped horizontally, on the 420ms navigation curve.",
+    "ja-JP": "不透明な二層を全幅で並べて移動し、横方向を切り抜く。420ms のナビ曲線を共用する。",
+    "ko-KR": "불투명한 두 층을 전체 너비만큼 나란히 이동하고 가로로 자르며 420ms 탐색 곡선을 공유한다.",
+    "fr-FR": "Les couches opaques glissent côte à côte sur une largeur, rognées horizontalement, en 420ms.",
+    "es-ES": "Las capas opacas se deslizan lado a lado un ancho, con recorte horizontal y la curva de navegación de 420ms.",
+    "ru-RU": "Непрозрачные слои идут рядом на полную ширину с обрезкой по горизонтали и кривой навигации 420ms.",
+  },
+  why: {
+    "zh-CN": "半透明文字在切换途中重叠，导致每行出现重影。",
+    "zh-TW": "半透明文字在切換途中重疊，導致每列出現重影。",
+    "en-US": "Overlapping translucent text made every row appear doubled during the switch.",
+    "ja-JP": "半透明の文字が切替中に重なり、各行が二重に見えたため。",
+    "ko-KR": "전환 도중 반투명 글자가 겹쳐 모든 행이 이중으로 보였기 때문이다.",
+    "fr-FR": "Le texte translucide superposé dédoublait chaque ligne pendant la transition.",
+    "es-ES": "El texto translúcido superpuesto duplicaba visualmente cada fila durante el cambio.",
+    "ru-RU": "Наложение полупрозрачного текста вызывало двоение каждой строки при смене фильтра.",
+  },
+},
+{
   id: "queue-row-reflow",
   date: "2026-11-06",
   old: {

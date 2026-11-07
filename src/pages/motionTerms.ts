@@ -31,25 +31,33 @@ export const ITEM_SWITCH_RULE: Text = {
 };
 
 export const QUEUE_LIST_RULE: Text = {
-  "zh-CN": "长工作队列使用 QueueList：筛选按页签方向整列推移并回到顶部，追加只展开新行，原位更新不动；中间增删才带动邻行。FlowList 全量重排用于短列表。",
-  "zh-TW": "長工作佇列使用 QueueList：篩選按頁籤方向整列推移並回到頂部，追加只展開新列，原位更新不動；中間增刪才帶動鄰列。FlowList 全量重排用於短清單。",
-  "en-US": "Long work queues use QueueList: filters push the whole list in tab order and reset " +
+  "zh-CN": "长工作队列使用 QueueList：筛选按页签方向并排平移一整宽，全程不透明、不重叠，并回到顶部。" +
+    "追加只展开新行，原位更新不动；中间增删才带动邻行。FlowList 全量重排用于短列表。",
+  "zh-TW": "長工作佇列使用 QueueList：篩選按頁籤方向並排平移一整寬，全程不透明、不重疊，並回到頂部。" +
+    "追加只展開新列，原位更新不動；中間增刪才帶動鄰列。FlowList 全量重排用於短清單。",
+  "en-US": "Long work queues use QueueList: filters slide side by side a full width in tab order, " +
+    "fully opaque without overlap, and reset " +
     "scroll; appends expand only new rows, content updates stay still, and middle inserts or " +
     "removals shift neighbours. Full FlowList reflow is for short lists.",
-  "ja-JP": "長い作業キューには QueueList を使う。絞り込みはタブ順に一覧全体を押し移して先頭へ戻し、末尾追加は新しい行だけ開く。内容更新は動かさず、途中の追加・削除だけ隣の行を動" +
+  "ja-JP": "長い作業キューには QueueList を使う。絞り込みはタブ順に全幅を並べてスライドし、常に不透明で重ならず、先頭へ戻る。" +
+    "末尾追加は新しい行だけ開く。内容更新は動かさず、途中の追加・削除だけ隣の行を動" +
     "かす。FlowList の全体再配置は短い一覧向け。",
-  "ko-KR": "긴 작업 대기열에는 QueueList를 쓴다. 필터는 탭 순서대로 목록 전체를 밀고 맨 위로 돌아간다. 끝에 추가된 행만 펼치고 내용 갱신은 움직이지 않는다. " +
+  "ko-KR": "긴 작업 대기열에는 QueueList를 쓴다. 필터는 탭 순서대로 전체 너비만큼 나란히 이동하며, 항상 불투명하고 겹치지 않으며 맨 위로 돌아간다. " +
+    "끝에 추가된 행만 펼치고 내용 갱신은 움직이지 않는다. " +
     "중간 삽입과 제거만 이웃 행을 움직인다. FlowList 전체 재배치는 짧은 목록에 쓴다.",
-  "fr-FR": "Les longues files utilisent QueueList : les filtres poussent la liste selon l’ordre des " +
-    "onglets et remontent en haut. Seules les nouvelles lignes finales se déploient ; les " +
+  "fr-FR": "Les longues files utilisent QueueList : les filtres glissent côte à côte sur une largeur " +
+    "entière selon les onglets, toujours opaques et sans chevauchement, puis remontent en haut. " +
+    "Seules les nouvelles lignes finales se déploient ; les " +
     "mises à jour restent fixes. Seuls les ajouts ou retraits au milieu déplacent les " +
     "voisines. FlowList reste pour les listes courtes.",
-  "es-ES": "Las colas largas usan QueueList: los filtros empujan toda la lista según las pestañas y " +
-    "vuelven arriba. Solo se expanden las filas añadidas al final; actualizar contenido no " +
+  "es-ES": "Las colas largas usan QueueList: los filtros se deslizan lado a lado un ancho completo " +
+    "según las pestañas, siempre opacos y sin superponerse, y vuelven arriba. " +
+    "Solo se expanden las filas añadidas al final; actualizar contenido no " +
     "mueve filas. Solo insertar o quitar en medio desplaza las vecinas. FlowList se reserva " +
     "para listas cortas.",
-  "ru-RU": "Длинные очереди используют QueueList: фильтры сдвигают весь список по порядку вкладок и " +
-    "возвращают наверх. В конце раскрываются только новые строки; обновление текста " +
+  "ru-RU": "Длинные очереди используют QueueList: фильтры скользят рядом на полную ширину по порядку " +
+    "вкладок, всегда непрозрачно и без наложения, и возвращаются наверх. " +
+    "В конце раскрываются только новые строки; обновление текста " +
     "неподвижно. Лишь вставка или удаление в середине сдвигает соседей. Полная перестройка " +
     "FlowList — для коротких списков.",
 };

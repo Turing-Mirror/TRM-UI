@@ -12,8 +12,12 @@ beforeEach(() => {
   sheet = document.createElement("style");
   sheet.textContent = readFileSync("src/trm/styles/components.css", "utf8");
   document.head.appendChild(sheet);
+  document.documentElement.style.setProperty("--ease-nav", "cubic-bezier(0.16, 1, 0.3, 1)");
 });
-afterEach(() => { view?.unmount(); sheet.remove(); vi.restoreAllMocks(); vi.useRealTimers(); });
+afterEach(() => {
+  view?.unmount(); sheet.remove(); document.documentElement.style.removeProperty("--ease-nav");
+  vi.restoreAllMocks(); vi.useRealTimers();
+});
 
 const order = ["all", "human", "done"];
 const rowKeys = Array.from({ length: 40 }, (_, i) => String(i));
@@ -30,25 +34,60 @@ it("pushes one whole layer in tab order, keeps rows still and resets only the ne
   act(() => root.dispatchEvent(new Event("scroll")));
   act(() => view.root.render(render("human", rowKeys.slice(10))));
   expect(root.scrollTop).toBe(0);
+  expect(getComputedStyle(root).overflowX).toBe("hidden");
+  expect(getComputedStyle(root).overflow).toBe("auto");
   expect(view.container.querySelector<HTMLElement>(".trm-queue-out")?.style.top).toBe("-600px");
   expect(animate).toHaveBeenCalledTimes(2);
   for (let i = 0; i < animate.mock.calls.length; i++) {
     expect((animate.mock.contexts[i] as HTMLElement).className).toMatch(/^trm-queue-(current|out)$/);
     const [frames, options] = animate.mock.calls[i];
     expect(JSON.stringify(frames)).not.toContain("scale");
-    expect(options).toMatchObject({ duration: FLOW_MS });
+    expect(JSON.stringify(frames)).not.toContain("opacity");
+    expect((animate.mock.contexts[i] as HTMLElement).style.opacity).toBe("1");
+    expect(options).toMatchObject({ duration: FLOW_MS, easing: "cubic-bezier(0.16, 1, 0.3, 1)" });
   }
   const incoming = animate.mock.calls.find((_, i) =>
     (animate.mock.contexts[i] as HTMLElement).className === "trm-queue-current")!;
-  expect((incoming[0] as Keyframe[])[0].transform).toBe("translate3d(6%, 0, 0)");
+  expect(incoming[0]).toEqual([{ transform: "translate3d(100%, 0, 0)" }, { transform: "none" }]);
+  const outgoing = animate.mock.calls.find((_, i) =>
+    (animate.mock.contexts[i] as HTMLElement).className === "trm-queue-out")!;
+  expect(outgoing[0]).toEqual([{ transform: "none" }, { transform: "translate3d(-100%, 0, 0)" }]);
   const current = view.container.querySelector(".trm-queue-current")!;
   expect(current.querySelectorAll('.flow-enter, .flow-leave')).toHaveLength(0);
   expect(getComputedStyle(current.querySelector(".rise")!).animation).toBe("none");
+  act(() => vi.advanceTimersByTime(FLOW_MS));
+  expect(root.hasAttribute("data-switching")).toBe(false);
+  expect(getComputedStyle(root).overflowX).not.toBe("hidden");
   animate.mockClear();
   act(() => view.root.render(render("all")));
   const reverse = animate.mock.calls.find((_, i) =>
     (animate.mock.contexts[i] as HTMLElement).className === "trm-queue-current")!;
-  expect((reverse[0] as Keyframe[])[0].transform).toBe("translate3d(-6%, 0, 0)");
+  expect(reverse[0]).toEqual([{ transform: "translate3d(-100%, 0, 0)" }, { transform: "none" }]);
+  const reverseOut = animate.mock.calls.find((_, i) =>
+    (animate.mock.contexts[i] as HTMLElement).className === "trm-queue-out")!;
+  expect(reverseOut[0]).toEqual([{ transform: "none" }, { transform: "translate3d(100%, 0, 0)" }]);
+  act(() => vi.advanceTimersByTime(FLOW_MS));
+  expect(view.container.querySelector(".trm-queue-out")).toBeNull();
+});
+
+it("finishes the adjacent pair before sliding to the latest requested scope", () => {
+  const animate = vi.spyOn(HTMLElement.prototype, "animate");
+  view = mount(render("all", ["a"]));
+  act(() => view.root.render(render("human", ["b"])));
+  act(() => vi.advanceTimersByTime(160));
+  const current = view.container.querySelector(".trm-queue-current");
+  animate.mockClear();
+  act(() => view.root.render(render("all", ["a"])));
+  act(() => view.root.render(render("done", ["c"])));
+  expect(view.container.querySelector(".trm-queue-current")).toBe(current);
+  expect(view.container.querySelector(".trm-queue-list")?.getAttribute("data-queue-scope")).toBe("human");
+  expect(animate).not.toHaveBeenCalled();
+  act(() => vi.advanceTimersByTime(FLOW_MS - 160));
+  expect(view.container.querySelector(".trm-queue-list")?.getAttribute("data-queue-scope")).toBe("done");
+  expect(view.container.querySelector(".trm-queue-out")).toBe(current);
+  expect(view.container.querySelectorAll(".trm-queue-stage > div")).toHaveLength(2);
+  expect(animate).toHaveBeenCalledTimes(2);
+  for (const [frames] of animate.mock.calls) expect(JSON.stringify(frames)).not.toContain("opacity");
   act(() => vi.advanceTimersByTime(FLOW_MS));
   expect(view.container.querySelector(".trm-queue-out")).toBeNull();
 });
@@ -101,7 +140,7 @@ it("accepts an explicit direction and switches immediately under reduced motion"
   act(() => view.root.render(render("human", [], "", -1)));
   const incoming = animate.mock.calls.find((_, i) =>
     (animate.mock.contexts[i] as HTMLElement).className === "trm-queue-current")!;
-  expect((incoming[0] as Keyframe[])[0].transform).toBe("translate3d(-6%, 0, 0)");
+  expect((incoming[0] as Keyframe[])[0].transform).toBe("translate3d(-100%, 0, 0)");
   const media = window.matchMedia("(prefers-reduced-motion: reduce)");
   Object.defineProperty(media, "matches", { configurable: true, value: true });
   vi.spyOn(window, "matchMedia").mockReturnValue(media);

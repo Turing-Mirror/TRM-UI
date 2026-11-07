@@ -142,12 +142,13 @@ function usePushMotion(phase: PushPhase, seq: number, dir: Dir, transition: Pane
     if (!el) return;
     const painted = getComputedStyle(el);
     const continuing = previous.current !== null && previous.current !== "hidden";
-    const sliding = transition === "slide";
-    const queue = transition === "queue";
+    const sliding = transition === "slide" || transition === "queue";
     const opacity = sliding ? 1 : continuing ? Number(painted.opacity) : (phase === "enter" ? 0 : 1);
-    const distance = sliding ? 100 : queue ? 6 : 32;
-    const unit = sliding || queue ? "%" : "px";
-    const transform = continuing ? painted.transform : `translate3d(${(dir || 1) * distance}${unit}, 0, 0)`;
+    const distance = sliding ? 100 : 32;
+    const unit = sliding ? "%" : "px";
+    // Queue turns are serialized, so both layers start at exact adjacent endpoints.
+    const transform = transition === "queue" && phase === "leave" ? "none"
+      : continuing ? painted.transform : `translate3d(${(dir || 1) * distance}${unit}, 0, 0)`;
     animations.current.forEach(animation => animation.cancel());
     animations.current = [];
     previous.current = phase;
@@ -159,19 +160,15 @@ function usePushMotion(phase: PushPhase, seq: number, dir: Dir, transition: Pane
     const leaving = phase === "leave";
     const target = sliding ? 1 : leaving ? 0 : 1;
     const endTransform = !leaving ? "none" : sliding ? `translate3d(${(dir || 1) * -100}%, 0, 0)`
-      : queue ? `translate3d(${(dir || 1) * -2.5}%, 0, 0)`
-        : `translate3d(${(dir || 1) * -14}px, 0, 0) scale(0.99)`;
+      : `translate3d(${(dir || 1) * -14}px, 0, 0) scale(0.99)`;
     // Inline endpoints also provide an immediate fallback without Web Animations.
     el.style.opacity = String(target);
     el.style.transform = endTransform;
     if (typeof el.animate !== "function" || reduced()) return;
-    // Both views move and fade immediately on the same curve. A staged fade creates
-    // an empty interval even when the destination content is already available.
+    // Full-width slides stay opaque: fading adjacent pages would make queue text ghost.
+    // The default compact push still moves and fades both views on the same curve.
     const fades: Keyframe[] = [{ opacity }, { opacity: target }];
-    animations.current = queue ? [el.animate(
-      [{ transform, opacity }, { transform: endTransform, opacity: target }],
-      { duration: FLOW_MS, easing: curve("--ease-nav"), fill: "both" },
-    )] : [
+    animations.current = [
       el.animate([{ transform }, { transform: endTransform }], { duration: FLOW_MS, easing: curve("--ease-nav"), fill: "both" }),
       ...(sliding ? [] : [el.animate(fades, { duration: FLOW_MS, easing: curve("--ease-nav"), fill: "both" })]),
     ];
@@ -374,7 +371,7 @@ export type QueueListProps<T> = Omit<FlowListProps<T>, "layout" | "motion"> & {
   foot?: ReactNode;
 };
 
-/** Long work queues: scopes push as a whole; local inserts/removals change row heights without FLIP. */
+/** Long queues slide opaque scopes a full width; local inserts/removals change row heights without FLIP. */
 export function QueueList<T>({
   items, keyOf, render, scope, order, dir, className = "", itemClassName, empty, foot,
 }: QueueListProps<T>) {
@@ -386,26 +383,28 @@ export function QueueList<T>({
   const [old, setOld] = useState<{ node: ReactNode; seq: number; scroll: number } | null>(null);
   const box = useRef<HTMLDivElement>(null);
   const scroll = useRef(0);
-  if (cur.scope !== scope) {
+  // Finish the adjacent pair before accepting the latest scope, so a third layer cannot
+  // start on top of a page that is still entering. Reduced motion never waits.
+  if (cur.scope !== scope && (!old || reduced())) {
     const before = order?.indexOf(cur.scope) ?? -1;
     const after = order?.indexOf(scope) ?? -1;
     const direction = dir ?? (before >= 0 && after >= 0 && after < before ? -1 : 1);
     setOld(reduced() ? null : { node: cur.node, seq: cur.seq, scroll: scroll.current });
     setCur({ scope, node, seq: cur.seq + 1, dir: direction });
-  } else if (cur.node !== node) {
+  } else if (cur.scope === scope && cur.node !== node) {
     setCur({ ...cur, node });
   }
   useLayoutEffect(() => {
     if (box.current) box.current.scrollTop = 0;
     scroll.current = 0;
-  }, [scope]);
+  }, [cur.scope]);
   useEffect(() => {
     if (!old) return;
     const timer = window.setTimeout(() => setOld(null), FLOW_MS);
     return () => window.clearTimeout(timer);
   }, [old]);
   return <div ref={box} className={`trm-queue-list flow-quiet ${className}`}
-    data-queue-scope={scope} data-switching={Boolean(old) || undefined}
+    data-queue-scope={cur.scope} data-switching={Boolean(old) || undefined}
     onScroll={event => { scroll.current = event.currentTarget.scrollTop; }}>
     <div className="trm-queue-stage">
       {old ? <PushLayer key={old.seq} phase="leave" seq={cur.seq} dir={cur.dir} transition="queue"
