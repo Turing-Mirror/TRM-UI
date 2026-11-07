@@ -74,7 +74,7 @@ export { AccordionGroup, type AccordionItem } from "./components/ui";
 // 桌面应用的外壳与内容件
 export { Icon, ICON_NAMES, isIconName, type IconName } from "./components/Icon";
 export { BUSY_DELAY_MS } from "./components/useDelayedBusy";
-export { Tag, Meta, Mark, Bar, Section, IconBtn, Empty, Tabs, Filters, Pager, pageList, usePaged, type Art, type Tone } from "./components/display";
+export { Tag, Meta, Mark, Bar, Section, DocSection, DocBody, IconBtn, Empty, Tabs, Filters, Pager, pageList, usePaged, type Art, type Tone } from "./components/display";
 export { Modal, Drawer, usePresence, useLatest, OUT_MS } from "./components/overlay";
 export { Popover, PopoverOwner, Menu, MenuBtn, useMenu, Dropdown, PromptDialog, anchorOf, type Anchor, type MenuItem } from "./components/Menu";
 export { Calendar, dayKey, useAnchoredPop } from "./components/Calendar";

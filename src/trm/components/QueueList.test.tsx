@@ -208,3 +208,23 @@ it("freezes an unfinished removal in the outgoing scope until the whole layer le
   act(() => vi.advanceTimersByTime(FLOW_MS));
   expect(removed.isConnected).toBe(false);
 });
+
+it("slides a row that changed places within the same scope and leaves opacity alone", () => {
+  const animate = vi.spyOn(HTMLElement.prototype, "animate");
+  vi.spyOn(HTMLElement.prototype, "offsetTop", "get").mockImplementation(function (this: HTMLElement) {
+    return Array.from(this.parentElement?.children ?? []).indexOf(this) * 24;
+  });
+  view = mount(render("all", ["a", "b", "c", "d"]));
+  const moved = view.container.querySelector('[data-flow="c"]');
+  act(() => view.root.render(render("all", ["c", "a", "b", "d"])));
+  expect(view.container.querySelector('[data-flow="c"]')).toBe(moved);
+  const calls = animate.mock.calls.map((call, i) => ({
+    key: (animate.mock.contexts[i] as HTMLElement).dataset.flow,
+    frames: call[0] as Keyframe[],
+  }));
+  expect(calls.find(c => c.key === "c")?.frames[0].transform).toBe("translate3d(0px, 48px, 0)");
+  expect(calls.filter(c => c.key === "a" || c.key === "b").map(c => c.frames[0].transform))
+    .toEqual(["translate3d(0px, -24px, 0)", "translate3d(0px, -24px, 0)"]);
+  expect(calls.some(c => c.key === "d")).toBe(false);
+  expect(calls.every(c => c.frames.every(f => f.opacity === undefined))).toBe(true);
+});

@@ -96,6 +96,24 @@ export function Section({ title, action, children, className = "" }: { title: st
   );
 }
 
+/**
+ * 文档式详情里的一节：上面一行小号浅色标题，下面是内容。几节连着排时靠间距分开，不画线。
+ * 外面包一层 DocBody 限制行宽，宽窗口里一行不会拉得横跨整屏。
+ * quote：内容是助手会原样说出去的话（标准回复、建议回复），画成和助手气泡一样的浅底块，一眼能认出来。
+ */
+export function DocSection({ title, quote = false, children }: { title: string; quote?: boolean; children: ReactNode }) {
+  return (
+    <section className="trm-doc-section">
+      <h4 className="trm-doc-title">{title}</h4>
+      <div className={quote ? "trm-doc-quote" : "trm-doc-text"}>{children}</div>
+    </section>
+  );
+}
+
+export function DocBody({ children }: { children: ReactNode }) {
+  return <div className="trm-doc">{children}</div>;
+}
+
 /** 只有图标的按钮。label 必给，读屏与悬停提示都用它。 */
 export function IconBtn({ icon, label, onClick, active = false, size = 18 }: { icon: IconName; label: string; onClick?: () => void; active?: boolean; size?: number }) {
   return (

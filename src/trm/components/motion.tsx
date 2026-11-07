@@ -377,13 +377,16 @@ export type QueueListProps<T> = Omit<FlowListProps<T>, "layout" | "motion"> & {
   foot?: ReactNode;
 };
 
-/** Long queues slide opaque scopes a full width; local inserts/removals change row heights without FLIP. */
+/**
+ * 长队列换筛选或翻页时整块推过去。同一筛选、同一页里有项换了位置（来了新消息、改了排序字段），
+ * 那一项从旧位置滑到新位置，被它越过的项跟着让开，不会瞬间跳过去。
+ */
 export function QueueList<T>({
   items, keyOf, render, scope, page = 1, order, dir, className = "", itemClassName, empty, foot,
 }: QueueListProps<T>) {
   const outer = useContext(PaneOnCtx);
   const node = useMemo(() => <><FlowItems items={items} keyOf={keyOf} render={render}
-    itemClassName={itemClassName} reflow={false} />{items.length ? null : empty}{foot}</>,
+    itemClassName={itemClassName} reflow="order" />{items.length ? null : empty}{foot}</>,
   [items, keyOf, render, itemClassName, empty, foot]);
   const [cur, setCur] = useState({ scope, page, node, seq: 0, dir: 1 as Dir });
   const [old, setOld] = useState<{ node: ReactNode; seq: number; scroll: number } | null>(null);
@@ -438,7 +441,13 @@ export function FlowList<T>(props: FlowListProps<T>) {
 
 function FlowItems<T>({
   items, keyOf, render, className = "", itemClassName = "", motion, layout = "list", reflow = true,
-}: FlowListProps<T> & { reflow?: boolean }) {
+}: FlowListProps<T> & {
+  /**
+   * true：留下的项位置一变就滑过去。
+   * "order"：只有留下的项之间先后顺序变了才滑；单纯插入、删除时邻居随高度展开收拢自然让位，不再额外滑一次。
+   */
+  reflow?: boolean | "order";
+}) {
   const visible = usePaneOn();
   const staticMotion = useContext(StaticMotionContext);
   const duration = staticMotion || motion?.reduced || reduced() ? 0 : Math.max(0, motion?.durationMs ?? FLOW_MS);
@@ -480,7 +489,16 @@ function FlowItems<T>({
   useLayoutEffect(() => {
     const el = box.current;
     if (!el || !visible) return;
-    const quiet = !reflow || duration === 0 || measured.current === src;
+    const reordered = () => {
+      const before = measured.current.split("\n");
+      const after = src.split("\n");
+      const kept = new Set(after);
+      const was = before.filter(key => kept.has(key));
+      const had = new Set(before);
+      const now = after.filter(key => had.has(key));
+      return was.some((key, i) => key !== now[i]);
+    };
+    const quiet = !reflow || duration === 0 || measured.current === src || (reflow === "order" && !reordered());
     measured.current = src;
     // 位置量的是相对列表本身（列表是定位容器），外层整体移动不算这几项换了位置
     const easing = motion?.easing ?? curve("--ease-nav");

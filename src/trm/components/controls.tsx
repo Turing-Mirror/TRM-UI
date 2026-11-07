@@ -400,26 +400,44 @@ export function Slider({
   );
 }
 
-/** Row 已提供可见标题，因此开关只保留读屏名称，避免重复文字。 */
-export function Switch({ checked, onChange, label, disabled = false }: {
+/**
+ * 开关。label 只给读屏：Row 已经有可见标题，再写一遍就重复了。
+ * 不在 Row 里（比如详情头部）需要可见文字时传 text，点文字也能切换。
+ *
+ * busy：保存中。调用方先把 checked 改成新值（乐观更新），保存期间开关保持原样、不变暗，
+ * 只是不再响应点击。保存时直接 disabled 会让开关闪一下暗再亮回来。
+ */
+export function Switch({ checked, onChange, label, text, disabled = false, busy = false }: {
   checked: boolean;
   onChange: (v: boolean) => void;
   label: string;
+  text?: string;
   disabled?: boolean;
+  busy?: boolean;
 }) {
-  return (
-    <span className="trm-switch">
+  const control = (
+    <span className="trm-switch" data-busy={busy || undefined}>
       <input
         type="checkbox"
         role="switch"
-        aria-label={label}
+        aria-label={text ? undefined : label}
         aria-checked={checked}
+        aria-busy={busy || undefined}
         checked={checked}
         disabled={disabled}
-        onChange={(e) => onChange(e.target.checked)}
+        onChange={(e) => {
+          if (!busy) onChange(e.target.checked);
+        }}
       />
       <span className="trm-switch-track" aria-hidden="true" />
     </span>
+  );
+  if (!text) return control;
+  return (
+    <label className="trm-switch-labelled" data-busy={busy || undefined} data-disabled={disabled || undefined}>
+      {control}
+      <span>{text}</span>
+    </label>
   );
 }
 

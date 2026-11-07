@@ -89,10 +89,11 @@ export function SideItem({
   );
 }
 
-export function SearchBox({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+/** full：占满所在容器的宽度，用在列表头这类要和标题、标签、行对齐左右边的地方。 */
+export function SearchBox({ value, onChange, full = false }: { value: string; onChange: (v: string) => void; full?: boolean }) {
   const { t } = useI18n();
   return (
-    <div className="flex-1 max-w-[320px] h-8 flex items-center gap-2 px-2.5 rounded-[var(--rs)] bg-[color-mix(in_srgb,var(--ink)_5%,transparent)]">
+    <div className={`flex-1 ${full ? "w-full" : "max-w-[320px]"} h-8 flex items-center gap-2 px-2.5 rounded-[var(--rs)] bg-[color-mix(in_srgb,var(--ink)_5%,transparent)]`}>
       <Icon name="search" size={15} className="text-[var(--meta)]" />
       <input
         value={value}

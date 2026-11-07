@@ -59,3 +59,23 @@ it("blocks activation when disabled", () => {
   expect(change).not.toHaveBeenCalled();
   expect(input.getAttribute("aria-checked")).toBe("false");
 });
+
+it("keeps a busy switch at full strength and ignores input until the save settles", () => {
+  const change = vi.fn();
+  view = mount(<Switch checked busy onChange={change} label="启用" />);
+  const input = view.container.querySelector<HTMLInputElement>("input")!;
+  expect(input.disabled).toBe(false);
+  expect(input.getAttribute("aria-busy")).toBe("true");
+  act(() => input.click());
+  expect(change).not.toHaveBeenCalled();
+});
+
+it("shows visible text when asked and lets the text toggle the switch", () => {
+  const change = vi.fn();
+  view = mount(<Switch checked={false} onChange={change} label="启用" text="启用" />);
+  const input = view.container.querySelector<HTMLInputElement>("input")!;
+  expect(input.getAttribute("aria-label")).toBeNull();
+  expect(view.container.textContent).toBe("启用");
+  act(() => view.container.querySelector<HTMLElement>(".trm-switch-labelled span:last-child")!.click());
+  expect(change).toHaveBeenCalledWith(true);
+});
