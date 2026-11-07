@@ -21,7 +21,9 @@
       "missing": " (no disponible)"
     },
     "range": {
-      "defaultMark": "Valor inicial"
+      "defaultMark": "Valor inicial",
+      "value": "Valor",
+      "editValue": "Doble clic para introducir un valor"
     },
     "window": {
       "minimize": "Minimizar",
@@ -284,7 +286,7 @@
       "device": "Dispositivo de salida",
       "deviceDesc": "Un dispositivo guardado que no está disponible se marca como no disponible.",
       "volume": "Volumen",
-      "volumeNote": "Se ajusta a la marca más cercana al soltar.",
+      "volumeNote": "Haz doble clic en el número para escribir un valor. Pulsa Intro o sal del campo para aplicar, o Esc para cancelar.",
       "enable": "Iniciar con el sistema"
     },
     "list": {

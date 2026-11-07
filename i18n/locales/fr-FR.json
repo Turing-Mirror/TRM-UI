@@ -21,7 +21,9 @@
       "missing": " (indisponible)"
     },
     "range": {
-      "defaultMark": "Valeur par défaut"
+      "defaultMark": "Valeur par défaut",
+      "value": "Valeur",
+      "editValue": "Double-cliquer pour saisir une valeur"
     },
     "window": {
       "minimize": "Réduire",
@@ -284,7 +286,7 @@
       "device": "Périphérique de sortie",
       "deviceDesc": "Un appareil enregistré mais indisponible est signalé comme indisponible.",
       "volume": "Volume",
-      "volumeNote": "Se cale sur le repère le plus proche au relâchement.",
+      "volumeNote": "Double-cliquez sur le nombre pour saisir une valeur. Entrée ou quitter le champ valide la saisie ; Échap annule.",
       "enable": "Démarrer avec le système"
     },
     "list": {

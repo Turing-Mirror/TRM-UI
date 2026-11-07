@@ -350,6 +350,98 @@ export function RangeBar({
   );
 }
 
+export type SliderValueProps = {
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (value: number) => void;
+  format?: (value: number) => string;
+  ariaLabel?: string;
+  disabled?: boolean;
+  className?: string;
+};
+
+function decimalPlaces(value: number): number {
+  const [significand, exponent = "0"] = String(value).toLowerCase().split("e");
+  return Math.max(0, (significand.split(".")[1]?.length ?? 0) - Number(exponent));
+}
+
+function alignSliderValue(value: number, min: number, max: number, step: number): number {
+  const bounded = Math.max(min, Math.min(max, value));
+  if (!(step > 0)) return bounded;
+  const precision = Math.max(decimalPlaces(min), decimalPlaces(step));
+  const round = (n: number) => precision <= 100 ? Number(n.toFixed(precision)) : n;
+  const intervals = (bounded - min) / step;
+  // Decimal half-steps such as 0.15 / 0.1 may land just below .5 in binary.
+  const nearest = round(min + Math.round(intervals + Number.EPSILON * Math.max(1, intervals)) * step);
+  return Math.max(min, nearest > max ? round(nearest - step) : nearest);
+}
+
+/** Numeric readout shared by Slider and custom RangeBar rows. */
+export function SliderValue({ value, min, max, step, onChange, format, ariaLabel,
+  disabled = false, className = "text-[13px] min-w-[56px] text-right tabular-nums",
+}: SliderValueProps) {
+  const { t } = useI18n();
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState("");
+  const input = useRef<HTMLInputElement>(null);
+  const trigger = useRef<HTMLSpanElement>(null);
+  const focusBack = useRef(false);
+  // Enter may also cause blur. Close this session before notifying the parent.
+  const editingNow = useRef(false);
+  const shown = format ? format(value) : String(value);
+
+  useEffect(() => {
+    if (editing) { input.current?.focus(); input.current?.select(); }
+    else if (focusBack.current) { focusBack.current = false; trigger.current?.focus(); }
+  }, [editing]);
+  useEffect(() => {
+    if (disabled) { editingNow.current = false; setEditing(false); }
+  }, [disabled]);
+
+  const begin = () => {
+    if (disabled || editingNow.current) return;
+    editingNow.current = true;
+    setDraft(String(value));
+    setEditing(true);
+  };
+  const finish = (commit: boolean, restoreFocus = false) => {
+    if (!editingNow.current) return;
+    editingNow.current = false;
+    focusBack.current = restoreFocus;
+    setEditing(false);
+    if (!commit || disabled || !draft.trim()) return;
+    const parsed = Number(draft);
+    if (!Number.isFinite(parsed)) return;
+    const next = alignSliderValue(parsed, min, max, step);
+    if (next !== value) onChange(next);
+  };
+
+  return <span className={`relative inline-grid ${className}`} onPointerDown={e => e.stopPropagation()} onClick={e => e.stopPropagation()}>
+    <span ref={trigger} role="button" tabIndex={disabled || editing ? -1 : 0} aria-label={ariaLabel}
+      aria-disabled={disabled || undefined} aria-hidden={editing || undefined}
+      title={disabled ? undefined : t("ui.range.editValue")}
+      className={`rounded-[var(--rs)] outline-none focus-visible:shadow-[0_0_0_1px_var(--accent)] ${editing ? "invisible" : disabled ? "" : "cursor-text"}`}
+      onDoubleClick={e => { e.stopPropagation(); begin(); }}
+      onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); begin(); } }}>
+      {shown}
+    </span>
+    {editing ? <input ref={input} type="text" inputMode="decimal" value={draft} disabled={disabled}
+      aria-label={ariaLabel ?? t("ui.range.value")}
+      className="absolute inset-0 w-full min-w-0 rounded-[var(--rs)] border-0 bg-[var(--surface)] p-0 text-inherit text-right tabular-nums outline-none shadow-[0_0_0_1px_var(--accent)]"
+      onChange={e => setDraft(e.target.value)}
+      onDoubleClick={e => e.stopPropagation()}
+      onBlur={() => finish(true)}
+      onKeyDown={e => {
+        if (e.nativeEvent.isComposing) return;
+        if (e.key === "Enter" || e.key === "Escape") {
+          e.preventDefault(); e.stopPropagation(); finish(e.key === "Enter", true);
+        }
+      }} /> : null}
+  </span>;
+}
+
 /** 一行数值条：条子在左，数值在右。 */
 export function Slider({
   value,
@@ -375,7 +467,6 @@ export function Slider({
   ariaLabel?: string;
   disabled?: boolean;
 }) {
-  const shown = format ? format(value) : String(value);
   return (
     <div className="flex items-center gap-[15px] w-full">
       {/* 条子占满整行，不设上限：一格数值分到的像素最多，最好精调，看着也
@@ -395,7 +486,8 @@ export function Slider({
         />
       </div>
       {/* tabular-nums：数字等宽，拖动时右边这一列不会因为 1 比 8 窄而抖。 */}
-      <div className="text-[13px] min-w-[56px] text-right tabular-nums">{shown}</div>
+      <SliderValue value={value} min={min} max={max} step={step} onChange={onChange}
+        format={format} ariaLabel={ariaLabel} disabled={disabled} />
     </div>
   );
 }

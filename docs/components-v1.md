@@ -64,6 +64,16 @@ npm pack
 
 `useMorphState` 在目标页面完成布局后切换容器形态，默认等待两帧；`useLeavingValue` 保留旧内容直到离场结束。容器应挂在路由内容之外，切换页面、输入类型或语言不重建草稿。调用方保留原有几何、拖动、动效类与持续时间。
 
+## 滑块数值输入
+
+`Slider` 右侧数字支持双击直接输入，也可聚焦数字后按 Enter 或空格进入编辑。编辑框使用原始 `value`，不含 `format` 添加的单位，也不受显示精度影响。Enter 或失焦提交，Esc 取消；Enter 与 Esc 结束后焦点返回数字，失焦提交不抢回焦点。
+
+`SliderValue` 可独立放在 `RangeBar` 旁，供自定义布局复用同一数值输入。参数为 `value`、`min`、`max`、`step`、`onChange`，可选 `format`、`ariaLabel`、`disabled`、`className`；类型为 `SliderValueProps`。不传 `className` 时沿用 Slider 的 13px、最小宽度 56px、右对齐等宽数字；传入时替换这组显示样式。
+
+提交按 `min` 起算的 `step` 校准，并限制在范围内；支持小数与科学记数。空值或无效数字取消本次输入。编辑期间外部更新不覆盖草稿，禁用时不可编辑。重复失焦不会重复提交，数值编辑的双击、Enter 与 Esc 不触发父级快捷操作。RangeBar 的拖动和产品既有轨道双击复位逻辑保持不变。
+
+若产品显示百分比，应向数值编辑器传入百分比尺度的 `value/min/max/step`，并在 `onChange` 中换算回存储值；不要通过 `format` 隐藏这层尺度差异。
+
 ## 通用输入与数据组件
 
 | 导出 | 参数 |

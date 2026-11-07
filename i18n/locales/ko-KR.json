@@ -21,7 +21,9 @@
       "missing": " (사용 불가)"
     },
     "range": {
-      "defaultMark": "기본값"
+      "defaultMark": "기본값",
+      "value": "값",
+      "editValue": "두 번 클릭하여 값 입력"
     },
     "window": {
       "minimize": "최소화",
@@ -284,7 +286,7 @@
       "device": "출력 장치",
       "deviceDesc": "저장되었지만 지금 사용할 수 없는 장치는 사용 불가로 표시됩니다.",
       "volume": "볼륨",
-      "volumeNote": "놓으면 가장 가까운 눈금에 맞춰집니다.",
+      "volumeNote": "숫자를 두 번 클릭하여 직접 입력합니다. Enter를 누르거나 다른 곳으로 이동하면 적용되고 Esc를 누르면 취소됩니다.",
       "enable": "시스템 시작 시 실행"
     },
     "list": {

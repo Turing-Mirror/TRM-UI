@@ -8,7 +8,7 @@
  */
 
 export { PagePad, PageHead, Block, Group, Btn, ListItem, HelpMark } from "./components/ui";
-export { Field, Select, RangeBar, Slider, Toggle, Switch } from "./components/controls";
+export { Field, Select, RangeBar, Slider, SliderValue, type SliderValueProps, Toggle, Switch } from "./components/controls";
 export { TextInput, TextArea, type TextInputProps, type TextAreaProps } from "./components/inputs";
 export { ChipInput, type ChipInputProps } from "./components/ChipInput";
 export { Chip, type ChipProps } from "./components/Chip";

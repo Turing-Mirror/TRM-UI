@@ -4,6 +4,20 @@ import { ITEM_SWITCH_RULE, QUEUE_LIST_RULE } from "./motionTerms";
 /** 交互约定。「交互」页照这份数据渲染，下面的演示就是照这些约定做的。 */
 export const INTERACTION_RULES: Rule[] = [
 {
+  "id": "sliderNumberEntry",
+  "title": {
+    "zh-CN": "双击数字可直接输入，按 Enter 或移开焦点确认，按 Esc 取消。",
+    "zh-TW": "按兩下數字可直接輸入，按 Enter 或移開焦點確認，按 Esc 取消。",
+    "en-US": "Double-click the number to type a value. Press Enter or leave the field to apply, or Esc to cancel.",
+    "ja-JP": "数値をダブルクリックして直接入力します。Enter またはフォーカスを外して確定し、Esc で取り消します。",
+    "ko-KR": "숫자를 두 번 클릭하여 직접 입력합니다. Enter를 누르거나 다른 곳으로 이동하면 적용되고 Esc를 누르면 취소됩니다.",
+    "fr-FR": "Double-cliquez sur le nombre pour saisir une valeur. Entrée ou quitter le champ valide la saisie ; Échap annule.",
+    "es-ES": "Haz doble clic en el número para escribir un valor. Pulsa Intro o sal del campo para aplicar, o Esc para cancelar.",
+    "ru-RU": "Дважды щёлкните число для ввода. Enter или выход из поля применяет значение, Esc отменяет ввод."
+  },
+  "examples": []
+},
+{
   "id": "busyDelay",
   "title": {
     "zh-CN": "忙碌反馈只在用户能够察觉的等待中出现：立即阻止重复点击并设置 aria-busy，约 300ms 后才显示旋转指示；此前保留原标签，按钮宽度始终不变。",

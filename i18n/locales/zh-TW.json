@@ -21,7 +21,9 @@
       "missing": "（不可用）"
     },
     "range": {
-      "defaultMark": "初始值"
+      "defaultMark": "初始值",
+      "value": "數值",
+      "editValue": "按兩下輸入數值"
     },
     "window": {
       "minimize": "最小化",
@@ -284,7 +286,7 @@
       "device": "輸出裝置",
       "deviceDesc": "已儲存但當前不可用的裝置標註為不可用。",
       "volume": "音量",
-      "volumeNote": "鬆開後對齊到最近的刻度。",
+      "volumeNote": "按兩下數字可直接輸入，按 Enter 或移開焦點確認，按 Esc 取消。",
       "enable": "開機自動啟動"
     },
     "list": {

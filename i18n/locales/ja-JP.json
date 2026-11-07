@@ -21,7 +21,9 @@
       "missing": "（利用不可）"
     },
     "range": {
-      "defaultMark": "既定値"
+      "defaultMark": "既定値",
+      "value": "数値",
+      "editValue": "ダブルクリックして数値を入力"
     },
     "window": {
       "minimize": "最小化",
@@ -284,7 +286,7 @@
       "device": "出力デバイス",
       "deviceDesc": "保存済みで現在使えないデバイスには「使用不可」と表示します。",
       "volume": "音量",
-      "volumeNote": "離すと最も近い目盛りに合わせます。",
+      "volumeNote": "数値をダブルクリックして直接入力します。Enter またはフォーカスを外して確定し、Esc で取り消します。",
       "enable": "起動時に開始"
     },
     "list": {

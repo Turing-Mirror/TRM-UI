@@ -21,7 +21,9 @@
       "missing": " (unavailable)"
     },
     "range": {
-      "defaultMark": "Default value"
+      "defaultMark": "Default value",
+      "value": "Value",
+      "editValue": "Double-click to enter a value"
     },
     "window": {
       "minimize": "Minimize",
@@ -284,7 +286,7 @@
       "device": "Output device",
       "deviceDesc": "A saved device that is currently unavailable is marked as unavailable.",
       "volume": "Volume",
-      "volumeNote": "Snaps to the nearest mark on release.",
+      "volumeNote": "Double-click the number to type a value. Press Enter or leave the field to apply, or Esc to cancel.",
       "enable": "Start with the system"
     },
     "list": {

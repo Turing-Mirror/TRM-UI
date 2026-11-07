@@ -21,7 +21,9 @@
       "missing": "（不可用）"
     },
     "range": {
-      "defaultMark": "初始值"
+      "defaultMark": "初始值",
+      "value": "数值",
+      "editValue": "双击输入数值"
     },
     "window": {
       "minimize": "最小化",
@@ -284,7 +286,7 @@
       "device": "输出设备",
       "deviceDesc": "已保存但当前不可用的设备标注为不可用。",
       "volume": "音量",
-      "volumeNote": "松开后对齐到最近的刻度。",
+      "volumeNote": "双击数字可直接输入，按 Enter 或移开焦点确认，按 Esc 取消。",
       "enable": "开机自启"
     },
     "list": {
