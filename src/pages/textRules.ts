@@ -316,6 +316,71 @@ export const TEXT_RULES: Rule[] = [
     ],
   },
   {
+    "id": "documentStructure",
+    "title": {
+      "zh-CN": "官网与 README 按用途组织内容，保持紧凑。",
+      "zh-TW": "官網與 README 依用途組織內容，保持精簡。",
+      "en-US": "Organize websites and READMEs around practical uses and keep them concise.",
+      "ja-JP": "公式サイトと README は用途に沿って簡潔に構成します。",
+      "ko-KR": "공식 사이트와 README는 실제 용도에 따라 간결하게 구성한다.",
+      "fr-FR": "Organiser les sites et les README autour des usages concrets, avec concision.",
+      "es-ES": "Organizar los sitios y los README según usos concretos y mantenerlos concisos.",
+      "ru-RU": "Строить сайты и README вокруг практических задач и писать кратко."
+    },
+    "list": [
+      {
+        "zh-CN": "介绍先说明用户能做什么，再写对应功能与必要步骤。保留具体用途，例如语音聊天、游戏内放歌和同时变声；不用「音频处理」「工作台」等宽泛名称代替。功能说明须与当前实现及发布版本一致。",
+        "zh-TW": "介紹先說明使用者能做什麼，再寫對應功能與必要步驟。保留具體用途，例如語音聊天、遊戲內播放音樂和同時變聲；不用「音訊處理」「工作台」等籠統名稱取代。功能說明須與目前實作及發行版本一致。",
+        "en-US": "Start with what users can do, then describe the relevant features and necessary steps. Name concrete uses, such as voice chat, in-game music playback and simultaneous voice changing, instead of replacing them with broad labels such as audio processing or workbench. Feature descriptions must match the implementation and release.",
+        "ja-JP": "最初に利用者ができることを示し、対応する機能と必要な手順を続けます。ボイスチャット、ゲーム内の音楽再生、同時の音声変換など、具体的な用途を「音声処理」「ワークベンチ」といった広い名称に置き換えません。機能説明は実装と公開版に合わせます。",
+        "ko-KR": "먼저 사용자가 할 수 있는 일을 설명하고 관련 기능과 필요한 절차를 이어 쓴다. 음성 채팅, 게임 내 음악 재생, 동시 음성 변환 같은 구체적인 용도를 ‘오디오 처리’나 ‘워크벤치’처럼 포괄적인 이름으로 대체하지 않는다. 기능 설명은 구현 및 배포 버전과 일치해야 한다.",
+        "fr-FR": "Présenter d’abord ce que les utilisateurs peuvent faire, puis les fonctions et les étapes nécessaires. Citer les usages concrets, comme le chat vocal, la musique en jeu et le changement de voix simultané, sans les remplacer par des termes généraux comme traitement audio ou atelier. Les descriptions doivent correspondre à l’implémentation et à la version publiée.",
+        "es-ES": "Explicar primero qué puede hacer el usuario y después las funciones y los pasos necesarios. Nombrar usos concretos, como el chat de voz, la música en juegos y el cambio de voz simultáneo, sin sustituirlos por términos generales como procesamiento de audio o entorno de trabajo. Las descripciones deben corresponder a la implementación y la versión publicada.",
+        "ru-RU": "Сначала объяснять, что может сделать пользователь, затем описывать нужные функции и шаги. Называть конкретные задачи: голосовой чат, музыку в играх и одновременное изменение голоса. Не заменять их общими словами вроде «обработка аудио» или «рабочая среда». Описание функций должно соответствовать реализации и опубликованной версии."
+      },
+      {
+        "zh-CN": "同一主题写成完整段落，独立事项才用列表，操作顺序才用编号。不要一句一段、一个链接一段，或为每句说明另设标题。下载、官网、指南等导航集中排列；导航链接可使用分隔符，正文仍按句意组织。",
+        "zh-TW": "同一主題寫成完整段落，獨立事項才用清單，操作順序才用編號。不要一句一段、一個連結一段，或為每句說明另設標題。下載、官網、指南等導覽集中排列；導覽連結可使用分隔符號，正文仍依句意組織。",
+        "en-US": "Keep one topic in a complete paragraph, use lists for independent items and numbers for ordered steps. Do not give every sentence or link its own paragraph or heading. Group download, website and guide links together. Separators may distinguish navigation links; prose still follows sentence structure.",
+        "ja-JP": "同じ話題は一つの段落にまとめ、独立した項目には箇条書き、操作の順序には番号を使います。一文やリンクごとに段落や見出しを設けません。ダウンロード、公式サイト、ガイドへのリンクはまとめて配置します。ナビゲーションのリンクには区切り記号を使えますが、本文は文意に沿って構成します。",
+        "ko-KR": "같은 주제는 하나의 완결된 문단으로 쓰고, 독립된 항목에는 목록을, 순서가 있는 절차에는 번호를 사용한다. 문장이나 링크마다 문단이나 제목을 만들지 않는다. 다운로드, 공식 사이트, 안내 링크는 한곳에 모은다. 탐색 링크에는 구분 기호를 사용할 수 있지만 본문은 문장의 의미에 따라 구성한다.",
+        "fr-FR": "Regrouper un même sujet dans un paragraphe complet, réserver les listes aux éléments indépendants et les numéros aux étapes ordonnées. Ne pas créer un paragraphe ou un titre pour chaque phrase ou lien. Rassembler les liens de téléchargement, du site et du guide. Les séparateurs peuvent distinguer les liens de navigation ; le texte reste structuré en phrases.",
+        "es-ES": "Agrupar un mismo tema en un párrafo completo, usar listas para elementos independientes y números para pasos ordenados. No crear un párrafo o título por cada frase o enlace. Reunir los enlaces de descarga, sitio y guía. Los enlaces de navegación pueden llevar separadores; el texto sigue la estructura de las frases.",
+        "ru-RU": "Объединять одну тему в связный абзац, использовать списки для самостоятельных пунктов, а нумерацию для последовательных шагов. Не создавать отдельный абзац или заголовок для каждого предложения и ссылки. Ссылки на загрузку, сайт и руководство размещать вместе. В навигации допустимы разделители; основной текст строится по смыслу предложений."
+      },
+      {
+        "zh-CN": "截图只配必要的简短图注。不要把画面中已有的信息再写成段落，也不要在每张图下重复日期、版本、来源链接和操作指南。日期与版本仅在影响理解时说明；出处与检索信息放在图片元数据或维护记录中。SEO/GEO 不增加读者无须阅读的正文。",
+        "zh-TW": "截圖只附必要的簡短圖說。不要將畫面中已有的資訊再寫成段落，也不要在每張圖下重複日期、版本、來源連結和操作指南。日期與版本僅在影響理解時說明；出處與檢索資訊放在圖片中繼資料或維護紀錄中。SEO/GEO 不增加讀者無須閱讀的正文。",
+        "en-US": "Give screenshots only the short captions they need. Do not restate visible content in paragraphs or repeat dates, versions, source links and instructions under each image. Mention dates and versions only when they affect understanding; keep provenance and search information in image metadata or maintenance records. SEO/GEO must not add prose that readers do not need.",
+        "ja-JP": "スクリーンショットには必要な短い説明だけを添えます。画面にある情報を段落で繰り返したり、画像ごとに日付、バージョン、出典リンク、操作ガイドを並べたりしません。日付とバージョンは理解に必要な場合だけ記載し、出典や検索用の情報は画像メタデータや保守記録に置きます。SEO/GEO のために読者に不要な本文を増やしません。",
+        "ko-KR": "스크린샷에는 필요한 짧은 설명만 붙인다. 화면에 보이는 정보를 문단으로 반복하거나 이미지마다 날짜, 버전, 출처 링크, 사용 안내를 나열하지 않는다. 날짜와 버전은 이해에 영향을 줄 때만 설명하고, 출처 및 검색 정보는 이미지 메타데이터나 유지보수 기록에 둔다. SEO/GEO를 위해 독자에게 불필요한 본문을 늘리지 않는다.",
+        "fr-FR": "Limiter les captures aux légendes courtes nécessaires. Ne pas répéter en paragraphes ce que montre l’image ni ajouter sous chacune dates, versions, liens sources et instructions. Mentionner les dates et versions seulement si elles éclairent le contenu ; conserver la provenance et les informations de recherche dans les métadonnées ou les notes de maintenance. Le SEO/GEO ne doit pas ajouter de texte inutile aux lecteurs.",
+        "es-ES": "Añadir a las capturas solo las leyendas breves necesarias. No repetir en párrafos lo que ya muestra la imagen ni añadir bajo cada una fechas, versiones, enlaces de origen e instrucciones. Mencionar fechas y versiones solo cuando ayuden a comprender; guardar la procedencia y los datos de búsqueda en metadatos o registros de mantenimiento. El SEO/GEO no debe añadir texto que el lector no necesita.",
+        "ru-RU": "Добавлять к снимкам экрана только необходимые короткие подписи. Не пересказывать видимое на изображении отдельными абзацами и не повторять под каждым снимком дату, версию, ссылки на источник и инструкции. Указывать дату и версию только тогда, когда они важны для понимания; сведения об источнике и поиске хранить в метаданных или записях сопровождения. SEO/GEO не должно добавлять ненужный читателю текст."
+      }
+    ],
+    "examples": [
+      {
+        "source": "RVC Fabric README",
+        "pairs": {
+          "zh-CN": [
+            "官方截图。\n\n截图记录于 2026 年 8 月。\n\n官网。\n\n使用指南。\n\n下载 Windows 版。",
+            "图片后集中放置下载、官网与使用指南链接，删除无须单独说明的截图日期。"
+          ]
+        }
+      },
+      {
+        "source": "RVC Fabric 产品介绍",
+        "pairs": {
+          "zh-CN": [
+            "Windows 实时 AI 语音转换与模型训练工作台。",
+            "可在 QQ、Discord 和游戏语音中实时变声、播放音乐和音效。"
+          ]
+        }
+      }
+    ]
+  },
+  {
     id: "marketing",
     title: {
       "zh-CN": "营销口号与破折号句式",
