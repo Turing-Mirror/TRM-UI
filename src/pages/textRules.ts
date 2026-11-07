@@ -339,6 +339,16 @@ export const TEXT_RULES: Rule[] = [
         "ru-RU": "Сначала объяснять, что может сделать пользователь, затем описывать нужные функции и шаги. Называть конкретные задачи: голосовой чат, музыку в играх и одновременное изменение голоса. Не заменять их общими словами вроде «обработка аудио» или «рабочая среда». Описание функций должно соответствовать реализации и опубликованной версии."
       },
       {
+        "zh-CN": "产品介绍和使用说明只写用户可用的功能与操作。分支名、提交记录和实现进度留在开发文档。Beta 功能只有在提供测试版入口并说明使用差异时才进入用户说明，不将开发分支包装成额外的产品功能。",
+        "zh-TW": "產品介紹與使用說明只寫使用者可用的功能與操作。分支名稱、提交紀錄和實作進度留在開發文件。Beta 功能只有在提供測試版入口並說明使用差異時才放入使用說明，不將開發分支包裝成額外的產品功能。",
+        "en-US": "Product descriptions and user instructions cover available features and actions. Keep branch names, commit records and implementation progress in developer documentation. Mention beta features in user instructions only when a beta download is provided and its usage differences are explained. Do not present a development branch as an additional product feature.",
+        "ja-JP": "製品紹介と利用ガイドには、利用できる機能と操作を書きます。ブランチ名、コミット履歴、実装の進捗は開発者向け文書に置きます。ベータ版の機能を利用者向けに説明する場合は、ベータ版の入手先と利用上の違いを示します。開発ブランチそのものを追加機能として紹介しません。",
+        "ko-KR": "제품 소개와 사용 설명에는 사용할 수 있는 기능과 조작 방법을 쓴다. 브랜치 이름, 커밋 기록, 구현 진행 상황은 개발 문서에 둔다. 베타 기능은 베타 다운로드 경로와 사용상의 차이를 함께 안내할 때만 사용 설명에 포함한다. 개발 브랜치 자체를 추가 제품 기능으로 소개하지 않는다.",
+        "fr-FR": "Les descriptions du produit et les instructions présentent les fonctions et les actions disponibles. Réserver les noms de branches, les commits et l’avancement de l’implémentation à la documentation de développement. Ne présenter les fonctions bêta aux utilisateurs qu’avec un accès à la version bêta et une explication des différences d’utilisation. Une branche de développement n’est pas une fonction supplémentaire du produit.",
+        "es-ES": "Las descripciones del producto y las instrucciones explican las funciones y acciones disponibles. Los nombres de ramas, los commits y el progreso de implementación pertenecen a la documentación de desarrollo. Incluir funciones beta en las instrucciones solo si se ofrece acceso a la versión beta y se explican las diferencias de uso. No presentar una rama de desarrollo como una función adicional del producto.",
+        "ru-RU": "В описании продукта и инструкциях писать о доступных функциях и действиях. Названия веток, коммиты и ход реализации оставлять в документации для разработчиков. Упоминать бета-функции в пользовательской инструкции только вместе со ссылкой на бета-версию и объяснением отличий в использовании. Не представлять ветку разработки как дополнительную функцию продукта."
+      },
+      {
         "zh-CN": "同一主题写成完整段落，独立事项才用列表，操作顺序才用编号。不要一句一段、一个链接一段，或为每句说明另设标题。下载、官网、指南等导航集中排列；导航链接可使用分隔符，正文仍按句意组织。",
         "zh-TW": "同一主題寫成完整段落，獨立事項才用清單，操作順序才用編號。不要一句一段、一個連結一段，或為每句說明另設標題。下載、官網、指南等導覽集中排列；導覽連結可使用分隔符號，正文仍依句意組織。",
         "en-US": "Keep one topic in a complete paragraph, use lists for independent items and numbers for ordered steps. Do not give every sentence or link its own paragraph or heading. Group download, website and guide links together. Separators may distinguish navigation links; prose still follows sentence structure.",
@@ -349,14 +359,14 @@ export const TEXT_RULES: Rule[] = [
         "ru-RU": "Объединять одну тему в связный абзац, использовать списки для самостоятельных пунктов, а нумерацию для последовательных шагов. Не создавать отдельный абзац или заголовок для каждого предложения и ссылки. Ссылки на загрузку, сайт и руководство размещать вместе. В навигации допустимы разделители; основной текст строится по смыслу предложений."
       },
       {
-        "zh-CN": "截图只配必要的简短图注。不要把画面中已有的信息再写成段落，也不要在每张图下重复日期、版本、来源链接和操作指南。日期与版本仅在影响理解时说明；出处与检索信息放在图片元数据或维护记录中。SEO/GEO 不增加读者无须阅读的正文。",
-        "zh-TW": "截圖只附必要的簡短圖說。不要將畫面中已有的資訊再寫成段落，也不要在每張圖下重複日期、版本、來源連結和操作指南。日期與版本僅在影響理解時說明；出處與檢索資訊放在圖片中繼資料或維護紀錄中。SEO/GEO 不增加讀者無須閱讀的正文。",
-        "en-US": "Give screenshots only the short captions they need. Do not restate visible content in paragraphs or repeat dates, versions, source links and instructions under each image. Mention dates and versions only when they affect understanding; keep provenance and search information in image metadata or maintenance records. SEO/GEO must not add prose that readers do not need.",
-        "ja-JP": "スクリーンショットには必要な短い説明だけを添えます。画面にある情報を段落で繰り返したり、画像ごとに日付、バージョン、出典リンク、操作ガイドを並べたりしません。日付とバージョンは理解に必要な場合だけ記載し、出典や検索用の情報は画像メタデータや保守記録に置きます。SEO/GEO のために読者に不要な本文を増やしません。",
-        "ko-KR": "스크린샷에는 필요한 짧은 설명만 붙인다. 화면에 보이는 정보를 문단으로 반복하거나 이미지마다 날짜, 버전, 출처 링크, 사용 안내를 나열하지 않는다. 날짜와 버전은 이해에 영향을 줄 때만 설명하고, 출처 및 검색 정보는 이미지 메타데이터나 유지보수 기록에 둔다. SEO/GEO를 위해 독자에게 불필요한 본문을 늘리지 않는다.",
-        "fr-FR": "Limiter les captures aux légendes courtes nécessaires. Ne pas répéter en paragraphes ce que montre l’image ni ajouter sous chacune dates, versions, liens sources et instructions. Mentionner les dates et versions seulement si elles éclairent le contenu ; conserver la provenance et les informations de recherche dans les métadonnées ou les notes de maintenance. Le SEO/GEO ne doit pas ajouter de texte inutile aux lecteurs.",
-        "es-ES": "Añadir a las capturas solo las leyendas breves necesarias. No repetir en párrafos lo que ya muestra la imagen ni añadir bajo cada una fechas, versiones, enlaces de origen e instrucciones. Mencionar fechas y versiones solo cuando ayuden a comprender; guardar la procedencia y los datos de búsqueda en metadatos o registros de mantenimiento. El SEO/GEO no debe añadir texto que el lector no necesita.",
-        "ru-RU": "Добавлять к снимкам экрана только необходимые короткие подписи. Не пересказывать видимое на изображении отдельными абзацами и не повторять под каждым снимком дату, версию, ссылки на источник и инструкции. Указывать дату и версию только тогда, когда они важны для понимания; сведения об источнике и поиске хранить в метаданных или записях сопровождения. SEO/GEO не должно добавлять ненужный читателю текст."
+        "zh-CN": "截图只配必要的简短图注。不要把画面中已有的信息再写成段落，也不要在每张图下重复日期、版本、来源链接和操作指南。日期与版本仅在影响理解时说明；出处与检索信息放在图片元数据或维护记录中。SEO/GEO 不增加读者无须阅读的正文。 同一产品的简短介绍、操作说明与截图集中在产品页，不为检索关键词拆出重复页面。",
+        "zh-TW": "截圖只附必要的簡短圖說。不要將畫面中已有的資訊再寫成段落，也不要在每張圖下重複日期、版本、來源連結和操作指南。日期與版本僅在影響理解時說明；出處與檢索資訊放在圖片中繼資料或維護紀錄中。SEO/GEO 不增加讀者無須閱讀的正文。 同一產品的簡短介紹、操作說明與截圖集中於產品頁，不為檢索關鍵字拆出重複頁面。",
+        "en-US": "Give screenshots only the short captions they need. Do not restate visible content in paragraphs or repeat dates, versions, source links and instructions under each image. Mention dates and versions only when they affect understanding; keep provenance and search information in image metadata or maintenance records. SEO/GEO must not add prose that readers do not need. Keep a product’s short description, instructions and screenshots on its product page. Do not create duplicate pages for search keywords.",
+        "ja-JP": "スクリーンショットには必要な短い説明だけを添えます。画面にある情報を段落で繰り返したり、画像ごとに日付、バージョン、出典リンク、操作ガイドを並べたりしません。日付とバージョンは理解に必要な場合だけ記載し、出典や検索用の情報は画像メタデータや保守記録に置きます。SEO/GEO のために読者に不要な本文を増やしません。 製品の短い紹介、操作説明、スクリーンショットは製品ページにまとめます。検索キーワードのために重複ページを作りません。",
+        "ko-KR": "스크린샷에는 필요한 짧은 설명만 붙인다. 화면에 보이는 정보를 문단으로 반복하거나 이미지마다 날짜, 버전, 출처 링크, 사용 안내를 나열하지 않는다. 날짜와 버전은 이해에 영향을 줄 때만 설명하고, 출처 및 검색 정보는 이미지 메타데이터나 유지보수 기록에 둔다. SEO/GEO를 위해 독자에게 불필요한 본문을 늘리지 않는다. 제품의 짧은 소개, 사용 방법, 스크린샷은 제품 페이지에 모은다. 검색 키워드를 위해 중복 페이지를 만들지 않는다.",
+        "fr-FR": "Limiter les captures aux légendes courtes nécessaires. Ne pas répéter en paragraphes ce que montre l’image ni ajouter sous chacune dates, versions, liens sources et instructions. Mentionner les dates et versions seulement si elles éclairent le contenu ; conserver la provenance et les informations de recherche dans les métadonnées ou les notes de maintenance. Le SEO/GEO ne doit pas ajouter de texte inutile aux lecteurs. Regrouper la courte présentation, les instructions et les captures sur la page du produit. Ne pas créer de pages redondantes pour des mots-clés de recherche.",
+        "es-ES": "Añadir a las capturas solo las leyendas breves necesarias. No repetir en párrafos lo que ya muestra la imagen ni añadir bajo cada una fechas, versiones, enlaces de origen e instrucciones. Mencionar fechas y versiones solo cuando ayuden a comprender; guardar la procedencia y los datos de búsqueda en metadatos o registros de mantenimiento. El SEO/GEO no debe añadir texto que el lector no necesita. Reunir la descripción breve, las instrucciones y las capturas en la página del producto. No crear páginas duplicadas para palabras clave de búsqueda.",
+        "ru-RU": "Добавлять к снимкам экрана только необходимые короткие подписи. Не пересказывать видимое на изображении отдельными абзацами и не повторять под каждым снимком дату, версию, ссылки на источник и инструкции. Указывать дату и версию только тогда, когда они важны для понимания; сведения об источнике и поиске хранить в метаданных или записях сопровождения. SEO/GEO не должно добавлять ненужный читателю текст. Краткое описание, инструкции и снимки экрана размещать на странице продукта. Не создавать дублирующие страницы ради поисковых запросов."
       }
     ],
     "examples": [
@@ -375,6 +385,15 @@ export const TEXT_RULES: Rule[] = [
           "zh-CN": [
             "Windows 实时 AI 语音转换与模型训练工作台。",
             "可在 QQ、Discord 和游戏语音中实时变声、播放音乐和音效。"
+          ]
+        }
+      },
+      {
+        "source": "RVC Fabric README",
+        "pairs": {
+          "zh-CN": [
+            "Neptune 海王星开发分支还提供手机配对、本地 API 和 MCP 接口。",
+            "用户介绍删除这段分支说明，Beta 实现进度留在开发文档。"
           ]
         }
       }
