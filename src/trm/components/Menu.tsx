@@ -436,6 +436,7 @@ export function PromptDialog({
         <div className="text-[15px] font-semibold">{shownTitle}</div>
         <input
           autoFocus
+          aria-label={shownTitle}
           value={name}
           onChange={(e) => setName(e.target.value)}
           onFocus={(e) => e.currentTarget.select()}
