@@ -898,7 +898,8 @@ option {
   padding: 12px 8px;
 }
 .trm-workbench-heading h3 { margin: 0; font-size: 15.5px; font-weight: 600; }
-.trm-workbench-title { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+/* 标题至少留出 240px：放不下时右侧按钮整体换到下一行，而不是把标题和小字挤成一字一行。 */
+.trm-workbench-title { flex: 1 1 240px; min-width: 0; overflow-wrap: anywhere; }
 .trm-workbench-title .roll { max-width: 100%; }
 .trm-workbench-title .roll > span { white-space: normal; overflow-wrap: anywhere; }
 /* Heading changes travel with the body. Opaque, full-height rolls never blink or overlap. */
