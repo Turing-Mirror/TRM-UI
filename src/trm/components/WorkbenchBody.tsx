@@ -1,17 +1,24 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { FLOW_MS, FlowList, PushLayer } from "./motion";
+import { StaticMotionContext } from "./motionScope";
 
 type Block = { key: string; node: ReactNode };
 type Body = { scope: string; blocks: Block[]; end?: string | number; seq: number; dir: -1 | 1 };
 const reduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-function BodyContent({ body, leaving }: { body: Body; leaving: boolean }) {
+function BodyContent({ body, leaving, moving }: { body: Body; leaving: boolean; moving: boolean }) {
   const scroll = useRef<HTMLDivElement>(null);
   const first = useRef(true);
   useLayoutEffect(() => {
+    if (!moving) return;
+    // Cancel descendant CSS entrances and transitions before paint. Unlike toggling
+    // animation:none on the stage, cancellation does not restart them when the push ends.
+    scroll.current?.getAnimations?.({ subtree: true }).forEach(animation => animation.cancel());
+  });
+  useLayoutEffect(() => {
     const el = scroll.current;
     if (!el || leaving || body.end === undefined) return;
-    const instant = first.current || reduced();
+    const instant = first.current || moving || reduced();
     first.current = false;
     const from = el.scrollTop;
     const start = performance.now();
@@ -32,13 +39,15 @@ function BodyContent({ body, leaving }: { body: Body; leaving: boolean }) {
       el.removeEventListener("wheel", cancel);
       el.removeEventListener("touchstart", cancel);
     };
-  }, [body.end, leaving]);
-  return <div ref={scroll} className="trm-workbench-body" data-follow-end={body.end !== undefined || undefined}>
-    <div className="trm-workbench-read">
-      <FlowList items={body.blocks} keyOf={block => block.key} className="flow-quiet"
-        itemClassName="trm-workbench-block" render={block => block.node} />
+  }, [body.end, leaving, moving]);
+  return <StaticMotionContext.Provider value={moving}>
+    <div ref={scroll} className="trm-workbench-body" data-follow-end={body.end !== undefined || undefined}>
+      <div className="trm-workbench-read">
+        <FlowList items={body.blocks} keyOf={block => block.key} className="flow-quiet"
+          itemClassName="trm-workbench-block" render={block => block.node} />
+      </div>
     </div>
-  </div>;
+  </StaticMotionContext.Provider>;
 }
 
 /** Every detail uses one adjacent body pair; only conversations opt into following the scroll end. */
@@ -47,13 +56,18 @@ export function WorkbenchBody({ scope, order, blocks, end }: {
 }) {
   const [current, setCurrent] = useState<Body>({ scope, blocks, end, seq: 0, dir: 1 });
   const [old, setOld] = useState<Body | null>(null);
-  // Serialize rapid selections; only one adjacent pair can occupy the clipped viewport.
-  if (current.scope !== scope && (!old || reduced())) {
+  // A third selection replaces the incoming content without restarting its painted
+  // journey. Reversing swaps the same two layers and continues from their positions.
+  if (current.scope !== scope) {
     const before = order.indexOf(current.scope);
     const after = order.indexOf(scope);
     const dir = before >= 0 && after >= 0 && after < before ? -1 : 1;
-    setOld(reduced() ? null : current);
-    setCurrent({ scope, blocks, end, seq: current.seq + 1, dir });
+    if (old && !reduced() && scope !== old.scope && dir === current.dir) {
+      setCurrent({ ...current, scope, blocks, end });
+    } else {
+      setOld(reduced() ? null : current);
+      setCurrent({ scope, blocks, end, seq: old?.seq ?? current.seq + 1, dir });
+    }
   } else if (current.scope === scope && (current.blocks !== blocks || current.end !== end)) {
     setCurrent({ ...current, blocks, end });
   }
@@ -66,11 +80,11 @@ export function WorkbenchBody({ scope, order, blocks, end }: {
     data-switching={Boolean(old) || undefined} data-direction={current.dir}>
     {old ? <PushLayer key={old.seq} phase="leave" seq={current.seq} dir={current.dir} transition="body"
       className="trm-workbench-body-layer trm-workbench-body-out">
-      <BodyContent body={old} leaving />
+      <BodyContent key={old.scope} body={old} leaving moving />
     </PushLayer> : null}
     <PushLayer key={current.seq} phase={old ? "enter" : "shown"} seq={current.seq} dir={current.dir}
       transition="body" className="trm-workbench-body-layer trm-workbench-body-current">
-      <BodyContent body={current} leaving={false} />
+      <BodyContent key={current.scope} body={current} leaving={false} moving={Boolean(old)} />
     </PushLayer>
   </div>;
 }

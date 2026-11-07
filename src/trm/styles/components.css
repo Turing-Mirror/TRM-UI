@@ -889,6 +889,17 @@ option {
 .trm-workbench-title { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .trm-workbench-title .roll { max-width: 100%; }
 .trm-workbench-title .roll > span { white-space: normal; overflow-wrap: anywhere; }
+/* Heading changes travel with the body. Opaque, full-height rolls never blink or overlap. */
+@keyframes workbench-roll-in {
+  from { transform: translate3d(0, calc(var(--workbench-roll-dir, 1) * 100%), 0); }
+  to { transform: none; }
+}
+@keyframes workbench-roll-out {
+  from { transform: none; }
+  to { transform: translate3d(0, calc(var(--workbench-roll-dir, 1) * -100%), 0); }
+}
+.trm-workbench-title .roll-in { animation-name: workbench-roll-in; }
+.trm-workbench-title .roll-out { animation-name: workbench-roll-out; }
 .trm-workbench-field { min-width: 0; max-width: 100%; }
 .trm-workbench-sub {
   display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 6px; font-size: 12.5px; color: var(--ink-muted);
@@ -961,7 +972,6 @@ option {
 .trm-workbench-body-layer { position: absolute; inset: 0; overflow: clip; }
 .trm-workbench-body-layer > .trm-workbench-body { height: 100%; box-sizing: border-box; }
 .trm-workbench-body-out { pointer-events: none; }
-.trm-workbench-body-out .flow-item { animation-play-state: paused; }
 .trm-workbench-body-notice { flex: none; margin-inline: var(--workbench-padding); }
 .trm-workbench-read { min-width: 0; overflow-wrap: anywhere; }
 .trm-workbench-foot { flex: none; padding-block: 16px; }

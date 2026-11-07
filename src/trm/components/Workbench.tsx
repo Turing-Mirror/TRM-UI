@@ -168,6 +168,20 @@ export function WorkbenchDetail({
   const selection = useContext(SelectionContext);
   const pushBody = selection?.selected != null;
   const fields = Children.toArray(sub);
+  const scope = selection?.selected;
+  const [heading, setHeading] = useState({ scope, entrance: true, dir: 1 });
+  if (heading.scope !== scope) {
+    const before = selection?.order.indexOf(heading.scope ?? "") ?? -1;
+    const after = selection?.order.indexOf(scope ?? "") ?? -1;
+    setHeading({ scope, entrance: false, dir: before >= 0 && after >= 0 && after < before ? -1 : 1 });
+  }
+  useEffect(() => {
+    if (!heading.entrance) return;
+    const delay = parseFloat(String(stagger(fields.length).animationDelay));
+    const timer = window.setTimeout(() => setHeading(value => ({ ...value, entrance: false })), FLOW_MS + delay);
+    return () => window.clearTimeout(timer);
+  }, [heading.entrance, fields.length]);
+  const headingClass = `trm-workbench-part${heading.entrance ? " rise" : ""}`;
   const blocks = Children.toArray(children).map((node, i) => ({
     key: isValidElement(node) ? String(node.key) : String(i), node,
   }));
@@ -206,12 +220,12 @@ export function WorkbenchDetail({
     : <footer className="trm-workbench-foot" data-mode={footMode}>{foot}</footer>;
   return <section className="trm-workbench-detail" aria-labelledby={id}>
     <header className="trm-workbench-heading">
-      <div className="trm-workbench-title">
-        <h3 id={id} className="trm-workbench-part rise" style={stagger(0)}>
+      <div className="trm-workbench-title" style={{ "--workbench-roll-dir": heading.dir } as CSSProperties}>
+        <h3 id={id} className={headingClass} style={stagger(0)}>
           {titleText === undefined ? field(title) : <Roll value={titleText}>{title}</Roll>}
         </h3>
         {fields.length ? <div className="trm-workbench-sub">
-          {fields.map((node, i) => <div key={i} className="trm-workbench-field trm-workbench-part rise"
+          {fields.map((node, i) => <div key={i} className={`trm-workbench-field ${headingClass}`}
             style={stagger(i + 1)}>{field(node)}</div>)}
         </div> : null}
       </div>

@@ -17,6 +17,7 @@ import {
 } from "react";
 
 import { usePresence } from "./overlay";
+import { StaticMotionContext } from "./motionScope";
 
 /** 推移、伸缩、流动列表共用的时长。与 index.css 的 --flow-ms 一致。 */
 export const FLOW_MS = 420;
@@ -149,8 +150,8 @@ function usePushMotion(phase: PushPhase, seq: number, dir: Dir, transition: Pane
     const distance = sliding ? 100 : 32;
     const unit = sliding ? "%" : "px";
     // Queue turns are serialized, so both layers start at exact adjacent endpoints.
-    const transform = (transition === "queue" || transition === "body") && phase === "leave" ? "none"
-      : continuing ? painted.transform : translate(`${(dir || 1) * distance}${unit}`);
+    const transform = transition === "queue" && phase === "leave" ? "none"
+      : continuing ? painted.transform || "none" : translate(`${(dir || 1) * distance}${unit}`);
     animations.current.forEach(animation => animation.cancel());
     animations.current = [];
     previous.current = phase;
@@ -439,7 +440,8 @@ function FlowItems<T>({
   items, keyOf, render, className = "", itemClassName = "", motion, layout = "list", reflow = true,
 }: FlowListProps<T> & { reflow?: boolean }) {
   const visible = usePaneOn();
-  const duration = motion?.reduced || reduced() ? 0 : Math.max(0, motion?.durationMs ?? FLOW_MS);
+  const staticMotion = useContext(StaticMotionContext);
+  const duration = staticMotion || motion?.reduced || reduced() ? 0 : Math.max(0, motion?.durationMs ?? FLOW_MS);
   const [list, setList] = useState<FlowEntry<T>[]>(() => items.map((item) => ({ key: keyOf(item), item, phase: "stay" })));
   // 按 key 的顺序判断列表变没变。父组件每次重绘都会传来新数组（filter、slice），
   // 只看数组是不是同一个，就会把每次重绘都当成换了列表，用旧位置再滑一遍
@@ -450,7 +452,10 @@ function FlowItems<T>({
   // 上一次量位置时对应的那份列表。收尾那次重绘（卸下离开的项、新来的项转常驻）列表没变，只记位置不放动画
   const measured = useRef(sig);
 
-  if (src !== sig) {
+  if (staticMotion && (src !== sig || list.some(entry => entry.phase !== "stay"))) {
+    setSrc(sig);
+    setList(items.map(item => ({ key: keyOf(item), item, phase: "stay" })));
+  } else if (src !== sig) {
     setSrc(sig);
     const next = new Set(items.map(keyOf));
     const prev = list.filter((e) => e.phase !== "leave" || !next.has(e.key));
@@ -538,13 +543,18 @@ function FlowItems<T>({
 export function Roll({ value, children = value, className = "" }: {
   value: string; children?: ReactNode; className?: string;
 }) {
+  const staticMotion = useContext(StaticMotionContext);
   const [cur, setCur] = useState({ value, node: children, seq: 0 });
   const [old, setOld] = useState<{ node: ReactNode; seq: number } | null>(null);
   if (cur.value !== value) {
-    setOld(reduced() ? null : { node: cur.node, seq: cur.seq });
+    setOld(staticMotion || reduced() ? null : { node: cur.node, seq: cur.seq });
     setCur({ value, node: children, seq: cur.seq + 1 });
   } else if (cur.node !== children) {
     setCur({ ...cur, node: children });
+  }
+  if (staticMotion && (old || cur.seq)) {
+    setOld(null);
+    setCur({ value, node: children, seq: 0 });
   }
   useEffect(() => {
     if (!old) return;

@@ -5,7 +5,7 @@ import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { Workbench, WorkbenchDetail, WorkbenchItem } from "./Workbench";
 import { Empty, Filters, Tabs, Pager } from "./display";
 import { SearchBox } from "./listing";
-import { FlowList, FLOW_MS } from "./motion";
+import { FlowList, FLOW_MS, Roll } from "./motion";
 import { mount, type Mounted } from "../test/dom";
 const styles = readFileSync("src/trm/styles/components.css", "utf8");
 
@@ -93,10 +93,13 @@ it("pushes a review body in order without scroll-to-end, while retaining actions
   expect(view.container.querySelector(".trm-workbench-foot")).toBe(footer);
   expect(footer?.closest(".trm-workbench-body-stage")).toBeNull();
   expect(view.container.querySelector("h3 .roll-in")?.textContent).toBe("a");
+  expect(view.container.querySelector(".trm-workbench-heading .rise")).toBeNull();
+  expect(view.container.querySelector<HTMLElement>(".trm-workbench-title")!.style.getPropertyValue("--workbench-roll-dir")).toBe("1");
   act(() => vi.advanceTimersByTime(FLOW_MS));
   animate.mockClear();
   act(() => view.root.render(review("z")));
   expect(animate.mock.calls[1][0]).toEqual([{ transform: "translate3d(0, -100%, 0)" }, { transform: "none" }]);
+  expect(view.container.querySelector<HTMLElement>(".trm-workbench-title")!.style.getPropertyValue("--workbench-roll-dir")).toBe("-1");
 });
 
 const chat = (selected: string, messages = ["first", "second"]) => <Workbench selected={selected}
@@ -162,21 +165,107 @@ it("expands appended messages in the same body without starting another item pus
   expect(animate.mock.contexts.some(node => (node as HTMLElement).className.includes("trm-workbench-body-layer"))).toBe(false);
 });
 
-it("serializes rapid item changes without a third body and skips motion when reduced", () => {
+it("retargets rapid item changes in the existing incoming layer and skips motion when reduced", () => {
+  const animate = vi.spyOn(HTMLElement.prototype, "animate");
   view = mount(chat("z"));
   act(() => view.root.render(chat("a")));
+  const incoming = view.container.querySelector(".trm-workbench-body-current");
+  animate.mockClear();
+  act(() => vi.advanceTimersByTime(100));
   act(() => view.root.render(chat("")));
   expect(view.container.querySelectorAll(".trm-workbench-body-layer")).toHaveLength(2);
-  expect(view.container.querySelector(".trm-workbench-body-stage")?.getAttribute("data-scope")).toBe("a");
-  act(() => vi.advanceTimersByTime(FLOW_MS));
+  expect(view.container.querySelector(".trm-workbench-body-current")).toBe(incoming);
+  expect(animate).not.toHaveBeenCalled();
   expect(view.container.querySelector(".trm-workbench-body-stage")?.getAttribute("data-scope")).toBe("");
-  expect(view.container.querySelectorAll(".trm-workbench-body-layer")).toHaveLength(2);
-  act(() => vi.advanceTimersByTime(FLOW_MS));
+  expect(view.container.querySelector(".trm-workbench-heading .rise, .trm-workbench-body-stage .flow-enter, .trm-workbench-body-stage .flow-leave")).toBeNull();
+  act(() => vi.advanceTimersByTime(FLOW_MS - 100));
   expect(view.container.querySelectorAll(".trm-workbench-body-layer")).toHaveLength(1);
   reduced = true;
   act(() => view.root.render(chat("z")));
   expect(view.container.querySelectorAll(".trm-workbench-body-layer")).toHaveLength(1);
   expect(view.container.querySelector(".trm-workbench-body-stage")?.getAttribute("data-scope")).toBe("z");
+});
+
+it("reverses the existing body pair from its painted positions", () => {
+  const animate = vi.spyOn(HTMLElement.prototype, "animate");
+  view = mount(chat("z"));
+  act(() => view.root.render(chat("a")));
+  const outgoing = view.container.querySelector<HTMLElement>(".trm-workbench-body-out")!;
+  const incoming = view.container.querySelector<HTMLElement>(".trm-workbench-body-current")!;
+  // happy-dom has no animation timeline; supply the two adjacent painted transforms.
+  outgoing.style.transform = "matrix(1, 0, 0, 1, 0, -120)";
+  incoming.style.transform = "matrix(1, 0, 0, 1, 0, 180)";
+  animate.mockClear();
+  act(() => view.root.render(chat("z")));
+  expect(view.container.querySelector(".trm-workbench-body-current")).toBe(outgoing);
+  expect(view.container.querySelector(".trm-workbench-body-out")).toBe(incoming);
+  expect(animate.mock.calls.map(call => call[0])).toEqual([
+    [{ transform: "matrix(1, 0, 0, 1, 0, 180)" }, { transform: "translate3d(0, 100%, 0)" }],
+    [{ transform: "matrix(1, 0, 0, 1, 0, -120)" }, { transform: "none" }],
+  ]);
+  act(() => vi.advanceTimersByTime(FLOW_MS));
+  expect(view.container.querySelectorAll(".trm-workbench-body-layer")).toHaveLength(1);
+});
+
+it("cancels nested entrance/fade animations before painting the body push", () => {
+  const cancel = vi.fn();
+  const getAnimations = vi.spyOn(HTMLElement.prototype, "getAnimations").mockReturnValue([
+    { cancel } as unknown as Animation,
+  ]);
+  view = mount(chat("z"));
+  cancel.mockClear();
+  getAnimations.mockClear();
+  act(() => view.root.render(chat("a")));
+  const bodyCalls = getAnimations.mock.contexts.flatMap((node, i) =>
+    (node as HTMLElement).classList.contains("trm-workbench-body") ? [getAnimations.mock.calls[i]] : []);
+  expect(bodyCalls).toEqual([[{ subtree: true }], [{ subtree: true }]]);
+  expect(cancel).toHaveBeenCalled();
+  const title = view.container.querySelector("h3 .roll-in")!;
+  expect(getComputedStyle(title).animationName).toBe("workbench-roll-in");
+  for (const name of ["workbench-roll-in", "workbench-roll-out"]) {
+    const keyframes = styles.slice(styles.indexOf(`@keyframes ${name}`)).split("\n}")[0];
+    expect(keyframes).not.toMatch(/opacity|scale/);
+    expect(keyframes).toContain("--workbench-roll-dir");
+  }
+});
+
+it.each([false, true])("isolates nested content motion during a push and restores same-item motion (narrow=%s)", small => {
+  narrow = small;
+  const animate = vi.spyOn(HTMLElement.prototype, "animate");
+  const detail = (selected: string, messages: string[], status: string) => <Workbench selected={selected}
+    order={order} onBack={() => {}} list={null} detail={<WorkbenchDetail
+      title={<span><Roll value={selected} /></span>} sub={<Roll value={status} />}>
+      <FlowList key="messages" items={messages} keyOf={message => message}
+        render={message => <p className="rise">{message}</p>} />
+    </WorkbenchDetail>} />;
+  view = mount(detail("z", ["old"], "waiting"));
+  act(() => vi.advanceTimersByTime(FLOW_MS + 100));
+  const heading = view.container.querySelector("h3");
+  const stage = view.container.querySelector(".trm-workbench-body-stage")!;
+  act(() => view.root.render(detail("z", ["old", "pending"], "replied")));
+  expect(stage.querySelector(".flow-enter")?.textContent).toBe("pending");
+  animate.mockClear();
+  act(() => view.root.render(detail("a", ["new"], "waiting")));
+  expect(animate).toHaveBeenCalledTimes(2);
+  expect(stage.querySelectorAll(".trm-workbench-body-layer")).toHaveLength(2);
+  expect(stage.querySelector(".flow-enter, .flow-leave, .roll-in, .roll-out")).toBeNull();
+  expect(view.container.querySelector("h3")).toBe(heading);
+  expect(view.container.querySelector(".trm-workbench-heading .rise")).toBeNull();
+  // Refetch/append during the push must not start a second motion inside either layer.
+  act(() => view.root.render(detail("a", ["new", "during"], "replied")));
+  expect(stage.querySelector(".flow-enter, .flow-leave")).toBeNull();
+  expect(animate).toHaveBeenCalledTimes(2);
+  expect(stage.querySelector(".trm-workbench-body-out")?.textContent).toBe("oldpending");
+  act(() => vi.advanceTimersByTime(FLOW_MS + 100));
+  animate.mockClear();
+  const body = stage.querySelector(".trm-workbench-body-current");
+  act(() => view.root.render(detail("a", ["new", "during", "after"], "done")));
+  expect(stage.querySelector(".flow-enter")?.textContent).toBe("after");
+  expect(stage.querySelector(".trm-workbench-body-current")).toBe(body);
+  expect(stage.querySelector(".trm-workbench-body-out")).toBeNull();
+  expect(view.container.querySelector(".trm-workbench-heading .rise")).toBeNull();
+  expect(view.container.querySelector(".trm-workbench-field .roll-in")?.textContent).toBe("done");
+  expect(animate.mock.contexts.some(node => (node as HTMLElement).className.includes("trm-workbench-body-layer"))).toBe(false);
 });
 
 it.each([false, true])("insets every row background and rounds its corners (selected=%s)", selected => {

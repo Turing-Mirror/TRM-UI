@@ -31,6 +31,41 @@ function goPage(page: number) {
   act(() => vi.advanceTimersByTime(FLOW_MS + 1));
 }
 
+it.each([false, true])("switches both gallery consumers with one body push and no heading entrance (narrow=%s)", narrow => {
+  const matchMedia = window.matchMedia.bind(window);
+  vi.spyOn(window, "matchMedia").mockImplementation(query => {
+    const media = matchMedia(query);
+    if (query.includes("max-width")) vi.spyOn(media, "matches", "get").mockReturnValue(narrow);
+    return media;
+  });
+  start();
+  for (const workbench of view.container.querySelectorAll(".trm-workbench")) {
+    const rows = workbench.querySelectorAll<HTMLButtonElement>(".trm-workbench-item");
+    act(() => rows[0].click());
+    act(() => vi.advanceTimersByTime(FLOW_MS + 100));
+    const heading = workbench.querySelector(".trm-workbench-detail h3");
+    const actions = workbench.querySelector(".trm-workbench-actions");
+    const foot = workbench.querySelector(".trm-workbench-foot");
+    act(() => rows[1].click());
+    expect(workbench.querySelector(".trm-workbench-detail h3")).toBe(heading);
+    expect(workbench.querySelector(".trm-workbench-detail .trm-workbench-heading .rise")).toBeNull();
+    const stage = workbench.querySelector(".trm-workbench-body-stage")!;
+    expect(stage.querySelectorAll(".trm-workbench-body-current")).toHaveLength(1);
+    expect(stage.querySelectorAll(".trm-workbench-body-out")).toHaveLength(1);
+    expect(stage.querySelector(".flow-enter, .flow-leave")).toBeNull();
+    expect(workbench.querySelector(".trm-workbench-actions")).toBe(actions);
+    expect(workbench.querySelector(".trm-workbench-foot")).toBe(foot);
+    act(() => vi.advanceTimersByTime(FLOW_MS + 100));
+    expect(stage.querySelectorAll(".trm-workbench-body-layer")).toHaveLength(1);
+    if (narrow) {
+      act(() => workbench.querySelector<HTMLButtonElement>(".trm-workbench-back")!.click());
+      act(() => vi.advanceTimersByTime(FLOW_MS + 1));
+      expect(workbench.querySelector<HTMLElement>('[data-trm-pane="list"]')!.hidden).toBe(false);
+      expect(workbench.querySelector(".trm-workbench-item")).toBe(rows[0]);
+    }
+  }
+});
+
 it("shows a distinct All queue with reviewed rows and rolls the filter heading and total", () => {
   start();
   const head = queue().querySelector(".trm-workbench-list-head .trm-workbench-heading")!;
