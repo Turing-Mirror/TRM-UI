@@ -80,7 +80,7 @@ export { Popover, PopoverOwner, Menu, MenuBtn, useMenu, Dropdown, PromptDialog, 
 export { Calendar, dayKey, useAnchoredPop } from "./components/Calendar";
 export { NoticeProvider, useNotify, Notices, NOTICE_OUT_MS, type Notice, type NoticeInput } from "./components/Notices";
 export {
-  AppBar, Sidebar, SidebarBrand, SidebarItem, SidebarStatus, type SidebarStatusProps, SidebarHead, SidebarHeadBtn, ActivityRow, SIDEBAR_W,
+  AppBar, Sidebar, SidebarBrand, SidebarItem, SidebarSwitch, SidebarStatus, type SidebarStatusProps, SidebarHead, SidebarHeadBtn, ActivityRow, SIDEBAR_W,
 } from "./components/Sidebar";
 export { Side, SideHead, SideItem, SearchBox, MoreBtn, afterDrag } from "./components/listing";
 export { Panes, Pane, Swap, Morph, FlowList, Roll, Collapse, usePaneOn, useDir, useSlider, sliderStyle, stagger, curve, FLOW_MS, SWAP_OUT_MS } from "./components/motion";

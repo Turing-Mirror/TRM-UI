@@ -116,7 +116,7 @@ export function Workbench({
 }
 
 export type WorkbenchItemProps = {
-  title: string;
+  title: ReactNode;
   meta?: ReactNode;
   preview?: string;
   tag?: ReactNode;

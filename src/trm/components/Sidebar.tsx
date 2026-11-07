@@ -14,6 +14,7 @@ import { IconBtn } from "./display";
 import { WinBtn, type WindowControls } from "./TitleBar";
 import { Roll } from "./motion";
 import { Tooltip } from "./Tooltip";
+import { useMenu } from "./Menu";
 
 // Share the geometry so foot states keep the same icon anchor as navigation, including when collapsed.
 const SIDEBAR_ROW = "relative w-full flex-none flex items-center gap-3 h-9 px-[13px] rounded-[var(--rs)] border-0 cursor-pointer text-[13.5px] transition-colors overflow-hidden";
@@ -192,6 +193,58 @@ export function SidebarItem({
       <span className="side-label truncate" aria-hidden={collapsed || undefined}>{label}</span>
       {dot ? <span aria-label={dot} className={`absolute w-[6px] h-[6px] rounded-full bg-[var(--notify)] transition-[top,right] duration-300 ${collapsed ? "top-1.5 right-2" : "top-[15px] right-3"}`} /> : null}
     </button>
+  );
+}
+
+/**
+ * 侧栏里切换当前范围（店铺、工作区等）的一行：图标、当前项名称和向下箭头，点开是选项菜单，当前项带勾。
+ * 和导航项同一套行高与图标位置，收起后只剩图标，悬停显示当前项。
+ */
+export function SidebarSwitch<T extends string>({
+  icon,
+  label,
+  value,
+  options,
+  onChange,
+  collapsed,
+}: {
+  icon: IconName;
+  /** 这一行切换的是什么，读屏读出来，例如「店铺」。 */
+  label: string;
+  value: T;
+  options: { id: T; label: string }[];
+  onChange: (value: T) => void;
+  collapsed: boolean;
+}) {
+  const menu = useMenu();
+  const current = options.find((o) => o.id === value)?.label ?? "";
+  const open = Boolean(menu.openOn);
+  return (
+    <>
+      <button
+        type="button"
+        aria-label={`${label}：${current}`}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        title={collapsed ? current : undefined}
+        onClick={(e) =>
+          menu.open(
+            e.currentTarget,
+            options.map((o) => ({ id: o.id, label: o.label, checked: o.id === value, onSelect: () => onChange(o.id) })),
+          )
+        }
+        className={[SIDEBAR_ROW, open ? "bg-[color-mix(in_srgb,var(--ink)_4%,transparent)] text-[var(--ink)]" : `${SIDEBAR_HOVER} text-[var(--ink)]`].join(" ")}
+      >
+        <Icon name={icon} size={18} />
+        <span className="side-label flex-1 min-w-0 truncate text-start" aria-hidden={collapsed || undefined}>
+          {current}
+        </span>
+        <span className="side-label flex" aria-hidden>
+          <Icon name="down" size={14} className={`text-[var(--meta)] transition-transform duration-300 ease-[var(--ease)] ${open ? "rotate-180" : ""}`} />
+        </span>
+      </button>
+      {menu.node}
+    </>
   );
 }
 
