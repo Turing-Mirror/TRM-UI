@@ -11,7 +11,7 @@ export type OutlineProps = {
   offset?: number;
 };
 
-/** 读宽页面左侧至少要留出这么宽，才放得下侧栏式菜单；不够时菜单改排在内容上方。 */
+/** 内容左侧（含页面左右留白）至少要留出这么宽，才放得下侧栏式菜单；不够时菜单改排在内容上方。 */
 const RAIL_ROOM = 148;
 /** 菜单顶边与下方第一组标题对齐的距离，与 RowGroup 的上边距一致。 */
 const GROUP_GAP = 30;
@@ -35,6 +35,8 @@ export function Outline({ items, label, offset = 24 }: OutlineProps) {
   const [active, setActive] = useState(items[0]?.id);
   const [side, setSide] = useState(false);
   const held = useRef(0);
+  /** 换排法前菜单占的高度；换完按差值补滚动，下方内容原地不动。 */
+  const shift = useRef<{ side: boolean; height: number } | null>(null);
   const { box, pos, armed, jump } = useSlider<HTMLDivElement>();
 
   // 左侧空白够不够放侧栏，随窗口和侧边栏宽度变化重新判断
@@ -42,17 +44,29 @@ export function Outline({ items, label, offset = 24 }: OutlineProps) {
     const el = rail.current;
     const root = scrollRoot(el);
     if (!el || !root) return;
+    // 只按宽度算：页面进场时带位移动画，按坐标量会量偏；隐藏时宽度为 0，不改判断
     const check = () => {
-      const page = el.parentElement;
-      if (!page) return;
-      const left = page.getBoundingClientRect().left - root.getBoundingClientRect().left;
-      setSide(left + parseFloat(getComputedStyle(page).paddingLeft) >= RAIL_ROOM);
+      if (!root.clientWidth || !el.offsetWidth) return;
+      const next = (root.clientWidth - el.offsetWidth) / 2 >= RAIL_ROOM;
+      const now = el.dataset.side !== undefined;
+      if (next !== now) shift.current = { side: now, height: el.offsetHeight };
+      setSide(next);
     };
     check();
     const ro = new ResizeObserver(check);
     ro.observe(root);
     return () => ro.disconnect();
   }, []);
+
+  useLayoutEffect(() => {
+    const el = rail.current;
+    const root = scrollRoot(el);
+    // 只在排法真的换过之后补：首次挂载时这里和判断在同一次提交里先跑一遍，那时还没换
+    if (!el || !root || !shift.current || shift.current.side === side) return;
+    const delta = el.offsetHeight - shift.current.height;
+    shift.current = null;
+    if (delta && root.scrollTop > 0) root.scrollTop += delta;
+  }, [side]);
 
   // 选中项跟随滚动位置：最后一个顶边已经越过参考线的章节
   useEffect(() => {

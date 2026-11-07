@@ -1239,7 +1239,7 @@ option {
 .trm-outline-list > button { border: 0; padding: 0; background: transparent; cursor: pointer; font: inherit; font-size: 13.5px; line-height: 32px; white-space: nowrap; text-align: start; color: var(--ink-muted); transition: color var(--flow-ms) var(--ease); }
 .trm-outline-list > button:hover, .trm-outline-list > button[aria-current] { color: var(--ink); }
 .trm-outline-list > button[aria-current] { font-weight: 500; }
-.trm-outline-rail:not([data-side]) .trm-outline { margin-block-start: 18px; }
+.trm-outline-rail:not([data-side]) { padding-block-start: 18px; }
 .trm-outline-rail[data-side] .trm-outline-list { flex-direction: column; flex-wrap: nowrap; gap: 0; padding-inline-start: 14px; box-shadow: inset 1px 0 var(--line); }
 .trm-outline-rail[data-side] .trm-outline-list > button { line-height: 30px; }
 .trm-outline-mark { border-radius: 999px; background: var(--accent); }
