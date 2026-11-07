@@ -97,15 +97,14 @@ export function Section({ title, action, children, className = "" }: { title: st
 }
 
 /**
- * 文档式详情里的一节：上面一行小号浅色标题，下面是内容。几节连着排时靠间距分开，不画线。
- * 外面包一层 DocBody 限制行宽，宽窗口里一行不会拉得横跨整屏。
- * quote：内容是助手会原样说出去的话（标准回复、建议回复），画成和助手气泡一样的浅底块，一眼能认出来。
+ * 详情里的一节：标题在上，内容放在分组底色的卡片里，与设置页的 RowGroup 同一套样子。
+ * 外面包一层 DocBody，铺满详情区，右边与详情头部的操作按钮对齐。
  */
-export function DocSection({ title, quote = false, children }: { title: string; quote?: boolean; children: ReactNode }) {
+export function DocSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="trm-doc-section">
       <h4 className="trm-doc-title">{title}</h4>
-      <div className={quote ? "trm-doc-quote" : "trm-doc-text"}>{children}</div>
+      <div className="trm-doc-text">{children}</div>
     </section>
   );
 }
