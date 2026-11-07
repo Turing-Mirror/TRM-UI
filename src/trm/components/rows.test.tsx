@@ -6,7 +6,26 @@ import { PagePad } from "./ui";
 import { mount, type Mounted } from "../test/dom";
 
 let view: Mounted;
-afterEach(() => { view?.unmount(); });
+afterEach(() => { view?.unmount(); vi.restoreAllMocks(); });
+
+it("flattens nested groups through wrapper components and warns only once per nested group", () => {
+  const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+  const Child = () => <div><RowGroup title="Model" note="Connection settings" action={<button>Reset</button>}>
+    <Row title="Endpoint" control={<input />} />
+    <RowGroup title="Knowledge"><Row title="Enabled" /></RowGroup>
+  </RowGroup></div>;
+  const render = () => <RowGroup title="Connections"><Child /></RowGroup>;
+  view = mount(render());
+  expect(view.container.querySelectorAll(".trm-row-card")).toHaveLength(1);
+  expect(Array.from(view.container.querySelectorAll("h4"), node => node.textContent)).toEqual(["Model", "Knowledge"]);
+  expect(view.container.querySelector(".trm-row-subgroup button")?.textContent).toBe("Reset");
+  expect(view.container.querySelectorAll(".trm-row")).toHaveLength(2);
+  expect(warn).toHaveBeenCalledTimes(2);
+  const input = view.container.querySelector("input");
+  act(() => view.root.render(render()));
+  expect(view.container.querySelector("input")).toBe(input);
+  expect(warn).toHaveBeenCalledTimes(2);
+});
 
 describe("Row", () => {
   it("places and labels a control after the title and description", () => {

@@ -195,6 +195,18 @@
         "answer": "Dans Membres, choisissez Inviter et saisissez son adresse e-mail."
       }
     },
+    "connectionSettings": {
+      "title": "Connexions",
+      "model": "Modèle de langage",
+      "knowledge": "Base de connaissances",
+      "enabled": "Activé"
+    },
+    "connection": {
+      "online": "Boutique en ligne",
+      "offline": "Boutique hors ligne",
+      "login": "Boutique à connecter",
+      "error": "Erreur de connexion boutique"
+    },
     "webShell": {
       "title": "Interface web",
       "brand": "Administration",
@@ -259,6 +271,7 @@
       "segmentNote": "Cliquez sur une option ou faites glisser le curseur pour changer."
     },
     "btn": {
+      "quick": "Action rapide",
       "normal": "Normal",
       "primary": "Principal",
       "on": "Sélectionné",

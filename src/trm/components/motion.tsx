@@ -133,7 +133,7 @@ const pushStyle = (dir: Dir) => ({ "--push": String(dir || 1) }) as CSSPropertie
 type PushPhase = "enter" | "leave" | "shown" | "hidden";
 
 /** Retarget a running push from its painted state instead of restarting at full opacity. */
-function usePushMotion(phase: PushPhase, seq: number, dir: Dir, transition: PaneTransition | "queue" = "push") {
+function usePushMotion(phase: PushPhase, seq: number, dir: Dir, transition: PaneTransition | "queue" | "body" = "push") {
   const node = useRef<HTMLDivElement>(null);
   const previous = useRef<PushPhase | null>(null);
   const animations = useRef<Animation[]>([]);
@@ -142,13 +142,15 @@ function usePushMotion(phase: PushPhase, seq: number, dir: Dir, transition: Pane
     if (!el) return;
     const painted = getComputedStyle(el);
     const continuing = previous.current !== null && previous.current !== "hidden";
-    const sliding = transition === "slide" || transition === "queue";
+    const sliding = transition !== "push";
+    const translate = (distance: string) => transition === "body"
+      ? `translate3d(0, ${distance}, 0)` : `translate3d(${distance}, 0, 0)`;
     const opacity = sliding ? 1 : continuing ? Number(painted.opacity) : (phase === "enter" ? 0 : 1);
     const distance = sliding ? 100 : 32;
     const unit = sliding ? "%" : "px";
     // Queue turns are serialized, so both layers start at exact adjacent endpoints.
-    const transform = transition === "queue" && phase === "leave" ? "none"
-      : continuing ? painted.transform : `translate3d(${(dir || 1) * distance}${unit}, 0, 0)`;
+    const transform = (transition === "queue" || transition === "body") && phase === "leave" ? "none"
+      : continuing ? painted.transform : translate(`${(dir || 1) * distance}${unit}`);
     animations.current.forEach(animation => animation.cancel());
     animations.current = [];
     previous.current = phase;
@@ -159,7 +161,7 @@ function usePushMotion(phase: PushPhase, seq: number, dir: Dir, transition: Pane
     }
     const leaving = phase === "leave";
     const target = sliding ? 1 : leaving ? 0 : 1;
-    const endTransform = !leaving ? "none" : sliding ? `translate3d(${(dir || 1) * -100}%, 0, 0)`
+    const endTransform = !leaving ? "none" : sliding ? translate(`${(dir || 1) * -100}%`)
       : `translate3d(${(dir || 1) * -14}px, 0, 0) scale(0.99)`;
     // Inline endpoints also provide an immediate fallback without Web Animations.
     el.style.opacity = String(target);
@@ -183,9 +185,9 @@ function usePushMotion(phase: PushPhase, seq: number, dir: Dir, transition: Pane
   return node;
 }
 
-function PushLayer({ phase, seq, dir, className = "", children, transition = "push", style }: {
+export function PushLayer({ phase, seq, dir, className = "", children, transition = "push", style }: {
   phase: PushPhase; seq: number; dir: Dir; className?: string; children: ReactNode;
-  transition?: "push" | "queue"; style?: CSSProperties;
+  transition?: "push" | "queue" | "body"; style?: CSSProperties;
 }) {
   const node = usePushMotion(phase, seq, dir, transition);
   return <div ref={node} inert={phase === "leave"} aria-hidden={phase === "leave" || undefined}
@@ -365,46 +367,50 @@ export type FlowListProps<T> = {
 export type QueueListProps<T> = Omit<FlowListProps<T>, "layout" | "motion"> & {
   /** Query/filter identity, independent of the loaded rows. */
   scope: string;
+  /** Page identity within a scope; changing it pushes in numeric page order. */
+  page?: number;
   order?: readonly string[];
   dir?: -1 | 1;
   empty?: ReactNode;
+  /** Optional append controls for feeds; work queues put Pager in Workbench.pager. */
   foot?: ReactNode;
 };
 
 /** Long queues slide opaque scopes a full width; local inserts/removals change row heights without FLIP. */
 export function QueueList<T>({
-  items, keyOf, render, scope, order, dir, className = "", itemClassName, empty, foot,
+  items, keyOf, render, scope, page = 1, order, dir, className = "", itemClassName, empty, foot,
 }: QueueListProps<T>) {
   const outer = useContext(PaneOnCtx);
   const node = useMemo(() => <><FlowItems items={items} keyOf={keyOf} render={render}
     itemClassName={itemClassName} reflow={false} />{items.length ? null : empty}{foot}</>,
   [items, keyOf, render, itemClassName, empty, foot]);
-  const [cur, setCur] = useState({ scope, node, seq: 0, dir: 1 as Dir });
+  const [cur, setCur] = useState({ scope, page, node, seq: 0, dir: 1 as Dir });
   const [old, setOld] = useState<{ node: ReactNode; seq: number; scroll: number } | null>(null);
   const box = useRef<HTMLDivElement>(null);
   const scroll = useRef(0);
   // Finish the adjacent pair before accepting the latest scope, so a third layer cannot
   // start on top of a page that is still entering. Reduced motion never waits.
-  if (cur.scope !== scope && (!old || reduced())) {
+  if ((cur.scope !== scope || cur.page !== page) && (!old || reduced())) {
     const before = order?.indexOf(cur.scope) ?? -1;
     const after = order?.indexOf(scope) ?? -1;
-    const direction = dir ?? (before >= 0 && after >= 0 && after < before ? -1 : 1);
+    const direction = cur.scope === scope ? (page < cur.page ? -1 : 1)
+      : dir ?? (before >= 0 && after >= 0 && after < before ? -1 : 1);
     setOld(reduced() ? null : { node: cur.node, seq: cur.seq, scroll: scroll.current });
-    setCur({ scope, node, seq: cur.seq + 1, dir: direction });
-  } else if (cur.scope === scope && cur.node !== node) {
+    setCur({ scope, page, node, seq: cur.seq + 1, dir: direction });
+  } else if (cur.scope === scope && cur.page === page && cur.node !== node) {
     setCur({ ...cur, node });
   }
   useLayoutEffect(() => {
     if (box.current) box.current.scrollTop = 0;
     scroll.current = 0;
-  }, [cur.scope]);
+  }, [cur.scope, cur.page]);
   useEffect(() => {
     if (!old) return;
     const timer = window.setTimeout(() => setOld(null), FLOW_MS);
     return () => window.clearTimeout(timer);
   }, [old]);
   return <div ref={box} className={`trm-queue-list flow-quiet ${className}`}
-    data-queue-scope={cur.scope} data-switching={Boolean(old) || undefined}
+    data-queue-scope={cur.scope} data-queue-page={cur.page} data-switching={Boolean(old) || undefined}
     onScroll={event => { scroll.current = event.currentTarget.scrollTop; }}>
     <div className="trm-queue-stage">
       {old ? <PushLayer key={old.seq} phase="leave" seq={cur.seq} dir={cur.dir} transition="queue"

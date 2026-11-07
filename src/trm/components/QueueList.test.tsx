@@ -20,6 +20,50 @@ afterEach(() => {
 });
 
 const order = ["all", "human", "done"];
+
+it("pushes page changes horizontally in page order and resets scroll, independently of scope order", () => {
+  const animate = vi.spyOn(HTMLElement.prototype, "animate");
+  const paged = (page: number, scope = "all") => <QueueList page={page} scope={scope}
+    order={order} items={[`${scope}:${page}`]} keyOf={id => id} render={id => <span>{id}</span>} />;
+  view = mount(paged(1));
+  const root = view.container.querySelector<HTMLElement>(".trm-queue-list")!;
+  root.scrollTop = 120;
+  act(() => root.dispatchEvent(new Event("scroll")));
+  act(() => view.root.render(paged(2)));
+  expect(root.scrollTop).toBe(0);
+  expect(root.dataset.queuePage).toBe("2");
+  expect(animate).toHaveBeenCalledTimes(2);
+  expect(animate.mock.calls[1][0]).toEqual([{ transform: "translate3d(100%, 0, 0)" }, { transform: "none" }]);
+  expect(view.container.querySelector(".trm-queue-current .flow-enter")).toBeNull();
+  act(() => vi.advanceTimersByTime(FLOW_MS));
+  animate.mockClear();
+  root.scrollTop = 80;
+  act(() => view.root.render(paged(1)));
+  expect(root.scrollTop).toBe(0);
+  expect(animate.mock.calls[1][0]).toEqual([{ transform: "translate3d(-100%, 0, 0)" }, { transform: "none" }]);
+  act(() => vi.advanceTimersByTime(FLOW_MS));
+  act(() => view.root.render(paged(3)));
+  act(() => vi.advanceTimersByTime(FLOW_MS));
+  animate.mockClear();
+  act(() => view.root.render(paged(1, "human")));
+  // A filter change takes its direction from tab order even when it resets the page number.
+  expect(animate.mock.calls[1][0]).toEqual([{ transform: "translate3d(100%, 0, 0)" }, { transform: "none" }]);
+});
+
+it("serializes rapid page selections and keeps only the latest requested page", () => {
+  const paged = (page: number) => <QueueList scope="all" page={page} items={[page]}
+    keyOf={String} render={number => <span>{number}</span>} />;
+  view = mount(paged(1));
+  act(() => view.root.render(paged(2)));
+  act(() => view.root.render(paged(3)));
+  act(() => view.root.render(paged(1)));
+  expect(view.container.querySelectorAll(".trm-queue-stage > div")).toHaveLength(2);
+  expect(view.container.querySelector(".trm-queue-list")?.getAttribute("data-queue-page")).toBe("2");
+  act(() => vi.advanceTimersByTime(FLOW_MS));
+  expect(view.container.querySelector(".trm-queue-list")?.getAttribute("data-queue-page")).toBe("1");
+  act(() => vi.advanceTimersByTime(FLOW_MS));
+  expect(view.container.querySelectorAll(".trm-queue-stage > div")).toHaveLength(1);
+});
 const rowKeys = Array.from({ length: 40 }, (_, i) => String(i));
 const render = (scope: string, items = rowKeys, suffix = "", dir?: -1 | 1) => (
   <QueueList scope={scope} order={order} dir={dir} items={items} keyOf={id => id}

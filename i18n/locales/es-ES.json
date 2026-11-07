@@ -195,6 +195,18 @@
         "answer": "En Miembros, elija Invitar e introduzca su correo electrónico."
       }
     },
+    "connectionSettings": {
+      "title": "Conexiones",
+      "model": "Modelo de lenguaje",
+      "knowledge": "Base de conocimiento",
+      "enabled": "Activado"
+    },
+    "connection": {
+      "online": "Tienda en línea",
+      "offline": "Tienda sin conexión",
+      "login": "Tienda requiere acceso",
+      "error": "Error de conexión de tienda"
+    },
     "webShell": {
       "title": "Diseño web",
       "brand": "Administración",
@@ -259,6 +271,7 @@
       "segmentNote": "Haga clic en una opción o arrastre el deslizador para cambiar."
     },
     "btn": {
+      "quick": "Acción rápida",
       "normal": "Normal",
       "primary": "Principal",
       "on": "Seleccionado",

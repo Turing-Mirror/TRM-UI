@@ -1,14 +1,19 @@
 import {
-  Children, isValidElement, useEffect, useId, useLayoutEffect, useRef, useState,
+  Children, createContext, isValidElement, useContext, useEffect, useId, useLayoutEffect, useRef, useState,
   type CSSProperties, type ReactNode,
 } from "react";
 import { useI18n } from "../i18n";
 import { Icon } from "./Icon";
 import { Collapse, FlowList, FLOW_MS, Morph, Pane, Panes, Roll, stagger } from "./motion";
+import { WorkbenchBody } from "./WorkbenchBody";
+
+const SelectionContext = createContext<{ selected: string | null; order: readonly string[] } | null>(null);
 
 export type WorkbenchProps = {
   list: ReactNode;
   listHead?: ReactNode;
+  /** A Pager remains at the list card's foot, outside the scrolling and moving rows. */
+  pager?: ReactNode;
   detail: ReactNode;
   selected: string | null;
   /** Supply keys in list order, including unloaded/filtered keys when their order is known. */
@@ -36,7 +41,7 @@ function useNarrow(px: number) {
 
 /** The caller owns selection and data; the workspace owns navigation and independent scroll areas. */
 export function Workbench({
-  list, listHead, detail, selected, onBack, listWidth, narrowAt = 900, empty, className = "",
+  list, listHead, pager, detail, selected, order, onBack, listWidth, narrowAt = 900, empty, className = "",
 }: WorkbenchProps) {
   const { t } = useI18n();
   const narrow = useNarrow(narrowAt);
@@ -83,6 +88,7 @@ export function Workbench({
   }}>
     {listHead != null ? <div className="trm-workbench-list-head">{listHead}</div> : null}
     {list}
+    {pager != null ? <div className="trm-workbench-pager">{pager}</div> : null}
   </div>;
   const detailPane = <div className="trm-workbench-main">
     {narrow ? <div className="trm-workbench-navigation">
@@ -92,7 +98,8 @@ export function Workbench({
     </div> : null}
     {/* Selection changes data, not the detail's identity. Empty still replaces it without overlap. */}
     <div className="trm-workbench-stage">
-      {selected === null ? <div className="trm-workbench-empty">{empty}</div> : detail}
+      {selected === null ? <div className="trm-workbench-empty">{empty}</div>
+        : <SelectionContext.Provider value={{ selected, order }}>{detail}</SelectionContext.Provider>}
     </div>
   </div>;
   const style = listWidth === undefined ? undefined : {
@@ -141,10 +148,10 @@ export type WorkbenchDetailProps = {
   sub?: ReactNode;
   actions?: ReactNode;
   notice?: ReactNode;
-  /** Top-level keys identify FlowList blocks. Include the item ID for item-specific content. */
+  /** Stable keys identify blocks within an item; selection pushes the whole body once. */
   children: ReactNode;
   foot?: ReactNode;
-  /** Form actions follow their fields; only a conversation composer needs a pinned foot. */
+  /** Standalone forms may keep actions inline. Inside Workbench, both modes stay outside the body push. */
   footMode?: "inline" | "pinned";
   /** Change this token to follow the content end during a conversation switch or append. */
   scrollToEnd?: string | number;
@@ -158,6 +165,8 @@ export function WorkbenchDetail({
   title, titleText, sub, actions, notice, children, foot, footMode = "inline", scrollToEnd,
 }: WorkbenchDetailProps) {
   const id = useId();
+  const selection = useContext(SelectionContext);
+  const pushBody = selection?.selected != null;
   const fields = Children.toArray(sub);
   const blocks = Children.toArray(children).map((node, i) => ({
     key: isValidElement(node) ? String(node.key) : String(i), node,
@@ -169,7 +178,7 @@ export function WorkbenchDetail({
   const firstScroll = useRef(true);
   useLayoutEffect(() => {
     const el = body.current;
-    if (!el || scrollToEnd === undefined) return;
+    if (!el || scrollToEnd === undefined || pushBody) return;
     const instant = firstScroll.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     firstScroll.current = false;
     const from = el.scrollTop;
@@ -192,7 +201,7 @@ export function WorkbenchDetail({
       el.removeEventListener("wheel", cancel);
       el.removeEventListener("touchstart", cancel);
     };
-  }, [scrollToEnd]);
+  }, [scrollToEnd, pushBody]);
   const footer = foot == null ? null
     : <footer className="trm-workbench-foot" data-mode={footMode}>{foot}</footer>;
   return <section className="trm-workbench-detail" aria-labelledby={id}>
@@ -208,7 +217,13 @@ export function WorkbenchDetail({
       </div>
       {actions != null ? <div className="trm-workbench-actions">{actions}</div> : null}
     </header>
-    <div ref={body} className="trm-workbench-body" data-follow-end={scrollToEnd !== undefined || undefined}>
+    {pushBody ? <>
+      <Collapse open={notice != null && notice !== false} className="trm-workbench-notice trm-workbench-body-notice">
+        <div className="trm-workbench-notice-content">{notice}</div>
+      </Collapse>
+      <WorkbenchBody scope={selection.selected!} order={selection.order} blocks={blocks} end={scrollToEnd} />
+      {footMode === "inline" ? footer : null}
+    </> : <div ref={body} className="trm-workbench-body" data-follow-end={scrollToEnd !== undefined || undefined}>
       {/* FlowList already morphs keyed changes; a second height transition would lag behind the scroll end. */}
       <Morph className="trm-workbench-read" disabled={entrance.quiet}>
         <Collapse open={notice != null && notice !== false} className="trm-workbench-notice">
@@ -221,7 +236,7 @@ export function WorkbenchDetail({
           </div>} />
         {footMode === "inline" ? footer : null}
       </Morph>
-    </div>
+    </div>}
     {footMode === "pinned" ? footer : null}
   </section>;
 }

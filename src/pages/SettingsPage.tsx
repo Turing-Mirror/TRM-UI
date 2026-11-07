@@ -49,6 +49,23 @@ const GROUP_KEYS = { main: "demo.set.keysGroupMain", nav: "demo.set.keysGroupNav
  * 设置页的三类写法：外观（语言、主题、背景图与磨砂）、常规（关闭方式、开关、在线更新）、
  * 快捷键（逐项录制，可设为全局，可搜索）。改了需要重启才生效的，顶部出一条提示，给出「立即重启」。
  */
+function ConnectionSettingsDemo() {
+  const { t } = useI18n();
+  const [model, setModel] = useState(true);
+  const [knowledge, setKnowledge] = useState(false);
+  return <section>
+    <h3 className="mt-8 mb-0 text-[15.5px] font-semibold">{t("demo.connectionSettings.title")}</h3>
+    <RowGroup title={t("demo.connectionSettings.model")}>
+      <Row title={t("demo.connectionSettings.enabled")} control={<Switch checked={model} onChange={setModel}
+        label={t("demo.connectionSettings.model")} />} />
+    </RowGroup>
+    <RowGroup title={t("demo.connectionSettings.knowledge")}>
+      <Row title={t("demo.connectionSettings.enabled")} control={<Switch checked={knowledge} onChange={setKnowledge}
+        label={t("demo.connectionSettings.knowledge")} />} />
+    </RowGroup>
+  </section>;
+}
+
 export function SettingsPage({ look, onLook, mouseNav, onMouseNav }: { look: Look; onLook: (l: Look) => void; mouseNav: boolean; onMouseNav: (v: boolean) => void }) {
   const { t, locale, setLocale } = useI18n();
   const notify = useNotify();
@@ -185,6 +202,7 @@ export function SettingsPage({ look, onLook, mouseNav, onMouseNav }: { look: Loo
             />
           </RowGroup>
         ) : tab === "general" ? (
+          <>
           <RowGroup title={t("demo.set.tab.general")}>
             <Row
               title={t("demo.set.close")}
@@ -234,6 +252,8 @@ export function SettingsPage({ look, onLook, mouseNav, onMouseNav }: { look: Loo
               control={<Btn busy={checking} onClick={check}>{checking ? t("demo.set.checking") : t("demo.set.check")}</Btn>}
             />
           </RowGroup>
+          <ConnectionSettingsDemo />
+          </>
         ) : (
           <Block title={t("demo.set.tab.keys")} action={<Toggle checked={globalOn} onChange={setGlobalOn} label={t("demo.set.keysOn")} />}>
             <div className="max-w-[360px] mb-3">

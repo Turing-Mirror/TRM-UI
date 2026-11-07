@@ -195,6 +195,18 @@
         "answer": "メンバーページで招待を選び、相手のメールアドレスを入力してください。"
       }
     },
+    "connectionSettings": {
+      "title": "接続",
+      "model": "言語モデル",
+      "knowledge": "ナレッジベース",
+      "enabled": "有効"
+    },
+    "connection": {
+      "online": "店舗オンライン",
+      "offline": "店舗オフライン",
+      "login": "店舗ログイン待ち",
+      "error": "店舗接続エラー"
+    },
     "webShell": {
       "title": "ウェブレイアウト",
       "brand": "管理画面",
@@ -259,6 +271,7 @@
       "segmentNote": "項目をクリックするか、つまみをドラッグして切り替えます。"
     },
     "btn": {
+      "quick": "短い操作",
       "normal": "通常",
       "primary": "主ボタン",
       "on": "選択中",

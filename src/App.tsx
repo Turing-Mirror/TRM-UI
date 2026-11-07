@@ -22,6 +22,7 @@ import {
   type ThemeMode,
 } from "./trm";
 import { OverviewPage } from "./pages/OverviewPage";
+import { SidebarStatusDemo } from "./pages/SidebarStatusDemo";
 import { ComponentsPage } from "./pages/ComponentsPage";
 import { PatternsPage } from "./pages/PatternsPage";
 import { TypePage } from "./pages/TypePage";
@@ -129,7 +130,10 @@ function Shell() {
         <Sidebar
           collapsed={collapsed}
           label={t("demo.shell.nav")}
-          foot={<SidebarItem icon="settings" label={t("demo.shell.settings")} collapsed={collapsed} on={page === "settings"} onClick={() => setPage("settings")} />}
+          foot={<>
+            <SidebarStatusDemo collapsed={collapsed} />
+            <SidebarItem icon="settings" label={t("demo.shell.settings")} collapsed={collapsed} on={page === "settings"} onClick={() => setPage("settings")} />
+          </>}
         >
           {nav.pages().filter((p) => p.id !== "settings").map((p) => (
             <SidebarItem key={p.id} icon={ICONS[p.id]} label={p.label} on={page === p.id} collapsed={collapsed} onClick={() => setPage(p.id)} />

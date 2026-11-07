@@ -111,6 +111,8 @@ npm pack
 
 `RowGroup({ title?, note?, action?, children })` 在标题与备注下面显示分组卡片，相邻 `Row` 之间使用细线。`Row({ title, desc?, tip?, control?, stacked?, onClick?, children? })` 左侧显示标题与说明，右侧显示控件；`stacked` 将控件置于下方并占满宽度，容器不足 560px 时普通行也换行。`children` 用于行下方补充内容。
 
+多个 `RowGroup` 连续排列，可放在同一个普通章节标题下，不得互相嵌套。误嵌套时，内部组自动展平为父卡片中的小标题与行，不再生成第二个卡片底色；开发环境输出一次提示。
+
 只传 `onClick` 而不传 `control` 时，行使用原生按钮和右箭头，支持 Enter 与空格；此时 `tip` 使用原生提示，避免按钮嵌套。原生控件自动关联标题与说明，保留调用方显式标签；复合控件置于有名称的 group 内，调用方仍应提供控件自身的 `label` 或 `ariaLabel`。`Field`、`Group` 和 `Block` 保持原有接口。参考实现见 `src/pages/SettingsPage.tsx`。
 
 `CenterPanel({ title, sub?, width?, children, foot? })` 在父工作区内居中，默认卡片宽度 400px；`width` 接受像素数值或 CSS 长度。父容器需提供确定高度，内容过长时自然增长，由父容器滚动。它使用普通 section，不创建遮罩、焦点陷阱或 portal。
@@ -152,7 +154,7 @@ npm pack
 | 导出 | 参数 |
 | --- | --- |
 | `Workbench` / `WorkbenchProps` | `list`、`detail`、`selected: string \| null`、`order: readonly string[]`、`onBack`。 |
-| Workbench 可选参数 | `listHead`、`listWidth`、`narrowAt`、`empty`、`className`。 |
+| Workbench 可选参数 | `listHead`、`pager`、`listWidth`、`narrowAt`、`empty`、`className`。 |
 | `WorkbenchItem` / `WorkbenchItemProps` | `title`、`selected`、`onClick`；可选 `meta`、`preview`、`tag`、`avatar`。 |
 | `WorkbenchDetail` / `WorkbenchDetailProps` | `title`、`children`。 |
 | WorkbenchDetail 可选参数 | `titleText`、`sub`、`actions`、`notice`、`foot`、`footMode`、`scrollToEnd`。 |
@@ -165,6 +167,8 @@ npm pack
 `listWidth` 接受像素数值或 CSS 长度，覆盖默认变量。
 工作台在给定高度内保留等量上下留白 `--workbench-space`（16px），列表底部不贴窗口边缘。
 列表标题和筛选放在 `listHead`，与列表共用分组底色；原有 `list` 内的标题、筛选组合仍可使用。
+标题、筛选和搜索统一使用 `--workbench-list-content-inset`（默认 16px），等于行外侧内缩加行内留白。数量和刷新操作放在同一标题行右侧；搜索使用 `.trm-workbench-search`。筛选文字与指示器不越过内容左边缘。
+`pager` 接受现有 `<Pager page={page} pages={pages} onChange={setPage} />`，固定在列表卡片底部，位于滚动列表之外，不随列表推移。
 详情保留页面底色，不增加卡片。标题、正文、提示和底部横向占满详情，统一使用 `--workbench-padding`（16px）。
 原有 `.trm-workbench-read` 类继续保留，但不再限宽和居中。阅读宽度上限只加在单独的段落或字段上，靠起始边对齐；
 聊天消息示例最大宽度为正文的 70%。
@@ -172,37 +176,42 @@ npm pack
 `onBack` 由调用方将 `selected` 设为 null；返回按钮使用通用语言包，列表保留滚动与输入状态，并恢复操作焦点。
 跨越宽窄断点会重新挂载插槽；需要跨断点保留的草稿、筛选与业务状态应由调用方持有。
 
-`order` 保留为业务列表的键顺序；条目切换不再按此顺序重播详情入场，窄屏列表与详情仍使用 `Panes` 推移。
+`order` 是完整业务列表的键顺序，决定所有详情正文的推移方向；包含当前未显示页的键。窄屏列表与详情仍使用 `Panes` 推移。
 空字符串也是有效键；只有 null 显示 `empty`。传入 `<Empty icon="chat" title={chooseText} />` 即可显示居中的图标与文字。
 `WorkbenchItem` 是原生按钮，用 `aria-pressed` 表达选中状态，支持 Enter 与空格。插槽中不要嵌套交互控件。
-`WorkbenchDetail` 固定头部，正文独立滚动，并使用 `Morph` 处理内容高度变化。
-`footMode` 默认 `inline`，表单操作紧跟字段；聊天输入框使用 `pinned`，固定在详情底部。
-旧版固定底部的调用方需显式传入 `footMode="pinned"`，其他既有参数继续支持。
+`WorkbenchDetail` 固定头部，正文独立滚动。在 Workbench 内，所有操作与 foot 均保持在正文推移区域之外；普通表单与聊天使用同一切换方式。
+独立使用 WorkbenchDetail 时，`footMode` 默认 `inline`，表单操作紧跟字段；`pinned` 固定在详情底部。
 `sub` 可传单个节点或数组，数组各项独立排列，字符串和数值自动用 `Roll` 更新；自定义节点中的文字变化由调用方包裹 `Roll`。
 `title` 为字符串或数值时自动使用 `Roll`；富文本标题可提供 `titleText` 作为变化标识，整个节点随文字滚动。
 需要保留标题图标时，将 `Roll` 放在标题节点的文字部分。`Roll` 新增可选 `children`，`value` 仍是变化标识。
 宽屏切换条目保持一个详情实例，不使用 `Swap`。调用方不要给详情组件设置随条目变化的 React key。
 标题与子字段更新使用 `Roll`；操作、菜单、输入框与底部不播放位移或淡入淡出。提示仅使用 `Collapse`。
-正文顶层子节点自动交给 `FlowList`。会话消息使用包含会话 ID 的稳定 key；共同内容使用相同 key 保留 DOM。
-退出块收起，新增块展开，间距写在块内；FlowList 自身连续改变正文高度，不再叠加 Morph 的延迟过渡。
-首次显示标题、字段与正文时可依次浮现；后续切换不重播。空态与详情直接替换，维持第 6 轮的无重叠行为。
+所有详情从 Workbench 获取 `selected` 与 `order`：切换条目只对整个正文做一次竖向推移，不要求设置 `scrollToEnd`。选择列表下方条目向上推，上方条目向下推。
+同一条目内的内容增删由 `FlowList` 处理，间距写在块内；不叠加 Morph 的延迟过渡。切换条目时新正文默认从顶部显示，聊天通过 `scrollToEnd` 选择末尾。
+新旧正文使用两个等高相邻层，始终不透明、不重叠，裁切在正文窗口中，共用 `FLOW_MS`（420ms）与 `--ease-nav`。连续选择先完成当前两层，再切到最后请求的条目。
+切换时新的 FlowList 从常驻块开始，不播放逐块或逐条气泡伸缩；同一条目追加仍逐条展开。消息使用包含会话 ID 的稳定 key。提示位于固定正文上方，操作、ChatState 与 composer 不参与正文推移。
+首次显示标题和字段时可依次浮现；后续切换不重播。空态与详情直接替换，维持无重叠行为。
 减少动态效果时，滚字、折叠、消息增删及自动滚动立即完成。
 
 聊天可设置 `scrollToEnd={conversationId + ":" + messageCount}`。首次挂载在绘制前定位末尾；
-令牌变化后在 `FLOW_MS` 内平滑跟随正在伸缩的内容末尾，不在移除旧气泡后突然跳转。
+切换条目时新层在绘制前定位末尾，入场后不再跳转；同一条目令牌变化后在 `FLOW_MS` 内跟随正在伸缩的消息末尾。
 滚轮或触摸会中断跟随；输入草稿不改变令牌，因此不会打断向上阅读。正文禁用浏览器滚动锚定以免互相干扰。
 草稿、处理状态与消息由调用方按会话保存；组件保留 DOM 不代表共享不同会话的业务数据。
 
 `ChatComposer` 基于 `ComposerInput`，输入高度自动增长至 `maxHeight`（默认 200px），清空后自动收缩。
 Enter 与发送按钮调用 `onSend`；Shift + Enter 换行，输入法确认不发送；空白草稿、禁用和发送中均禁止发送。
 `sending` 显示按钮忙碌状态并禁用输入。草稿与发送结果由调用方维护，组件不会自行清空；占位符和按钮名称由语言包传入。
-输入与发送按钮位于同一个 `--surface` 圆角区域，使用 `--r`、`--line` 内描边与强调色焦点环。
-单行输入行与圆形发送按钮均为 32px，按钮距区域右下各 8px；固定底部时多行输入向上增长。
+输入区域使用 `--surface`、`--r`、`--line` 内描边与强调色焦点环。发送按钮位于输入区域外侧的右边，间距 8px，与输入区域底部对齐。
+单行文本输入高 32px，加上下各 8px 内边距后，整个输入区域与圆形发送按钮均高 48px。固定底部时多行输入向上增长，按钮保持原尺寸。
 可发送时使用 `--accent` / `--accent-ink`；空白或禁用时使用中性 `--rail` / `--ink-muted`，不降低整体透明度。
-发送中以居中 16px spinner 替换发送图标。`maxHeight` 限制文本输入本身，不包含区域的上下内边距。
-`state` 放在输入区域上方。`ChatState` 默认 `tone="assistant"`，使用 `--accent-soft`；人工状态使用 `--rail`。
+发送中立即设置 `aria-busy` 并阻止重复提交；达到 `BUSY_DELAY_MS`（300ms）才以居中 16px spinner 替换发送图标。`maxHeight` 限制文本输入本身，不包含区域的上下内边距。
+`state` 放在整个输入和按钮行上方并占满宽度。`ChatState` 默认 `tone="assistant"`，使用 `--accent-soft`；人工状态使用 `--rail`。图标和标签作为一组居中，action 独立放在右侧，不挤偏中心。
 状态条满宽、最小高度 40px、14px 中等字重、`--r` 圆角；标签使用 Roll，底色沿 `--flow-ms` / `--ease` 过渡。
 默认图标为芯片或人员，可由 `icon` 替换；`action` 可放安静的 `Btn`，不提供时没有操作占位。
+
+所有 `Btn busy` 共用 `BUSY_DELAY_MS`：立即禁用重复点击并设置 `aria-busy`，延迟前保持原标签；延迟后 spinner 覆盖在中心，原标签继续占位，按钮宽度不变。短请求结束会取消计时，下一次请求重新计时。
+
+`SidebarStatus({ icon, label, tone?, onClick, collapsed })` 用于侧栏底部的连接或服务状态，标签同时包含对象与状态。行高 36px、水平内边距 13px、图标 18px、间距 12px、字号 13.5px，与 SidebarItem 共用尺寸。`tone` 为 `ok | warn | danger | muted`，默认 muted，只给图标着色。标签使用 Roll，图标使用淡换；收起后保留图标、完整 Tooltip 和无障碍名称。在线与离线使用 `online` / `offline`，错误与待登录复用 `alert` / `scan`。
 `AlertMark` 为 16px 圆形 `--surface` 底、1px `--hairline` 环与实心 `--danger` 感叹号，支持聚焦查看 Tooltip。
 在相对定位的气泡内使用 `<span className="trm-alert-mark-corner"><AlertMark label={label} /></span>`，
 标记在右下边缘向外重叠 4px。深色主题继续使用相应表面与危险色令牌。
@@ -212,10 +221,10 @@ Enter 与发送按钮调用 `onSend`；Shift + Enter 换行，输入法确认不
 分隔线是文字列的伪元素，自动避开头像与两侧内边距，悬停或选中行两侧的线隐藏。
 所有 WorkbenchItem 的悬停与选中背景按 `--workbench-row-inset`（8px）横向内缩，
 使用 `--rs` 圆角；行宽扣除两侧外边距，因此背景不接触列表卡片边缘。
-行内左右各留 8px，与列表头共用外层内缩，内容和右侧元信息距卡片边缘均为 16px。
+行内左右留白由 `--workbench-row-padding`（8px）控制，列表头统一使用外缩与行内留白之和，内容和右侧元信息默认距卡片边缘 16px。
 分隔线继续对齐行文字列，有头像时避开头像。
-审核画廊的 Pending 初始包含 3 条待处理记录，先显示 2 条；All 显示这 3 条及 2 条已处理记录。
-列表头标题与总数随筛选使用 Roll 更新，总数包含尚未加载显示的匹配记录。
+审核画廊的 Pending 包含 3 条待处理记录，All 包含这 3 条及 2 条已处理记录。审核与聊天队列均每页 2 条，使用 Pager 页码；筛选回第一页，审核后页码越界则回到剩余最后一页。
+列表头标题与总数随筛选使用 Roll 更新，总数包含所有页面的匹配记录。
 分隔线适用范围以 `interactionRules.ts` 的 `denseListDividers` 为准；设置行卡片已移除外框与行间边框。
 长队列列表使用 `QueueList`；计数用 `Roll`，编辑器展开用 `Collapse`。
 这些动效沿用共享原语的减少动态效果规则。完整示例见 `src/pages/WorkbenchPattern.tsx`，规则见 `interactionRules.ts`。
@@ -242,16 +251,18 @@ Enter 与发送按钮调用 `onSend`；Shift + Enter 换行，输入法确认不
 
 ### 长队列列表
 
-`QueueList<T>` 接受 `items`、`keyOf`、`render`、`scope`，可选 `order`、`dir`、`className`、
+`QueueList<T>` 接受 `items`、`keyOf`、`render`、`scope`，可选 `page`（默认 1）、`order`、`dir`、`className`、
 `itemClassName`、`empty`、`foot`。`scope` 表示筛选或查询，不包含条数；`order` 是页签 ID 顺序，
 也可直接给 `dir={1 | -1}`。没有可比较的顺序时从右侧进入。
 `className` 用于组件自身的滚动容器；父布局需限制高度，工作台使用 `trm-workbench-rows`。
-空态和加载更多按钮分别放在 `empty`、`foot`，与当前列表同属一个内容层。
-切换 scope 时新旧内容全程不透明、并排整宽平移：向右切换时旧层从 0 到 -100%，新层从 +100% 到 0，
+工作队列使用分页：当前页数据传入 items，页码传入 page，现有 Pager 放在 Workbench.pager，固定在列表卡片底部。使用 `usePaged` 可按筛选复位并在数据减少后限制页码。
+空态放在 `empty`。`foot` 保留显式追加操作，供信息流等其他用途选用；工作队列不使用无限加载。
+切换 scope 或 page 时新旧内容全程不透明、并排整宽平移：下一页旧层从 0 到 -100%，新层从 +100% 到 0，
 向左切换方向相反。复用导航节奏 420ms、`--ease-nav`，不缩放、不改变透明度；推移期间横向裁切，纵向仍可滚动。
 同时重置新列表滚动位置，旧层保留切换前的视觉位置并设为 inert。行内不重播 rise、FLIP 或展开动画。
-连续切换先完成当前两层的推移，再前往最后请求的 scope，避免新层与尚未入场完毕的内容交叠。
-同一 scope 内追加只展开新行，既有行保持 DOM 与滚动位置；原位内容更新不播放行级动效。
+同一 scope 内按 page 数值判断方向，上一页从左侧进入；scope 改变时使用页签 order 或显式 dir，不受页码复位影响。
+连续切换先完成当前两层的推移，再前往最后请求的 scope/page，避免新层与尚未入场完毕的内容交叠。
+同一 scope/page 内追加只展开新行，既有行保持 DOM 与滚动位置；原位内容更新不播放行级动效。
 中间插入或删除使用行高展开或收起，自然带动相邻行，不再叠加 FLIP。
 调用方应保持既有行顺序，加载更多只追加结果；不要在追加后重新排序已有数据。
 减少动态效果时立即替换。短选项、标签和小卡片列表继续使用默认 `FlowList` 完整重排动效。

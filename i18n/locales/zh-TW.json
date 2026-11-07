@@ -195,6 +195,18 @@
         "answer": "開啟成員頁面，選擇邀請，再輸入對方的電子郵件地址。"
       }
     },
+    "connectionSettings": {
+      "title": "連線",
+      "model": "大型語言模型",
+      "knowledge": "知識庫",
+      "enabled": "啟用"
+    },
+    "connection": {
+      "online": "店鋪在線",
+      "offline": "店鋪離線",
+      "login": "店鋪待登入",
+      "error": "店鋪連線錯誤"
+    },
     "webShell": {
       "title": "網頁佈局",
       "brand": "管理台",
@@ -259,6 +271,7 @@
       "segmentNote": "點選選項或拖動滑塊即可切換。"
     },
     "btn": {
+      "quick": "快速操作",
       "normal": "一般",
       "primary": "主按鈕",
       "on": "已選取",

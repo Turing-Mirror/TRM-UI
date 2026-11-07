@@ -8,58 +8,25 @@ export type MotionTerm = { id: string; code: string; name: Text; desc: Text };
 
 // Shared with interaction rules so the selection principle has one source.
 export const ITEM_SWITCH_RULE: Text = {
-  "zh-CN": "切换条目时，共有控件与框架不移动、不淡出；短文字用 Roll，增删块用 Collapse / FlowList，只有新内容入场。禁止整页交叉淡入淡出；依次浮现只用于首次出现。",
-  "zh-TW": "切換項目時，共有控制元件與框架不移動、不淡出；短文字用 Roll，增刪區塊用 Collapse / " +
-    "FlowList，只有新內容入場。禁止整頁交叉淡入淡出；依次浮現只用於首次出現。",
-  "en-US": "When switching items, shared controls and frames stay still and opaque. Short text uses " +
-    "Roll; added or removed blocks use Collapse / FlowList. Only new content enters. No " +
-    "whole-view crossfade; stagger only on first appearance.",
-  "ja-JP": "項目を切り替えても共通の操作と枠は動かさず、薄くしない。短い文字は Roll、ブロックの追加と削除は Collapse / FlowList " +
-    "を使う。新しい内容だけが入る。画面全体をクロスフェードせず、順次表示は初回だけにする。",
-  "ko-KR": "항목을 바꿔도 공통 컨트롤과 틀은 움직이거나 흐려지지 않는다. 짧은 글자는 Roll, 블록 추가와 제거는 Collapse / FlowList를 쓴다. 새 " +
-    "내용만 들어온다. 전체 화면 교차 페이드는 쓰지 않으며 순차 등장은 처음에만 쓴다.",
-  "fr-FR": "Au changement d’élément, commandes et cadres communs restent fixes et opaques. Roll " +
-    "change le texte court ; Collapse / FlowList ajoute ou retire les blocs. Seul le contenu " +
-    "nouveau entre. Aucun fondu global ; apparition décalée au premier affichage seulement.",
-  "es-ES": "Al cambiar de elemento, los controles y marcos comunes permanecen fijos y opacos. El " +
-    "texto breve usa Roll; los bloques añadidos o retirados usan Collapse / FlowList. Solo " +
-    "entra contenido nuevo. Sin fundido global; aparición escalonada solo al inicio.",
-  "ru-RU": "При смене элемента общие рамки и элементы управления неподвижны и непрозрачны. Короткий " +
-    "текст использует Roll, добавление и удаление блоков — Collapse / FlowList. Входит только" +
-    " новое содержимое. Без общего перекрёстного затухания; поочерёдное появление только при " +
-    "первом показе.",
+  "zh-CN": "所有 Workbench 详情切换条目时，只让正文按列表顺序整层竖向推移：选择下方条目向上推，上方条目向下推。两层等高相邻，全程不透明、不重叠，裁切在正文内，共用 420ms 导航曲线。标题和字段用 Roll；框架、操作、提示位置、ChatState 与输入框保持不动。普通正文从顶部显示，聊天正文绘制前定位末尾；切换不播放逐块或逐气泡动画，同一条目追加消息仍由 FlowList 逐条展开。",
+  "zh-TW": "所有 Workbench 詳情切換項目時，只讓正文按清單順序整層垂直推移：選擇下方項目向上推，上方項目向下推。兩層等高相鄰，全程不透明、不重疊，裁切在正文內，共用 420ms 導覽曲線。標題和欄位用 Roll；框架、操作、提示位置、ChatState 與輸入框保持不動。普通正文從頂部顯示，聊天正文繪製前定位末尾；切換不播放逐塊或逐氣泡動畫，同一項目追加訊息仍由 FlowList 逐條展開。",
+  "en-US": "In every Workbench detail, an item switch pushes only the whole body vertically in list order: selecting below pushes up, selecting above pushes down. Equal-height adjacent layers stay opaque, non-overlapping and clipped to the body, using the 420ms navigation curve. Titles and fields roll; frames, actions, notice position, ChatState and composer stay still. Ordinary bodies start at the top; chats reach the end before paint. No block or bubble animation on switches; same-item message appends still expand through FlowList.",
+  "ja-JP": "すべての Workbench 詳細で、項目切替は本文全体だけを一覧順に縦へ押す。下の項目なら上へ、上の項目なら下へ動く。同じ高さの隣接層を不透明のまま重ねず本文内で切り抜き、420msのナビ曲線を使う。見出しと項目は Roll、枠、操作、案内位置、ChatState、入力欄は固定する。通常の本文は先頭、会話は描画前に末尾へ移動する。切替時の個別ブロックや吹き出しの動きはなく、同じ会話への追加だけ FlowList で展開する。",
+  "ko-KR": "모든 Workbench 상세의 항목 전환은 목록 순서대로 본문 전체만 세로로 민다. 아래 항목은 위로, 위 항목은 아래로 이동한다. 같은 높이의 인접 층은 불투명하고 겹치지 않으며 본문 안에서 잘리고 420ms 탐색 곡선을 쓴다. 제목과 필드는 Roll로 바꾸고 프레임, 작업, 안내 위치, ChatState, 입력창은 고정한다. 일반 본문은 맨 위, 채팅은 그리기 전 맨 끝으로 이동한다. 전환 시 개별 블록이나 말풍선은 움직이지 않으며 같은 항목의 메시지 추가만 FlowList로 펼친다.",
+  "fr-FR": "Dans tous les détails Workbench, seul le corps entier est poussé verticalement selon la liste : vers le haut pour un élément suivant, vers le bas pour un précédent. Couches adjacentes de même hauteur, opaques, sans chevauchement, rognées au corps, avec la courbe de 420ms. Titres et champs utilisent Roll ; cadre, actions, avis, ChatState et saisie restent fixes. Le corps ordinaire commence en haut ; le chat est déjà en bas avant affichage. Aucun mouvement par bloc ou bulle au changement ; les messages ajoutés au même élément se déploient via FlowList.",
+  "es-ES": "En todos los detalles Workbench, cambiar de elemento empuja solo el cuerpo completo verticalmente según la lista: hacia arriba al elegir uno inferior y hacia abajo al elegir uno superior. Capas adyacentes de igual altura, opacas, sin superponerse, recortadas al cuerpo con la curva de 420ms. Títulos y campos usan Roll; marco, acciones, aviso, ChatState y editor quedan fijos. El cuerpo normal empieza arriba; el chat llega al final antes de dibujarse. Sin animación por bloque o burbuja al cambiar; las adiciones al mismo elemento usan FlowList.",
+  "ru-RU": "Во всех деталях Workbench смена элемента сдвигает только всё тело по вертикали в порядке списка: выбор ниже — вверх, выбор выше — вниз. Соседние слои равной высоты непрозрачны, не перекрываются, обрезаны телом и используют кривую 420мс. Заголовки и поля используют Roll; рамка, действия, уведомление, ChatState и ввод неподвижны. Обычное тело начинается сверху, чат прокручен до конца до отрисовки. При смене нет анимации отдельных блоков или сообщений; добавления в тот же диалог раскрываются через FlowList."
 };
 
 export const QUEUE_LIST_RULE: Text = {
-  "zh-CN": "长工作队列使用 QueueList：筛选按页签方向并排平移一整宽，全程不透明、不重叠，并回到顶部。" +
-    "追加只展开新行，原位更新不动；中间增删才带动邻行。FlowList 全量重排用于短列表。",
-  "zh-TW": "長工作佇列使用 QueueList：篩選按頁籤方向並排平移一整寬，全程不透明、不重疊，並回到頂部。" +
-    "追加只展開新列，原位更新不動；中間增刪才帶動鄰列。FlowList 全量重排用於短清單。",
-  "en-US": "Long work queues use QueueList: filters slide side by side a full width in tab order, " +
-    "fully opaque without overlap, and reset " +
-    "scroll; appends expand only new rows, content updates stay still, and middle inserts or " +
-    "removals shift neighbours. Full FlowList reflow is for short lists.",
-  "ja-JP": "長い作業キューには QueueList を使う。絞り込みはタブ順に全幅を並べてスライドし、常に不透明で重ならず、先頭へ戻る。" +
-    "末尾追加は新しい行だけ開く。内容更新は動かさず、途中の追加・削除だけ隣の行を動" +
-    "かす。FlowList の全体再配置は短い一覧向け。",
-  "ko-KR": "긴 작업 대기열에는 QueueList를 쓴다. 필터는 탭 순서대로 전체 너비만큼 나란히 이동하며, 항상 불투명하고 겹치지 않으며 맨 위로 돌아간다. " +
-    "끝에 추가된 행만 펼치고 내용 갱신은 움직이지 않는다. " +
-    "중간 삽입과 제거만 이웃 행을 움직인다. FlowList 전체 재배치는 짧은 목록에 쓴다.",
-  "fr-FR": "Les longues files utilisent QueueList : les filtres glissent côte à côte sur une largeur " +
-    "entière selon les onglets, toujours opaques et sans chevauchement, puis remontent en haut. " +
-    "Seules les nouvelles lignes finales se déploient ; les " +
-    "mises à jour restent fixes. Seuls les ajouts ou retraits au milieu déplacent les " +
-    "voisines. FlowList reste pour les listes courtes.",
-  "es-ES": "Las colas largas usan QueueList: los filtros se deslizan lado a lado un ancho completo " +
-    "según las pestañas, siempre opacos y sin superponerse, y vuelven arriba. " +
-    "Solo se expanden las filas añadidas al final; actualizar contenido no " +
-    "mueve filas. Solo insertar o quitar en medio desplaza las vecinas. FlowList se reserva " +
-    "para listas cortas.",
-  "ru-RU": "Длинные очереди используют QueueList: фильтры скользят рядом на полную ширину по порядку " +
-    "вкладок, всегда непрозрачно и без наложения, и возвращаются наверх. " +
-    "В конце раскрываются только новые строки; обновление текста " +
-    "неподвижно. Лишь вставка или удаление в середине сдвигает соседей. Полная перестройка " +
-    "FlowList — для коротких списков.",
+  "zh-CN": "工作队列必须用 Pager 页码分页，分页条位于列表卡片底部。无限加载只用于信息流，其他追加需求须显式选择。QueueList 的 page 变化与 scope 切换一样整层水平推移并回到顶部：下一页从右进入，上一页从左进入；筛选切换按页签顺序。全程不透明、不重叠，共用 420ms 导航曲线。追加仅展开新行，原位更新不动。",
+  "zh-TW": "工作佇列必須用 Pager 頁碼分頁，分頁列位於清單卡片底部。無限載入只用於資訊流，其他追加需求須明確選擇。QueueList 的 page 變化與 scope 切換一樣整層水平推移並回到頂部：下一頁從右進入，上一頁從左進入；篩選切換按頁籤順序。全程不透明、不重疊，共用 420ms 導覽曲線。追加僅展開新列，原位更新不動。",
+  "en-US": "Work queues use numbered Pager navigation at the list card foot. Endless loading is for feeds only; other append behavior is opt-in. QueueList page changes push a whole layer horizontally and reset scroll, like scope changes: next pages enter from the right, previous from the left; filters follow tab order. Layers stay opaque and non-overlapping on the 420ms navigation curve. Appends expand only new rows; content updates stay still.",
+  "ja-JP": "作業キューはカード下部の Pager でページ番号を使う。無限読み込みはフィードだけにし、その他の追加は明示的に選ぶ。QueueList の page 変更は scope 変更と同じ全体の水平移動と先頭復帰を使う。次ページは右、前ページは左から入り、フィルターはタブ順に従う。420msのナビ曲線で不透明かつ重ならず動く。追加は新しい行だけ開き、内容更新は動かさない。",
+  "ko-KR": "작업 대기열은 목록 카드 하단의 Pager로 페이지 번호를 사용한다. 무한 로딩은 피드에만 쓰고 다른 추가 동작은 명시적으로 선택한다. QueueList의 page 변경은 scope 변경처럼 전체를 가로로 밀고 맨 위로 돌아간다. 다음 페이지는 오른쪽, 이전 페이지는 왼쪽에서 들어오며 필터는 탭 순서를 따른다. 420ms 탐색 곡선으로 불투명하게 겹치지 않고 이동한다. 추가는 새 행만 펼치며 내용 갱신은 움직이지 않는다.",
+  "fr-FR": "Les files de travail utilisent Pager avec des numéros au pied de la carte. Le chargement infini est réservé aux fils ; tout autre ajout est explicite. Changer page dans QueueList pousse toute la couche horizontalement et revient en haut, comme un changement de scope : suivant depuis la droite, précédent depuis la gauche ; filtres selon les onglets. Couches opaques, sans chevauchement, courbe de 420ms. Seules les nouvelles lignes se déploient ; les mises à jour restent fixes.",
+  "es-ES": "Las colas de trabajo usan Pager con números al pie de la tarjeta. La carga infinita se reserva para los feeds; otras adiciones son opcionales y explícitas. Cambiar page en QueueList empuja toda la capa horizontalmente y vuelve arriba, como cambiar scope: siguiente desde la derecha, anterior desde la izquierda; filtros según las pestañas. Capas opacas, sin superponerse, con la curva de 420ms. Solo se expanden filas nuevas; las actualizaciones quedan fijas.",
+  "ru-RU": "Рабочие очереди используют номера страниц Pager внизу карточки списка. Бесконечная загрузка — только для лент; иное добавление включается явно. Изменение page в QueueList сдвигает весь слой по горизонтали и возвращает прокрутку вверх, как смена scope: следующая страница справа, предыдущая слева; фильтры следуют порядку вкладок. Слои непрозрачны, не перекрываются, кривая 420мс. Раскрываются только новые строки; обновления неподвижны."
 };
 
 export const MOTION_TERMS: MotionTerm[] = [

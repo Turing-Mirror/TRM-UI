@@ -5,6 +5,8 @@
   --workbench-padding: 16px;
   --workbench-space: 16px;
   --workbench-row-inset: 8px;
+  --workbench-row-padding: 8px;
+  --workbench-list-content-inset: calc(var(--workbench-row-inset) + var(--workbench-row-padding));
   --bg-base: #f4f6f8;
   --bg: var(--bg-base);
   --surface: #ffffff;

@@ -3,7 +3,8 @@ import { act, useState } from "react";
 import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { Workbench, WorkbenchDetail, WorkbenchItem } from "./Workbench";
-import { Empty } from "./display";
+import { Empty, Filters, Tabs, Pager } from "./display";
+import { SearchBox } from "./listing";
 import { FlowList, FLOW_MS } from "./motion";
 import { mount, type Mounted } from "../test/dom";
 const styles = readFileSync("src/trm/styles/components.css", "utf8");
@@ -30,8 +31,156 @@ afterEach(() => { view?.unmount(); sheet.remove(); vi.restoreAllMocks(); vi.useR
 
 const order = ["z", "a", ""];
 
+it.each(["count", "refresh", "search"])("aligns title, filters and row content for the %s head", variant => {
+  const options = [{ id: "all", label: "All" }, { id: "pending", label: "Pending" }];
+  view = mount(<div style={{ "--workbench-list-content-inset": "16px", "--workbench-row-inset": "8px",
+    "--workbench-row-padding": "8px" } as React.CSSProperties}>
+    <Workbench selected={null} order={[]} onBack={() => {}} detail={null}
+      listHead={<>
+        <div className="trm-workbench-heading"><h3>Queue</h3>
+          {variant === "count" ? <span>12</span> : variant === "refresh" ? <button>Refresh</button> : null}
+        </div>
+        {variant === "search" ? <div className="trm-workbench-search"><SearchBox value="" onChange={() => {}} /></div> : null}
+        <div className="trm-workbench-filters"><Filters value="all" options={options} onChange={() => {}} /></div>
+        <div className="trm-workbench-filters"><Tabs value="all" options={options} onChange={() => {}} /></div>
+      </>}
+      list={<WorkbenchItem title="One" selected={false} onClick={() => {}} />}
+      pager={<Pager page={1} pages={3} onChange={() => {}} />} />
+  </div>);
+  const head = view.container.querySelector(".trm-workbench-list-head")!;
+  const inset = parseFloat(getComputedStyle(head).paddingInline);
+  expect(inset).toBe(16);
+  expect(parseFloat(getComputedStyle(head.querySelector(".trm-workbench-heading")!).paddingLeft)).toBe(0);
+  const row = getComputedStyle(view.container.querySelector(".trm-workbench-item")!);
+  expect(parseFloat(row.marginInline) + parseFloat(row.paddingLeft)).toBe(inset);
+  for (const group of head.querySelectorAll(".trm-workbench-filters")) {
+    expect(parseFloat(getComputedStyle(group).paddingLeft) || 0).toBe(0);
+    expect(parseFloat(getComputedStyle(group.querySelector("button")!).paddingInline)).toBe(0);
+    const indicator = group.querySelector<HTMLElement>(".slider")!;
+    expect(indicator.parentElement).toBe(group.firstElementChild);
+    expect(indicator.style.transform).toContain("0px");
+  }
+  if (variant === "search") expect(getComputedStyle(head.querySelector(".trm-workbench-search")!).paddingInline).toBe("");
+  const foot = view.container.querySelector(".trm-workbench-pager")!;
+  expect(foot.parentElement?.className).toBe("trm-workbench-list");
+  expect(foot.closest(".trm-workbench-rows")).toBeNull();
+  expect(getComputedStyle(foot).flex).toBe("0 0 auto");
+});
+
+it("pushes a review body in order without scroll-to-end, while retaining actions and inline foot", () => {
+  const animate = vi.spyOn(HTMLElement.prototype, "animate");
+  const review = (selected: string) => <Workbench selected={selected} order={order}
+    onBack={() => {}} list={null} detail={<WorkbenchDetail title={selected} sub={selected}
+      actions={<button>Edit</button>} notice="Notice" foot={<button>Approve</button>}>
+      <p key={selected}>{selected}</p>
+    </WorkbenchDetail>} />;
+  view = mount(review("z"));
+  const action = view.container.querySelector(".trm-workbench-actions button");
+  const footer = view.container.querySelector(".trm-workbench-foot");
+  const outgoing = view.container.querySelector<HTMLElement>(".trm-workbench-body")!;
+  outgoing.scrollTop = 120;
+  animate.mockClear();
+  act(() => view.root.render(review("a")));
+  expect(animate).toHaveBeenCalledTimes(2);
+  expect(animate.mock.calls[0][0]).toEqual([{ transform: "none" }, { transform: "translate3d(0, -100%, 0)" }]);
+  expect(animate.mock.calls[1][0]).toEqual([{ transform: "translate3d(0, 100%, 0)" }, { transform: "none" }]);
+  expect(outgoing.scrollTop).toBe(120);
+  const current = view.container.querySelector<HTMLElement>(".trm-workbench-body-current .trm-workbench-body")!;
+  expect(current.scrollTop).toBe(0);
+  expect(current.hasAttribute("data-follow-end")).toBe(false);
+  expect(view.container.querySelector(".trm-workbench-body-stage .flow-enter, .trm-workbench-body-stage .flow-leave, .trm-workbench-body-stage .rise")).toBeNull();
+  expect(view.container.querySelector(".trm-workbench-actions button")).toBe(action);
+  expect(view.container.querySelector(".trm-workbench-foot")).toBe(footer);
+  expect(footer?.closest(".trm-workbench-body-stage")).toBeNull();
+  expect(view.container.querySelector("h3 .roll-in")?.textContent).toBe("a");
+  act(() => vi.advanceTimersByTime(FLOW_MS));
+  animate.mockClear();
+  act(() => view.root.render(review("z")));
+  expect(animate.mock.calls[1][0]).toEqual([{ transform: "translate3d(0, -100%, 0)" }, { transform: "none" }]);
+});
+
+const chat = (selected: string, messages = ["first", "second"]) => <Workbench selected={selected}
+  order={order} onBack={() => {}} list={null} detail={<WorkbenchDetail title={selected}
+    sub={selected} notice="Fixed notice" actions={<button>Action</button>} footMode="pinned"
+    foot={<textarea aria-label="Draft" />} scrollToEnd={`${selected}:${messages.length}`}>
+    {messages.map(message => <p key={`${selected}:${message}`}>{message}</p>)}
+  </WorkbenchDetail>} />;
+
+it("pushes exactly one adjacent opaque body pair in list order, with stationary controls and pre-scrolled content", () => {
+  const animate = vi.spyOn(HTMLElement.prototype, "animate");
+  vi.spyOn(HTMLElement.prototype, "scrollHeight", "get").mockReturnValue(900);
+  vi.spyOn(HTMLElement.prototype, "clientHeight", "get").mockReturnValue(300);
+  document.documentElement.style.setProperty("--ease-nav", "cubic-bezier(0.16, 1, 0.3, 1)");
+  view = mount(chat("z"));
+  const action = view.container.querySelector("button");
+  const composer = view.container.querySelector("textarea");
+  const notice = view.container.querySelector(".trm-workbench-notice");
+  const outgoing = view.container.querySelector<HTMLElement>(".trm-workbench-body")!;
+  outgoing.scrollTop = 200;
+  animate.mockClear();
+  act(() => view.root.render(chat("a")));
+  expect(animate).toHaveBeenCalledTimes(2);
+  expect(view.container.querySelectorAll(".trm-workbench-body-layer")).toHaveLength(2);
+  expect(view.container.querySelector('.trm-workbench-body-stage[data-direction="1"]')).not.toBeNull();
+  expect(view.container.querySelector(".trm-workbench-body-out .trm-workbench-body")).toBe(outgoing);
+  expect(outgoing.scrollTop).toBe(200);
+  expect(view.container.querySelector<HTMLElement>(".trm-workbench-body-current .trm-workbench-body")!.scrollTop).toBe(600);
+  expect(view.container.querySelector(".trm-workbench-body-stage [data-phase=enter], .trm-workbench-body-stage [data-phase=leave]")).toBeNull();
+  expect(view.container.querySelector(".trm-workbench-body-stage .rise")).toBeNull();
+  for (const [i, call] of animate.mock.calls.entries()) {
+    expect((animate.mock.contexts[i] as HTMLElement).className).toContain("trm-workbench-body-layer");
+    expect((animate.mock.contexts[i] as HTMLElement).style.opacity).toBe("1");
+    expect(call[1]).toMatchObject({ duration: FLOW_MS, easing: "cubic-bezier(0.16, 1, 0.3, 1)" });
+    expect(JSON.stringify(call[0])).not.toMatch(/opacity|scale/);
+  }
+  expect(animate.mock.calls[0][0]).toEqual([{ transform: "none" }, { transform: "translate3d(0, -100%, 0)" }]);
+  expect(animate.mock.calls[1][0]).toEqual([{ transform: "translate3d(0, 100%, 0)" }, { transform: "none" }]);
+  expect(getComputedStyle(view.container.querySelector(".trm-workbench-body-stage")!).overflow).toBe("clip");
+  expect(view.container.querySelector("button")).toBe(action);
+  expect(view.container.querySelector("textarea")).toBe(composer);
+  expect(view.container.querySelector(".trm-workbench-notice")).toBe(notice);
+  act(() => vi.advanceTimersByTime(FLOW_MS));
+  animate.mockClear();
+  act(() => view.root.render(chat("z")));
+  expect(animate).toHaveBeenCalledTimes(2);
+  expect(animate.mock.calls[0][0]).toEqual([{ transform: "none" }, { transform: "translate3d(0, 100%, 0)" }]);
+  expect(animate.mock.calls[1][0]).toEqual([{ transform: "translate3d(0, -100%, 0)" }, { transform: "none" }]);
+  document.documentElement.style.removeProperty("--ease-nav");
+});
+
+it("expands appended messages in the same body without starting another item push", () => {
+  const animate = vi.spyOn(HTMLElement.prototype, "animate");
+  view = mount(chat("z"));
+  const first = view.container.querySelector(".trm-workbench-body-current p");
+  const layer = view.container.querySelector(".trm-workbench-body-current");
+  animate.mockClear();
+  act(() => view.root.render(chat("z", ["first", "second", "reply"])));
+  expect(view.container.querySelector(".trm-workbench-body-current")).toBe(layer);
+  expect(view.container.querySelector(".trm-workbench-body-current p")).toBe(first);
+  expect(view.container.querySelector('[data-phase="enter"] p')?.textContent).toBe("reply");
+  expect(view.container.querySelector(".trm-workbench-body-out")).toBeNull();
+  expect(animate.mock.contexts.some(node => (node as HTMLElement).className.includes("trm-workbench-body-layer"))).toBe(false);
+});
+
+it("serializes rapid item changes without a third body and skips motion when reduced", () => {
+  view = mount(chat("z"));
+  act(() => view.root.render(chat("a")));
+  act(() => view.root.render(chat("")));
+  expect(view.container.querySelectorAll(".trm-workbench-body-layer")).toHaveLength(2);
+  expect(view.container.querySelector(".trm-workbench-body-stage")?.getAttribute("data-scope")).toBe("a");
+  act(() => vi.advanceTimersByTime(FLOW_MS));
+  expect(view.container.querySelector(".trm-workbench-body-stage")?.getAttribute("data-scope")).toBe("");
+  expect(view.container.querySelectorAll(".trm-workbench-body-layer")).toHaveLength(2);
+  act(() => vi.advanceTimersByTime(FLOW_MS));
+  expect(view.container.querySelectorAll(".trm-workbench-body-layer")).toHaveLength(1);
+  reduced = true;
+  act(() => view.root.render(chat("z")));
+  expect(view.container.querySelectorAll(".trm-workbench-body-layer")).toHaveLength(1);
+  expect(view.container.querySelector(".trm-workbench-body-stage")?.getAttribute("data-scope")).toBe("z");
+});
+
 it.each([false, true])("insets every row background and rounds its corners (selected=%s)", selected => {
-  view = mount(<div style={{ "--workbench-row-inset": "8px", "--rs": "8px" } as React.CSSProperties}>
+  view = mount(<div style={{ "--workbench-row-inset": "8px", "--workbench-row-padding": "8px", "--workbench-list-content-inset": "16px", "--rs": "8px" } as React.CSSProperties}>
     <div className="trm-workbench-list-head">
       <div className="trm-workbench-heading">Queue</div>
     </div>
@@ -132,7 +281,7 @@ it("renders separate sub fields and body parts with ordered delays, retaining th
   expect(Array.from(fields, node => node.textContent)).toEqual(["Website", "Pending"]);
   const parts = view.container.querySelectorAll<HTMLElement>(".trm-workbench-part");
   expect(Array.from(parts, node => node.style.animationDelay)).toEqual([
-    "0ms", "38ms", "76ms", "114ms", "152ms",
+    "0ms", "38ms", "76ms",
   ]);
   expect(view.container.querySelector(".trm-workbench-list .trm-workbench-list-head")?.textContent).toBe("Queue");
   act(() => view.root.render(queue("Approved")));

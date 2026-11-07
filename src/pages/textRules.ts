@@ -5,21 +5,48 @@ import { zh, type Rule } from "./rules";
  * 新增或修改界面文字、提示和译文前先看这里，规则只在这一处维护。
  */
 export const TEXT_RULES: Rule[] = [
+  // A shell connection needs its subject named even when the icon already conveys the state.
+{
+  "id": "sidebarConnection",
+  "title": {
+    "zh-CN": "侧栏底部的连接与服务状态使用 SidebarStatus。",
+    "zh-TW": "側欄底部的連線與服務狀態使用 SidebarStatus。",
+    "en-US": "Use SidebarStatus for connection and service states in the shell foot.",
+    "ja-JP": "サイドバー下部の接続やサービスの状態には SidebarStatus を使う。",
+    "ko-KR": "사이드바 하단의 연결 및 서비스 상태에는 SidebarStatus를 사용한다.",
+    "fr-FR": "Utiliser SidebarStatus pour les états de connexion et de service en bas de la barre latérale.",
+    "es-ES": "Usar SidebarStatus para los estados de conexión y servicio al pie de la barra lateral.",
+    "ru-RU": "Для состояния соединений и служб внизу боковой панели использовать SidebarStatus."
+  },
+  "list": [
+    {
+      "zh-CN": "状态图标配合对象与状态文字，例如「店铺在线」。在线用 online，离线用 offline，错误用 alert，待登录用 scan。颜色只用于图标，文字使用次要文字色；不单独放「在线」等彩色词语，不画胶囊、底色或圆点。收起后仅显示图标，完整文字用作 Tooltip 和无障碍名称。",
+      "zh-TW": "狀態圖示配合對象與狀態文字，例如「店鋪在線」。在線用 online，離線用 offline，錯誤用 alert，待登入用 scan。顏色只用於圖示，文字使用次要文字色；不單獨放「在線」等彩色詞語，不畫膠囊、底色或圓點。收起後僅顯示圖示，完整文字用作 Tooltip 和無障礙名稱。",
+      "en-US": "Pair a state icon with a label naming the subject and state, such as “Shop online”. Use online, offline, alert for errors and scan for login. Apply tone only to the icon and secondary ink to the label. Never use a bare colored state word, pill, fill or dot. When collapsed, show only the icon and keep the full label as its Tooltip and accessible name.",
+      "ja-JP": "状態アイコンと対象・状態を示す文字（「店舗オンライン」など）を組み合わせる。接続中は online、切断は offline、エラーは alert、ログイン待ちは scan を使う。色はアイコンだけに付け、文字は補助色にする。状態の単語だけを色付きで置かず、カプセル、背景色、点を付けない。折りたたみ時はアイコンだけを表示し、全文を Tooltip とアクセシブルな名前に使う。",
+      "ko-KR": "상태 아이콘과 대상 및 상태를 나타내는 문구(예: ‘매장 온라인’)를 함께 사용한다. 온라인은 online, 오프라인은 offline, 오류는 alert, 로그인 대기는 scan을 사용한다. 색상은 아이콘에만 적용하고 문구에는 보조 글자색을 사용한다. 색이 있는 상태 단어만 놓거나 캡슐, 배경색, 점을 넣지 않는다. 접으면 아이콘만 표시하고 전체 문구를 Tooltip과 접근성 이름으로 유지한다.",
+      "fr-FR": "Associer une icône à un libellé nommant le sujet et son état, par exemple « Boutique en ligne ». Utiliser online, offline, alert pour les erreurs et scan pour la connexion au compte. Colorer uniquement l’icône ; le texte garde la couleur secondaire. Aucun mot d’état coloré isolé, capsule, fond ou point. En mode réduit, garder seulement l’icône et utiliser le libellé complet comme Tooltip et nom accessible.",
+      "es-ES": "Combinar un icono con un texto que nombre el sujeto y su estado, como « Tienda en línea ». Usar online, offline, alert para errores y scan para iniciar sesión. Aplicar el color solo al icono y el color secundario al texto. No usar palabras de estado coloreadas y aisladas, cápsulas, fondos ni puntos. Al contraer, mostrar solo el icono y mantener el texto completo como Tooltip y nombre accesible.",
+      "ru-RU": "Сочетать значок с подписью, называющей объект и состояние, например «Магазин в сети». Использовать online, offline, alert для ошибок и scan для входа. Цвет состояния применять только к значку, текст оставлять вторичным. Не использовать отдельное цветное слово, капсулу, заливку или точку. При сворачивании оставлять значок, а полную подпись использовать как Tooltip и доступное имя."
+    }
+  ],
+  "examples": []
+},
   {
     id: "iconIdentifies",
     title: {
-      "zh-CN": "图标已标明的平台、文件类型或状态，不在同一视图中重复写成文字。",
-      "zh-TW": "圖示已標明的平台、檔案類型或狀態，不在同一檢視中重複寫成文字。",
+      "zh-CN": "图标已标明的平台、文件类型或状态，不在同一视图中重复写成文字；侧栏连接与服务状态遵循 SidebarStatus 规则。",
+      "zh-TW": "圖示已標明的平台、檔案類型或狀態，不在同一檢視中重複寫成文字；側欄連線與服務狀態遵循 SidebarStatus 規則。",
       "en-US": "Do not repeat a platform, file type or status as text in the same view when its icon " +
-        "already identifies it.",
-      "ja-JP": "アイコンで示したプラットフォーム、ファイル形式、状態を同じ画面の文字で繰り返さない。",
-      "ko-KR": "아이콘이 이미 나타내는 플랫폼, 파일 형식, 상태를 같은 화면에서 글자로 반복하지 않는다.",
+        "already identifies it; shell connection and service states follow the SidebarStatus rule.",
+      "ja-JP": "アイコンで示したプラットフォーム、ファイル形式、状態を同じ画面の文字で繰り返さない。ただしサイドバーの接続やサービスの状態は SidebarStatus の規則に従う。",
+      "ko-KR": "아이콘이 이미 나타내는 플랫폼, 파일 형식, 상태를 같은 화면에서 글자로 반복하지 않는다. 사이드바의 연결 및 서비스 상태는 SidebarStatus 규칙을 따른다.",
       "fr-FR": "Ne pas répéter en texte une plateforme, un type de fichier ou un état déjà identifié par" +
-        " son icône dans la même vue.",
+        " son icône dans la même vue ; les états de connexion et de service de la barre latérale suivent la règle SidebarStatus.",
       "es-ES": "No repetir como texto una plataforma, un tipo de archivo o un estado que su icono ya " +
-        "identifica en la misma vista.",
+        "identifica en la misma vista; los estados de conexión y servicio de la barra lateral siguen la regla SidebarStatus.",
       "ru-RU": "Не повторять текстом платформу, тип файла или состояние, уже обозначенные значком в том " +
-        "же представлении.",
+        "же представлении; состояния соединений и служб в боковой панели следуют правилу SidebarStatus.",
     },
     examples: [],
   },

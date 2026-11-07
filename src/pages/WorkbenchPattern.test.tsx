@@ -26,6 +26,10 @@ function select(id: string) {
 }
 
 function queue() { return view.container.querySelector(".trm-workbench")!; }
+function goPage(page: number) {
+  act(() => queue().querySelector<HTMLButtonElement>(`.trm-workbench-pager [data-k="p${page}"]`)!.click());
+  act(() => vi.advanceTimersByTime(FLOW_MS + 1));
+}
 
 it("shows a distinct All queue with reviewed rows and rolls the filter heading and total", () => {
   start();
@@ -36,22 +40,29 @@ it("shows a distinct All queue with reviewed rows and rolls the filter heading a
   expect(head.querySelector("h3 .roll-in")?.textContent).toBe("All");
   expect(head.querySelector(":scope > .roll .roll-in")?.textContent).toBe("5");
   const rows = queue().querySelectorAll(".trm-queue-current .trm-workbench-item");
-  expect(rows).toHaveLength(5);
-  expect(Array.from(rows, row => row.textContent).join(" ")).toContain("Approved");
-  expect(Array.from(rows, row => row.textContent).join(" ")).toContain("Rejected");
+  expect(rows).toHaveLength(2);
   act(() => vi.advanceTimersByTime(FLOW_MS + 40));
+  goPage(2);
+  expect(queue().querySelector(".trm-queue-current")?.textContent).toContain("Approved");
+  goPage(3);
+  expect(queue().querySelector(".trm-queue-current")?.textContent).toContain("Rejected");
   click("Pending");
   expect(head.querySelector("h3 .roll-in")?.textContent).toBe("Pending");
   expect(head.querySelector(":scope > .roll .roll-in")?.textContent).toBe("3");
   expect(queue().querySelectorAll(".trm-queue-current .trm-workbench-item")).toHaveLength(2);
+  expect(queue().querySelector('.trm-workbench-pager [aria-current="page"]')?.textContent).toBe("1");
 });
 
-it("loads more in place, collapses reviewed rows, rolls the pending count and filters results", () => {
+it("pages instead of loading endlessly, collapses reviewed rows and rolls the pending count", () => {
   start();
+  const pager = queue().querySelector(".trm-workbench-pager nav");
+  goPage(2);
+  expect(queue().querySelectorAll(".trm-workbench-item")).toHaveLength(1);
+  expect(queue().querySelector('[data-flow="invite"]')?.getAttribute("data-phase")).toBe("stay");
+  expect(queue().querySelector(".trm-workbench-pager nav")).toBe(pager);
+  expect(queue().textContent).not.toContain("Load more");
+  goPage(1);
   const retained = view.container.querySelector('[data-flow="export"]');
-  click("Load more");
-  expect(view.container.querySelector('[data-flow="invite"]')?.getAttribute("data-phase")).toBe("enter");
-  act(() => vi.advanceTimersByTime(FLOW_MS + 40));
   select("access");
   click("Approve");
   expect(view.container.querySelector('[data-flow="access"]')?.getAttribute("data-phase")).toBe("leave");
@@ -64,6 +75,21 @@ it("loads more in place, collapses reviewed rows, rolls the pending count and fi
   expect(view.container.querySelector('[data-flow="access"]')?.textContent).toContain("Approved");
   select("access");
   expect(view.container.querySelector(".trm-workbench-foot")?.textContent).toBe("Approved");
+});
+
+it("clamps to the remaining page after reviewing the last row and pages the chat queue too", () => {
+  start();
+  goPage(2);
+  select("invite");
+  click("Approve");
+  act(() => vi.advanceTimersByTime(FLOW_MS + 1));
+  expect(queue().querySelector('.trm-workbench-pager [aria-current="page"]')?.textContent).toBe("1");
+  expect(queue().querySelectorAll(".trm-queue-current .trm-workbench-item")).toHaveLength(2);
+  const chat = view.container.querySelectorAll(".trm-workbench")[1];
+  act(() => chat.querySelector<HTMLButtonElement>('.trm-workbench-pager [data-k="p2"]')!.click());
+  act(() => vi.advanceTimersByTime(FLOW_MS + 1));
+  expect(chat.querySelectorAll(".trm-workbench-item")).toHaveLength(1);
+  expect(chat.querySelector('[data-flow="invite"]')).not.toBeNull();
 });
 
 it("keeps edited answers when changing selection and records rejection separately", () => {
@@ -118,6 +144,8 @@ it("appends replies locally, keeps drafts per conversation and toggles the notic
   expect(chat.querySelector(".trm-workbench-notice[data-open]")?.textContent).toContain("Confirm");
   act(() => chat.querySelector("textarea")!
     .dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true })));
+  expect(chat.querySelector('.trm-chat-composer-send[aria-busy="true"]')).not.toBeNull();
+  act(() => vi.advanceTimersByTime(650));
   expect(chat.querySelector('[role="log"]')?.textContent).toBe("A saved draft");
   expect(chat.querySelector("textarea")!.value).toBe("");
   expect(chat.querySelector(".trm-workbench-field .roll-in")?.textContent).toBe("Replied");

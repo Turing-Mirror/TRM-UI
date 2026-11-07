@@ -12,6 +12,45 @@ import { useI18n } from "../i18n";
 import { Icon, type IconName } from "./Icon";
 import { IconBtn } from "./display";
 import { WinBtn, type WindowControls } from "./TitleBar";
+import { Roll } from "./motion";
+import { Tooltip } from "./Tooltip";
+
+// Share the geometry so foot states keep the same icon anchor as navigation, including when collapsed.
+const SIDEBAR_ROW = "relative w-full flex-none flex items-center gap-3 h-9 px-[13px] rounded-[var(--rs)] border-0 cursor-pointer text-[13.5px] transition-colors overflow-hidden";
+const SIDEBAR_HOVER = "bg-transparent hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]";
+const STATUS_TONE = {
+  ok: "text-[var(--ok)]",
+  warn: "text-[var(--warn)]",
+  danger: "text-[var(--danger)]",
+  muted: "text-[var(--meta)]",
+} as const;
+
+export type SidebarStatusProps = {
+  icon: IconName;
+  /** Name both the subject and its state; the icon alone cannot identify the connection. */
+  label: string;
+  tone?: keyof typeof STATUS_TONE;
+  onClick: (e: MouseEvent) => void;
+  collapsed: boolean;
+};
+
+/** A connection or service state belongs to the foot's list, not to a separate badge. */
+export function SidebarStatus({ icon, label, tone = "muted", onClick, collapsed }: SidebarStatusProps) {
+  return (
+    <Tooltip text={label} disabled={!collapsed} triggerClassName="flex w-full flex-none min-w-0">
+      <button type="button" onClick={onClick} aria-label={label} data-collapsed={collapsed || undefined}
+        className={`${SIDEBAR_ROW} ${SIDEBAR_HOVER} text-[var(--ink-muted)]`}>
+        {/* Keep the glyph slot fixed; only the glyph fades when its shape or tone changes. */}
+        <Roll value={`${icon}:${tone}`} className="sidebar-status-icon flex-none w-[18px] h-[18px]">
+          <Icon name={icon} size={18} className={STATUS_TONE[tone]} />
+        </Roll>
+        <span className="side-label min-w-0 text-left" aria-hidden={collapsed || undefined}>
+          <Roll value={label} className="max-w-full" />
+        </span>
+      </button>
+    </Tooltip>
+  );
+}
 
 /** 侧栏宽度：展开与收起。 */
 export const SIDEBAR_W = { open: 244, collapsed: 64 } as const;
@@ -145,8 +184,8 @@ export function SidebarItem({
       title={collapsed ? label : undefined}
       className={[
         // 左右留白固定：收起后按钮宽 44，18 的图标正好居中；展开时图标也在这个位置
-        "relative w-full flex-none flex items-center gap-3 h-9 px-[13px] rounded-[var(--rs)] border-0 cursor-pointer text-[13.5px] transition-colors overflow-hidden",
-        on ? "bg-[color-mix(in_srgb,var(--ink)_7%,transparent)] text-[var(--ink)] font-medium" : "bg-transparent text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]",
+        SIDEBAR_ROW,
+        on ? "bg-[color-mix(in_srgb,var(--ink)_7%,transparent)] text-[var(--ink)] font-medium" : `${SIDEBAR_HOVER} text-[var(--ink-muted)] hover:text-[var(--ink)]`,
       ].join(" ")}
     >
       <Icon name={icon} size={18} className={on ? "text-[var(--accent)]" : ""} />

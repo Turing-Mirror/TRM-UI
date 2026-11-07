@@ -195,6 +195,18 @@
         "answer": "Open Members and choose Invite. Enter their email address."
       }
     },
+    "connectionSettings": {
+      "title": "Connections",
+      "model": "Language model",
+      "knowledge": "Knowledge base",
+      "enabled": "Enabled"
+    },
+    "connection": {
+      "online": "Shop online",
+      "offline": "Shop offline",
+      "login": "Shop login required",
+      "error": "Shop connection error"
+    },
     "webShell": {
       "title": "Web layout",
       "brand": "Admin",
@@ -259,6 +271,7 @@
       "segmentNote": "Click an option or drag the thumb to switch."
     },
     "btn": {
+      "quick": "Quick action",
       "normal": "Default",
       "primary": "Primary",
       "on": "Selected",

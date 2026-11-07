@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   AlertMark, Block, Btn, ChatComposer, ChatState, Collapse, Empty, Filters, Icon, QueueList, Roll, Tag, TextArea,
-  Tooltip,
+  Tooltip, IconBtn, Pager, usePaged,
   Workbench, WorkbenchDetail, WorkbenchItem, useI18n,
 } from "../trm";
 
@@ -18,8 +18,7 @@ const REVIEW_ENTRIES = [
 type Entry = (typeof REVIEW_ENTRIES)[number];
 type Status = "pending" | "approved" | "rejected";
 type Filter = "all" | "pending";
-const INITIAL_LIMIT = 2;
-const FILTER_LIMITS: Record<Filter, number> = { pending: INITIAL_LIMIT, all: REVIEW_ENTRIES.length };
+const PAGE_SIZE = 2;
 const INITIAL_STATUSES: Record<string, Status> = { billing: "approved", password: "rejected" };
 
 function ReviewDetail({ item, status, answer, onAnswer, onReview }: {
@@ -62,14 +61,13 @@ export function WorkbenchPattern() {
   const { t, locale } = useI18n();
   const [selected, setSelected] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>("pending");
-  const [limit, setLimit] = useState(INITIAL_LIMIT);
   const [statuses, setStatuses] = useState<Record<string, Status>>(INITIAL_STATUSES);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const status = (id: string) => statuses[id] ?? "pending";
   // Drafts belong to the queue so switching details or resizing does not discard an edit.
   const answer = (id: string) => answers[`${locale}:${id}`] ?? t(`demo.workbench.${id}.answer`);
   const filtered = REVIEW_ENTRIES.filter(item => filter === "all" || status(item.id) === "pending");
-  const shown = filtered.slice(0, limit);
+  const { page, pages, setPage, slice: shown } = usePaged(filtered, PAGE_SIZE, filter);
   const current = REVIEW_ENTRIES.find(item => item.id === selected);
   const review = (next: Status) => {
     if (!current) return;
@@ -89,24 +87,19 @@ export function WorkbenchPattern() {
           <div className="trm-workbench-filters">
             <Filters value={filter} onChange={value => {
               setFilter(value);
-              setLimit(FILTER_LIMITS[value]);
               const next = REVIEW_ENTRIES.filter(item => value === "all" || status(item.id) === "pending");
-              if (!next.slice(0, FILTER_LIMITS[value]).some(item => item.id === selected)) setSelected(null);
+              if (!next.some(item => item.id === selected)) setSelected(null);
             }} options={(["pending", "all"] as const).map(id => ({ id, label: t(`demo.workbench.${id}`) }))} />
           </div>
         </>}
-        list={<QueueList scope={filter} order={["pending", "all"]} className="trm-workbench-rows"
+        pager={<Pager page={page} pages={pages} onChange={setPage} showSinglePage />}
+        list={<QueueList scope={filter} page={page} order={["pending", "all"]} className="trm-workbench-rows"
             items={shown} keyOf={item => item.id} render={item => (
               <WorkbenchItem title={t(`demo.workbench.${item.id}.question`)}
                   meta={t("demo.workbench.hits", { n: item.hits })} preview={answer(item.id)}
                   tag={<Tag>{t(`demo.workbench.${status(item.id)}`)}</Tag>}
                   selected={selected === item.id} onClick={() => setSelected(item.id)} />
-            )} empty={<Empty icon="check" title={t("demo.workbench.clear")} />}
-            foot={shown.length < filtered.length ? <div className="p-4 text-center">
-              <Btn onClick={() => setLimit(value => value + INITIAL_LIMIT)}>
-                {t("demo.workbench.more")}
-              </Btn>
-            </div> : null} />}
+            )} empty={<Empty icon="check" title={t("demo.workbench.clear")} />} />}
         detail={current ? <ReviewDetail item={current} status={status(current.id)}
           answer={answer(current.id)} onReview={review}
           onAnswer={value => setAnswers(previous => ({ ...previous, [`${locale}:${current.id}`]: value }))}
@@ -118,6 +111,7 @@ export function WorkbenchPattern() {
 function ChatQueue() {
   const { t, locale } = useI18n();
   const [selected, select] = useState<string | null>(null);
+  const { page, pages, setPage, slice: shown } = usePaged([...ENTRIES], PAGE_SIZE);
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [replies, setReplies] = useState<Record<string, string[]>>({});
   const [noticeHidden, setNoticeHidden] = useState<Record<string, boolean>>({});
@@ -127,17 +121,25 @@ function ChatQueue() {
   const messages = replies[key] ?? [];
   const draft = drafts[key] ?? "";
   const human = handlers[selected ?? ""] ?? false;
+  const [sending, setSending] = useState(false);
+  const sendTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (sendTimer.current !== null) clearTimeout(sendTimer.current); }, []);
   const send = () => {
-    if (!draft.trim()) return;
-    setReplies(previous => ({ ...previous, [key]: [...(previous[key] ?? []), draft.trim()] }));
-    setDrafts(previous => ({ ...previous, [key]: "" }));
+    if (!draft.trim() || sending) return;
+    setSending(true);
+    sendTimer.current = setTimeout(() => {
+      setReplies(previous => ({ ...previous, [key]: [...(previous[key] ?? []), draft.trim()] }));
+      setDrafts(previous => ({ ...previous, [key]: "" }));
+      setSending(false);
+    }, 650);
   };
   return <Block title={t("demo.workbench.chat.title")}>
     <div className="h-[560px]">
       <Workbench selected={selected} order={ENTRIES.map(item => item.id)} onBack={() => select(null)}
         listHead={<div className="trm-workbench-heading"><h3>{t("demo.workbench.chat.queue")}</h3></div>}
         empty={<Empty icon="chat" title={t("demo.workbench.chat.choose")} />}
-        list={<QueueList scope="all" className="trm-workbench-rows" items={ENTRIES} keyOf={item => item.id}
+        pager={<Pager page={page} pages={pages} onChange={setPage} showSinglePage />}
+        list={<QueueList scope="all" page={page} className="trm-workbench-rows" items={shown} keyOf={item => item.id}
           render={item => <WorkbenchItem title={t(`demo.workbench.chat.${item.id}`)}
             avatar={<Icon name="chat" size={24} />} preview={t(`demo.workbench.${item.id}.question`)}
             selected={selected === item.id} onClick={() => select(item.id)} />} />}
@@ -161,8 +163,11 @@ function ChatQueue() {
           notice={!noticeHidden[key] ? <div className="rounded-[var(--rs)] bg-[var(--group)] p-3 text-[13px]">
             {t("demo.workbench.chat.notice")}
           </div> : null}
-          footMode="pinned" foot={<ChatComposer value={draft} placeholder={t("demo.workbench.chat.placeholder")}
+          footMode="pinned" foot={<ChatComposer value={draft} sending={sending} placeholder={t("demo.workbench.chat.placeholder")}
             state={<ChatState tone={human ? "human" : "assistant"}
+              action={<IconBtn icon={human ? "chip" : "user"}
+                label={t(human ? "demo.workbench.chat.assistant" : "demo.workbench.chat.human")}
+                onClick={() => setHandlers(previous => ({ ...previous, [current.id]: !human }))} />}
               label={t(human ? "demo.workbench.chat.human" : "demo.workbench.chat.assistant")} />}
             sendLabel={t("demo.workbench.chat.send")} onSend={send}
             onChange={value => setDrafts(previous => ({ ...previous, [key]: value }))} />}>

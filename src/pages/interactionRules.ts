@@ -3,6 +3,34 @@ import { ITEM_SWITCH_RULE, QUEUE_LIST_RULE } from "./motionTerms";
 
 /** 交互约定。「交互」页照这份数据渲染，下面的演示就是照这些约定做的。 */
 export const INTERACTION_RULES: Rule[] = [
+{
+  "id": "busyDelay",
+  "title": {
+    "zh-CN": "忙碌反馈只在用户能够察觉的等待中出现：立即阻止重复点击并设置 aria-busy，约 300ms 后才显示旋转指示；此前保留原标签，按钮宽度始终不变。",
+    "zh-TW": "忙碌回饋只在使用者能夠察覺的等待中出現：立即阻止重複點擊並設定 aria-busy，約 300ms 後才顯示旋轉指示；此前保留原標籤，按鈕寬度始終不變。",
+    "en-US": "Show busy feedback only for waits a person can notice: block repeated clicks and set aria-busy immediately, then show a spinner after about 300ms. Until then keep the original label; button width never changes.",
+    "ja-JP": "待機表示は利用者が待ち時間を感じる場合だけ出す。連打の防止と aria-busy は即時に設定し、約300ms後に回転表示を出す。それまでは元のラベルを保ち、ボタン幅は変えない。",
+    "ko-KR": "사용자가 느낄 수 있는 대기에만 진행 표시를 보여 준다. 반복 클릭 차단과 aria-busy는 즉시 적용하고 약 300ms 후 회전 표시를 보여 준다. 그전에는 기존 문구를 유지하며 버튼 너비는 바뀌지 않는다.",
+    "fr-FR": "Afficher une progression seulement pour une attente perceptible : bloquer les clics répétés et définir aria-busy immédiatement, puis afficher un indicateur après environ 300ms. Garder le libellé initial jusque-là et une largeur constante.",
+    "es-ES": "Mostrar progreso solo en esperas perceptibles: bloquear clics repetidos y establecer aria-busy de inmediato; mostrar el indicador tras unos 300ms. Hasta entonces conservar el texto original y mantener siempre el ancho del botón.",
+    "ru-RU": "Показывать индикатор лишь при заметном ожидании: сразу блокировать повторные нажатия и задавать aria-busy, а спиннер выводить примерно через 300мс. До этого сохранять исходную подпись; ширина кнопки не меняется."
+  },
+  "examples": []
+},
+{
+  "id": "flatGroups",
+  "title": {
+    "zh-CN": "RowGroup 不得嵌套。一个章节包含多个分组时，连续放置 RowGroup，可共用一个普通章节标题。误嵌套时内层不再绘制卡片底色，标题作为父卡片内的小标题，并在开发环境提示。",
+    "zh-TW": "RowGroup 不得巢狀使用。一個章節包含多個群組時，連續放置 RowGroup，可共用一個普通章節標題。誤用巢狀結構時內層不再繪製卡片底色，標題作為父卡片內的小標題，並在開發環境提示。",
+    "en-US": "RowGroups never nest. Place several groups consecutively, optionally under one plain section heading. An accidentally nested group renders without another card surface, uses a subheading inside the parent card, and warns in development.",
+    "ja-JP": "RowGroup は入れ子にしない。複数のグループは連続して配置し、必要なら共通の通常見出しを置く。誤って入れ子にした場合、内側にはカードの背景を付けず親カード内の小見出しとして表示し、開発時に警告する。",
+    "ko-KR": "RowGroup은 중첩하지 않는다. 여러 그룹은 일반 섹션 제목 아래에 연속으로 배치할 수 있다. 실수로 중첩하면 내부 카드 배경을 제거하고 부모 카드 안의 소제목으로 표시하며 개발 환경에서 경고한다.",
+    "fr-FR": "Ne jamais imbriquer les RowGroup. Placer les groupes à la suite, éventuellement sous un titre de section simple. Un groupe imbriqué par erreur n’ajoute pas de fond de carte ; son titre devient un sous-titre dans la carte parente et un avertissement apparaît en développement.",
+    "es-ES": "Los RowGroup nunca se anidan. Colocar los grupos consecutivamente, con un título de sección sencillo si hace falta. Un grupo anidado por error no añade otra superficie; su título aparece como subtítulo de la tarjeta superior y se avisa en desarrollo.",
+    "ru-RU": "Не вкладывать RowGroup друг в друга. Располагать группы последовательно, при необходимости под общим простым заголовком. Ошибочно вложенная группа не рисует вторую карточку, её название становится подзаголовком родительской карточки; в разработке выводится предупреждение."
+  },
+  "examples": []
+},
 { id: "queueList", title: QUEUE_LIST_RULE, examples: [] },
 {
   id: "labelChip",

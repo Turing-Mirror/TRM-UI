@@ -3,6 +3,7 @@ import { HelpMark } from "./Tooltip";
 import { Icon } from "./Icon";
 import { useI18n } from "../i18n";
 import { Collapse } from "./motion";
+import { useDelayedBusy } from "./useDelayedBusy";
 
 /** 可折叠一节的收起状态，按 key 记在本机，下次打开保持。 */
 function useCollapsed(key?: string): [boolean, () => void] {
@@ -178,11 +179,8 @@ export function Btn({
   uw?: boolean;
   disabled?: boolean;
   /**
-   * 请求在途。会禁用按钮，并在文字前面点三个点。
-   *
-   * 只变灰是不够的：用户点了一下，按钮灰了，界面别的地方没有任何变化 ——
-   * 他分不出「正在做」和「点了没反应」，于是再点，或者来群里问。灰是状态，
-   * 动的那三个点才是回执。
+   * Requests block repeated clicks immediately. Only noticeable waits show a spinner;
+   * keep the idle label's layout so quick requests neither flash nor resize the button.
    */
   busy?: boolean;
   dimDisabled?: boolean;
@@ -192,6 +190,9 @@ export function Btn({
   /** 按钮上只有图形没有字时（比如「⋯」）必须给，否则读屏读不出这是什么。 */
   ariaLabel?: string;
 }) {
+  const showBusy = useDelayedBusy(busy);
+  const [idleLabel, setIdleLabel] = useState(children);
+  if (!busy && idleLabel !== children) setIdleLabel(children);
   return (
     <button
       type="button"
@@ -200,7 +201,7 @@ export function Btn({
       aria-label={ariaLabel}
       onClick={onClick}
       className={[
-        "text-[12.5px] border-0 rounded-[var(--rs)] cursor-pointer",
+        "relative text-[12.5px] border-0 rounded-[var(--rs)] cursor-pointer",
         noWrap ? "whitespace-nowrap" : "",
         "transition-[transform,background,color,box-shadow] duration-200 ease-[var(--ease)]",
         // 交互态一律写 enabled: 不写 disabled: 反向覆盖：前者在禁用下根本不匹配，
@@ -213,14 +214,12 @@ export function Btn({
             ? "bg-transparent text-[var(--accent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--accent)_42%,transparent)]"
             : "bg-transparent text-[var(--ink-muted)] shadow-[inset_0_0_0_1px_var(--line)] enabled:hover:text-[var(--ink)] enabled:hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]",
         disabled || busy ? "disabled:cursor-default" : "",
-        (disabled || busy) && dimDisabled ? "disabled:opacity-40" : "",
+        disabled && !busy && dimDisabled ? "disabled:opacity-40" : "",
         className,
       ].join(" ")}
     >
-      {busy ? (
-        <span aria-hidden className="btn-dots mr-1.5 inline-block align-middle" />
-      ) : null}
-      {children}
+      <span style={{ opacity: showBusy ? 0 : undefined }}>{busy ? idleLabel : children}</span>
+      {showBusy ? <span aria-hidden className="trm-btn-busy"><span className="trm-busy-spinner" /></span> : null}
     </button>
   );
 }

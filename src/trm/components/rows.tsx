@@ -1,19 +1,29 @@
-import { cloneElement, isValidElement, useId, type AriaAttributes, type CSSProperties, type ReactNode } from "react";
+import { cloneElement, createContext, isValidElement, useContext, useEffect, useId, useRef, type AriaAttributes, type CSSProperties, type ReactNode } from "react";
 import { HelpMark } from "./Tooltip";
 import { Icon } from "./Icon";
 
 export type RowGroupProps = { title?: string; note?: string; action?: ReactNode; children: ReactNode };
+const RowGroupContext = createContext(false);
 
 /** Settings cards deliberately have separators; the older Field/Group pattern remains unchanged. */
 export function RowGroup({ title, note, action, children }: RowGroupProps) {
   const id = useId();
-  return <section className="trm-row-group" aria-labelledby={title ? id : undefined}>
+  const nested = useContext(RowGroupContext);
+  const warned = useRef(false);
+  useEffect(() => {
+    if (import.meta.env.DEV && nested && !warned.current) {
+      warned.current = true;
+      console.warn("RowGroup must not nest. Use consecutive RowGroups under a plain section heading. The nested group is rendered flat.");
+    }
+  }, [nested]);
+  const Heading = nested ? "h4" : "h3";
+  return <RowGroupContext.Provider value={true}><section className={nested ? "trm-row-subgroup" : "trm-row-group"} aria-labelledby={title ? id : undefined}>
     {title || note || action ? <div className="trm-row-heading">
-      <div>{title ? <h3 id={id}>{title}</h3> : null}{note ? <p>{note}</p> : null}</div>
+      <div>{title ? <Heading id={id}>{title}</Heading> : null}{note ? <p>{note}</p> : null}</div>
       {action ? <div className="trm-row-action">{action}</div> : null}
     </div> : null}
-    <div className="trm-row-card">{children}</div>
-  </section>;
+    {nested ? children : <div className="trm-row-card">{children}</div>}
+  </section></RowGroupContext.Provider>;
 }
 
 export type RowProps = {

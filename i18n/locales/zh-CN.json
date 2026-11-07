@@ -195,6 +195,18 @@
         "answer": "打开成员页面，选择邀请，再输入对方的电子邮箱。"
       }
     },
+    "connectionSettings": {
+      "title": "连接",
+      "model": "大模型",
+      "knowledge": "知识库",
+      "enabled": "启用"
+    },
+    "connection": {
+      "online": "店铺在线",
+      "offline": "店铺离线",
+      "login": "店铺待登录",
+      "error": "店铺连接错误"
+    },
     "webShell": {
       "title": "网页布局",
       "brand": "管理台",
@@ -259,6 +271,7 @@
       "segmentNote": "点击选项或拖动滑块即可切换。"
     },
     "btn": {
+      "quick": "快速操作",
       "normal": "普通",
       "primary": "主按钮",
       "on": "已选中",

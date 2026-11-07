@@ -39,6 +39,17 @@ function ChipTones() {
   </div>;
 }
 
+function QuickButtonDemo() {
+  const { t } = useI18n();
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    if (!busy) return;
+    const timer = window.setTimeout(() => setBusy(false), 180);
+    return () => window.clearTimeout(timer);
+  }, [busy]);
+  return <Btn busy={busy} onClick={() => setBusy(true)}>{t("demo.btn.quick")}</Btn>;
+}
+
 export function ComponentsPage() {
   const { t } = useI18n();
   const [busy, setBusy] = useState(false);
@@ -87,6 +98,7 @@ export function ComponentsPage() {
               {t("demo.btn.busy")}
             </Btn>
             <Btn disabled>{t("demo.btn.disabled")}</Btn>
+            <QuickButtonDemo />
           </div>
         </Group>
       </Block>

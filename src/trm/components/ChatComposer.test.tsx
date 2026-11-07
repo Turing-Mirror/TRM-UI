@@ -33,12 +33,12 @@ it("sends Enter and button clicks, keeping Shift+Enter and IME confirmation in t
   expect(area.placeholder).toBe("Write a reply");
   expect(view.container.querySelector("button")!.getAttribute("aria-label")).toBe("Send reply");
   expect(area.closest(".trm-chat-composer-field")?.querySelector(".trm-chat-composer-send"))
-    .toBe(view.container.querySelector("button"));
+    .toBeNull();
+  expect(area.closest(".trm-chat-composer-field")?.nextElementSibling).toBe(view.container.querySelector("button"));
   const buttonStyle = getComputedStyle(view.container.querySelector("button")!);
-  expect(buttonStyle.width).toBe("32px");
-  expect(buttonStyle.height).toBe("32px");
-  expect(buttonStyle.position).toBe("absolute");
-  expect(buttonStyle.bottom).toBe("8px");
+  expect(buttonStyle.width).toBe("48px");
+  expect(buttonStyle.height).toBe("48px");
+  expect(getComputedStyle(view.container.querySelector(".trm-chat-composer-row")!).alignItems).toBe("flex-end");
   expect(getComputedStyle(area).minHeight).toBe("32px");
   act(() => {
     Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!.call(area, "Edited reply");
@@ -57,7 +57,7 @@ it.each([{ disabled: true }, { sending: true }, { value: "  " }])("blocks submis
   expect(send).not.toHaveBeenCalled();
   expect(view.container.querySelector("button")!.disabled).toBe(true);
   expect(view.container.querySelector("button")!.className).toBe("trm-chat-composer-send");
-  expect(Boolean(view.container.querySelector(".trm-chat-composer-spinner"))).toBe("sending" in props);
+  expect(view.container.querySelector(".trm-busy-spinner")).toBeNull();
   if ("sending" in props) expect(view.container.firstElementChild?.getAttribute("aria-busy")).toBe("true");
 });
 
@@ -79,7 +79,7 @@ it("places the optional state above the field and keeps the editor mounted when 
     placeholder="Reply" sendLabel="Send" state={<div role="status">{state}</div>} />;
   view = mount(composer("Assistant handling"));
   const area = view.container.querySelector("textarea");
-  expect(view.container.querySelector(".trm-chat-composer-field")?.previousElementSibling?.textContent)
+  expect(view.container.querySelector(".trm-chat-composer-row")?.previousElementSibling?.textContent)
     .toBe("Assistant handling");
   act(() => view.root.render(composer("Human handling")));
   expect(view.container.querySelector("textarea")).toBe(area);

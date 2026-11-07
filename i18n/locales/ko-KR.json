@@ -195,6 +195,18 @@
         "answer": "멤버 페이지에서 초대를 선택하고 상대방의 이메일 주소를 입력하세요."
       }
     },
+    "connectionSettings": {
+      "title": "연결",
+      "model": "언어 모델",
+      "knowledge": "지식 베이스",
+      "enabled": "사용"
+    },
+    "connection": {
+      "online": "매장 온라인",
+      "offline": "매장 오프라인",
+      "login": "매장 로그인 필요",
+      "error": "매장 연결 오류"
+    },
     "webShell": {
       "title": "웹 레이아웃",
       "brand": "관리",
@@ -259,6 +271,7 @@
       "segmentNote": "항목을 클릭하거나 손잡이를 끌어 전환합니다."
     },
     "btn": {
+      "quick": "빠른 작업",
       "normal": "기본",
       "primary": "기본 동작",
       "on": "선택됨",

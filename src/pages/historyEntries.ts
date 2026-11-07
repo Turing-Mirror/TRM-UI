@@ -19,6 +19,142 @@ export type HistoryEntry = {
 
 export const HISTORY: HistoryEntry[] = [
 {
+  "id": "workbench-paged-navigation",
+  "date": "2026-11-07",
+  "old": {
+    "zh-CN": "工作台筛选起点比标题更靠左；审核正文仍逐块伸缩，只有聊天整层推移；队列通过加载更多追加。",
+    "zh-TW": "工作台篩選起點比標題更靠左；審核正文仍逐塊伸縮，只有聊天整層推移；佇列透過載入更多追加。",
+    "en-US": "Workbench filters began left of the title; reviews still expanded blocks while only chats pushed whole bodies, and queues used load more.",
+    "ja-JP": "フィルターが見出しより左に寄り、レビュー本文はブロック別に開閉し、会話だけ全体を押していた。キューは追加読み込みだった。",
+    "ko-KR": "필터가 제목보다 왼쪽에 있었고 검토 본문은 블록별로 펼쳐지며 채팅만 전체를 밀었다. 대기열은 더 보기로 추가했다.",
+    "fr-FR": "Les filtres dépassaient le titre à gauche ; les avis déployaient des blocs, seuls les chats poussaient le corps entier ; les files chargeaient davantage.",
+    "es-ES": "Los filtros empezaban a la izquierda del título; las revisiones expandían bloques, solo los chats empujaban todo el cuerpo y las colas cargaban más filas.",
+    "ru-RU": "Фильтры начинались левее заголовка; проверки раскрывали блоки, только чаты сдвигали всё тело, а очереди использовали дозагрузку."
+  },
+  "now": {
+    "zh-CN": "列表头与行共用内容左边缘；所有详情只按列表顺序推移整层正文；Pager 固定在列表卡片底部，换页水平推移并回到顶部。",
+    "zh-TW": "清單標頭與列共用內容左邊緣；所有詳情只按清單順序推移整層正文；Pager 固定在清單卡片底部，換頁水平推移並回到頂部。",
+    "en-US": "List heads and rows share one content edge. Every detail pushes only the whole body in list order. Pager stays at the card foot; pages push horizontally and reset scroll.",
+    "ja-JP": "一覧の見出しと行の左端を揃え、すべての詳細で本文全体だけを一覧順に押す。Pager はカード下部に固定し、ページは水平移動して先頭へ戻る。",
+    "ko-KR": "목록 머리와 행의 왼쪽을 맞추고 모든 상세에서 본문 전체만 목록 순서대로 민다. Pager는 카드 하단에 고정하며 페이지는 가로로 이동하고 맨 위로 돌아간다.",
+    "fr-FR": "En-têtes et lignes partagent le même bord. Tous les détails poussent uniquement le corps entier selon la liste. Pager reste au pied de la carte ; les pages glissent horizontalement et remontent en haut.",
+    "es-ES": "Cabeceras y filas comparten el borde. Todos los detalles empujan solo el cuerpo completo según la lista. Pager queda al pie; las páginas se deslizan horizontalmente y vuelven arriba.",
+    "ru-RU": "Заголовки и строки имеют общий край. Все детали сдвигают только всё тело по порядку списка. Pager закреплён внизу карточки; страницы движутся горизонтально и возвращаются вверх."
+  },
+  "why": {
+    "zh-CN": "所有者要求统一对齐、简化详情切换，并用页码替代工作队列的无限追加。",
+    "zh-TW": "所有者要求統一對齊、簡化詳情切換，並用頁碼取代工作佇列的無限追加。",
+    "en-US": "The owner requested consistent alignment, simpler detail switches and numbered pages instead of endless work queues.",
+    "ja-JP": "所有者が整列の統一、詳細切替の簡素化、作業キューの無限追加からページ番号への変更を指定した。",
+    "ko-KR": "소유자가 정렬 통일, 상세 전환 단순화, 작업 대기열의 무한 추가 대신 페이지 번호를 요청했다.",
+    "fr-FR": "Le propriétaire demande un alignement commun, des transitions simples et des pages numérotées plutôt que des files infinies.",
+    "es-ES": "El propietario pidió alineación uniforme, cambios simples y páginas numeradas en vez de colas infinitas.",
+    "ru-RU": "Владелец запросил единое выравнивание, простую смену деталей и номера страниц вместо бесконечных очередей."
+  }
+},
+{
+  "id": "chat-composer-outside",
+  "date": "2026-11-07",
+  "old": {
+    "zh-CN": "第 7 轮在聊天输入区域内放置 32px 发送按钮，状态栏内容左对齐，忙碌图标立即出现。",
+    "zh-TW": "第 7 輪在聊天輸入區域內放置 32px 傳送按鈕，狀態列內容靠左，忙碌圖示立即出現。",
+    "en-US": "Round 7 placed a 32px send button inside the field, aligned the state left and showed busy glyphs immediately.",
+    "ja-JP": "第7回では32pxの送信ボタンを入力欄に内蔵し、状態を左寄せし、待機表示を即時に出していた。",
+    "ko-KR": "7차에서는 32px 전송 버튼을 입력창 안에 두고 상태를 왼쪽에 정렬하며 진행 표시를 즉시 보여 주었다.",
+    "fr-FR": "Le tour 7 plaçait un bouton de 32px dans le champ, alignait l’état à gauche et affichait immédiatement l’indicateur d’attente.",
+    "es-ES": "La ronda 7 colocaba un botón de 32px dentro del campo, alineaba el estado a la izquierda y mostraba el progreso inmediatamente.",
+    "ru-RU": "Раунд 7 помещал кнопку 32px внутрь поля, выравнивал состояние слева и сразу показывал индикатор ожидания."
+  },
+  "now": {
+    "zh-CN": "发送按钮移到输入区域外侧右边，等于单行区域的 48px 高度，底部对齐、间距 8px。状态居中，操作靠右；Btn 与发送按钮共用 300ms 忙碌延迟，宽度不变。",
+    "zh-TW": "傳送按鈕移到輸入區域外側右邊，等於單行區域的 48px 高度，底部對齊、間距 8px。狀態置中，操作靠右；Btn 與傳送按鈕共用 300ms 忙碌延遲，寬度不變。",
+    "en-US": "The send button sits outside on the right, 48px tall like the one-line field, bottom-aligned with an 8px gap. State content is centered, actions stay right; Btn and send share a 300ms busy delay with stable width.",
+    "ja-JP": "送信ボタンは入力欄の右外側に置き、1行の欄と同じ48px、下揃え、間隔8pxにする。状態は中央、操作は右。Btn と送信は300msの待機表示遅延を共有し、幅を保つ。",
+    "ko-KR": "전송 버튼은 입력창 오른쪽 바깥에 두며 한 줄 영역과 같은 48px 높이로 아래에 맞추고 8px 간격을 둔다. 상태는 중앙, 작업은 오른쪽이다. Btn과 전송 버튼은 300ms 지연과 고정 너비를 공유한다.",
+    "fr-FR": "Le bouton est à droite hors du champ, haut de 48px comme le champ à une ligne, aligné en bas avec 8px d’écart. État centré, actions à droite ; Btn et envoi partagent un délai de 300ms sans changement de largeur.",
+    "es-ES": "El botón queda fuera a la derecha, mide 48px como el campo de una línea, se alinea abajo y deja 8px. Estado centrado y acciones a la derecha; Btn y envío comparten un retraso de 300ms sin cambiar de ancho.",
+    "ru-RU": "Кнопка стоит снаружи справа, имеет высоту 48px как однострочное поле, выровнена по низу с промежутком 8px. Состояние по центру, действия справа; Btn и отправка используют задержку 300мс без изменения ширины."
+  },
+  "why": {
+    "zh-CN": "所有者要求发送按钮放在输入框外，并将处理状态居中；短请求的瞬时忙碌图标会产生闪烁。",
+    "zh-TW": "所有者要求傳送按鈕放在輸入框外，並將處理狀態置中；短請求的瞬時忙碌圖示會產生閃爍。",
+    "en-US": "The owner requested an external send button and centered handling state; transient spinners on quick requests read as flicker.",
+    "ja-JP": "所有者が外側の送信ボタンと中央の状態表示を指定した。短い処理の一瞬の回転表示はちらつきに見える。",
+    "ko-KR": "소유자가 입력창 밖의 전송 버튼과 중앙 상태 표시를 요청했다. 짧은 요청의 순간적인 회전 표시는 깜박임으로 보인다.",
+    "fr-FR": "Le propriétaire demande un bouton externe et un état centré ; les indicateurs fugitifs des requêtes rapides ressemblent à un clignotement.",
+    "es-ES": "El propietario pidió el botón fuera y el estado centrado; los indicadores fugaces de solicitudes rápidas parecen parpadeos.",
+    "ru-RU": "Владелец запросил внешнюю кнопку и состояние по центру; мгновенные спиннеры коротких запросов воспринимаются как мерцание."
+  }
+},
+{
+  "id": "chat-body-directional-push",
+  "date": "2026-11-07",
+  "old": {
+    "zh-CN": "第 7 轮切换聊天条目时，旧气泡通过 FlowList 收起，新气泡同时展开。",
+    "zh-TW": "第 7 輪切換聊天項目時，舊氣泡透過 FlowList 收起，新氣泡同時展開。",
+    "en-US": "Round 7 collapsed old chat bubbles and expanded new ones simultaneously through FlowList on item switches.",
+    "ja-JP": "第7回の会話切替は FlowList で旧吹き出しを閉じながら新しい吹き出しを開いていた。",
+    "ko-KR": "7차 채팅 전환은 FlowList로 기존 말풍선을 접으며 새 말풍선을 동시에 펼쳤다.",
+    "fr-FR": "Au tour 7, FlowList repliait les anciennes bulles et déployait les nouvelles simultanément au changement de conversation.",
+    "es-ES": "La ronda 7 contraía las burbujas antiguas y expandía las nuevas simultáneamente con FlowList al cambiar de conversación.",
+    "ru-RU": "В раунде 7 при смене диалога FlowList одновременно сворачивал старые сообщения и раскрывал новые."
+  },
+  "now": {
+    "zh-CN": "仅条目切换改为正文整层竖向推移：方向来自列表顺序，等高相邻层不透明、不重叠，裁切在正文内，共用 420ms 导航曲线。新正文绘制前定位末尾；同一条目追加仍逐条展开，公共区域保持不动。",
+    "zh-TW": "僅項目切換改為正文整層垂直推移：方向來自清單順序，等高相鄰層不透明、不重疊，裁切在正文內，共用 420ms 導覽曲線。新正文繪製前定位末尾；同一項目追加仍逐條展開，公共區域保持不動。",
+    "en-US": "Only item switches push the whole body vertically in list order. Equal-height adjacent layers stay opaque and non-overlapping, clipped to the body, on the 420ms navigation curve. New bodies start at the scroll end; same-item appends still expand individually and shared regions stay still.",
+    "ja-JP": "会話切替だけ本文全体を一覧順に縦へ押す。同じ高さの隣接層を不透明のまま重ねず本文内で切り抜き、420msのナビ曲線を使う。新本文は描画前に末尾へ移動する。同じ会話への追加は個別展開し共通部分は固定する。",
+    "ko-KR": "항목 전환만 목록 순서에 따라 본문 전체를 세로로 민다. 같은 높이의 인접 층은 불투명하게 겹치지 않고 본문 안에서 잘리며 420ms 탐색 곡선을 쓴다. 새 본문은 미리 끝으로 스크롤한다. 같은 항목의 추가는 개별 확장하고 공통 영역은 고정한다.",
+    "fr-FR": "Seuls les changements d’élément poussent le corps entier verticalement dans l’ordre de la liste. Couches adjacentes de même hauteur, opaques, sans chevauchement, rognées au corps sur la courbe de 420ms. Le nouveau corps est déjà en bas ; les ajouts au même élément se déploient seuls, les zones communes restent fixes.",
+    "es-ES": "Solo los cambios de elemento empujan todo el cuerpo verticalmente según la lista. Capas adyacentes de igual altura, opacas, sin superponerse, recortadas al cuerpo con la curva de 420ms. El cuerpo nuevo ya está al final; los mensajes del mismo elemento se expanden por separado y las zonas comunes quedan fijas.",
+    "ru-RU": "Только смена элемента сдвигает всё тело по вертикали в порядке списка. Соседние слои равной высоты непрозрачны, не перекрываются, обрезаны телом и движутся по кривой 420мс. Новый слой уже прокручен до конца; добавления раскрываются отдельно, общие области неподвижны."
+  },
+  "why": {
+    "zh-CN": "底部锚定的消息同时收缩与展开会从中间向两侧散开，缺少统一方向，结束时还可能跳到末尾。",
+    "zh-TW": "底部錨定的訊息同時收縮與展開會從中間向兩側散開，缺少統一方向，結束時還可能跳到末尾。",
+    "en-US": "Bottom-anchored bubbles collapsing and expanding together spread from the middle rather than moving in one direction, and can jump to the end afterward.",
+    "ja-JP": "下端固定の吹き出しを同時に開閉すると中央から上下へ散らばり、方向が揃わず、最後に末尾へ飛ぶこともある。",
+    "ko-KR": "아래쪽에 고정된 말풍선이 동시에 접히고 펼쳐지면 중앙에서 양쪽으로 퍼져 방향이 통일되지 않고 끝에서 스크롤이 튈 수 있다.",
+    "fr-FR": "Les bulles ancrées en bas se dispersent depuis le milieu quand elles se replient et se déploient ensemble, puis peuvent sauter à la fin.",
+    "es-ES": "Las burbujas ancladas abajo se dispersan desde el centro al contraerse y expandirse a la vez, y pueden saltar al final después.",
+    "ru-RU": "Одновременное сворачивание и раскрытие сообщений у нижней границы разбрасывает их от центра вместо единого движения и может вызвать скачок прокрутки в конце."
+  }
+},
+{
+  "id": "sidebar-connection-status",
+  "date": "2026-11-07",
+  "old": {
+    "zh-CN": "侧栏底部单独放置彩色「在线」Tag，或在收起后隐藏连接文字。",
+    "zh-TW": "側欄底部單獨放置彩色「在線」Tag，或在收起後隱藏連線文字。",
+    "en-US": "The sidebar foot used a bare colored “Online” Tag or hid connection text when collapsed.",
+    "ja-JP": "サイドバー下部に色付きの「オンライン」Tag だけを置くか、折りたたむと接続文字を隠していた。",
+    "ko-KR": "사이드바 하단에 색이 있는 ‘온라인’ Tag만 놓거나 접으면 연결 문구를 숨겼다.",
+    "fr-FR": "Le bas de la barre latérale affichait un Tag « En ligne » coloré isolé ou masquait la connexion en mode réduit.",
+    "es-ES": "El pie lateral mostraba un Tag « En línea » coloreado y aislado u ocultaba la conexión al contraerse.",
+    "ru-RU": "Внизу панели стоял отдельный цветной Tag «В сети», либо текст соединения скрывался при сворачивании."
+  },
+  "now": {
+    "zh-CN": "使用与导航项同尺寸的 SidebarStatus：状态图标、对象与状态文字；收起后保留图标、Tooltip 和无障碍名称。",
+    "zh-TW": "使用與導覽項同尺寸的 SidebarStatus：狀態圖示、對象與狀態文字；收起後保留圖示、Tooltip 和無障礙名稱。",
+    "en-US": "SidebarStatus matches navigation rows with a state icon and subject/state label; collapsed rows keep the icon, Tooltip and accessible name.",
+    "ja-JP": "SidebarStatus はナビ項目と同じ寸法で状態アイコンと対象・状態の文字を表示し、折りたたみ時もアイコン、Tooltip、アクセシブルな名前を保つ。",
+    "ko-KR": "SidebarStatus는 탐색 항목과 같은 크기로 상태 아이콘과 대상·상태 문구를 표시하며 접어도 아이콘, Tooltip, 접근성 이름을 유지한다.",
+    "fr-FR": "SidebarStatus reprend les dimensions de la navigation avec une icône et un libellé sujet/état ; en mode réduit, l’icône, le Tooltip et le nom accessible restent présents.",
+    "es-ES": "SidebarStatus usa las dimensiones de navegación con icono y texto de sujeto/estado; al contraer conserva el icono, Tooltip y nombre accesible.",
+    "ru-RU": "SidebarStatus повторяет размеры навигации, показывает значок и подпись объекта и состояния; при сворачивании сохраняет значок, Tooltip и доступное имя."
+  },
+  "why": {
+    "zh-CN": "孤立的状态词缺少对象与位置联系，收起后也无法辨认连接状态。",
+    "zh-TW": "孤立的狀態詞缺少對象與位置聯繫，收起後也無法辨認連線狀態。",
+    "en-US": "An isolated state word does not identify its subject or belong to a row, and the connection becomes unclear when collapsed.",
+    "ja-JP": "状態の単語だけでは対象と配置の関係が分からず、折りたたむと接続状態も判別できない。",
+    "ko-KR": "상태 단어만으로는 대상과 행의 관계를 알 수 없고 접으면 연결 상태도 식별할 수 없다.",
+    "fr-FR": "Un mot d’état isolé ne précise ni son sujet ni sa place dans la liste ; la connexion devient illisible en mode réduit.",
+    "es-ES": "Una palabra de estado aislada no identifica el sujeto ni su lugar en la lista, y la conexión deja de reconocerse al contraer.",
+    "ru-RU": "Отдельное слово состояния не указывает объект и не связано со строкой; при сворачивании состояние соединения становится неясным."
+  }
+},
+{
   id: "queue-opaque-slide",
   date: "2026-11-07",
   old: {

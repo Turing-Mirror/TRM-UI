@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SidebarStatusDemo } from "./SidebarStatusDemo";
 import {
   AppBar, PageHead, PagePad, Row, RowGroup, Sidebar, SidebarBrand, SidebarItem, Switch, useI18n,
 } from "../trm";
@@ -20,11 +21,11 @@ export function WebShellDemo({ desktop = false, compact = false }: { desktop?: b
           label={t("demo.webShell.title")}
           head={!desktop ? <SidebarBrand brand={brand} collapsed={collapsed} onToggle={toggle} /> : undefined}
           foot={<>
+            <SidebarStatusDemo collapsed={collapsed} />
             <SidebarItem
               icon="settings" label={t("nav.settings")} collapsed={collapsed}
               on={page === "nav.settings"} onClick={() => setPage("nav.settings")}
             />
-            {!collapsed ? <span className="px-3 text-xs text-[var(--meta)]">{t("demo.webShell.status")}</span> : null}
           </>}
         >
           <SidebarItem
