@@ -25,6 +25,27 @@ function select(id: string) {
   act(() => vi.advanceTimersByTime(FLOW_MS + 1));
 }
 
+function queue() { return view.container.querySelector(".trm-workbench")!; }
+
+it("shows a distinct All queue with reviewed rows and rolls the filter heading and total", () => {
+  start();
+  const head = queue().querySelector(".trm-workbench-list-head .trm-workbench-heading")!;
+  expect(head.textContent).toBe("Pending3");
+  expect(queue().querySelectorAll(".trm-queue-current .trm-workbench-item")).toHaveLength(2);
+  click("All");
+  expect(head.querySelector("h3 .roll-in")?.textContent).toBe("All");
+  expect(head.querySelector(":scope > .roll .roll-in")?.textContent).toBe("5");
+  const rows = queue().querySelectorAll(".trm-queue-current .trm-workbench-item");
+  expect(rows).toHaveLength(5);
+  expect(Array.from(rows, row => row.textContent).join(" ")).toContain("Approved");
+  expect(Array.from(rows, row => row.textContent).join(" ")).toContain("Rejected");
+  act(() => vi.advanceTimersByTime(FLOW_MS + 40));
+  click("Pending");
+  expect(head.querySelector("h3 .roll-in")?.textContent).toBe("Pending");
+  expect(head.querySelector(":scope > .roll .roll-in")?.textContent).toBe("3");
+  expect(queue().querySelectorAll(".trm-queue-current .trm-workbench-item")).toHaveLength(2);
+});
+
 it("loads more in place, collapses reviewed rows, rolls the pending count and filters results", () => {
   start();
   const retained = view.container.querySelector('[data-flow="export"]');
@@ -36,7 +57,7 @@ it("loads more in place, collapses reviewed rows, rolls the pending count and fi
   expect(view.container.querySelector('[data-flow="access"]')?.getAttribute("data-phase")).toBe("leave");
   expect(view.container.querySelector(".trm-workbench-heading .roll-in")?.textContent).toBe("2");
   act(() => vi.advanceTimersByTime(FLOW_MS + 40));
-  expect(view.container.querySelector('[data-flow="access"]')).toBeNull();
+  expect(queue().querySelector('[data-flow="access"]')).toBeNull();
   expect(view.container.querySelector('[data-flow="export"]')).toBe(retained);
   click("All");
   act(() => vi.advanceTimersByTime(FLOW_MS + 40));
@@ -78,8 +99,15 @@ it("appends replies locally, keeps drafts per conversation and toggles the notic
     area.dispatchEvent(new Event("input", { bubbles: true }));
   });
   choose(0);
+  const composer = chat.querySelector("textarea");
+  const action = chat.querySelector(".trm-workbench-actions button");
+  expect(chat.querySelector(".trm-chat-state")?.textContent).toBe("Human handling");
+  expect(chat.querySelector('.trm-alert-mark[aria-label="Human handling required"]')).not.toBeNull();
   type("A saved draft");
   choose(1);
+  expect(chat.querySelector("textarea")).toBe(composer);
+  expect(chat.querySelector(".trm-workbench-actions button")).toBe(action);
+  expect(chat.querySelector(".trm-chat-state")?.textContent).toBe("Assistant handling");
   expect(chat.querySelector("textarea")!.value).toBe("");
   choose(0);
   expect(chat.querySelector("textarea")!.value).toBe("A saved draft");
@@ -98,6 +126,7 @@ it("appends replies locally, keeps drafts per conversation and toggles the notic
 
 it("resolves dynamic demo keys in all eight locales", () => {
   start();
+  click("All");
   act(() => view.container.querySelectorAll(".trm-workbench")[1]
     .querySelector<HTMLButtonElement>(".trm-workbench-item")!.click());
   act(() => vi.advanceTimersByTime(FLOW_MS + 1));

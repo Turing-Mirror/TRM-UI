@@ -137,7 +137,19 @@
   },
   "demo": {
     "workbench": {
+      "billing": {
+        "question": "How do I download an invoice?",
+        "answer": "Select the order on the billing page, then download the invoice."
+      },
+      "password": {
+        "question": "How do I change my password?",
+        "answer": "Change your password in account settings."
+      },
       "chat": {
+        "assistant": "Assistant handling",
+        "human": "Human handling",
+        "assignAssistant": "Assign to AI",
+        "needsHuman": "Human handling required",
         "title": "Conversation workbench",
         "queue": "Conversations",
         "choose": "Choose a conversation",
@@ -190,6 +202,9 @@
       "status": "Connected"
     },
     "shared": {
+      "chipsTitle": "Status and labels",
+      "headphones": "Headphones",
+      "bluetooth": "Bluetooth",
       "title": "Data and inputs",
       "notes": "Notes",
       "notesPlaceholder": "Add notes",

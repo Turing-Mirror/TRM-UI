@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
-import { useI18n } from "../i18n";
-import { IconBtn } from "./display";
+import { Chip } from "./Chip";
 
 export type ChipInputProps = {
   value: string[];
@@ -14,7 +13,6 @@ export type ChipInputProps = {
 export function ChipInput({
   value, onChange, label, disabled = false, placeholder, separators = /[,，]/,
 }: ChipInputProps) {
-  const { t } = useI18n();
   const [draft, setDraft] = useState("");
   const composing = useRef(false);
   // Global and sticky expressions must not carry lastIndex between keystrokes.
@@ -29,16 +27,8 @@ export function ChipInput({
   return (
     <div className="trm-chip-input" data-disabled={disabled || undefined}>
       {value.map((chip, index) => (
-        <span className="trm-chip" key={chip}>
-          <span>{chip}</span>
-          <span inert={disabled}>
-            <IconBtn
-              icon="close"
-              label={t("ui.common.removeItem", { name: chip })}
-              onClick={() => { if (!disabled) onChange(value.filter((_, i) => i !== index)); }}
-            />
-          </span>
-        </span>
+        <Chip key={chip} disabled={disabled}
+          onRemove={() => onChange(value.filter((_, i) => i !== index))}>{chip}</Chip>
       ))}
       <input
         aria-label={label}

@@ -299,6 +299,11 @@ body::before {
 .flow-enter, .flow-leave { overflow: clip; overflow-clip-margin: 6px; }
 .flow-enter { animation: flow-open var(--flow-ms) var(--ease-nav) both; }
 .flow-leave { animation: flow-close var(--flow-ms) var(--ease-nav) both; pointer-events: none; }
+.trm-queue-list { min-height: 0; overflow: auto; overflow-anchor: none; overscroll-behavior: contain; }
+.trm-queue-stage { position: relative; isolation: isolate; }
+.trm-queue-out { position: absolute; inset-inline: 0; pointer-events: none; }
+/* Freeze unfinished outgoing row heights instead of restarting them when a scope replaces the list. */
+.trm-queue-out .flow-item { animation-play-state: paused; }
 .roll { display: inline-grid; overflow: clip; overflow-clip-margin: 2px; vertical-align: bottom; }
 .roll > span { grid-area: 1 / 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 @keyframes roll-in {
@@ -836,25 +841,22 @@ option {
   overflow-y: auto;
 }
 .trm-workbench-list { background: var(--group); border-radius: var(--r); }
-.trm-workbench-list-head { flex: none; padding-inline: 8px; }
+.trm-workbench-list-head { flex: none; padding-inline: var(--workbench-row-inset); }
 .trm-workbench-main {
   display: flex; flex: 1; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden;
 }
 .trm-workbench-panes { flex: 1; }
 .trm-workbench[data-narrow] .trm-workbench-list { width: 100%; height: 100%; }
 .trm-workbench[data-narrow] .trm-workbench-main { height: 100%; }
-.trm-workbench-swap { flex: 1; min-height: 0; }
-/* Only parts enter; the detail viewport never moves or resizes. */
-.trm-workbench-swap > div { height: 100%; min-height: 0; }
+.trm-workbench-stage { flex: 1; min-height: 0; }
 .trm-workbench-part.rise {
   --rise-x: calc(var(--push, 1) * 8px); --rise-y: 6px; --rise-scale: 1; --rise-ms: var(--flow-ms);
-  animation: rise var(--rise-ms) var(--ease-nav) both;
 }
+/* Only configure the entrance here: redeclaring animation would override .flow-quiet .rise. */
 /* Narrow navigation already pushes the retained pane; do not layer another entrance over that push. */
 .trm-workbench[data-narrow] .flow-quiet .trm-workbench-part { animation: none; }
-.trm-workbench-block + .trm-workbench-block { margin-top: 16px; }
+.trm-workbench-block { padding-bottom: 16px; }
 .trm-workbench-notice-content { padding-bottom: 16px; }
-.trm-workbench-swap > .swap-out .rise { animation: none; }
 @media (prefers-reduced-motion: reduce) {
   .trm-workbench .rise, .trm-workbench .swap-out { animation: none; }
   .trm-workbench .roll-in, .trm-workbench .roll-out { animation: none; }
@@ -890,8 +892,11 @@ option {
   display: flex;
   align-items: center;
   gap: 12px;
-  width: 100%;
-  padding: 10px 12px;
+  width: calc(100% - 2 * var(--workbench-row-inset));
+  margin-inline: var(--workbench-row-inset);
+  border-radius: var(--rs);
+  /* Match the heading's inner 8px; the shared outer inset keeps both content edges aligned. */
+  padding: 10px 8px;
   border: 0;
   background: transparent;
   color: var(--ink);
@@ -939,6 +944,7 @@ option {
   flex: 1; min-height: 0; overflow-y: auto; padding: 12px var(--workbench-padding) 24px;
 }
 .trm-workbench-body, .trm-workbench-rows, .trm-workbench-list { overscroll-behavior: contain; }
+.trm-workbench-body[data-follow-end] { overflow-anchor: none; }
 .trm-workbench-read { min-width: 0; overflow-wrap: anywhere; }
 .trm-workbench-foot { flex: none; padding-block: 16px; }
 /* Full-width details share one inset. Reading limits belong to individual blocks, never the workspace. */
@@ -1020,8 +1026,56 @@ option {
 .trm-input:disabled, .trm-chip-input[data-disabled] { opacity: 0.5; cursor: default; }
 .trm-input::placeholder, .trm-chip-input input::placeholder { color: var(--meta); }
 .trm-textarea { resize: vertical; }
-.trm-chat-composer { display: flex; align-items: flex-end; gap: 8px; width: 100%; min-width: 0; }
-.trm-chat-composer-input { flex: 1; resize: none; line-height: 1.6; overflow-y: auto; }
+.trm-chat-composer { display: flex; flex-direction: column; gap: 8px; width: 100%; min-width: 0; }
+.trm-chat-composer-field {
+  position: relative; box-sizing: border-box; padding: 8px 48px 8px 12px;
+  border-radius: var(--r); background: var(--surface); box-shadow: inset 0 0 0 1px var(--line);
+}
+.trm-chat-composer-field:focus-within {
+  box-shadow: inset 0 0 0 1px var(--accent), 0 0 0 2px var(--accent-soft);
+}
+.trm-chat-composer-input {
+  display: block; box-sizing: border-box; width: 100%; min-height: 32px; padding: 6px 0;
+  border: 0; outline: none; resize: none; background: transparent; color: var(--ink);
+  font: inherit; font-size: 13px; line-height: 20px; overflow-y: auto; user-select: text;
+}
+.trm-chat-composer-input::placeholder { color: var(--ink-muted); }
+.trm-chat-composer-input:disabled { color: var(--ink-muted); }
+.trm-chat-composer-send {
+  position: absolute; right: 8px; bottom: 8px; display: grid; place-items: center;
+  width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; cursor: pointer;
+  background: var(--accent); color: var(--accent-ink);
+  transition: background-color var(--flow-ms) var(--ease), color var(--flow-ms) var(--ease);
+}
+.trm-chat-composer-send:disabled { background: var(--rail); color: var(--ink-muted); cursor: default; }
+.trm-chat-composer-send:focus-visible, .trm-alert-mark:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+.trm-chat-composer-spinner {
+  width: 16px; height: 16px; box-sizing: border-box; border: 2px solid var(--line);
+  border-top-color: currentColor; border-radius: 50%; animation: trm-chat-spin 800ms linear infinite;
+}
+@keyframes trm-chat-spin { to { transform: rotate(360deg); } }
+.trm-chat-state {
+  display: flex; align-items: center; gap: 8px; box-sizing: border-box; width: 100%; min-height: 40px;
+  padding: 6px 12px; border-radius: var(--r); background: var(--accent-soft); color: var(--ink);
+  font-size: 14px; font-weight: 500;
+  transition: background-color var(--flow-ms) var(--ease);
+}
+.trm-chat-state[data-tone="human"] { background: var(--rail); }
+.trm-chat-state-icon, .trm-chat-state-action { display: inline-flex; flex: none; }
+.trm-chat-state-label { flex: 1; min-width: 0; }
+.trm-chat-state-label .roll { max-width: 100%; }
+.trm-chat-state-label .roll > span { white-space: normal; }
+.trm-alert-mark {
+  display: inline-grid; place-items: center; box-sizing: border-box; width: 16px; height: 16px;
+  border-radius: 50%; background: var(--surface); color: var(--danger); box-shadow: 0 0 0 1px var(--hairline);
+}
+.trm-alert-mark-corner { position: absolute; right: -4px; bottom: -4px; display: flex; }
+@media (prefers-reduced-motion: reduce) {
+  .trm-chat-state, .trm-chat-composer-send { transition: none; }
+  .trm-chat-composer-spinner { animation: none; }
+}
 .trm-chip-input {
   display: flex;
   flex-wrap: wrap;
@@ -1035,15 +1089,24 @@ option {
 .trm-chip {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
+  min-height: 24px;
   max-width: 100%;
   overflow-wrap: anywhere;
-  background: var(--group);
-  color: var(--ink);
-  padding: 2px 4px 2px 8px;
+  background: var(--chip);
+  color: var(--chip-ink);
+  padding: 2px 8px;
   border-radius: var(--rs);
-  font-size: 13px;
+  font-size: 12.5px;
+  line-height: 20px;
 }
+.trm-chip[data-removable] { padding-right: 2px; }
+.trm-chip[data-tone="ok"] { color: var(--chip-ok-ink); }
+.trm-chip[data-tone="warn"] { color: var(--chip-warn-ink); }
+.trm-chip[data-tone="accent"] { color: var(--chip-accent-ink); }
+.trm-chip[data-tone="danger"] { color: var(--chip-danger-ink); }
+.trm-chip-icon { display: inline-flex; flex: none; }
+.trm-chip button { width: 20px; height: 20px; padding: 0; color: inherit; }
 .trm-chip-input input {
   min-width: 80px;
   width: 80px;

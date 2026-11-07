@@ -137,7 +137,19 @@
   },
   "demo": {
     "workbench": {
+      "billing": {
+        "question": "如何下载发票？",
+        "answer": "在账单页面选择订单，然后下载发票。"
+      },
+      "password": {
+        "question": "如何修改密码？",
+        "answer": "在账户设置中修改密码。"
+      },
       "chat": {
+        "assistant": "AI 正在处理",
+        "human": "人工正在处理",
+        "assignAssistant": "交给 AI",
+        "needsHuman": "需要人工处理",
         "title": "会话工作台",
         "queue": "会话",
         "choose": "选择会话",
@@ -190,6 +202,9 @@
       "status": "已连接"
     },
     "shared": {
+      "chipsTitle": "状态与标签",
+      "headphones": "耳机",
+      "bluetooth": "蓝牙",
       "title": "数据与输入",
       "notes": "备注",
       "notesPlaceholder": "添加备注",

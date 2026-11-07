@@ -6,6 +6,24 @@ import { zh, type Rule } from "./rules";
  */
 export const TEXT_RULES: Rule[] = [
   {
+    id: "iconIdentifies",
+    title: {
+      "zh-CN": "图标已标明的平台、文件类型或状态，不在同一视图中重复写成文字。",
+      "zh-TW": "圖示已標明的平台、檔案類型或狀態，不在同一檢視中重複寫成文字。",
+      "en-US": "Do not repeat a platform, file type or status as text in the same view when its icon " +
+        "already identifies it.",
+      "ja-JP": "アイコンで示したプラットフォーム、ファイル形式、状態を同じ画面の文字で繰り返さない。",
+      "ko-KR": "아이콘이 이미 나타내는 플랫폼, 파일 형식, 상태를 같은 화면에서 글자로 반복하지 않는다.",
+      "fr-FR": "Ne pas répéter en texte une plateforme, un type de fichier ou un état déjà identifié par" +
+        " son icône dans la même vue.",
+      "es-ES": "No repetir como texto una plataforma, un tipo de archivo o un estado que su icono ya " +
+        "identifica en la misma vista.",
+      "ru-RU": "Не повторять текстом платформу, тип файла или состояние, уже обозначенные значком в том " +
+        "же представлении.",
+    },
+    examples: [],
+  },
+  {
     id: "core",
     title: {
       "zh-CN": "核心原则",

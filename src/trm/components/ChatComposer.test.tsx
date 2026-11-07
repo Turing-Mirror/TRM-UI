@@ -1,11 +1,19 @@
 // @vitest-environment happy-dom
 import { act } from "react";
-import { afterEach, expect, it, vi } from "vitest";
+import { readFileSync } from "node:fs";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { ChatComposer } from "./ChatComposer";
 import { mount, type Mounted } from "../test/dom";
+const styles = readFileSync("src/trm/styles/components.css", "utf8");
 
 let view: Mounted;
-afterEach(() => { view?.unmount(); vi.restoreAllMocks(); });
+let sheet: HTMLStyleElement;
+beforeEach(() => {
+  sheet = document.createElement("style");
+  sheet.textContent = styles;
+  document.head.appendChild(sheet);
+});
+afterEach(() => { view?.unmount(); sheet.remove(); vi.restoreAllMocks(); });
 
 it("sends Enter and button clicks, keeping Shift+Enter and IME confirmation in the editor", () => {
   const send = vi.fn();
@@ -24,6 +32,14 @@ it("sends Enter and button clicks, keeping Shift+Enter and IME confirmation in t
   expect(send).toHaveBeenCalledTimes(2);
   expect(area.placeholder).toBe("Write a reply");
   expect(view.container.querySelector("button")!.getAttribute("aria-label")).toBe("Send reply");
+  expect(area.closest(".trm-chat-composer-field")?.querySelector(".trm-chat-composer-send"))
+    .toBe(view.container.querySelector("button"));
+  const buttonStyle = getComputedStyle(view.container.querySelector("button")!);
+  expect(buttonStyle.width).toBe("32px");
+  expect(buttonStyle.height).toBe("32px");
+  expect(buttonStyle.position).toBe("absolute");
+  expect(buttonStyle.bottom).toBe("8px");
+  expect(getComputedStyle(area).minHeight).toBe("32px");
   act(() => {
     Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!.call(area, "Edited reply");
     area.dispatchEvent(new Event("input", { bubbles: true }));
@@ -40,6 +56,8 @@ it.each([{ disabled: true }, { sending: true }, { value: "  " }])("blocks submis
   act(() => view.container.querySelector("button")!.click());
   expect(send).not.toHaveBeenCalled();
   expect(view.container.querySelector("button")!.disabled).toBe(true);
+  expect(view.container.querySelector("button")!.className).toBe("trm-chat-composer-send");
+  expect(Boolean(view.container.querySelector(".trm-chat-composer-spinner"))).toBe("sending" in props);
   if ("sending" in props) expect(view.container.firstElementChild?.getAttribute("aria-busy")).toBe("true");
 });
 
@@ -53,5 +71,16 @@ it("grows to the configured maximum and shrinks after the caller clears the draf
   expect(area.style.height).toBe("120px");
   height = 24;
   act(() => view.root.render(composer("")));
-  expect(area.style.height).toBe("24px");
+  expect(area.style.height).toBe("32px");
+});
+
+it("places the optional state above the field and keeps the editor mounted when it changes", () => {
+  const composer = (state: string) => <ChatComposer value="" onChange={() => {}} onSend={() => {}}
+    placeholder="Reply" sendLabel="Send" state={<div role="status">{state}</div>} />;
+  view = mount(composer("Assistant handling"));
+  const area = view.container.querySelector("textarea");
+  expect(view.container.querySelector(".trm-chat-composer-field")?.previousElementSibling?.textContent)
+    .toBe("Assistant handling");
+  act(() => view.root.render(composer("Human handling")));
+  expect(view.container.querySelector("textarea")).toBe(area);
 });

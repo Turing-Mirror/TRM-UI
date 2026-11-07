@@ -137,7 +137,19 @@
   },
   "demo": {
     "workbench": {
+      "billing": {
+        "question": "如何下載發票？",
+        "answer": "在帳單頁面選擇訂單，然後下載發票。"
+      },
+      "password": {
+        "question": "如何修改密碼？",
+        "answer": "在帳戶設定中修改密碼。"
+      },
       "chat": {
+        "assistant": "AI 正在處理",
+        "human": "人工正在處理",
+        "assignAssistant": "交給 AI",
+        "needsHuman": "需要人工處理",
         "title": "對話工作台",
         "queue": "對話",
         "choose": "選擇對話",
@@ -190,6 +202,9 @@
       "status": "已連線"
     },
     "shared": {
+      "chipsTitle": "狀態與標籤",
+      "headphones": "耳機",
+      "bluetooth": "藍牙",
       "title": "資料與輸入",
       "notes": "備註",
       "notesPlaceholder": "新增備註",

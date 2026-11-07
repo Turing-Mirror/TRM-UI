@@ -11,6 +11,8 @@ export { PagePad, PageHead, Block, Group, Btn, ListItem, HelpMark } from "./comp
 export { Field, Select, RangeBar, Slider, Toggle, Switch } from "./components/controls";
 export { TextInput, TextArea, type TextInputProps, type TextAreaProps } from "./components/inputs";
 export { ChipInput, type ChipInputProps } from "./components/ChipInput";
+export { Chip, type ChipProps } from "./components/Chip";
+export { QueueList, type QueueListProps, type FlowListProps } from "./components/motion";
 export { DataTable, type DataColumn, type DataTableProps } from "./components/DataTable";
 export { BarChart, niceTick, type BarChartItem, type BarChartProps } from "./components/BarChart";
 export { ConfirmDialog, type ConfirmDialogProps } from "./components/ConfirmDialog";
@@ -112,6 +114,8 @@ export { lookup, interpolate, translate } from "./i18n/dict";
 
 export { ComposerInput, type ComposerInputProps } from "./components/ComposerInput";
 export { ChatComposer, type ChatComposerProps } from "./components/ChatComposer";
+export { ChatState, type ChatStateProps } from "./components/ChatState";
+export { AlertMark, type AlertMarkProps } from "./components/AlertMark";
 export { useMorphState, useLeavingValue } from "./hooks/useMorphState";
 export {
   Workbench, WorkbenchItem, WorkbenchDetail,

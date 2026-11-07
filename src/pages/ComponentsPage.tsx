@@ -15,11 +15,29 @@ import {
   TextInput,
   TextArea,
   ChipInput,
+  Chip,
+  Tag,
   DataTable,
   BarChart,
   ConfirmDialog,
   useI18n,
+  type Tone,
 } from "../trm";
+
+const CHIP_TONES: readonly Tone[] = ["muted", "ok", "warn", "accent", "danger"];
+const TONE_STATUS: Record<Tone, string> = {
+  muted: "chat.waiting", ok: "approved", warn: "pending", accent: "chat.replied", danger: "rejected",
+};
+
+function ChipTones() {
+  const { t } = useI18n();
+  return <div className="flex flex-wrap items-center gap-5 py-4">
+    {CHIP_TONES.map(tone => <div key={tone} className="flex items-center gap-2">
+      <Chip tone={tone} icon="audio">{t("demo.shared.headphones")}</Chip>
+      <Tag tone={tone}>{t(`demo.workbench.${TONE_STATUS[tone]}`)}</Tag>
+    </div>)}
+  </div>;
+}
 
 export function ComponentsPage() {
   const { t } = useI18n();
@@ -127,6 +145,11 @@ export function ComponentsPage() {
             />
           </div>
         </Group>
+      </Block>
+
+      <Block title={t("demo.shared.chipsTitle")}>
+        <ChipTones />
+        <Group><ChipTones /></Group>
       </Block>
 
       <Block title={t("demo.shared.title")}>

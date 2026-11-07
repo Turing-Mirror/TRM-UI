@@ -4,6 +4,7 @@
   --workbench-list-width: clamp(280px, 28%, 380px);
   --workbench-padding: 16px;
   --workbench-space: 16px;
+  --workbench-row-inset: 8px;
   --bg-base: #f4f6f8;
   --bg: var(--bg-base);
   --surface: #ffffff;
@@ -24,6 +25,14 @@
   --wp-clash: clamp(0, calc((var(--wp-luma, 0.5) - 0.46) / 0.5), 1);
   --ink: #1e242b;
   --ink-muted: #5d6874;
+  /* Opaque neutral fill stays distinct on page, group and surface; both themes inherit their ink. */
+  --chip: color-mix(in srgb, var(--ink) 10%, var(--surface));
+  --chip-ink: var(--ink-muted);
+  /* Small category labels need stronger ink than status icons on the neutral chip surface. */
+  --chip-ok-ink: #227342;
+  --chip-warn-ink: #995000;
+  --chip-accent-ink: #0868b8;
+  --chip-danger-ink: #b13d2c;
   --help: #8a949e;
   --meta: #a3acb6;
   --hairline: rgba(30, 36, 43, 0.1);
@@ -94,6 +103,10 @@
     --line: rgba(232, 240, 248, 0.22);
     --accent: #4aa3f0;
     --accent-ink: #0f1319;
+    --chip-ok-ink: var(--ok);
+    --chip-warn-ink: var(--warn-ink);
+    --chip-accent-ink: #63b0f4;
+    --chip-danger-ink: #f18c7d;
     --accent-soft: rgba(74, 163, 240, 0.14);
     --notify: #ff9f0a;
     --page-bg: #0c0f13;
@@ -134,6 +147,10 @@
   --line: rgba(232, 240, 248, 0.22);
   --accent: #4aa3f0;
   --accent-ink: #0f1319;
+  --chip-ok-ink: var(--ok);
+  --chip-warn-ink: var(--warn-ink);
+  --chip-accent-ink: #63b0f4;
+  --chip-danger-ink: #f18c7d;
   --accent-soft: rgba(74, 163, 240, 0.14);
   --notify: #ff9f0a;
   --page-bg: #0c0f13;

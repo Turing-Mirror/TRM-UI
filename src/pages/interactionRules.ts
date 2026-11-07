@@ -1,7 +1,38 @@
 import type { Rule } from "./rules";
+import { ITEM_SWITCH_RULE, QUEUE_LIST_RULE } from "./motionTerms";
 
 /** 交互约定。「交互」页照这份数据渲染，下面的演示就是照这些约定做的。 */
 export const INTERACTION_RULES: Rule[] = [
+{ id: "queueList", title: QUEUE_LIST_RULE, examples: [] },
+{
+  id: "labelChip",
+  title: {
+    "zh-CN": "状态使用 Tag（彩色文字、无填充）；用户标签、关键词和分类使用 Chip。产品不另造第三种样式。",
+    "zh-TW": "狀態使用 Tag（彩色文字、無填色）；使用者標籤、關鍵字和分類使用 Chip。產品不另造第三種樣式。",
+    "en-US": "Statuses use Tag (coloured text, no fill); user labels, keywords and categories use " +
+      "Chip. Products do not invent a third look.",
+    "ja-JP": "状態は Tag（色付き文字・塗りなし）、ユーザーのラベル・キーワード・分類は Chip を使う。製品独自の第三の外観を作らない。",
+    "ko-KR": "상태에는 Tag(색상 텍스트, 채우기 없음)를, 사용자 라벨·키워드·분류에는 Chip을 쓴다. 제품에서 세 번째 모양을 만들지 않는다.",
+    "fr-FR": "Les états utilisent Tag (texte coloré, sans fond) ; les libellés, mots-clés et " +
+      "catégories utilisent Chip. Les produits ne créent pas un troisième style.",
+    "es-ES": "Los estados usan Tag (texto de color, sin relleno); las etiquetas, palabras clave y " +
+      "categorías usan Chip. Los productos no crean un tercer estilo.",
+    "ru-RU": "Состояния используют Tag (цветной текст без заливки); метки, ключевые слова и категории " +
+      "— Chip. Продукты не создают третий стиль.",
+  },
+  note: {
+    "zh-CN": "Chip 的 tone 表示标签分类颜色；状态仍使用 Tag。",
+    "zh-TW": "Chip 的 tone 表示標籤分類顏色；狀態仍使用 Tag。",
+    "en-US": "Chip tone marks a label’s category colour; states still use Tag.",
+    "ja-JP": "Chip の tone はラベルの分類色を示し、状態には引き続き Tag を使う。",
+    "ko-KR": "Chip의 tone은 라벨의 분류 색상을 나타내며 상태에는 계속 Tag를 쓴다.",
+    "fr-FR": "Le tone de Chip indique la couleur de catégorie ; les états utilisent toujours Tag.",
+    "es-ES": "El tone de Chip indica el color de categoría; los estados siguen usando Tag.",
+    "ru-RU": "Tone у Chip задаёт цвет категории метки; состояния по-прежнему используют Tag.",
+  },
+  examples: [],
+},
+{ id: "itemSwitch", title: ITEM_SWITCH_RULE, examples: [] },
 {
   "id": "denseListDividers",
   "title": {

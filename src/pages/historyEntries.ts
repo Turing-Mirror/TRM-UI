@@ -19,6 +19,175 @@ export type HistoryEntry = {
 
 export const HISTORY: HistoryEntry[] = [
 {
+  id: "queue-row-reflow",
+  date: "2026-11-06",
+  old: {
+    "zh-CN": "工作队列筛选与追加沿用 FlowList 的逐行重排。",
+    "zh-TW": "工作佇列篩選與追加沿用 FlowList 的逐列重排。",
+    "en-US": "Work queue filters and appends used FlowList row reflow.",
+    "ja-JP": "作業キューの絞り込みと追加で FlowList の行再配置を使っていた。",
+    "ko-KR": "작업 대기열의 필터와 추가에 FlowList 행 재배치를 사용했다.",
+    "fr-FR": "Les filtres et ajouts des files utilisaient le réagencement des lignes de FlowList.",
+    "es-ES": "Los filtros y añadidos de las colas usaban la redistribución por filas de FlowList.",
+    "ru-RU": "Фильтры и добавления очередей использовали перестройку строк FlowList.",
+  },
+  now: {
+    "zh-CN": "长队列使用 QueueList：筛选整列推移，追加只展开新行，中间增删才移动邻行。",
+    "zh-TW": "長佇列使用 QueueList：篩選整列推移，追加只展開新列，中間增刪才移動鄰列。",
+    "en-US": "QueueList pushes scopes as a whole, expands appended rows only, and shifts neighbours " +
+      "only for middle changes.",
+    "ja-JP": "QueueList は絞り込みを一覧全体で押し移し、末尾の新規行だけ開く。途中の増減だけ隣接行を動かす。",
+    "ko-KR": "QueueList는 필터를 목록 전체로 밀고 끝에 추가된 행만 펼친다. 중간의 증감만 이웃 행을 움직인다.",
+    "fr-FR": "QueueList pousse les filtres en bloc et déploie seulement les ajouts ; les changements " +
+      "au milieu déplacent les voisines.",
+    "es-ES": "QueueList empuja filtros completos y expande solo las nuevas filas; los cambios " +
+      "intermedios desplazan las vecinas.",
+    "ru-RU": "QueueList сдвигает фильтры целиком, раскрывает только новые строки; соседи движутся лишь " +
+      "при изменениях в середине.",
+  },
+  why: {
+    "zh-CN": "长队列同时洗牌般移动会分散处理人员的注意力。",
+    "zh-TW": "長佇列同時洗牌般移動會分散處理人員的注意力。",
+    "en-US": "Simultaneous row shuffling distracts staff working through long queues.",
+    "ja-JP": "長いキューで行が一斉に並び替わると担当者の注意が散る。",
+    "ko-KR": "긴 대기열에서 행이 동시에 뒤섞이면 담당자의 주의가 분산된다.",
+    "fr-FR": "Le mélange simultané des lignes distrait les agents dans les longues files.",
+    "es-ES": "El movimiento simultáneo de filas distrae al personal que trabaja con colas largas.",
+    "ru-RU": "Одновременное перемешивание строк отвлекает сотрудников в длинных очередях.",
+  },
+},
+{
+  id: "label-chip-fill",
+  date: "2026-11-06",
+  old: {
+    "zh-CN": "ChipInput 独自绘制标签，普通只读标签缺少共享组件，浅色填充容易混入表格底色。",
+    "zh-TW": "ChipInput 自行繪製標籤，一般唯讀標籤缺少共用元件，淺色填色容易混入表格底色。",
+    "en-US": "ChipInput drew its own labels; read-only labels lacked a shared component and pale fills " +
+      "blended into tables.",
+    "ja-JP": "ChipInput 独自のラベルだけがあり、共通の読み取り専用部品がなく、薄い背景が表に溶け込んでいた。",
+    "ko-KR": "ChipInput이 라벨을 따로 그렸고 읽기 전용 공유 컴포넌트가 없어 옅은 배경이 표와 구별되지 않았다.",
+    "fr-FR": "ChipInput dessinait ses libellés ; sans composant partagé en lecture seule, les fonds " +
+      "pâles se confondaient avec la table.",
+    "es-ES": "ChipInput dibujaba sus etiquetas; sin componente compartido de solo lectura, los fondos " +
+      "claros se confundían con la tabla.",
+    "ru-RU": "ChipInput рисовал метки отдельно; общего компонента для чтения не было, светлая заливка " +
+      "сливалась с таблицей.",
+  },
+  now: {
+    "zh-CN": "只读标签和 ChipInput 共用 Chip，使用中性不透明填充与次要文字色；Tag 继续表示状态。",
+    "zh-TW": "唯讀標籤和 ChipInput 共用 Chip，使用中性不透明填色與次要文字色；Tag 繼續表示狀態。",
+    "en-US": "Read-only labels and ChipInput share Chip with opaque neutral fill and secondary text; " +
+      "Tag remains for statuses.",
+    "ja-JP": "読み取り専用ラベルと ChipInput は中立色の不透明な背景と補助文字色の Chip を共有し、状態には Tag を使う。",
+    "ko-KR": "읽기 전용 라벨과 ChipInput은 불투명 중립 배경과 보조 텍스트 색의 Chip을 공유한다. 상태에는 Tag를 쓴다.",
+    "fr-FR": "Les libellés et ChipInput partagent Chip, au fond neutre opaque et texte secondaire ; " +
+      "Tag reste pour les états.",
+    "es-ES": "Las etiquetas y ChipInput comparten Chip, con fondo neutro opaco y texto secundario; Tag " +
+      "sigue indicando estados.",
+    "ru-RU": "Метки и ChipInput используют общий Chip с непрозрачной нейтральной заливкой; Tag " +
+      "остаётся для состояний.",
+  },
+  why: {
+    "zh-CN": "标签需要在深浅主题的页面、分组和表面上清楚可读，并避免产品各自制造样式。",
+    "zh-TW": "標籤需要在深淺主題的頁面、群組和表面上清楚可讀，並避免產品各自製造樣式。",
+    "en-US": "Labels must remain legible on page, group and surface backgrounds in both themes, with " +
+      "one shared appearance.",
+    "ja-JP": "両テーマのページ、グループ、表面でラベルを読みやすくし、外観を一つに統一するため。",
+    "ko-KR": "두 테마의 페이지, 그룹, 표면 배경에서 라벨을 읽기 쉽게 유지하고 모양을 통일한다.",
+    "fr-FR": "Les libellés doivent rester lisibles sur les différents fonds des deux thèmes, avec une " +
+      "apparence commune.",
+    "es-ES": "Las etiquetas deben ser legibles sobre todos los fondos en ambos temas y compartir un " +
+      "mismo aspecto.",
+    "ru-RU": "Метки должны читаться на фоне страницы, групп и поверхностей в обеих темах и иметь общий " +
+      "вид.",
+  },
+},
+{
+  id: "chat-composer-field",
+  date: "2026-11-06",
+  old: {
+    "zh-CN": "聊天输入框与发送按钮并排，按钮偏低，禁用时强调色整体变淡。",
+    "zh-TW": "聊天輸入框與傳送按鈕並排，按鈕偏低，停用時強調色整體變淡。",
+    "en-US": "The send button sat beside and below the input row, with a faded accent when disabled.",
+    "ja-JP": "送信ボタンが入力欄の横で低く配置され、無効時はアクセント色全体が薄くなっていた。",
+    "ko-KR": "전송 버튼이 입력 행 옆에서 아래로 치우쳤고 비활성화 시 강조색이 흐려졌다.",
+    "fr-FR": "Le bouton d’envoi était à côté du champ, trop bas, avec un accent estompé à l’état désactivé.",
+    "es-ES": "El botón de envío quedaba junto al campo, demasiado bajo y con el acento atenuado al desactivarse.",
+    "ru-RU": "Кнопка отправки стояла рядом с полем и ниже строки; при отключении акцентный цвет бледнел.",
+  },
+  now: {
+    "zh-CN": "统一圆角输入区域内置 32px 圆形发送按钮，禁用使用中性色，发送中显示旋转指示；处理状态在上方突出显示。",
+    "zh-TW": "統一圓角輸入區域內建 32px 圓形傳送按鈕，停用使用中性色，傳送中顯示旋轉指示；處理狀態在上方突出顯示。",
+    "en-US": "One rounded field contains a 32px round send button, neutral disabled fill and a busy spinner. " +
+      "A prominent handling bar sits above it.",
+    "ja-JP": "角丸の入力欄に32pxの丸い送信ボタンを内蔵し、無効時は中立色、送信中は回転表示にする。上に担当状況を明示する。",
+    "ko-KR": "둥근 입력 영역에 32px 원형 전송 버튼을 넣고 비활성화는 중립색, 전송 중은 회전 표시를 쓴다. 처리 상태는 위에 표시한다.",
+    "fr-FR": "Un champ arrondi contient un bouton rond de 32px, neutre si désactivé, animé pendant l’envoi. " +
+      "Une barre visible indique qui traite la conversation.",
+    "es-ES": "Un campo redondeado incluye un botón circular de 32px, neutro al desactivarse y con indicador " +
+      "giratorio al enviar. La atención se muestra en una barra superior.",
+    "ru-RU": "В общее поле встроена круглая кнопка 32px: нейтральная при отключении, со спиннером при отправке. " +
+      "Выше расположена заметная полоса состояния обработки.",
+  },
+  why: {
+    "zh-CN": "发送按钮应与单行输入等高，并在输入增长时保持右下位置；处理归属应清楚可见。",
+    "zh-TW": "傳送按鈕應與單行輸入等高，並在輸入增長時保持右下位置；處理歸屬應清楚可見。",
+    "en-US": "The button must match a single input row and stay bottom-right as text grows; ownership must be clear.",
+    "ja-JP": "ボタンを入力1行と同じ高さにし、入力が増えても右下に保つ。対応の担当も明確にする。",
+    "ko-KR": "버튼은 한 줄 입력과 높이가 같고 글이 늘어도 오른쪽 아래에 있어야 한다. 처리 주체도 명확해야 한다.",
+    "fr-FR": "Le bouton doit avoir la hauteur d’une ligne et rester en bas à droite ; le responsable doit être visible.",
+    "es-ES": "El botón debe medir lo mismo que una línea y permanecer abajo a la derecha; el responsable debe ser claro.",
+    "ru-RU": "Кнопка должна быть высотой в одну строку и оставаться справа внизу; ответственный должен быть виден.",
+  },
+},
+{
+  id: "workbench-item-rise",
+  date: "2026-11-06",
+  old: {
+    "zh-CN": "第 5 轮工作台切换条目时，旧详情淡出，标题、字段、操作、提示与正文依次浮现。",
+    "zh-TW": "第 5 輪工作台切換項目時，舊詳情淡出，標題、欄位、操作、提示與正文依次浮現。",
+    "en-US": "Round 5 faded out the old detail and replayed a staggered rise for headings, fields, " +
+      "actions, notice and body.",
+    "ja-JP": "第5回では項目切り替え時に旧詳細を消し、見出し、項目、操作、案内、本文を順に浮かび上がらせていた。",
+    "ko-KR": "5차 작업대는 항목 전환 시 이전 상세를 흐리게 하고 제목, 필드, 작업, 안내, 본문을 차례로 띄웠다.",
+    "fr-FR": "Au tour 5, l’ancien détail disparaissait en fondu, puis titres, champs, actions, avis et" +
+      " corps réapparaissaient en séquence.",
+    "es-ES": "En la ronda 5, el detalle anterior se desvanecía y títulos, campos, acciones, aviso y " +
+      "cuerpo volvían a aparecer en secuencia.",
+    "ru-RU": "В раунде 5 старые детали гасли, а заголовки, поля, действия, уведомление и содержимое " +
+      "снова появлялись по очереди.",
+  },
+  now: {
+    "zh-CN": "第 7 轮保留详情实例，控件不动，短文字滚动，正文按 key 折叠与展开；空态切换和窄屏推移保持不变。",
+    "zh-TW": "第 7 輪保留詳情實例，控制元件不動，短文字滾動，正文按 key 摺疊與展開；空態切換和窄螢幕推移保持不變。",
+    "en-US": "Round 7 retains the detail, keeps controls still, rolls short text and expands or " +
+      "collapses keyed blocks. Empty-state replacement and narrow push remain.",
+    "ja-JP": "第7回では詳細を保持し、操作は固定、短文はロール、本文はキー別に開閉する。空状態の置換と狭い画面のプッシュは維持する。",
+    "ko-KR": "7차는 상세를 유지하고 컨트롤은 고정하며 짧은 글자는 굴리고 블록은 키별로 펼치거나 접는다. 빈 화면 교체와 좁은 화면 밀기는 유지한다.",
+    "fr-FR": "Le tour 7 conserve le détail et les commandes, fait défiler le texte court et déploie ou" +
+      " replie les blocs par clé. L’état vide et la poussée étroite restent.",
+    "es-ES": "La ronda 7 conserva el detalle y los controles, desplaza el texto breve y expande o " +
+      "contrae bloques por clave. Se mantienen el estado vacío y el empuje estrecho.",
+    "ru-RU": "Раунд 7 сохраняет детали и неподвижные элементы управления; короткий текст " +
+      "прокручивается, блоки раскрываются по ключам. Пустое состояние и сдвиг узкого экрана " +
+      "сохранены.",
+  },
+  why: {
+    "zh-CN": "切换会话只改变内容；操作、菜单和输入框再次运动会破坏位置与焦点的连续性。",
+    "zh-TW": "切換對話只改變內容；操作、選單和輸入框再次運動會破壞位置與焦點的連續性。",
+    "en-US": "Switching conversations changes content. Moving shared actions, menus and the composer " +
+      "breaks positional and focus continuity.",
+    "ja-JP": "会話の切り替えで変わるのは内容であり、共通の操作、メニュー、入力欄を動かすと位置とフォーカスの連続性が失われる。",
+    "ko-KR": "대화 전환은 내용을 바꾼다. 공통 작업, 메뉴, 입력창을 움직이면 위치와 초점의 연속성이 깨진다.",
+    "fr-FR": "Changer de conversation modifie le contenu. Déplacer les actions, menus et le champ de " +
+      "saisie communs rompt la continuité de position et de focus.",
+    "es-ES": "Cambiar de conversación modifica el contenido. Mover acciones, menús y el editor comunes" +
+      " rompe la continuidad de posición y foco.",
+    "ru-RU": "Смена диалога меняет содержимое. Движение общих действий, меню и поля ввода нарушает " +
+      "непрерывность положения и фокуса.",
+  },
+},
+{
   id: "vertical-page-push",
   date: "2026-11-06",
   old: {

@@ -137,7 +137,19 @@
   },
   "demo": {
     "workbench": {
+      "billing": {
+        "question": "청구서는 어떻게 다운로드하나요?",
+        "answer": "청구 페이지에서 주문을 선택한 다음 청구서를 다운로드하세요."
+      },
+      "password": {
+        "question": "비밀번호는 어떻게 변경하나요?",
+        "answer": "계정 설정에서 비밀번호를 변경하세요."
+      },
       "chat": {
+        "assistant": "AI 처리 중",
+        "human": "담당자 처리 중",
+        "assignAssistant": "AI에 맡기기",
+        "needsHuman": "담당자 처리가 필요합니다",
         "title": "대화 작업대",
         "queue": "대화",
         "choose": "대화 선택",
@@ -190,6 +202,9 @@
       "status": "연결됨"
     },
     "shared": {
+      "chipsTitle": "상태와 라벨",
+      "headphones": "헤드폰",
+      "bluetooth": "블루투스",
       "title": "데이터와 입력",
       "notes": "메모",
       "notesPlaceholder": "메모 추가",

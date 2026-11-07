@@ -1,15 +1,18 @@
 // @vitest-environment happy-dom
 import { act, useState } from "react";
+import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { Workbench, WorkbenchDetail, WorkbenchItem } from "./Workbench";
 import { Empty } from "./display";
 import { FlowList, FLOW_MS } from "./motion";
 import { mount, type Mounted } from "../test/dom";
+const styles = readFileSync("src/trm/styles/components.css", "utf8");
 
 let view: Mounted;
 let narrow = false;
 let reduced = false;
 let media: MediaQueryList;
+let sheet: HTMLStyleElement;
 beforeEach(() => {
   vi.useFakeTimers();
   narrow = false;
@@ -19,10 +22,35 @@ beforeEach(() => {
   const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
   Object.defineProperty(preference, "matches", { configurable: true, get: () => reduced });
   vi.spyOn(window, "matchMedia").mockImplementation(query => query.includes("max-width") ? media : preference);
+  sheet = document.createElement("style");
+  sheet.textContent = styles;
+  document.head.appendChild(sheet);
 });
-afterEach(() => { view?.unmount(); vi.restoreAllMocks(); vi.useRealTimers(); });
+afterEach(() => { view?.unmount(); sheet.remove(); vi.restoreAllMocks(); vi.useRealTimers(); });
 
 const order = ["z", "a", ""];
+
+it.each([false, true])("insets every row background and rounds its corners (selected=%s)", selected => {
+  view = mount(<div style={{ "--workbench-row-inset": "8px", "--rs": "8px" } as React.CSSProperties}>
+    <div className="trm-workbench-list-head">
+      <div className="trm-workbench-heading">Queue</div>
+    </div>
+    <WorkbenchItem title="Conversation" selected={selected} onClick={() => {}} />
+  </div>);
+  const row = view.container.querySelector("button")!;
+  const css = getComputedStyle(row);
+  expect(css.marginInline).toBe("8px");
+  expect(css.borderRadius).toBe("8px");
+  expect(css.width).toBe("calc(100% - 2 * 8px)");
+  const head = getComputedStyle(view.container.querySelector(".trm-workbench-list-head")!);
+  const heading = getComputedStyle(view.container.querySelector(".trm-workbench-heading")!);
+  for (const side of ["paddingLeft", "paddingRight"] as const) {
+    const rowEdge = parseFloat(css.marginInline) + parseFloat(css[side]);
+    const headEdge = parseFloat(head.paddingInline) + parseFloat(heading[side]);
+    expect(rowEdge).toBe(16);
+    expect(rowEdge).toBe(headEdge);
+  }
+});
 function render(selected: string | null) {
   return <Workbench selected={selected} order={order} onBack={() => {}} list={<input defaultValue="Filter" />}
     empty={<Empty icon="chat" title="Choose an item" />} listWidth="22rem"
@@ -74,14 +102,21 @@ it.each([false, true])("never overlaps empty and detail, including rapid changes
   expect(view.container.querySelector(".trm-workbench-empty")?.textContent).toBe("Choose an item");
 });
 
-it("stages details in list order, including immediate reversal, and makes the departing detail inert", () => {
+it("retains actions, foot and detail across item switches and immediate reversal, rolling only title text", () => {
   view = mount(render("z"));
+  const detail = view.container.querySelector(".trm-workbench-detail");
+  const action = view.container.querySelector(".trm-workbench-actions button");
+  const foot = view.container.querySelector(".trm-workbench-foot button");
   act(() => view.root.render(render("a")));
-  const stage = () => view.container.querySelector<HTMLElement>(".trm-workbench-swap")!;
-  expect(stage().style.getPropertyValue("--push")).toBe("1");
-  expect(view.container.querySelector(".trm-workbench-swap > .swap-out[inert]")?.textContent).toContain("Body z");
+  expect(view.container.querySelector("h3 .roll-in")?.textContent).toBe("Title a");
   act(() => view.root.render(render("z")));
-  expect(stage().style.getPropertyValue("--push")).toBe("-1");
+  expect(view.container.querySelector("h3 .roll-in")?.textContent).toBe("Title z");
+  expect(view.container.querySelector(".trm-workbench-detail")).toBe(detail);
+  expect(view.container.querySelector(".trm-workbench-actions button")).toBe(action);
+  expect(view.container.querySelector(".trm-workbench-foot button")).toBe(foot);
+  expect(action?.closest(".rise")).toBeNull();
+  expect(foot?.closest(".rise")).toBeNull();
+  expect(view.container.querySelector(".swap-out")).toBeNull();
   act(() => vi.advanceTimersByTime(FLOW_MS + 1));
   expect(view.container.querySelectorAll(".trm-workbench-detail")).toHaveLength(1);
   expect(view.container.textContent).toContain("Body z");
@@ -97,7 +132,7 @@ it("renders separate sub fields and body parts with ordered delays, retaining th
   expect(Array.from(fields, node => node.textContent)).toEqual(["Website", "Pending"]);
   const parts = view.container.querySelectorAll<HTMLElement>(".trm-workbench-part");
   expect(Array.from(parts, node => node.style.animationDelay)).toEqual([
-    "0ms", "38ms", "76ms", "114ms", "152ms", "190ms", "228ms",
+    "0ms", "38ms", "76ms", "114ms", "152ms",
   ]);
   expect(view.container.querySelector(".trm-workbench-list .trm-workbench-list-head")?.textContent).toBe("Queue");
   act(() => view.root.render(queue("Approved")));
@@ -119,6 +154,67 @@ it("collapses a notice without remounting the title or replaying its entrance", 
   act(() => vi.advanceTimersByTime(FLOW_MS + 1));
   expect(view.container.textContent).not.toContain("Check the question");
   expect(view.container.querySelector("h3")).toBe(title);
+});
+
+it.each([false, true])("uses keyed body blocks and preserves shared blocks (reduced=%s)", preference => {
+  reduced = preference;
+  const detail = (item: string) => <WorkbenchDetail title={<strong>{item}</strong>} titleText={item}
+    notice={item === "z" ? "Notice" : undefined}>
+    <input key="shared" defaultValue="Retained draft" /><p key={item}>{item}</p>
+  </WorkbenchDetail>;
+  view = mount(detail("z"));
+  const input = view.container.querySelector("input");
+  const old = view.container.querySelector("p");
+  act(() => view.root.render(detail("a")));
+  expect(view.container.querySelector("input")).toBe(input);
+  expect(view.container.querySelector("input")?.closest("[data-phase]")?.getAttribute("data-phase")).toBe("stay");
+  if (preference) {
+    expect(old?.isConnected).toBe(false);
+    expect(view.container.querySelector(".roll-out")).toBeNull();
+    expect(view.container.querySelector(".trm-workbench-notice")?.textContent).toBe("");
+  } else {
+    expect(old?.closest('[data-phase="leave"][inert]')).not.toBeNull();
+    expect(view.container.querySelector('[data-phase="enter"] p')?.textContent).toBe("a");
+    expect(view.container.querySelector("h3 .roll-in strong")?.textContent).toBe("a");
+    const part = view.container.querySelector('[data-phase="enter"] .rise')!;
+    expect(getComputedStyle(part).animation).toBe("none");
+  }
+  act(() => view.root.render(detail("z")));
+  act(() => vi.advanceTimersByTime(FLOW_MS + 40));
+  expect(view.container.querySelectorAll("p")).toHaveLength(1);
+  expect(view.container.querySelector("p")?.textContent).toBe("z");
+  expect(view.container.querySelector("input")).toBe(input);
+});
+
+it.each([false, true])("follows the changing scroll end without a post-switch jump (reduced=%s)", preference => {
+  reduced = preference;
+  let height = 900;
+  vi.spyOn(HTMLElement.prototype, "scrollHeight", "get").mockImplementation(() => height);
+  vi.spyOn(HTMLElement.prototype, "clientHeight", "get").mockReturnValue(300);
+  const detail = (item: string) => <WorkbenchDetail title={item} scrollToEnd={item}>
+    <p key={item}>{item}</p>
+  </WorkbenchDetail>;
+  view = mount(detail("z"));
+  const body = view.container.querySelector<HTMLElement>(".trm-workbench-body")!;
+  expect(body.scrollTop).toBe(600);
+  body.scrollTop = 0;
+  height = 1200;
+  act(() => view.root.render(detail("a")));
+  expect(body.scrollTop).toBe(preference ? 900 : 0);
+  act(() => vi.advanceTimersByTime(FLOW_MS / 2));
+  if (!preference) {
+    expect(body.scrollTop).toBeGreaterThan(0);
+    expect(body.scrollTop).toBeLessThan(900);
+  }
+  height = 1500;
+  act(() => vi.advanceTimersByTime(FLOW_MS));
+  // Reduced motion has no animation frames; its content has already settled synchronously.
+  expect(body.scrollTop).toBe(preference ? 900 : 1200);
+  act(() => view.root.render(detail("z")));
+  act(() => body.dispatchEvent(new WheelEvent("wheel")));
+  body.scrollTop = 100;
+  act(() => vi.advanceTimersByTime(FLOW_MS));
+  expect(body.scrollTop).toBe(100);
 });
 
 it("places form actions after the content by default and pins only the requested foot", () => {

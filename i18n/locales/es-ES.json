@@ -137,7 +137,19 @@
   },
   "demo": {
     "workbench": {
+      "billing": {
+        "question": "¿Cómo descargo una factura?",
+        "answer": "Seleccione el pedido en la página de facturación y descargue la factura."
+      },
+      "password": {
+        "question": "¿Cómo cambio mi contraseña?",
+        "answer": "Cambie su contraseña en los ajustes de la cuenta."
+      },
       "chat": {
+        "assistant": "Atención del asistente",
+        "human": "Atención humana",
+        "assignAssistant": "Asignar a la IA",
+        "needsHuman": "Requiere atención humana",
         "title": "Espacio de conversaciones",
         "queue": "Conversaciones",
         "choose": "Seleccione una conversación",
@@ -190,6 +202,9 @@
       "status": "Conectado"
     },
     "shared": {
+      "chipsTitle": "Estados y etiquetas",
+      "headphones": "Auriculares",
+      "bluetooth": "Bluetooth",
       "title": "Datos y entradas",
       "notes": "Notas",
       "notesPlaceholder": "Añadir notas",

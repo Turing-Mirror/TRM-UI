@@ -71,6 +71,7 @@ npm pack
 | `TextInput` / `TextInputProps` | `value: string`、`onChange(string)`、`invalid?`、原生输入属性；`type` 支持 text、password、number。 |
 | `TextArea` / `TextAreaProps` | `value: string`、`onChange(string)`、`invalid?`、原生 textarea 属性；默认 3 行。 |
 | `ChipInput` / `ChipInputProps` | `value: string[]`、`onChange`、`label`、`disabled?`、`placeholder?`、`separators?`；默认中英文逗号。 |
+| `Chip` / `ChipProps` | `children: string`；可选 `icon: IconName`、`tone: Tone`、`onRemove`、`disabled`。 |
 | `DataTable<T>` / `DataTableProps<T>` | `rows`、`columns`、`keyOf`、`label`、`onRowClick?`。 |
 | `DataColumn<T>` | `key`、`label`、`render(row)`、`align?: "start" \| "end"`、`width?: string`。 |
 | `BarChart` / `BarChartProps` | `title`、`data: BarChartItem[]`、`formatValue?`、`formatLabel?`、`describe?`、`showTableToggle?`。 |
@@ -78,6 +79,26 @@ npm pack
 | `ConfirmDialog` / `ConfirmDialogProps` | `open`、`title`、`text`、`confirm`、`danger?`、`busy`、`onClose`、`onConfirm`。 |
 
 `ChipInput` 在输入法组合期间保留草稿，逗号、Enter 或失焦提交并去重，空草稿下 Backspace 移除末项。
+其标签直接使用 `Chip`；只读关键词也使用同一组件，提供 `onRemove` 时显示带本地化名称的移除按钮。
+`Chip` 使用 12.5px 文字、24px 最小高度、`--rs` 圆角，无边线。`--chip` 是 `--ink` 的 10% 与
+`--surface` 的不透明混合色，`--chip-ink` 使用 `--ink-muted`，随根主题切换。
+默认主题文字对比度为浅色 4.68:1、深色 5.57:1；填充不透明，因此页面、分组和表面底色不影响该比值。
+颜色或主题覆盖后应重新计算对比度。状态继续使用无填充的 `Tag`，用途规则见 `interactionRules.ts`。
+`tone` 与 Tag 共用 `Tone` 类型，默认 `muted`；ChipInput 继续使用此默认值。
+所有 tone 保留同一个 `--chip` 填充与尺寸，只改变文字和图标颜色。分类色使用
+`--chip-ok-ink`、`--chip-warn-ink`、`--chip-accent-ink`、`--chip-danger-ink`；
+浅色主题加深文字，深色主题的 ok、warn 复用现有颜色，accent、danger 使用提高亮度后的专用文字色。
+画廊在页面和分组底色上并列展示全部 Chip tone 与相同 tone 的 Tag，跟随深浅主题切换。
+默认令牌的文字对比度如下，显式深色与跟随系统深色使用同一组结果：
+
+| tone | 浅色 | 深色 |
+| --- | --- | --- |
+| muted | 4.68:1 | 5.57:1 |
+| ok | 4.81:1 | 5.51:1 |
+| warn | 4.94:1 | 6.64:1 |
+| accent | 4.70:1 | 5.10:1 |
+| danger | 4.84:1 | 4.95:1 |
+
 `DataTable` 自带分组底色、圆角与横向滚动，行回调支持点击、Enter 和空格；单元格内的控件独立响应。
 `BarChart` 用于非负单序列数据，负值按零高度显示；`formatLabel` 接收标签字符串，`describe` 接收数据项。
 `showTableToggle` 默认关闭，启用后提供图表与表格切换。密集序列保留 2px 柱间距并横向滚动。
@@ -133,9 +154,12 @@ npm pack
 | `Workbench` / `WorkbenchProps` | `list`、`detail`、`selected: string \| null`、`order: readonly string[]`、`onBack`。 |
 | Workbench 可选参数 | `listHead`、`listWidth`、`narrowAt`、`empty`、`className`。 |
 | `WorkbenchItem` / `WorkbenchItemProps` | `title`、`selected`、`onClick`；可选 `meta`、`preview`、`tag`、`avatar`。 |
-| `WorkbenchDetail` / `WorkbenchDetailProps` | `title`、`children`；可选 `sub`、`actions`、`notice`、`foot`、`footMode`。 |
+| `WorkbenchDetail` / `WorkbenchDetailProps` | `title`、`children`。 |
+| WorkbenchDetail 可选参数 | `titleText`、`sub`、`actions`、`notice`、`foot`、`footMode`、`scrollToEnd`。 |
 | `ChatComposer` / `ChatComposerProps` | `value`、`onChange`、`onSend`、`placeholder`、`sendLabel`。 |
-| ChatComposer 可选参数 | `ariaLabel`、`disabled`、`sending`、`maxHeight`、`className`。 |
+| ChatComposer 可选参数 | `ariaLabel`、`disabled`、`sending`、`maxHeight`、`state`、`className`。 |
+| `ChatState` / `ChatStateProps` | `label`；可选 `tone: "assistant" \| "human"`、`icon`、`action`。 |
+| `AlertMark` / `AlertMarkProps` | `label`，同时作为无障碍名称与 Tooltip 文案。 |
 
 父容器需提供确定高度。列表宽度由 `--workbench-list-width: clamp(280px, 28%, 380px)` 自适应；
 `listWidth` 接受像素数值或 CSS 长度，覆盖默认变量。
@@ -148,50 +172,87 @@ npm pack
 `onBack` 由调用方将 `selected` 设为 null；返回按钮使用通用语言包，列表保留滚动与输入状态，并恢复操作焦点。
 跨越宽窄断点会重新挂载插槽；需要跨断点保留的草稿、筛选与业务状态应由调用方持有。
 
-`order` 是业务列表的键顺序，决定 `useDir` 与详情分块进入方向；键不是标题，也不按字符串大小推断顺序。
+`order` 保留为业务列表的键顺序；条目切换不再按此顺序重播详情入场，窄屏列表与详情仍使用 `Panes` 推移。
 空字符串也是有效键；只有 null 显示 `empty`。传入 `<Empty icon="chat" title={chooseText} />` 即可显示居中的图标与文字。
 `WorkbenchItem` 是原生按钮，用 `aria-pressed` 表达选中状态，支持 Enter 与空格。插槽中不要嵌套交互控件。
 `WorkbenchDetail` 固定头部，正文独立滚动，并使用 `Morph` 处理内容高度变化。
 `footMode` 默认 `inline`，表单操作紧跟字段；聊天输入框使用 `pinned`，固定在详情底部。
 旧版固定底部的调用方需显式传入 `footMode="pinned"`，其他既有参数继续支持。
 `sub` 可传单个节点或数组，数组各项独立排列，字符串和数值自动用 `Roll` 更新；自定义节点中的文字变化由调用方包裹 `Roll`。
-`notice` 位于标题之后、正文之前，用 `Collapse` 显示和移除。同一条目更新不会重播分块入场。
-正文每个顶层子节点是一个独立动效分块，使用稳定的 key 保留更新状态；嵌套内容作为一个块处理。
-选中另一条目时，标题、各子字段、操作、提示和前几个正文块依次使用 `stagger()` / `.rise`，
-8px 水平位移跟随列表方向，6px 上浮，无缩放，时长使用 `--flow-ms`，曲线使用 `--ease-nav`。
-`Swap variant="parts"` 只为旧详情执行短促淡出，进入层不整块移动；窄屏继续使用 `Panes` 推移。
+`title` 为字符串或数值时自动使用 `Roll`；富文本标题可提供 `titleText` 作为变化标识，整个节点随文字滚动。
+需要保留标题图标时，将 `Roll` 放在标题节点的文字部分。`Roll` 新增可选 `children`，`value` 仍是变化标识。
+宽屏切换条目保持一个详情实例，不使用 `Swap`。调用方不要给详情组件设置随条目变化的 React key。
+标题与子字段更新使用 `Roll`；操作、菜单、输入框与底部不播放位移或淡入淡出。提示仅使用 `Collapse`。
+正文顶层子节点自动交给 `FlowList`。会话消息使用包含会话 ID 的稳定 key；共同内容使用相同 key 保留 DOM。
+退出块收起，新增块展开，间距写在块内；FlowList 自身连续改变正文高度，不再叠加 Morph 的延迟过渡。
+首次显示标题、字段与正文时可依次浮现；后续切换不重播。空态与详情直接替换，维持第 6 轮的无重叠行为。
+减少动态效果时，滚字、折叠、消息增删及自动滚动立即完成。
+
+聊天可设置 `scrollToEnd={conversationId + ":" + messageCount}`。首次挂载在绘制前定位末尾；
+令牌变化后在 `FLOW_MS` 内平滑跟随正在伸缩的内容末尾，不在移除旧气泡后突然跳转。
+滚轮或触摸会中断跟随；输入草稿不改变令牌，因此不会打断向上阅读。正文禁用浏览器滚动锚定以免互相干扰。
+草稿、处理状态与消息由调用方按会话保存；组件保留 DOM 不代表共享不同会话的业务数据。
 
 `ChatComposer` 基于 `ComposerInput`，输入高度自动增长至 `maxHeight`（默认 200px），清空后自动收缩。
 Enter 与发送按钮调用 `onSend`；Shift + Enter 换行，输入法确认不发送；空白草稿、禁用和发送中均禁止发送。
 `sending` 显示按钮忙碌状态并禁用输入。草稿与发送结果由调用方维护，组件不会自行清空；占位符和按钮名称由语言包传入。
+输入与发送按钮位于同一个 `--surface` 圆角区域，使用 `--r`、`--line` 内描边与强调色焦点环。
+单行输入行与圆形发送按钮均为 32px，按钮距区域右下各 8px；固定底部时多行输入向上增长。
+可发送时使用 `--accent` / `--accent-ink`；空白或禁用时使用中性 `--rail` / `--ink-muted`，不降低整体透明度。
+发送中以居中 16px spinner 替换发送图标。`maxHeight` 限制文本输入本身，不包含区域的上下内边距。
+`state` 放在输入区域上方。`ChatState` 默认 `tone="assistant"`，使用 `--accent-soft`；人工状态使用 `--rail`。
+状态条满宽、最小高度 40px、14px 中等字重、`--r` 圆角；标签使用 Roll，底色沿 `--flow-ms` / `--ease` 过渡。
+默认图标为芯片或人员，可由 `icon` 替换；`action` 可放安静的 `Btn`，不提供时没有操作占位。
+`AlertMark` 为 16px 圆形 `--surface` 底、1px `--hairline` 环与实心 `--danger` 感叹号，支持聚焦查看 Tooltip。
+在相对定位的气泡内使用 `<span className="trm-alert-mark-corner"><AlertMark label={label} /></span>`，
+标记在右下边缘向外重叠 4px。深色主题继续使用相应表面与危险色令牌。
 
 `listHead` 内使用 `.trm-workbench-heading`、`.trm-workbench-filters`，`list` 使用 `.trm-workbench-rows` 独立滚动。
 工作台按实际行顺序标记 `data-divider`，忽略退出中的 FlowList 行；最后一项不画线。
 分隔线是文字列的伪元素，自动避开头像与两侧内边距，悬停或选中行两侧的线隐藏。
+所有 WorkbenchItem 的悬停与选中背景按 `--workbench-row-inset`（8px）横向内缩，
+使用 `--rs` 圆角；行宽扣除两侧外边距，因此背景不接触列表卡片边缘。
+行内左右各留 8px，与列表头共用外层内缩，内容和右侧元信息距卡片边缘均为 16px。
+分隔线继续对齐行文字列，有头像时避开头像。
+审核画廊的 Pending 初始包含 3 条待处理记录，先显示 2 条；All 显示这 3 条及 2 条已处理记录。
+列表头标题与总数随筛选使用 Roll 更新，总数包含尚未加载显示的匹配记录。
 分隔线适用范围以 `interactionRules.ts` 的 `denseListDividers` 为准；设置行卡片已移除外框与行间边框。
-筛选与加载更多在同一个 `FlowList` 内更新；初次出现用 `stagger()` / `.rise`，计数用 `Roll`，编辑器展开用 `Collapse`。
+长队列列表使用 `QueueList`；计数用 `Roll`，编辑器展开用 `Collapse`。
 这些动效沿用共享原语的减少动态效果规则。完整示例见 `src/pages/WorkbenchPattern.tsx`，规则见 `interactionRules.ts`。
 
-以下为十行 JSX 示例。`rows`、`current`、`selected`、`select`、`approve`、`reject` 由产品提供，文案来自产品语言包。
+以下为 JSX 示例。`rows`、`current`、`selected`、`select`、`approve`、`reject` 由产品提供，文案来自产品语言包。
 
 ```tsx
 <Workbench selected={selected} order={rows.map(row => row.id)} onBack={() => select(null)}
   empty={<Empty icon="chat" title={t("review.choose")} />}
-  list={<FlowList className="trm-workbench-rows" items={rows} keyOf={row => row.id}
-    render={(row, i) => <div className="rise" style={stagger(i)}>
-      <WorkbenchItem title={row.question} preview={row.answer} selected={selected === row.id}
-        onClick={() => select(row.id)} /></div>} />}
+  list={<QueueList scope="all" className="trm-workbench-rows" items={rows} keyOf={row => row.id}
+    render={row => <WorkbenchItem title={row.question} preview={row.answer} selected={selected === row.id}
+      onClick={() => select(row.id)} />} />}
   detail={current && <WorkbenchDetail title={current.question}
     foot={<><Btn primary onClick={approve}>{t("review.approve")}</Btn>
       <Btn onClick={reject}>{t("review.reject")}</Btn></>}>
     <p>{current.answer}</p></WorkbenchDetail>} />
 ```
 
-样式类统一使用 `trm-workbench` 前缀，主要包括 `-list`、`-main`、`-panes`、`-swap`、`-empty`、`-back`、
+样式类统一使用 `trm-workbench` 前缀，主要包括 `-list`、`-main`、`-panes`、`-stage`、`-empty`、`-back`、
 `-item`、`-item-line`、`-item-title`、`-preview`、`-meta`、`-tag`、`-avatar`、`-detail`、`-heading`、`-body`、`-read`、`-foot`，
 以及 `-list-head`、`-part`、`-field`、`-block`、`-notice`。回复输入框使用 `trm-chat-composer` 和 `trm-chat-composer-input`。
 
 `Panes layout="fill"` 用于画布、编辑器或占满父容器的工作区。父容器必须提供确定高度；此模式直接定位子视图，不经过按内容伸缩的 Morph 容器。默认 `layout="content"` 保持列表和设置页面的高度伸缩。离场完成后的 Pane 使用 hidden 和 inert，同时保留输入状态。
+
+### 长队列列表
+
+`QueueList<T>` 接受 `items`、`keyOf`、`render`、`scope`，可选 `order`、`dir`、`className`、
+`itemClassName`、`empty`、`foot`。`scope` 表示筛选或查询，不包含条数；`order` 是页签 ID 顺序，
+也可直接给 `dir={1 | -1}`。没有可比较的顺序时从右侧进入。
+`className` 用于组件自身的滚动容器；父布局需限制高度，工作台使用 `trm-workbench-rows`。
+空态和加载更多按钮分别放在 `empty`、`foot`，与当前列表同属一个内容层。
+切换 scope 时新旧内容整列水平推移，420ms、`--ease-nav`，进入 6%、退出 2.5%，没有缩放；
+同时重置新列表滚动位置，旧层保留切换前的视觉位置并设为 inert。行内不重播 rise、FLIP 或展开动画。
+同一 scope 内追加只展开新行，既有行保持 DOM 与滚动位置；原位内容更新不播放行级动效。
+中间插入或删除使用行高展开或收起，自然带动相邻行，不再叠加 FLIP。
+调用方应保持既有行顺序，加载更多只追加结果；不要在追加后重新排序已有数据。
+减少动态效果时立即替换。短选项、标签和小卡片列表继续使用默认 `FlowList` 完整重排动效。
 
 推移动效让旧内容淡出与新内容淡入同时开始，沿同一曲线交接，不在中间插入空白等待。中途反向时从当前显示状态继续。全高画布使用 `Panes layout="fill"`，不为其外层测量内容高度。
 

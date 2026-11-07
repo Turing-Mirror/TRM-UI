@@ -137,7 +137,19 @@
   },
   "demo": {
     "workbench": {
+      "billing": {
+        "question": "請求書をダウンロードするには？",
+        "answer": "請求ページで注文を選び、請求書をダウンロードします。"
+      },
+      "password": {
+        "question": "パスワードを変更するには？",
+        "answer": "アカウント設定でパスワードを変更します。"
+      },
       "chat": {
+        "assistant": "AI が対応中",
+        "human": "担当者が対応中",
+        "assignAssistant": "AI に任せる",
+        "needsHuman": "担当者の対応が必要",
         "title": "会話ワークベンチ",
         "queue": "会話",
         "choose": "会話を選択",
@@ -190,6 +202,9 @@
       "status": "接続済み"
     },
     "shared": {
+      "chipsTitle": "状態とラベル",
+      "headphones": "ヘッドホン",
+      "bluetooth": "Bluetooth",
       "title": "データと入力",
       "notes": "メモ",
       "notesPlaceholder": "メモを追加",

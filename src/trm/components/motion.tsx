@@ -11,7 +11,10 @@
  *
  * 时长与曲线在 index.css 的「页内动效」一段，与这里的常量一致。
  */
-import { createContext, memo, useContext, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import {
+  createContext, memo, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState,
+  type CSSProperties, type ReactNode,
+} from "react";
 
 import { usePresence } from "./overlay";
 
@@ -130,7 +133,7 @@ const pushStyle = (dir: Dir) => ({ "--push": String(dir || 1) }) as CSSPropertie
 type PushPhase = "enter" | "leave" | "shown" | "hidden";
 
 /** Retarget a running push from its painted state instead of restarting at full opacity. */
-function usePushMotion(phase: PushPhase, seq: number, dir: Dir, transition: PaneTransition = "push") {
+function usePushMotion(phase: PushPhase, seq: number, dir: Dir, transition: PaneTransition | "queue" = "push") {
   const node = useRef<HTMLDivElement>(null);
   const previous = useRef<PushPhase | null>(null);
   const animations = useRef<Animation[]>([]);
@@ -140,8 +143,11 @@ function usePushMotion(phase: PushPhase, seq: number, dir: Dir, transition: Pane
     const painted = getComputedStyle(el);
     const continuing = previous.current !== null && previous.current !== "hidden";
     const sliding = transition === "slide";
+    const queue = transition === "queue";
     const opacity = sliding ? 1 : continuing ? Number(painted.opacity) : (phase === "enter" ? 0 : 1);
-    const transform = continuing ? painted.transform : `translate3d(${(dir || 1) * (sliding ? 100 : 32)}${sliding ? "%" : "px"}, 0, 0)`;
+    const distance = sliding ? 100 : queue ? 6 : 32;
+    const unit = sliding || queue ? "%" : "px";
+    const transform = continuing ? painted.transform : `translate3d(${(dir || 1) * distance}${unit}, 0, 0)`;
     animations.current.forEach(animation => animation.cancel());
     animations.current = [];
     previous.current = phase;
@@ -152,7 +158,9 @@ function usePushMotion(phase: PushPhase, seq: number, dir: Dir, transition: Pane
     }
     const leaving = phase === "leave";
     const target = sliding ? 1 : leaving ? 0 : 1;
-    const endTransform = leaving ? sliding ? `translate3d(${(dir || 1) * -100}%, 0, 0)` : `translate3d(${(dir || 1) * -14}px, 0, 0) scale(0.99)` : "none";
+    const endTransform = !leaving ? "none" : sliding ? `translate3d(${(dir || 1) * -100}%, 0, 0)`
+      : queue ? `translate3d(${(dir || 1) * -2.5}%, 0, 0)`
+        : `translate3d(${(dir || 1) * -14}px, 0, 0) scale(0.99)`;
     // Inline endpoints also provide an immediate fallback without Web Animations.
     el.style.opacity = String(target);
     el.style.transform = endTransform;
@@ -160,7 +168,10 @@ function usePushMotion(phase: PushPhase, seq: number, dir: Dir, transition: Pane
     // Both views move and fade immediately on the same curve. A staged fade creates
     // an empty interval even when the destination content is already available.
     const fades: Keyframe[] = [{ opacity }, { opacity: target }];
-    animations.current = [
+    animations.current = queue ? [el.animate(
+      [{ transform, opacity }, { transform: endTransform, opacity: target }],
+      { duration: FLOW_MS, easing: curve("--ease-nav"), fill: "both" },
+    )] : [
       el.animate([{ transform }, { transform: endTransform }], { duration: FLOW_MS, easing: curve("--ease-nav"), fill: "both" }),
       ...(sliding ? [] : [el.animate(fades, { duration: FLOW_MS, easing: curve("--ease-nav"), fill: "both" })]),
     ];
@@ -175,9 +186,13 @@ function usePushMotion(phase: PushPhase, seq: number, dir: Dir, transition: Pane
   return node;
 }
 
-function PushLayer({ phase, seq, dir, className = "", children }: { phase: PushPhase; seq: number; dir: Dir; className?: string; children: ReactNode }) {
-  const node = usePushMotion(phase, seq, dir);
-  return <div ref={node} inert={phase === "leave"} aria-hidden={phase === "leave" || undefined} className={className} style={{ animation: "none" }}>{children}</div>;
+function PushLayer({ phase, seq, dir, className = "", children, transition = "push", style }: {
+  phase: PushPhase; seq: number; dir: Dir; className?: string; children: ReactNode;
+  transition?: "push" | "queue"; style?: CSSProperties;
+}) {
+  const node = usePushMotion(phase, seq, dir, transition);
+  return <div ref={node} inert={phase === "leave"} aria-hidden={phase === "leave" || undefined}
+    className={className} style={{ ...style, animation: "none" }}>{children}</div>;
 }
 
 /**
@@ -304,7 +319,7 @@ export function Swap({ k, dir = 1, children, className = "", variant = "push" }:
     return () => window.clearTimeout(id);
   }, [old, variant]);
   if (variant !== "push") {
-    // Workbench parts enter independently; the retained old detail still exits as one short fade.
+    // Legacy parts mode remains available; item selection in Workbench keeps one detail instead.
     const vars = {
       "--push": dir, "--swap-dx": `${dir * 18}px`, "--swap-ox": `${dir * -10}px`,
     } as CSSProperties;
@@ -340,12 +355,85 @@ export function Swap({ k, dir = 1, children, className = "", variant = "push" }:
 
 type FlowEntry<T> = { key: string; item: T; phase: "enter" | "stay" | "leave" };
 
+export type FlowListProps<T> = {
+  items: readonly T[];
+  keyOf: (item: T) => string;
+  render: (item: T, i: number) => ReactNode;
+  className?: string;
+  itemClassName?: string;
+  motion?: MotionOptions;
+  layout?: "list" | "grid";
+};
+
+export type QueueListProps<T> = Omit<FlowListProps<T>, "layout" | "motion"> & {
+  /** Query/filter identity, independent of the loaded rows. */
+  scope: string;
+  order?: readonly string[];
+  dir?: -1 | 1;
+  empty?: ReactNode;
+  foot?: ReactNode;
+};
+
+/** Long work queues: scopes push as a whole; local inserts/removals change row heights without FLIP. */
+export function QueueList<T>({
+  items, keyOf, render, scope, order, dir, className = "", itemClassName, empty, foot,
+}: QueueListProps<T>) {
+  const outer = useContext(PaneOnCtx);
+  const node = useMemo(() => <><FlowItems items={items} keyOf={keyOf} render={render}
+    itemClassName={itemClassName} reflow={false} />{items.length ? null : empty}{foot}</>,
+  [items, keyOf, render, itemClassName, empty, foot]);
+  const [cur, setCur] = useState({ scope, node, seq: 0, dir: 1 as Dir });
+  const [old, setOld] = useState<{ node: ReactNode; seq: number; scroll: number } | null>(null);
+  const box = useRef<HTMLDivElement>(null);
+  const scroll = useRef(0);
+  if (cur.scope !== scope) {
+    const before = order?.indexOf(cur.scope) ?? -1;
+    const after = order?.indexOf(scope) ?? -1;
+    const direction = dir ?? (before >= 0 && after >= 0 && after < before ? -1 : 1);
+    setOld(reduced() ? null : { node: cur.node, seq: cur.seq, scroll: scroll.current });
+    setCur({ scope, node, seq: cur.seq + 1, dir: direction });
+  } else if (cur.node !== node) {
+    setCur({ ...cur, node });
+  }
+  useLayoutEffect(() => {
+    if (box.current) box.current.scrollTop = 0;
+    scroll.current = 0;
+  }, [scope]);
+  useEffect(() => {
+    if (!old) return;
+    const timer = window.setTimeout(() => setOld(null), FLOW_MS);
+    return () => window.clearTimeout(timer);
+  }, [old]);
+  return <div ref={box} className={`trm-queue-list flow-quiet ${className}`}
+    data-queue-scope={scope} data-switching={Boolean(old) || undefined}
+    onScroll={event => { scroll.current = event.currentTarget.scrollTop; }}>
+    <div className="trm-queue-stage">
+      {old ? <PushLayer key={old.seq} phase="leave" seq={cur.seq} dir={cur.dir} transition="queue"
+        className="trm-queue-out" style={{ top: -old.scroll }}>
+        <PaneOnCtx.Provider value={false}><Frozen node={old.node} /></PaneOnCtx.Provider>
+      </PushLayer> : null}
+      <PushLayer key={cur.seq} phase={old ? "enter" : "shown"} seq={cur.seq} dir={cur.dir}
+        transition="queue" className="trm-queue-current">
+        <PaneOnCtx.Provider value={outer}><Frozen node={cur.node} /></PaneOnCtx.Provider>
+      </PushLayer>
+    </div>
+  </div>;
+}
+
 /**
  * 流动列表：同一份列表换了筛选、排序或展开了更多时，整块不重载。
  * 留下的项从旧位置滑到新位置，离开的项原地收拢，新来的项撑开。
  * 列表的间距写在每一项里面（例如 py-3），不要用 gap：收拢的项仍占着一份 gap。
+ * 全量重排用于选项、标签和少量卡片；长工作队列使用 QueueList，避免筛选时像重新发牌。
  */
-export function FlowList<T>({ items, keyOf, render, className = "", itemClassName = "", motion, layout = "list" }: { items: readonly T[]; keyOf: (item: T) => string; render: (item: T, i: number) => ReactNode; className?: string; itemClassName?: string; motion?: MotionOptions; layout?: "list" | "grid" }) {
+export function FlowList<T>(props: FlowListProps<T>) {
+  return <FlowItems {...props} />;
+}
+
+function FlowItems<T>({
+  items, keyOf, render, className = "", itemClassName = "", motion, layout = "list", reflow = true,
+}: FlowListProps<T> & { reflow?: boolean }) {
+  const visible = usePaneOn();
   const duration = motion?.reduced || reduced() ? 0 : Math.max(0, motion?.durationMs ?? FLOW_MS);
   const [list, setList] = useState<FlowEntry<T>[]>(() => items.map((item) => ({ key: keyOf(item), item, phase: "stay" })));
   // 按 key 的顺序判断列表变没变。父组件每次重绘都会传来新数组（filter、slice），
@@ -375,14 +463,14 @@ export function FlowList<T>({ items, keyOf, render, className = "", itemClassNam
       merged.push({ key, item, phase: had.get(key)?.phase ?? "enter" });
     }
     for (; pi < prev.length; pi++) if (!next.has(prev[pi].key)) merged.push({ ...prev[pi], phase: "leave" });
-    setList(merged);
+    setList(duration ? merged : merged.filter(e => e.phase !== "leave").map(e => ({ ...e, phase: "stay" })));
   }
 
   // 留下的项：量出新旧位置的差，先倒推回旧位置再放开（FLIP）
   useLayoutEffect(() => {
     const el = box.current;
-    if (!el) return;
-    const quiet = duration === 0 || measured.current === src;
+    if (!el || !visible) return;
+    const quiet = !reflow || duration === 0 || measured.current === src;
     measured.current = src;
     // 位置量的是相对列表本身（列表是定位容器），外层整体移动不算这几项换了位置
     const easing = motion?.easing ?? curve("--ease-nav");
@@ -415,10 +503,11 @@ export function FlowList<T>({ items, keyOf, render, className = "", itemClassNam
   // 撑开、收拢放完之后：新来的项转为常驻，离开的项卸下。多等两帧，确保动画已经停在终点
   const moving = list.some((e) => e.phase !== "stay");
   useEffect(() => {
-    if (!moving) return;
+    // Outgoing scope snapshots must not remove a half-collapsed row while the whole layer is leaving.
+    if (!moving || !visible) return;
     const id = window.setTimeout(() => setList((l) => l.filter((e) => e.phase !== "leave").map((e) => (e.phase === "enter" ? { ...e, phase: "stay" } : e))), duration ? duration + 40 : 0);
     return () => window.clearTimeout(id);
-  }, [moving, list, duration]);
+  }, [moving, list, duration, visible]);
 
   // 条目内容（点赞数之类）随时可能更新：在场的项一律按 key 取最新的那份来画，离开的项照原样画完
   const current = new Map(items.map((it) => [keyOf(it), it]));
@@ -441,12 +530,16 @@ export function FlowList<T>({ items, keyOf, render, className = "", itemClassNam
  * 滚字：同一处的文字换了，旧字向下滑出，新字从上方滑入，宽度随之过渡。
  * 用在标题、计数、当前项名称这类「同一个位置换了内容」的地方。
  */
-export function Roll({ value, className = "" }: { value: string; className?: string }) {
-  const [cur, setCur] = useState({ value, seq: 0 });
-  const [old, setOld] = useState<{ value: string; seq: number } | null>(null);
+export function Roll({ value, children = value, className = "" }: {
+  value: string; children?: ReactNode; className?: string;
+}) {
+  const [cur, setCur] = useState({ value, node: children, seq: 0 });
+  const [old, setOld] = useState<{ node: ReactNode; seq: number } | null>(null);
   if (cur.value !== value) {
-    setOld({ value: cur.value, seq: cur.seq });
-    setCur({ value, seq: cur.seq + 1 });
+    setOld(reduced() ? null : { node: cur.node, seq: cur.seq });
+    setCur({ value, node: children, seq: cur.seq + 1 });
+  } else if (cur.node !== children) {
+    setCur({ ...cur, node: children });
   }
   useEffect(() => {
     if (!old) return;
@@ -457,11 +550,11 @@ export function Roll({ value, className = "" }: { value: string; className?: str
     <span className={`roll ${className}`}>
       {old ? (
         <span key={`o${old.seq}`} aria-hidden className="roll-out">
-          {old.value}
+          {old.node}
         </span>
       ) : null}
-      <span key={cur.seq} className={cur.seq ? "roll-in" : ""}>
-        {cur.value}
+      <span key={cur.seq} className={cur.seq && !reduced() ? "roll-in" : ""}>
+        {cur.node}
       </span>
     </span>
   );
@@ -477,12 +570,14 @@ export function Collapse({ open, children, className = "", ms = FLOW_MS }: { ope
   if (open && !mounted) setMounted(true);
   useEffect(() => {
     if (open) return;
-    const id = window.setTimeout(() => setMounted(false), ms);
+    const id = window.setTimeout(() => setMounted(false), reduced() ? 0 : ms);
     return () => window.clearTimeout(id);
   }, [open, ms]);
   return (
     <div className={`collapse-area ${className}`} data-open={open || undefined} inert={!open}>
-      <div className="min-h-0 overflow-hidden">{mounted ? (open ? children : last.current) : null}</div>
+      <div className="min-h-0 overflow-hidden">
+        {mounted && (open || !reduced()) ? (open ? children : last.current) : null}
+      </div>
     </div>
   );
 }

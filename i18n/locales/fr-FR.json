@@ -137,7 +137,19 @@
   },
   "demo": {
     "workbench": {
+      "billing": {
+        "question": "Comment télécharger une facture ?",
+        "answer": "Sélectionnez la commande dans la facturation, puis téléchargez la facture."
+      },
+      "password": {
+        "question": "Comment changer mon mot de passe ?",
+        "answer": "Modifiez votre mot de passe dans les paramètres du compte."
+      },
       "chat": {
+        "assistant": "Traitement par l’assistant",
+        "human": "Traitement humain",
+        "assignAssistant": "Confier à l’IA",
+        "needsHuman": "Intervention humaine requise",
         "title": "Espace de conversations",
         "queue": "Conversations",
         "choose": "Choisir une conversation",
@@ -190,6 +202,9 @@
       "status": "Connecté"
     },
     "shared": {
+      "chipsTitle": "États et libellés",
+      "headphones": "Casque",
+      "bluetooth": "Bluetooth",
       "title": "Données et saisie",
       "notes": "Notes",
       "notesPlaceholder": "Ajouter des notes",

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import {
-  Block, Btn, ChatComposer, Collapse, Empty, Filters, FlowList, Icon, Roll, Tag, TextArea,
-  Workbench, WorkbenchDetail, WorkbenchItem, stagger, useI18n,
+  AlertMark, Block, Btn, ChatComposer, ChatState, Collapse, Empty, Filters, Icon, QueueList, Roll, Tag, TextArea,
+  Tooltip,
+  Workbench, WorkbenchDetail, WorkbenchItem, useI18n,
 } from "../trm";
 
 const ENTRIES = [
@@ -9,10 +10,17 @@ const ENTRIES = [
   { id: "export", hits: 8 },
   { id: "invite", hits: 3 },
 ] as const;
-type Entry = (typeof ENTRIES)[number];
+const REVIEW_ENTRIES = [
+  ...ENTRIES,
+  { id: "billing", hits: 6 },
+  { id: "password", hits: 4 },
+] as const;
+type Entry = (typeof REVIEW_ENTRIES)[number];
 type Status = "pending" | "approved" | "rejected";
 type Filter = "all" | "pending";
 const INITIAL_LIMIT = 2;
+const FILTER_LIMITS: Record<Filter, number> = { pending: INITIAL_LIMIT, all: REVIEW_ENTRIES.length };
+const INITIAL_STATUSES: Record<string, Status> = { billing: "approved", password: "rejected" };
 
 function ReviewDetail({ item, status, answer, onAnswer, onReview }: {
   item: Entry;
@@ -22,11 +30,12 @@ function ReviewDetail({ item, status, answer, onAnswer, onReview }: {
   onReview: (status: Status) => void;
 }) {
   const { t } = useI18n();
-  const [editing, setEditing] = useState(false);
+  const [edits, setEdits] = useState<Record<string, boolean>>({});
+  const editing = edits[item.id] ?? false;
   const pending = status === "pending";
   return <WorkbenchDetail title={t(`demo.workbench.${item.id}.question`)}
     sub={[t(`demo.workbench.${status}`), t("demo.workbench.hits", { n: item.hits })]}
-    actions={pending ? <Btn onClick={() => setEditing(value => !value)}>
+    actions={pending ? <Btn onClick={() => setEdits(value => ({ ...value, [item.id]: !editing }))}>
       {t(editing ? "demo.workbench.done" : "demo.workbench.edit")}
     </Btn> : undefined}
     footMode="inline" foot={pending ? <>
@@ -35,14 +44,14 @@ function ReviewDetail({ item, status, answer, onAnswer, onReview }: {
       </Btn>
       <Btn onClick={() => onReview("rejected")}>{t("demo.workbench.reject")}</Btn>
     </> : <Tag tone={status === "approved" ? "ok" : "muted"}>{t(`demo.workbench.${status}`)}</Tag>}>
-      <div className="max-w-[var(--page-w-read)] text-[13px]">
+      <div key={`${item.id}:answer`} className="max-w-[var(--page-w-read)] text-[13px]">
         <h4 className="m-0 font-medium">{t("demo.workbench.answer")}</h4>
         <p className="mt-2 whitespace-pre-wrap text-[var(--ink-muted)]">{answer}</p>
       </div>
-      <Collapse open={editing && pending} className="max-w-[var(--page-w-read)]">
+      <Collapse key={`${item.id}:editor`} open={editing && pending} className="max-w-[var(--page-w-read)]">
         <TextArea aria-label={t("demo.workbench.answer")} value={answer} onChange={onAnswer} rows={5} />
       </Collapse>
-      <div className="max-w-[var(--page-w-read)] text-[13px]">
+      <div key={`${item.id}:sources`} className="max-w-[var(--page-w-read)] text-[13px]">
         <h4 className="m-0 font-medium">{t("demo.workbench.sources")}</h4>
         <p className="mt-2 text-[var(--ink-muted)]">{t("demo.workbench.source")}</p>
       </div>
@@ -54,60 +63,51 @@ export function WorkbenchPattern() {
   const [selected, setSelected] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>("pending");
   const [limit, setLimit] = useState(INITIAL_LIMIT);
-  const [statuses, setStatuses] = useState<Record<string, Status>>({});
+  const [statuses, setStatuses] = useState<Record<string, Status>>(INITIAL_STATUSES);
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [flowing, setFlowing] = useState(false);
   const status = (id: string) => statuses[id] ?? "pending";
   // Drafts belong to the queue so switching details or resizing does not discard an edit.
   const answer = (id: string) => answers[`${locale}:${id}`] ?? t(`demo.workbench.${id}.answer`);
-  const filtered = ENTRIES.filter(item => filter === "all" || status(item.id) === "pending");
+  const filtered = REVIEW_ENTRIES.filter(item => filter === "all" || status(item.id) === "pending");
   const shown = filtered.slice(0, limit);
-  const current = ENTRIES.find(item => item.id === selected);
-  const pending = ENTRIES.filter(item => status(item.id) === "pending").length;
+  const current = REVIEW_ENTRIES.find(item => item.id === selected);
   const review = (next: Status) => {
     if (!current) return;
-    setFlowing(true);
     setStatuses(previous => ({ ...previous, [current.id]: next }));
     if (filter === "pending") setSelected(null);
   };
 
   return <><Block title={t("demo.workbench.title")}>
     <div className="h-[480px]">
-      <Workbench selected={selected} order={ENTRIES.map(item => item.id)} onBack={() => setSelected(null)}
+      <Workbench selected={selected} order={REVIEW_ENTRIES.map(item => item.id)} onBack={() => setSelected(null)}
         empty={<Empty icon="chat" title={t("demo.workbench.choose")} />}
         listHead={<>
           <div className="trm-workbench-heading">
-            <h3>{t("demo.workbench.pending")}</h3><Roll value={String(pending)} />
+            <h3><Roll value={t(`demo.workbench.${filter}`)} /></h3>
+            <Roll value={String(filtered.length)} />
           </div>
           <div className="trm-workbench-filters">
             <Filters value={filter} onChange={value => {
-              setFlowing(true);
               setFilter(value);
-              setLimit(INITIAL_LIMIT);
-              const next = ENTRIES.filter(item => value === "all" || status(item.id) === "pending");
-              if (!next.slice(0, INITIAL_LIMIT).some(item => item.id === selected)) setSelected(null);
+              setLimit(FILTER_LIMITS[value]);
+              const next = REVIEW_ENTRIES.filter(item => value === "all" || status(item.id) === "pending");
+              if (!next.slice(0, FILTER_LIMITS[value]).some(item => item.id === selected)) setSelected(null);
             }} options={(["pending", "all"] as const).map(id => ({ id, label: t(`demo.workbench.${id}`) }))} />
           </div>
         </>}
-        list={<div className="trm-workbench-rows">
-            {/* Only the initial list staggers; later changes use FlowList's expand/collapse motion. */}
-            <FlowList items={shown} keyOf={item => item.id} className={flowing ? "flow-quiet" : ""}
-              render={(item, i) => (
-              <div className="rise" style={stagger(i)}>
-                <WorkbenchItem title={t(`demo.workbench.${item.id}.question`)}
+        list={<QueueList scope={filter} order={["pending", "all"]} className="trm-workbench-rows"
+            items={shown} keyOf={item => item.id} render={item => (
+              <WorkbenchItem title={t(`demo.workbench.${item.id}.question`)}
                   meta={t("demo.workbench.hits", { n: item.hits })} preview={answer(item.id)}
                   tag={<Tag>{t(`demo.workbench.${status(item.id)}`)}</Tag>}
                   selected={selected === item.id} onClick={() => setSelected(item.id)} />
-              </div>
-            )} />
-            {!shown.length ? <Empty icon="check" title={t("demo.workbench.clear")} /> : null}
-            {shown.length < filtered.length ? <div className="p-4 text-center">
-              <Btn onClick={() => { setFlowing(true); setLimit(value => value + INITIAL_LIMIT); }}>
+            )} empty={<Empty icon="check" title={t("demo.workbench.clear")} />}
+            foot={shown.length < filtered.length ? <div className="p-4 text-center">
+              <Btn onClick={() => setLimit(value => value + INITIAL_LIMIT)}>
                 {t("demo.workbench.more")}
               </Btn>
-            </div> : null}
-          </div>}
-        detail={current ? <ReviewDetail key={current.id} item={current} status={status(current.id)}
+            </div> : null} />}
+        detail={current ? <ReviewDetail item={current} status={status(current.id)}
           answer={answer(current.id)} onReview={review}
           onAnswer={value => setAnswers(previous => ({ ...previous, [`${locale}:${current.id}`]: value }))}
         /> : null} />
@@ -121,10 +121,12 @@ function ChatQueue() {
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [replies, setReplies] = useState<Record<string, string[]>>({});
   const [noticeHidden, setNoticeHidden] = useState<Record<string, boolean>>({});
+  const [handlers, setHandlers] = useState<Record<string, boolean>>({ access: true });
   const current = ENTRIES.find(item => item.id === selected);
   const key = `${locale}:${selected}`;
   const messages = replies[key] ?? [];
   const draft = drafts[key] ?? "";
+  const human = handlers[selected ?? ""] ?? false;
   const send = () => {
     if (!draft.trim()) return;
     setReplies(previous => ({ ...previous, [key]: [...(previous[key] ?? []), draft.trim()] }));
@@ -135,33 +137,46 @@ function ChatQueue() {
       <Workbench selected={selected} order={ENTRIES.map(item => item.id)} onBack={() => select(null)}
         listHead={<div className="trm-workbench-heading"><h3>{t("demo.workbench.chat.queue")}</h3></div>}
         empty={<Empty icon="chat" title={t("demo.workbench.chat.choose")} />}
-        list={<div className="trm-workbench-rows">
-          {ENTRIES.map(item => <WorkbenchItem key={item.id} title={t(`demo.workbench.chat.${item.id}`)}
+        list={<QueueList scope="all" className="trm-workbench-rows" items={ENTRIES} keyOf={item => item.id}
+          render={item => <WorkbenchItem title={t(`demo.workbench.chat.${item.id}`)}
             avatar={<Icon name="chat" size={24} />} preview={t(`demo.workbench.${item.id}.question`)}
-            selected={selected === item.id} onClick={() => select(item.id)} />)}
-        </div>}
-        detail={current ? <WorkbenchDetail title={t(`demo.workbench.chat.${current.id}`)}
-          sub={[t("demo.workbench.chat.platform"),
-            t(messages.length ? "demo.workbench.chat.replied" : "demo.workbench.chat.waiting")]}
-          actions={<Btn onClick={() => setNoticeHidden(previous => ({ ...previous, [key]: !previous[key] }))}>
-            {t(noticeHidden[key] ? "demo.workbench.chat.showNotice" : "demo.workbench.chat.hideNotice")}
-          </Btn>}
+            selected={selected === item.id} onClick={() => select(item.id)} />} />}
+        detail={current ? <WorkbenchDetail title={<span className="inline-flex items-center gap-2">
+          <Tooltip text={t("demo.workbench.chat.platform")}>
+            <span role="img" aria-label={t("demo.workbench.chat.platform")}><Icon name="globe" size={18} /></span>
+          </Tooltip>
+          <Roll value={t(`demo.workbench.chat.${current.id}`)} />
+        </span>}
+          sub={t(messages.length ? "demo.workbench.chat.replied" : "demo.workbench.chat.waiting")}
+          scrollToEnd={`${key}:${messages.length}`}
+          actions={<>
+            <Btn disabled={!human}
+              onClick={() => setHandlers(previous => ({ ...previous, [current.id]: false }))}>
+              {t("demo.workbench.chat.assignAssistant")}
+            </Btn>
+            <Btn onClick={() => setNoticeHidden(previous => ({ ...previous, [key]: !previous[key] }))}>
+              {t(noticeHidden[key] ? "demo.workbench.chat.showNotice" : "demo.workbench.chat.hideNotice")}
+            </Btn>
+          </>}
           notice={!noticeHidden[key] ? <div className="rounded-[var(--rs)] bg-[var(--group)] p-3 text-[13px]">
             {t("demo.workbench.chat.notice")}
           </div> : null}
           footMode="pinned" foot={<ChatComposer value={draft} placeholder={t("demo.workbench.chat.placeholder")}
+            state={<ChatState tone={human ? "human" : "assistant"}
+              label={t(human ? "demo.workbench.chat.human" : "demo.workbench.chat.assistant")} />}
             sendLabel={t("demo.workbench.chat.send")} onSend={send}
             onChange={value => setDrafts(previous => ({ ...previous, [key]: value }))} />}>
-          <div key="incoming" className="w-fit max-w-[70%] rounded-[var(--r)] bg-[var(--group)] p-3 text-[13px]">
+          <div key={`${key}:incoming`}
+            className="relative w-fit max-w-[70%] rounded-[var(--r)] bg-[var(--group)] p-3 text-[13px]">
             {t(`demo.workbench.${current.id}.question`)}
+            {current.id === "access" ? <span className="trm-alert-mark-corner">
+              <AlertMark label={t("demo.workbench.chat.needsHuman")} />
+            </span> : null}
           </div>
-          <div key="replies" role="log" aria-label={t("demo.workbench.chat.reply")}>
-            <FlowList items={messages.map((message, i) => ({ id: String(i), message }))}
-              keyOf={message => message.id} itemClassName="pb-3" render={({ message }) => (
-                <div className="ml-auto w-fit max-w-[70%] whitespace-pre-wrap rounded-[var(--r)]
-                  bg-[var(--accent-soft)] p-3 text-[13px]">{message}</div>
-              )} />
-          </div>
+          {messages.map((message, i) => <div key={`${key}:reply:${i}`} role="log"
+            aria-label={t("demo.workbench.chat.reply")}
+            className="ml-auto w-fit max-w-[70%] whitespace-pre-wrap rounded-[var(--r)]
+              bg-[var(--accent-soft)] p-3 text-[13px]">{message}</div>)}
         </WorkbenchDetail> : null} />
     </div>
   </Block>;

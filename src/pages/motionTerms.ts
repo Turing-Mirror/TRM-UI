@@ -6,7 +6,85 @@ import type { Text } from "./rules";
  */
 export type MotionTerm = { id: string; code: string; name: Text; desc: Text };
 
+// Shared with interaction rules so the selection principle has one source.
+export const ITEM_SWITCH_RULE: Text = {
+  "zh-CN": "切换条目时，共有控件与框架不移动、不淡出；短文字用 Roll，增删块用 Collapse / FlowList，只有新内容入场。禁止整页交叉淡入淡出；依次浮现只用于首次出现。",
+  "zh-TW": "切換項目時，共有控制元件與框架不移動、不淡出；短文字用 Roll，增刪區塊用 Collapse / " +
+    "FlowList，只有新內容入場。禁止整頁交叉淡入淡出；依次浮現只用於首次出現。",
+  "en-US": "When switching items, shared controls and frames stay still and opaque. Short text uses " +
+    "Roll; added or removed blocks use Collapse / FlowList. Only new content enters. No " +
+    "whole-view crossfade; stagger only on first appearance.",
+  "ja-JP": "項目を切り替えても共通の操作と枠は動かさず、薄くしない。短い文字は Roll、ブロックの追加と削除は Collapse / FlowList " +
+    "を使う。新しい内容だけが入る。画面全体をクロスフェードせず、順次表示は初回だけにする。",
+  "ko-KR": "항목을 바꿔도 공통 컨트롤과 틀은 움직이거나 흐려지지 않는다. 짧은 글자는 Roll, 블록 추가와 제거는 Collapse / FlowList를 쓴다. 새 " +
+    "내용만 들어온다. 전체 화면 교차 페이드는 쓰지 않으며 순차 등장은 처음에만 쓴다.",
+  "fr-FR": "Au changement d’élément, commandes et cadres communs restent fixes et opaques. Roll " +
+    "change le texte court ; Collapse / FlowList ajoute ou retire les blocs. Seul le contenu " +
+    "nouveau entre. Aucun fondu global ; apparition décalée au premier affichage seulement.",
+  "es-ES": "Al cambiar de elemento, los controles y marcos comunes permanecen fijos y opacos. El " +
+    "texto breve usa Roll; los bloques añadidos o retirados usan Collapse / FlowList. Solo " +
+    "entra contenido nuevo. Sin fundido global; aparición escalonada solo al inicio.",
+  "ru-RU": "При смене элемента общие рамки и элементы управления неподвижны и непрозрачны. Короткий " +
+    "текст использует Roll, добавление и удаление блоков — Collapse / FlowList. Входит только" +
+    " новое содержимое. Без общего перекрёстного затухания; поочерёдное появление только при " +
+    "первом показе.",
+};
+
+export const QUEUE_LIST_RULE: Text = {
+  "zh-CN": "长工作队列使用 QueueList：筛选按页签方向整列推移并回到顶部，追加只展开新行，原位更新不动；中间增删才带动邻行。FlowList 全量重排用于短列表。",
+  "zh-TW": "長工作佇列使用 QueueList：篩選按頁籤方向整列推移並回到頂部，追加只展開新列，原位更新不動；中間增刪才帶動鄰列。FlowList 全量重排用於短清單。",
+  "en-US": "Long work queues use QueueList: filters push the whole list in tab order and reset " +
+    "scroll; appends expand only new rows, content updates stay still, and middle inserts or " +
+    "removals shift neighbours. Full FlowList reflow is for short lists.",
+  "ja-JP": "長い作業キューには QueueList を使う。絞り込みはタブ順に一覧全体を押し移して先頭へ戻し、末尾追加は新しい行だけ開く。内容更新は動かさず、途中の追加・削除だけ隣の行を動" +
+    "かす。FlowList の全体再配置は短い一覧向け。",
+  "ko-KR": "긴 작업 대기열에는 QueueList를 쓴다. 필터는 탭 순서대로 목록 전체를 밀고 맨 위로 돌아간다. 끝에 추가된 행만 펼치고 내용 갱신은 움직이지 않는다. " +
+    "중간 삽입과 제거만 이웃 행을 움직인다. FlowList 전체 재배치는 짧은 목록에 쓴다.",
+  "fr-FR": "Les longues files utilisent QueueList : les filtres poussent la liste selon l’ordre des " +
+    "onglets et remontent en haut. Seules les nouvelles lignes finales se déploient ; les " +
+    "mises à jour restent fixes. Seuls les ajouts ou retraits au milieu déplacent les " +
+    "voisines. FlowList reste pour les listes courtes.",
+  "es-ES": "Las colas largas usan QueueList: los filtros empujan toda la lista según las pestañas y " +
+    "vuelven arriba. Solo se expanden las filas añadidas al final; actualizar contenido no " +
+    "mueve filas. Solo insertar o quitar en medio desplaza las vecinas. FlowList se reserva " +
+    "para listas cortas.",
+  "ru-RU": "Длинные очереди используют QueueList: фильтры сдвигают весь список по порядку вкладок и " +
+    "возвращают наверх. В конце раскрываются только новые строки; обновление текста " +
+    "неподвижно. Лишь вставка или удаление в середине сдвигает соседей. Полная перестройка " +
+    "FlowList — для коротких списков.",
+};
+
 export const MOTION_TERMS: MotionTerm[] = [
+  {
+    id: "queue-list",
+    code: "QueueList",
+    name: {
+      "zh-CN": "长队列",
+      "zh-TW": "長佇列",
+      "en-US": "Long queues",
+      "ja-JP": "長いキュー",
+      "ko-KR": "긴 대기열",
+      "fr-FR": "Files longues",
+      "es-ES": "Colas largas",
+      "ru-RU": "Длинные очереди",
+    },
+    desc: QUEUE_LIST_RULE,
+  },
+  {
+    id: "item-switch",
+    code: "WorkbenchDetail, Roll, Collapse, FlowList",
+    name: {
+      "zh-CN": "不变的部分不动",
+      "zh-TW": "不變的部分不動",
+      "en-US": "Keep shared parts still",
+      "ja-JP": "共通部分は動かさない",
+      "ko-KR": "공통 부분은 그대로 둔다",
+      "fr-FR": "Garder les parties communes fixes",
+      "es-ES": "Mantener fijas las partes comunes",
+      "ru-RU": "Общие части неподвижны",
+    },
+    desc: ITEM_SWITCH_RULE,
+  },
   {
     id: "push",
     code: "Swap, Panes, PageHost",
@@ -150,26 +228,18 @@ export const MOTION_TERMS: MotionTerm[] = [
     code: "stagger(), .rise",
     name: { "zh-CN": "依次浮现", "zh-TW": "依次浮現", "en-US": "Staggered rise", "ja-JP": "順に浮かぶ", "ko-KR": "차례로 떠오름", "fr-FR": "Apparition décalée", "es-ES": "Aparición escalonada", "ru-RU": "Поочерёдное появление" },
     desc: {
-      "zh-CN": "一组卡片或条目首次出现时逐项浮现。之后切换筛选或翻页时不再重复。 工作台切换条目时，标题、子字段、操作、提示和正文分块依次浮现；同一条目的更新使用滚字或折叠。",
-      "zh-TW": "一組卡片或條目首次出現時逐項浮現。之後切換篩選或翻頁時不再重複。 工作台切換項目時，標題、子欄位、操作、提示和正文分塊依次浮現；同一項目的更新使用滾字或摺疊。",
-      "en-US": "A group of cards or items rises one by one when it first appears. It is not repeated on " +
-        "later filter or page changes. On workbench selection changes, the title, sub fields, " +
-        "actions, notice and body blocks rise in sequence; updates to the same item use Roll or " +
-        "Collapse.",
-      "ja-JP": "カードや項目のまとまりが初めて表示されるとき、一つずつ浮かび上がります。その後の絞り込みやページ切り替えでは繰り返しません。 " +
-        "作業台で項目を切り替えると、タイトル、補足項目、操作、案内、本文が順に現れる。同じ項目の更新には Roll または Collapse を使う。",
-      "ko-KR": "카드나 항목 묶음이 처음 나타날 때 하나씩 떠오릅니다. 이후 필터나 페이지를 바꿀 때는 반복하지 않습니다. 작업대 항목을 바꾸면 제목, 하위 필드, 작업, 안내, " +
-        "본문이 차례로 나타난다. 같은 항목의 갱신에는 Roll 또는 Collapse를 쓴다.",
-      "fr-FR": "Un groupe de cartes ou d'éléments apparaît un par un lors de sa première apparition. L'effet " +
-        "n'est pas répété lors des changements de filtre ou de page. Dans l’espace de travail, titre, " +
-        "champs, actions, avis et blocs apparaissent en séquence ; les mises à jour utilisent Roll ou " +
-        "Collapse.",
-      "es-ES": "Un grupo de tarjetas o elementos aparece uno a uno la primera vez que se muestra. No se " +
-        "repite en cambios posteriores de filtro o de página. Al cambiar de elemento, título, campos, " +
-        "acciones, aviso y bloques aparecen en secuencia; las actualizaciones usan Roll o Collapse.",
-      "ru-RU": "Группа карточек или элементов при первом показе появляется по одному. При последующей смене " +
-        "фильтра или страницы это не повторяется. При выборе элемента заголовок, поля, действия, " +
-        "уведомление и блоки появляются по очереди; обновления используют Roll или Collapse.",
+      "zh-CN": "一组内容仅在首次出现时依次浮现；切换条目、筛选或页码时不重复。",
+      "zh-TW": "一組內容僅在首次出現時依次浮現；切換項目、篩選或頁碼時不重複。",
+      "en-US": "Content rises in sequence only on first appearance, never on item, filter or page " +
+        "changes.",
+      "ja-JP": "内容が順に浮かぶのは初回表示だけで、項目・絞り込み・ページの変更では繰り返さない。",
+      "ko-KR": "내용의 순차 등장은 처음 표시할 때만 쓰며 항목, 필터, 페이지 변경에서는 반복하지 않는다.",
+      "fr-FR": "Le contenu apparaît en séquence uniquement au premier affichage, jamais au changement " +
+        "d’élément, de filtre ou de page.",
+      "es-ES": "El contenido aparece en secuencia solo al mostrarse por primera vez, nunca al cambiar de" +
+        " elemento, filtro o página.",
+      "ru-RU": "Содержимое появляется по очереди только при первом показе, без повтора при смене " +
+        "элемента, фильтра или страницы.",
     },
   },
 ];
