@@ -429,7 +429,7 @@ export function SliderValue({ value, min, max, step, onChange, format, ariaLabel
     </span>
     {editing ? <input ref={input} type="text" inputMode="decimal" value={draft} disabled={disabled}
       aria-label={ariaLabel ?? t("ui.range.value")}
-      className="absolute inset-0 w-full min-w-0 rounded-[var(--rs)] border-0 bg-[var(--surface)] p-0 text-inherit text-right tabular-nums outline-none shadow-[0_0_0_1px_var(--accent)]"
+      className="trm-slider-value-input"
       onChange={e => setDraft(e.target.value)}
       onDoubleClick={e => e.stopPropagation()}
       onBlur={() => finish(true)}

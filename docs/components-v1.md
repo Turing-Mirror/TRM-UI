@@ -70,6 +70,8 @@ npm pack
 
 `SliderValue` 可独立放在 `RangeBar` 旁，供自定义布局复用同一数值输入。参数为 `value`、`min`、`max`、`step`、`onChange`，可选 `format`、`ariaLabel`、`disabled`、`className`；类型为 `SliderValueProps`。不传 `className` 时沿用 Slider 的 13px、最小宽度 56px、右对齐等宽数字；传入时替换这组显示样式。
 
+编辑框默认至少 80px 宽、30px 高，左右留出 8px 内边距。它沿数字右侧向左展开，不改变静态数字和滑轨布局；可通过 `--slider-value-edit-width`、`--slider-value-edit-height` 调整编辑尺寸。
+
 提交按 `min` 起算的 `step` 校准，并限制在范围内；支持小数与科学记数。空值或无效数字取消本次输入。编辑期间外部更新不覆盖草稿，禁用时不可编辑。重复失焦不会重复提交，数值编辑的双击、Enter 与 Esc 不触发父级快捷操作。RangeBar 的拖动和产品既有轨道双击复位逻辑保持不变。
 
 若产品显示百分比，应向数值编辑器传入百分比尺度的 `value/min/max/step`，并在 `onChange` 中换算回存储值；不要通过 `format` 隐藏这层尺度差异。

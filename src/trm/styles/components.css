@@ -1237,3 +1237,24 @@ option {
 .trm-outline-mark { border-radius: 999px; background: var(--accent); }
 .trm-outline-rail:not([data-side]) .trm-outline-mark { height: 2px; }
 .trm-outline-rail[data-side] .trm-outline-mark { width: 2px; }
+
+/* Keep the readout compact; give its editor room without moving the slider. */
+.trm-slider-value-input {
+  position: absolute;
+  z-index: 1;
+  inset-inline-end: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: max(100%, var(--slider-value-edit-width, 5rem));
+  min-height: var(--slider-value-edit-height, 30px);
+  border: 0;
+  border-radius: var(--rs);
+  padding: 4px 8px;
+  background: var(--surface);
+  color: inherit;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  outline: none;
+  box-shadow: 0 0 0 1px var(--accent);
+}
