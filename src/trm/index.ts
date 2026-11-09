@@ -123,3 +123,5 @@ export {
   Workbench, WorkbenchItem, WorkbenchDetail,
   type WorkbenchProps, type WorkbenchItemProps, type WorkbenchDetailProps,
 } from "./components/Workbench";
+export { ImageCropDialog, type ImageCropDialogProps } from "./components/ImageCropDialog";
+export { ResourceDownloadRow, type ResourceDownloadRowProps } from "./components/ResourceDownloadRow";

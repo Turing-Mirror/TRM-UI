@@ -303,3 +303,13 @@ Enter 与发送按钮调用 `onSend`；Shift + Enter 换行，输入法确认不
 推移动效通过 Web Animations 从当前绘制的透明度与位移继续。动画途中反向时不恢复到全亮。正常完成的方向、时长与前后淡入淡出节奏保持一致；减少动态效果时立即到位。取消旧动画时处理 `finished` 的正常拒绝，行为依据 [MDN 的 cancel 说明](https://developer.mozilla.org/en-US/docs/Web/API/Animation/cancel)。
 
 回归覆盖：隐藏后重新显示、持续修改高度、滚动范围收缩、当前透明度为 0.18 时返回，以及已有 DOM 和草稿留存。
+
+## 封面裁剪
+
+`ImageCropDialog` 提供封面选择、裁剪、预览和导出。调用方传入展示名称、`pickImage`、可选的 `loadInitialImage`，以及 `onSave` 和 `onClose`。图片回调返回可由浏览器读取的图片地址，选择取消时返回 `null`。`onSave` 收到 JPEG data URL。文件选择、写入和刷新模型清单由产品负责。
+
+默认选区为 4:3，可切换至 1:1 或自由比例。预览按帧绘制，点击保存时才编码完整 JPEG。弹窗沿用 TRM UI 的焦点和 Esc 行为。
+
+## 资源下载行
+
+`ResourceDownloadRow` 共用下载、卸载、已安装和进度的显示。传入资源名称、说明、大小等详情，以及安装状态和操作回调。下载、卸载、并发限制与错误恢复仍由产品负责。

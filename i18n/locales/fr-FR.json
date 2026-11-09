@@ -10,6 +10,32 @@
     "ru-RU": "Русский"
   },
   "ui": {
+    "download": {
+      "recommended": "Recommandé",
+      "installed": "Installé",
+      "removing": "Suppression…",
+      "remove": "Désinstaller",
+      "downloading": "Téléchargement…",
+      "download": "Télécharger"
+    },
+    "crop": {
+      "title": "Changer et rogner la couverture",
+      "lead": "Recadrer une couverture pour « {v0} ». Molette pour zoomer, faites glisser l'image pour la déplacer et les bords de la sélection pour la redimensionner.",
+      "pick": "Choisir une image…",
+      "pickHint": "Formats pris en charge : jpg, png, webp et bmp.",
+      "repick": "Choisir une autre image",
+      "zoomIn": "Zoom avant",
+      "zoomOut": "Zoom arrière",
+      "fit": "Ajuster",
+      "zoom100": "100 %",
+      "ratioLabel": "Proportions :",
+      "free": "Libre",
+      "previewAfter": "Après recadrage",
+      "previewBefore": "Original",
+      "previewNote": "Taille de sortie : {v0} px",
+      "save": "Enregistrer la couverture",
+      "badImage": "Données d'image invalides. Échec de l'enregistrement"
+    },
     "chart": {
       "chart": "Graphique",
       "table": "Tableau",

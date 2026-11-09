@@ -240,7 +240,13 @@ export function Filters<T extends string>({ value, options, onChange }: { value:
  * 翻页。默认隐藏单页；持续显示页码的列表可设置 showSinglePage。
  * 换页时当前页的标记滑过去；留下的页码滑到新位置，新出现的页码淡入，离开的页码原地淡出，整排不跳。
  */
-export function Pager({ page, pages, onChange, showSinglePage = false }: { page: number; pages: number; onChange: (p: number) => void; showSinglePage?: boolean }) {
+export function Pager({ page, pages, onChange, showSinglePage = false, className = "mt-[var(--pager-margin-top,2rem)]" }: {
+  page: number;
+  pages: number;
+  onChange: (p: number) => void;
+  showSinglePage?: boolean;
+  className?: string;
+}) {
   const { t } = useI18n();
   const look = useHoverStyle();
   const { box, pos, armed } = useSlider<HTMLDivElement>();
@@ -253,15 +259,17 @@ export function Pager({ page, pages, onChange, showSinglePage = false }: { page:
     const el = box.current;
     if (!el) return;
     const now = new Map<string, { x: number; label: string }>();
-    const easing = curve("--ease-nav");
     const quiet = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const previous = lefts.current;
+    const easing = !quiet && previous ? curve("--ease-nav") : undefined;
     el.querySelectorAll<HTMLElement>(":scope > [data-k]").forEach((node) => {
       const key = node.dataset.k ?? "";
-      now.set(key, { x: node.offsetLeft, label: node.textContent ?? "" });
-      const was = lefts.current?.get(key);
-      if (quiet || !lefts.current) return;
+      const x = node.offsetLeft;
+      now.set(key, { x, label: node.textContent ?? "" });
+      if (quiet || !previous || !node.animate) return;
+      const was = previous.get(key);
       if (!was) node.animate([{ opacity: 0, transform: "scale(0.86)" }, { opacity: 1, transform: "none" }], { duration: FLOW_MS, easing });
-      else if (was.x !== node.offsetLeft) node.animate([{ transform: `translate3d(${was.x - node.offsetLeft}px, 0, 0)` }, { transform: "none" }], { duration: FLOW_MS, easing });
+      else if (was.x !== x) node.animate([{ transform: `translate3d(${was.x - x}px, 0, 0)` }, { transform: "none" }], { duration: FLOW_MS, easing });
     });
     const gone = lefts.current ? [...lefts.current].filter(([k]) => !now.has(k)) : [];
     lefts.current = now;
@@ -276,7 +284,7 @@ export function Pager({ page, pages, onChange, showSinglePage = false }: { page:
   const btn = "relative h-8 min-w-8 px-2 grid place-items-center rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[13px] tabular-nums transition-colors disabled:opacity-30 disabled:cursor-default";
   const hover = hoverInk(look);
   return (
-    <nav aria-label={t("ui.pager.label")} className="mt-[var(--pager-margin-top,2rem)] flex items-center justify-center gap-1">
+    <nav aria-label={t("ui.pager.label")} className={`${className} flex items-center justify-center gap-1`}>
       <button type="button" aria-label={t("ui.pager.prev")} disabled={page <= 1} onClick={() => onChange(page - 1)} className={`${btn} text-[var(--ink-muted)] ${hover}`}>
         <Icon name="back" size={15} />
       </button>

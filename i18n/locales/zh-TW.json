@@ -10,6 +10,32 @@
     "ru-RU": "Русский"
   },
   "ui": {
+    "download": {
+      "recommended": "推薦",
+      "installed": "已安裝",
+      "removing": "卸載中…",
+      "remove": "卸載",
+      "downloading": "下載中…",
+      "download": "下載"
+    },
+    "crop": {
+      "title": "更換封面並裁剪",
+      "lead": "為「{v0}」裁剪封面。滾輪縮放，拖動圖片平移，拖動選區邊緣調整範圍。",
+      "pick": "選擇圖片…",
+      "pickHint": "支援 jpg、png、webp、bmp。",
+      "repick": "換一張圖",
+      "zoomIn": "放大",
+      "zoomOut": "縮小",
+      "fit": "適應視窗",
+      "zoom100": "100%",
+      "ratioLabel": "比例：",
+      "free": "自由",
+      "previewAfter": "裁剪後",
+      "previewBefore": "原圖",
+      "previewNote": "輸出尺寸：{v0} px",
+      "save": "儲存封面",
+      "badImage": "圖片資料無效，儲存失敗"
+    },
     "chart": {
       "chart": "圖表",
       "table": "表格",

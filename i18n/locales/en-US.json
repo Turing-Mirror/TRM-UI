@@ -10,6 +10,32 @@
     "ru-RU": "Русский"
   },
   "ui": {
+    "download": {
+      "recommended": "Recommended",
+      "installed": "Installed",
+      "removing": "Removing…",
+      "remove": "Uninstall",
+      "downloading": "Downloading…",
+      "download": "Download"
+    },
+    "crop": {
+      "title": "Change and crop the cover",
+      "lead": "Crop a cover for “{v0}”. Scroll to zoom, drag the image to pan, and drag the selection edges to resize.",
+      "pick": "Choose an image…",
+      "pickHint": "Supports jpg, png, webp and bmp.",
+      "repick": "Pick another image",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "fit": "Fit",
+      "zoom100": "100%",
+      "ratioLabel": "Ratio:",
+      "free": "Free",
+      "previewAfter": "Cropped",
+      "previewBefore": "Original",
+      "previewNote": "Output size: {v0} px",
+      "save": "Save cover",
+      "badImage": "Invalid image data. Save failed"
+    },
     "chart": {
       "chart": "Chart",
       "table": "Table",

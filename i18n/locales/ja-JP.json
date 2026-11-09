@@ -10,6 +10,32 @@
     "ru-RU": "Русский"
   },
   "ui": {
+    "download": {
+      "recommended": "推奨",
+      "installed": "インストール済み",
+      "removing": "削除中…",
+      "remove": "削除",
+      "downloading": "ダウンロード中…",
+      "download": "ダウンロード"
+    },
+    "crop": {
+      "title": "カバーの変更と切り抜き",
+      "lead": "「{v0}」のカバーを切り抜きます。ホイールで拡大縮小、画像をドラッグして移動、選択範囲の端をドラッグして範囲を調整します。",
+      "pick": "画像を選択…",
+      "pickHint": "jpg、png、webp、bmp に対応しています。",
+      "repick": "別の画像を選ぶ",
+      "zoomIn": "拡大",
+      "zoomOut": "縮小",
+      "fit": "合わせる",
+      "zoom100": "100%",
+      "ratioLabel": "比率：",
+      "free": "自由",
+      "previewAfter": "切り抜き後",
+      "previewBefore": "元の画像",
+      "previewNote": "出力サイズ：{v0} px",
+      "save": "カバーを保存",
+      "badImage": "画像データが無効なため保存できませんでした"
+    },
     "chart": {
       "chart": "グラフ",
       "table": "表",
