@@ -275,8 +275,10 @@ class Sim {
     this.raf = 0;
   }
 
+  private geometry: Slot[] = [];
+
   private bounds() {
-    const s = this.io.slots();
+    const s = this.geometry;
     const first = s[0];
     const end = s[s.length - 1];
     return { s, min: first?.x ?? 0, max: end ? end.x + end.w : 0 };
@@ -284,7 +286,8 @@ class Sim {
 
   /** 弹向某一项。fromClick：点击触发，到达时才切换。 */
   target(id: string, fromClick: boolean) {
-    const slot = this.io.slots().find((s) => s.id === id);
+    this.geometry = this.io.slots();
+    const slot = this.geometry.find((s) => s.id === id);
     // 量不到位置（藏在看不见的地方）时不做动画；点击照样立即切换
     if (!slot || slot.w === 0) {
       if (fromClick) this.io.choose(id);
@@ -308,8 +311,11 @@ class Sim {
 
   /** 排版变了（字数、窗口、语言）：目标重新量一次；没在动的话直接放到位。 */
   settle(force = false) {
+    // A commit or resize can change the layout. Animation frames reuse this
+    // snapshot so painting the thumb never forces a layout read on the next frame.
+    this.geometry = this.io.slots();
     if (!this.goal) return;
-    const slot = this.io.slots().find((s) => s.id === this.goal);
+    const slot = this.geometry.find((s) => s.id === this.goal);
     if (!slot) return;
     if (slot.x === this.tx && slot.w === this.tw && !force) return;
     this.tx = slot.x;
@@ -407,7 +413,7 @@ class Sim {
     this.x += this.v * dt;
     // 点击：滑块中心进入目标那一项的范围时就切换，不等它完全停稳
     if (this.pending) {
-      const slot = this.io.slots().find((s) => s.id === this.pending);
+      const slot = this.geometry.find((s) => s.id === this.pending);
       const mid = this.x + this.w / 2;
       if (!slot || (mid >= slot.x && mid <= slot.x + slot.w)) this.arrive();
     }

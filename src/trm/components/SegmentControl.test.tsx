@@ -90,6 +90,25 @@ describe("SegmentControl 的指针收尾", () => {
     expect(glass.style.transform).toBe("none");
   });
 
+  it("动画帧复用排版测量，父页面重绘后会更新几何", () => {
+    const { root, rerender, changed } = setup();
+    const widths = vi.mocked(Object.getOwnPropertyDescriptor(HTMLElement.prototype, "offsetWidth")!.get!);
+    const offsets = vi.mocked(Object.getOwnPropertyDescriptor(HTMLElement.prototype, "offsetLeft")!.get!);
+    act(() => root.querySelectorAll("button")[1].click());
+    widths.mockClear();
+    offsets.mockClear();
+    finishFrames(3);
+    expect(widths).not.toHaveBeenCalled();
+    expect(offsets).not.toHaveBeenCalled();
+    expect(changed).not.toHaveBeenCalled();
+
+    widths.mockReturnValue(120);
+    rerender();
+    finishFrames();
+    expect(changed).toHaveBeenCalledExactlyOnceWith("b");
+    expect(root.querySelector<HTMLElement>(".seg-thumb")!.style.width).toBe("120px");
+  });
+
   it("拖动时失去 pointer capture 也会落定选择并结束动画循环", () => {
     const { root, changed } = setup();
     pointer(root, "pointerdown");
