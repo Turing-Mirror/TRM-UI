@@ -125,3 +125,5 @@ export {
 } from "./components/Workbench";
 export { ImageCropDialog, type ImageCropDialogProps } from "./components/ImageCropDialog";
 export { ResourceDownloadRow, type ResourceDownloadRowProps } from "./components/ResourceDownloadRow";
+export { CatalogCover } from "./components/CatalogCover";
+export { TransferProgress } from "./components/TransferProgress";
