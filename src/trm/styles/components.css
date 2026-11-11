@@ -94,39 +94,6 @@ html[data-input="pointer"] :focus-visible {
     opacity: 0.45;
   }
 }
-/* 顶部页签换页（PageHost axis="x"）：旧页当帧撤下，只有新页淡入并顺着方向走一小步。
-   方向由页签上的滑块表达，两页文字不会叠在一起。 */
-@keyframes enterL {
-  from {
-    opacity: 0;
-    transform: translateX(12px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes enterR {
-  from {
-    opacity: 0;
-    transform: translateX(-12px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-.page-enter-l {
-  animation: enterL var(--page-in-ms) var(--ease) both;
-}
-.page-enter-r {
-  animation: enterR var(--page-in-ms) var(--ease) both;
-}
-/* 自管换页的产品若仍挂着离场层，这一层直接不可见。 */
-.page-leave-l,
-.page-leave-r {
-  visibility: hidden;
-}
 @keyframes spotlight {
   0% {
     background: color-mix(in srgb, var(--accent) 14%, transparent);
@@ -478,29 +445,7 @@ option {
   }
 }
 
-/* 侧栏导航配 PageHost axis="y"：旧页先快速淡出，淡完新页才从去向那一侧进来，
-   任何时刻只看得到一页。离场时长 --page-out-ms 必须与 PageHost 的 PAGE_OUT_MS 一致。 */
-@keyframes leaveY {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
-@keyframes enterU {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: none; }
-}
-@keyframes enterD {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: none; }
-}
-.page-leave-u, .page-leave-d { animation: leaveY var(--page-out-ms) var(--ease-out-quick) forwards; }
-.page-enter-u { animation: enterU var(--page-in-ms) var(--ease) var(--page-out-ms) both; }
-.page-enter-d { animation: enterD var(--page-in-ms) var(--ease) var(--page-out-ms) both; }
-/* 长期图层只给 WebKit（见文件末尾说明）；Chromium 动画结束后撤层，文字按原样重画。 */
-@supports (hanging-punctuation: first) {
-  .page-leave-u, .page-enter-u, .page-leave-d, .page-enter-d { will-change: transform, opacity; }
-}
-
-/* 页内局部视图的浮现。整页导航使用上面的同步推移。 */
+/* 页内局部视图的浮现。整页导航由 PageHost 整页推移。 */
 @keyframes view-in {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: none; }

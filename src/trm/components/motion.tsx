@@ -188,7 +188,7 @@ function usePushMotion(phase: PushPhase, seq: number, dir: Dir, transition: Pane
 
 export function PushLayer({ phase, seq, dir, className = "", children, transition = "push", style }: {
   phase: PushPhase; seq: number; dir: Dir; className?: string; children: ReactNode;
-  transition?: "push" | "queue" | "body"; style?: CSSProperties;
+  transition?: "push" | "slide" | "queue" | "body"; style?: CSSProperties;
 }) {
   const node = usePushMotion(phase, seq, dir, transition);
   return <div ref={node} inert={phase === "leave"} aria-hidden={phase === "leave" || undefined}
@@ -300,25 +300,28 @@ export function Pane({ id, children, className = "" }: { id: string; children: R
  * 同一处内容换了一批：换筛选、换排序、翻页、换步骤。k 变了，旧的推出去、新的推进来，
  * 外层底板只伸缩高度。dir 给出方向（翻到下一页为 1，上一页为 -1），不给时从右边进。
  * 新内容里的 .rise 不再重放：一项项重新浮现会让整块像是重新加载了一遍。
+ * variant="slide"：分类级的内容整块水平平移一个容器宽度，不淡出、不缩放，与 Panes 的 slide 一致；
+ * 连续切换时先走完当前这一对，再去最后选的那一项，中途不露空白。
  */
 export function Swap({ k, dir = 1, children, className = "", variant = "push" }: {
-  k: string; dir?: Dir; children: ReactNode; className?: string; variant?: "push" | "fade" | "parts";
+  k: string; dir?: Dir; children: ReactNode; className?: string; variant?: "push" | "slide" | "fade" | "parts";
 }) {
+  const slide = variant === "slide";
   const outer = useContext(PaneOnCtx);
   const [cur, setCur] = useState({ k, node: children, seq: 0, dir });
   const [old, setOld] = useState<{ node: ReactNode; seq: number } | null>(null);
-  if (cur.k !== k) {
-    setOld({ node: cur.node, seq: cur.seq });
+  if (cur.k !== k && !(slide && old && !reduced())) {
+    setOld(slide && reduced() ? null : { node: cur.node, seq: cur.seq });
     setCur({ k, node: children, seq: cur.seq + 1, dir });
-  } else if (cur.node !== children) {
+  } else if (cur.k === k && cur.node !== children) {
     setCur({ ...cur, node: children });
   }
   useEffect(() => {
     if (!old) return;
-    const id = window.setTimeout(() => setOld(null), variant === "push" ? FLOW_MS : FADE_OUT_MS);
+    const id = window.setTimeout(() => setOld(null), variant === "push" || variant === "slide" ? FLOW_MS : FADE_OUT_MS);
     return () => window.clearTimeout(id);
   }, [old, variant]);
-  if (variant !== "push") {
+  if (variant !== "push" && !slide) {
     // Legacy parts mode remains available; item selection in Workbench keeps one detail instead.
     const vars = {
       "--push": dir, "--swap-dx": `${dir * 18}px`, "--swap-ox": `${dir * -10}px`,
@@ -336,16 +339,16 @@ export function Swap({ k, dir = 1, children, className = "", variant = "push" }:
   }
   return (
     <Morph className={className}>
-      <div className={`relative ${old ? "push-stage" : ""}`} style={pushStyle(cur.dir)}>
+      <div className={`relative ${slide ? "slide-stage" : old ? "push-stage" : ""}`} style={pushStyle(cur.dir)}>
         {old ? (
-          <PushLayer key={old.seq} phase="leave" seq={cur.seq} dir={cur.dir} className="push-out absolute inset-x-0 top-0 pointer-events-none">
+          <PushLayer key={old.seq} phase="leave" seq={cur.seq} dir={cur.dir} transition={slide ? "slide" : "push"} className="push-out absolute inset-x-0 top-0 pointer-events-none">
             {/* 退出中的旧内容不再算露着：里面的页标题随之让位 */}
             <PaneOnCtx.Provider value={false}>
               <Frozen node={old.node} />
             </PaneOnCtx.Provider>
           </PushLayer>
         ) : null}
-        <PushLayer key={cur.seq} phase={cur.seq ? "enter" : "shown"} seq={cur.seq} dir={cur.dir} className={cur.seq ? `${enterClass(cur.seq)} flow-quiet` : ""}>
+        <PushLayer key={cur.seq} phase={cur.seq ? (slide && !old ? "shown" : "enter") : "shown"} seq={cur.seq} dir={cur.dir} transition={slide ? "slide" : "push"} className={cur.seq ? `${enterClass(cur.seq)} flow-quiet` : ""}>
           <PaneOnCtx.Provider value={outer}><Frozen node={cur.node} /></PaneOnCtx.Provider>
         </PushLayer>
       </div>

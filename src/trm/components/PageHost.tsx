@@ -5,22 +5,16 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  type CSSProperties,
   type ReactNode,
 } from "react";
 import type { Nav } from "../lib/nav";
-
-/**
- * 侧栏换页（axis="y"）时离场层挂多久。**必须和 styles/tokens.css 的 `--page-out-ms` 一致。**
- *
- * 短了就是动画放到一半节点被拔掉；长了则是一个已经看不见的图层继续占着。
- * 顶部页签换页（axis="x"）没有离场层：旧页当帧撤下，只有新页淡入。
- */
-export const PAGE_OUT_MS = 100;
+import { FLOW_MS, curve } from "./motion";
 
 const PageActiveCtx = createContext(true);
 
 /**
- * 这一页此刻是否正显示着。换页离场、或产品让页面常驻但藏起来时为 false。
+ * 这一页此刻是否正显示着。换页离场、或页面常驻但藏起来时为 false。
  * 菜单、下拉这类浮层读它：页被切走时跟着收起，不留在别的页上面。
  */
 export const usePageActive = () => useContext(PageActiveCtx);
@@ -31,103 +25,148 @@ export function PageActive({ value, children }: { value: boolean; children: Reac
 }
 
 type Props<T extends string> = {
-  nav: Nav<T>;
+  /** 只用到方向：按导航顺序，往后为 1，往前为 -1。 */
+  nav: Pick<Nav<T>, "direction">;
   page: T;
   children: (id: T) => ReactNode;
-  /**
-   * 换页方向的轴。顶部页签用 "x"（默认）：页签上的滑块已经表达方向，旧页直接撤下、新页淡入。
-   * 侧栏用 "y"：旧页先淡出，新页再从去向那一侧进来。两种都不让两页同时可见。
-   */
+  /** 换页方向的轴。顶部页签用 "x"（默认），侧栏用 "y"：导航竖着排，页面就上下推。 */
   axis?: "x" | "y";
+  /** 离开后仍保持挂载的页：输入、筛选和滚动位置都留着，再来时不重新加载。 */
+  keep?: (id: T) => boolean;
+  /** 某一页容器的附加类名。默认纵向滚动；不该滚动的页传 "overflow-hidden"。 */
+  paneClassName?: (id: T) => string;
 };
 
+/** 胶片上的一页：slot 是它在胶片上的格子，相邻的页格子相差 1。 */
+type Layer<T> = { id: T; slot: number };
+type State<T> = { page: T; layers: Layer<T>[]; seq: number };
+
 /**
- * 按导航顺序做方向性换页：往后翻，新页从去向那一侧进来。
+ * 整页推移：新旧两页首尾相接，像一条胶片整体平移一个页面的距离，全程不透明、不缩放。
  *
- * 侧栏换页会短暂同时挂两层（离场页 + 入场页），所以 `children` 是个函数而不是节点 ——
- * 它会被调用两次，各画各的那一页。
+ * - 点击当帧就开始，新页同一帧挂上。
+ * - 中途改主意：胶片从此刻画到的位置接着走，不从头重放。反向回去时原来那一页还在，
+ *   状态不丢；连续往前翻时，页面一格一格接在后面，中间不露空白。
+ * - 只动胶片这一层的 transform，页面内容不参与每帧计算。停稳后撤掉 transform，文字不发糊。
+ * - 减弱动态效果时直接切换。
+ *
+ * 同时可能挂着几页，所以 `children` 是个函数而不是节点 —— 它会被每一页各调用一次。
  */
-export function PageHost<T extends string>({ nav, page, children, axis = "x" }: Props<T>) {
-  const [phase, setPhase] = useState<{
-    /** 叫 `page` 不叫 `current`：`x.current` 读起来像个 ref。 */
-    page: T;
-    leaving: T | null;
-    dir: 1 | -1 | 0;
-  }>({ page, leaving: null, dir: 0 });
+export function PageHost<T extends string>({ nav, page, children, axis = "x", keep, paneClassName }: Props<T>) {
   const reduce = usePrefersReducedMotion();
-  const leaveTimer = useRef<number | null>(null);
+  const [st, setSt] = useState<State<T>>({ page, layers: [{ id: page, slot: 0 }], seq: 0 });
+  const [parked, setParked] = useState<T[]>([]);
+  const strip = useRef<HTMLDivElement>(null);
+  const running = useRef<Animation | null>(null);
+  const panes = useRef(new Map<T, HTMLDivElement>());
+  const scrolls = useRef(new Map<T, number>());
 
-  useEffect(() => {
-    if (reduce) {
-      if (leaveTimer.current !== null) window.clearTimeout(leaveTimer.current);
-      leaveTimer.current = null;
-      setPhase((p) => p.page === page && p.leaving === null && p.dir === 0
-        ? p : { page, leaving: null, dir: 0 });
-      return;
+  if (st.page !== page) {
+    const dir = reduce ? 0 : nav.direction(st.page, page);
+    const from = st.layers.find((l) => l.id === st.page);
+    if (dir === 0 || !from) {
+      setSt({ page, layers: [{ id: page, slot: 0 }], seq: st.seq + 1 });
+    } else {
+      const slot = from.slot + dir;
+      // 新页接在当前页的去向一侧。那一格若还留着更早的离场页，由新页顶替。
+      const layers = st.layers.filter((l) => l.id !== page && l.slot !== slot);
+      setSt({ page, layers: [...layers, { id: page, slot }], seq: st.seq + 1 });
     }
-    if (page === phase.page) return;
-    if (leaveTimer.current !== null) window.clearTimeout(leaveTimer.current);
-    leaveTimer.current = null;
-    const dir = nav.direction(phase.page, page);
-    if (dir === 0 || axis === "x") {
-      setPhase({ page, leaving: null, dir });
-      return;
-    }
-    setPhase({ page, leaving: phase.page, dir });
-    if (leaveTimer.current) window.clearTimeout(leaveTimer.current);
-    leaveTimer.current = window.setTimeout(() => {
-      setPhase((p) => ({ ...p, leaving: null }));
-    }, PAGE_OUT_MS);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- 只在页面 id 变化时跑
-  }, [page, reduce]);
+  } else if (reduce && st.layers.length > 1) {
+    setSt({ page, layers: [{ id: page, slot: 0 }], seq: st.seq + 1 });
+  }
+  // 常驻页一旦露过面就留在台上；之后不在胶片上时藏起来。
+  const wanted = keep ? [...new Set([...parked, ...st.layers.map((l) => l.id)])].filter(keep) : [];
+  if (wanted.length !== parked.length) setParked(wanted);
 
-  useEffect(
-    () => () => {
-      if (leaveTimer.current) window.clearTimeout(leaveTimer.current);
-    },
-    [],
-  );
+  const slot = st.layers.find((l) => l.id === st.page)?.slot ?? 0;
+  const moving = st.layers.length > 1;
 
-  // 换**页**时回到顶部 —— 不是每次渲染都回。
-  //
-  // 这里一度写成内联的 `ref={(el) => { if (el) el.scrollTop = 0 }}`。
-  // 内联回调每次渲染都是一个新函数，于是 React 每渲染一次就摘一次挂一次，
-  // 每一趟都把滚动位置重置掉。只要页面上有任何东西在定时重渲染（进度轮询
-  // 之类），用户就会发现这一页**根本滚不动**。
-  const paneRef = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
-    if (paneRef.current) paneRef.current.scrollTop = 0;
-  }, [phase.page]);
+    const el = strip.current;
+    if (!el) return;
+    // 胶片的位置不交给 React 的 style：提交时它会先把终点写上去，这里就读不到此刻画到哪了。
+    // 先读此刻的位置，再写终点，动画从读到的位置接着走。
+    const painted = moving ? getComputedStyle(el).transform : "";
+    el.style.transform = slot ? shift(axis, -slot) : "";
+    if (!moving) {
+      running.current?.cancel();
+      running.current = null;
+      return;
+    }
+    const settle = () => {
+      running.current = null;
+      setSt((s) => (s.seq === st.seq ? { ...s, layers: [{ id: s.page, slot: 0 }] } : s));
+    };
+    if (typeof el.animate !== "function") {
+      settle();
+      return;
+    }
+    running.current?.cancel();
+    const animation = el.animate(
+      [{ transform: painted && painted !== "none" ? painted : "translate3d(0, 0, 0)" }, { transform: shift(axis, -slot) }],
+      { duration: FLOW_MS, easing: curve("--ease-nav") },
+    );
+    running.current = animation;
+    animation.finished.then(() => { if (running.current === animation) settle(); }, () => undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- 换页和停稳各跑一次
+  }, [st.seq, slot, moving]);
+  useEffect(() => () => running.current?.cancel(), []);
 
-  const [fwd, back] = axis === "y" ? ["u", "d"] : ["l", "r"];
-  const enterCls =
-    phase.dir === 1 ? `page-enter-${fwd}` : phase.dir === -1 ? `page-enter-${back}` : "";
-  const leaveCls =
-    phase.dir === 1 ? `page-leave-${fwd}` : phase.dir === -1 ? `page-leave-${back}` : "";
+  // 常驻页回来时回到离开时的滚动位置；藏着的时候排版若变短，浏览器会把位置收回去。
+  useLayoutEffect(() => {
+    const el = panes.current.get(st.page);
+    const saved = scrolls.current.get(st.page);
+    if (el && saved !== undefined && el.scrollTop !== saved) el.scrollTop = saved;
+  }, [st.page]);
+
+  const onStrip = new Map(st.layers.map((l) => [l.id, l.slot]));
+  // 按 id 排序，节点先后永远不变：换格子时 React 不挪节点，滚动位置不会被重置。
+  const ids = [...new Set([...onStrip.keys(), ...parked])].sort();
+  const mounted = ids.join("\n");
+  useEffect(() => {
+    // 已卸下的页不留滚动位置，下次来从头看。
+    const alive = new Set(mounted.split("\n"));
+    for (const id of scrolls.current.keys()) if (!alive.has(id)) scrolls.current.delete(id);
+  }, [mounted]);
 
   return (
     <div className="relative flex-1 overflow-hidden">
-      {(phase.leaving && phase.leaving !== phase.page
-        ? [phase.leaving, phase.page]
-        : [phase.page]).map((id) => {
-        const leaving = id === phase.leaving;
-        return (
-          <div
-            key={id}
-            ref={leaving ? undefined : paneRef}
-            data-page-scroll={leaving ? undefined : ""}
-            inert={leaving}
-            aria-hidden={leaving || undefined}
-            className={leaving
-              ? `absolute inset-0 overflow-hidden pointer-events-none z-[1] ${leaveCls}`
-              : `absolute inset-0 overflow-y-auto z-[2] ${enterCls}`}
-          >
-            <PageActive value={!leaving}>{children(id)}</PageActive>
-          </div>
-        );
-      })}
+      <div ref={strip} className="absolute inset-0">
+        {ids.map((id) => {
+          const at = onStrip.get(id);
+          const active = id === st.page;
+          return (
+            <div
+              key={id}
+              ref={(el) => {
+                if (el) panes.current.set(id, el);
+                else panes.current.delete(id);
+              }}
+              data-page-scroll={active ? "" : undefined}
+              inert={!active}
+              aria-hidden={!active || undefined}
+              onScroll={active ? (event) => { scrolls.current.set(id, event.currentTarget.scrollTop); } : undefined}
+              className={`absolute ${paneClassName?.(id) ?? "overflow-y-auto"} ${at === undefined ? "invisible" : ""}`}
+              style={place(axis, at ?? slot)}
+            >
+              <PageActive value={active}>{children(id)}</PageActive>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
+}
+
+function shift(axis: "x" | "y", slots: number): string {
+  return axis === "y" ? `translate3d(0, ${slots * 100}%, 0)` : `translate3d(${slots * 100}%, 0, 0)`;
+}
+
+function place(axis: "x" | "y", slot: number): CSSProperties {
+  return axis === "y"
+    ? { left: 0, right: 0, top: `${slot * 100}%`, height: "100%" }
+    : { top: 0, bottom: 0, left: `${slot * 100}%`, width: "100%" };
 }
 
 function usePrefersReducedMotion(): boolean {

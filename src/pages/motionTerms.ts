@@ -65,28 +65,26 @@ export const MOTION_TERMS: MotionTerm[] = [
     code: "PageHost",
     name: { "zh-CN": "换页", "zh-TW": "換頁", "en-US": "Page change", "ja-JP": "ページ切り替え", "ko-KR": "페이지 전환", "fr-FR": "Changement de page", "es-ES": "Cambio de página", "ru-RU": "Смена страницы" },
     desc: {
-      "zh-CN": "整页导航时两页不同时可见。顶部页签换页时，旧页当帧撤下，新页用 200ms 淡入并顺着方向移动一小步，方向由页签滑块表达。" +
-        "侧栏换页时，旧页先用 100ms 淡出，新页再从去向一侧进入。",
-      "zh-TW": "整頁導覽時兩頁不同時可見。頂部頁籤換頁時，舊頁當幀撤下，新頁用 200ms 淡入並順著方向移動一小步，方向由頁籤滑塊表達。" +
-        "側欄換頁時，舊頁先用 100ms 淡出，新頁再從去向一側進入。",
-      "en-US": "Two pages are never visible at once during page navigation. With top tabs, the old page is removed " +
-        "in the same frame and the new page fades in over 200ms with a short move in the travel direction; the tab thumb " +
-        "shows the direction. With a sidebar, the old page fades out over 100ms, then the new page enters from the side it is heading to.",
-      "ja-JP": "ページ移動では 2 つのページを同時に表示しません。上部タブでは古いページを同じフレームで外し、新しいページが 200ms で" +
-        "進行方向に少し動きながらフェードインします。方向はタブのつまみが示します。サイドバーでは古いページが 100ms でフェードアウトしてから、" +
-        "新しいページが進む側から入ります。",
-      "ko-KR": "페이지를 이동할 때 두 페이지가 동시에 보이지 않습니다. 상단 탭에서는 이전 페이지를 같은 프레임에 내리고, 새 페이지가 200ms 동안 " +
-        "이동 방향으로 조금 움직이며 나타납니다. 방향은 탭의 슬라이더가 나타냅니다. 사이드바에서는 이전 페이지가 100ms 동안 사라진 뒤 " +
-        "새 페이지가 이동하는 쪽에서 들어옵니다.",
-      "fr-FR": "Pendant la navigation, deux pages ne sont jamais visibles en même temps. Avec les onglets du haut, l’ancienne page " +
-        "est retirée dans la même image et la nouvelle apparaît en 200ms avec un court déplacement dans le sens du trajet ; " +
-        "le curseur des onglets indique le sens. Avec la barre latérale, l’ancienne page s’estompe en 100ms, puis la nouvelle entre du côté visé.",
-      "es-ES": "Durante la navegación nunca se ven dos páginas a la vez. Con las pestañas superiores, la página anterior se retira " +
-        "en el mismo fotograma y la nueva aparece en 200ms con un breve desplazamiento en el sentido del recorrido; " +
-        "el deslizador de las pestañas indica el sentido. Con la barra lateral, la página anterior se desvanece en 100ms y después entra la nueva por el lado de destino.",
-      "ru-RU": "При навигации две страницы не видны одновременно. С верхними вкладками старая страница убирается в том же кадре, " +
-        "а новая появляется за 200ms с коротким сдвигом по ходу движения; направление показывает ползунок вкладок. " +
-        "С боковой панелью старая страница гаснет за 100ms, затем новая входит со стороны назначения.",
+      "zh-CN": "整页导航时新旧两页首尾相接，整体平移一个页面的距离，全程不透明、不缩放，用时 420ms。顶部页签左右推，侧栏上下推。" +
+        "点击当帧开始；中途再点，从当前位置接着走，不从头重放。",
+      "zh-TW": "整頁導覽時新舊兩頁首尾相接，整體平移一個頁面的距離，全程不透明、不縮放，用時 420ms。頂部頁籤左右推，側欄上下推。" +
+        "點擊當幀開始；中途再點，從目前位置接著走，不從頭重播。",
+      "en-US": "During page navigation the old and new pages sit edge to edge and move together by one page, fully opaque and unscaled, " +
+        "in 420ms. Top tabs move sideways; a sidebar moves vertically. Motion starts in the frame of the click, and a click midway " +
+        "continues from the current position without restarting.",
+      "ja-JP": "ページ移動では新旧 2 ページが端と端を接して 1 ページ分いっしょに動きます。不透明のままで拡大縮小はなく、420ms です。" +
+        "上部タブは左右、サイドバーは上下に動きます。クリックと同じフレームで始まり、途中でクリックすると現在位置から続きます。",
+      "ko-KR": "페이지를 이동할 때 이전 페이지와 새 페이지가 맞닿은 채 한 페이지만큼 함께 움직입니다. 투명도와 크기는 바뀌지 않으며 420ms입니다. " +
+        "상단 탭은 좌우로, 사이드바는 상하로 움직입니다. 클릭한 프레임에 시작하고, 도중에 클릭하면 현재 위치에서 이어집니다.",
+      "fr-FR": "Pendant la navigation, l’ancienne et la nouvelle page sont bord à bord et se déplacent ensemble d’une page, " +
+        "opaques et sans zoom, en 420ms. Les onglets du haut déplacent à l’horizontale, la barre latérale à la verticale. " +
+        "Le mouvement commence dans l’image du clic ; un clic en cours de route continue depuis la position actuelle.",
+      "es-ES": "Durante la navegación, la página anterior y la nueva van borde con borde y se desplazan juntas una página, " +
+        "opacas y sin escala, en 420ms. Las pestañas superiores mueven en horizontal y la barra lateral en vertical. " +
+        "El movimiento empieza en el fotograma del clic; un clic a mitad continúa desde la posición actual.",
+      "ru-RU": "При навигации старая и новая страницы стоят вплотную и сдвигаются вместе на одну страницу, непрозрачно и без масштабирования, " +
+        "за 420ms. Верхние вкладки сдвигают по горизонтали, боковая панель по вертикали. Движение начинается в кадре щелчка; " +
+        "щелчок по ходу продолжает движение с текущего положения.",
     },
   },
   {

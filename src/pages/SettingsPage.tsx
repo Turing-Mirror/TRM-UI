@@ -132,7 +132,7 @@ export function SettingsPage({ look, onLook, mouseNav, onMouseNav }: { look: Loo
         </Nudge>
       </div>
 
-      <Swap k={tab} dir={tabDir} className="mt-2">
+      <Swap k={tab} dir={tabDir} variant="slide" className="mt-2">
         {tab === "appearance" ? (
           <RowGroup title={t("demo.set.tab.appearance")}>
             <Row title={t("demo.set.language")} control={<Select ariaLabel={t("demo.set.language")} value={locale} onChange={(v) => setLocale(v as LocaleCode)} options={LOCALES.map((l) => ({ id: l.id, label: t(l.labelKey) }))} width={180} />} />
