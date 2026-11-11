@@ -114,7 +114,11 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
   useEffect(() => () => running.current?.cancel(), []);
 
   // 常驻页回来时回到离开时的滚动位置；藏着的时候排版若变短，浏览器会把位置收回去。
+  const shown = useRef(page);
   useLayoutEffect(() => {
+    const left = panes.current.get(shown.current);
+    if (left && shown.current !== st.page) scrolls.current.set(shown.current, left.scrollTop);
+    shown.current = st.page;
     const el = panes.current.get(st.page);
     const saved = scrolls.current.get(st.page);
     if (el && saved !== undefined && el.scrollTop !== saved) el.scrollTop = saved;
@@ -146,7 +150,6 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
               data-page-scroll={active ? "" : undefined}
               inert={!active}
               aria-hidden={!active || undefined}
-              onScroll={active ? (event) => { scrolls.current.set(id, event.currentTarget.scrollTop); } : undefined}
               className={`absolute ${paneClassName?.(id) ?? "overflow-y-auto"} ${at === undefined ? "invisible" : ""}`}
               style={place(axis, at ?? slot)}
             >

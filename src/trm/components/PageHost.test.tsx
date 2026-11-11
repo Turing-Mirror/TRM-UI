@@ -125,7 +125,6 @@ describe.each(["x", "y"] as const)("PageHost axis=%s", axis => {
     m = mount(host(axis, "a", keep));
     const a = pane("a");
     a.scrollTop = 130;
-    act(() => { a.dispatchEvent(new Event("scroll")); });
     act(() => m.root.render(host(axis, "b", keep)));
     await finish();
     expect(pane("a")).toBe(a);
