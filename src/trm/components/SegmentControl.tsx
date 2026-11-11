@@ -21,7 +21,7 @@ type Props<T extends string> = {
 /**
  * 液态玻璃分段控件：一个会滑动、可以用鼠标拖动的玻璃滑块。
  *
- * - 点一项：滑块以适中的力度弹过去，到达那一项上方时切换。
+ * - 点一项：当帧切换，滑块同时以适中的力度弹过去。
  * - 按住滑块拖动：滑块跟着鼠标走，宽度在相邻两项之间过渡；松手时按甩出的速度判断停在哪一项，
  *   松手即切换。用力甩向一端，滑块撞上边缘时会被压扁再弹回。
  * - 滑块下面的文字透过它被放大，像隔着一颗水珠看。做法是在滑块里放一份同样排版的文字，
@@ -63,7 +63,7 @@ export function SegmentControl<T extends string>({ options, value, onChange, cla
 
   // 选中项变了（点击、键盘、外面改了值）就弹过去；第一次与改了排版时直接放到位
   useLayoutEffect(() => {
-    sim.current?.target(value, false);
+    sim.current?.target(value);
   }, [value, compact]);
   useLayoutEffect(() => {
     sim.current?.settle();
@@ -169,10 +169,8 @@ export function SegmentControl<T extends string>({ options, value, onChange, cla
                 suppressClick.current = false;
                 if (event.detail !== 0) return;
               }
-              // 当前选中项也可成为目标，用于中断尚未完成的切换。
-              // 点击：滑块先弹过去，到达那一项上方时才切换；减弱动态效果时直接切换
-              if (compact || !sim.current?.animated()) onChange(opt.id);
-              else sim.current.target(opt.id, true);
+              // 点击当帧切换；滑块随选中项的变化弹过去，不让内容等它。
+              if (opt.id !== value || compact || !sim.current?.animated()) onChange(opt.id);
             }}
             className={[
               "relative z-[1] border-0 bg-transparent p-0 cursor-pointer rounded-full",
@@ -191,7 +189,7 @@ export function SegmentControl<T extends string>({ options, value, onChange, cla
         <span ref={thumbRef} aria-hidden className="seg-thumb absolute top-[3px] bottom-[3px] left-0 z-[2] pointer-events-none" style={{ width: 0, opacity: 0 }}>
           <span ref={glassRef} className="seg-glass absolute inset-0 rounded-full">
             <span className="absolute inset-0 rounded-full overflow-hidden">
-              <span ref={lensRef} className="seg-lens absolute top-[-3px] flex p-[3px] text-[var(--ink)]">
+              <span ref={lensRef} className="seg-lens absolute top-[-3px] left-0 flex p-[3px] text-[var(--ink)]">
                 {options.map((opt) => (
                   <span key={opt.id} className="flex-none">
                     {label(opt)}
@@ -228,9 +226,9 @@ function paint(p: Frame, thumb: HTMLElement | null, glass: HTMLElement | null, l
   const sy = lift * (1 - speed * 0.12) * (1 + p.squash * 0.35);
   glass.style.transform = p.moving ? `scale(${sx.toFixed(4)}, ${sy.toFixed(4)})` : "none";
   const k = p.held ? LENS.held : LENS.rest;
-  lens.style.left = `${-x}px`;
+  // 镜片里的文字只走 transform：每帧不触发这一整排文字的排版。
   lens.style.transformOrigin = `${x + p.w / 2}px 50%`;
-  lens.style.transform = `scale(${k / sx}, ${k / sy})`;
+  lens.style.transform = `translateX(${-x}px) scale(${k / sx}, ${k / sy})`;
 }
 
 type Slot = { id: string; x: number; w: number; disabled: boolean };
@@ -254,8 +252,6 @@ class Sim {
   private tx = 0;
   private tw = 0;
   private goal: string | null = null;
-  /** 点击后要在到达时才切换的那一项。 */
-  private pending: string | null = null;
   private held = false;
   private grabAt = { px: 0, x: 0 };
   private samples: { x: number; t: number }[] = [];
@@ -284,17 +280,13 @@ class Sim {
     return { s, min: first?.x ?? 0, max: end ? end.x + end.w : 0 };
   }
 
-  /** 弹向某一项。fromClick：点击触发，到达时才切换。 */
-  target(id: string, fromClick: boolean) {
+  /** 弹向某一项。 */
+  target(id: string) {
     this.geometry = this.io.slots();
     const slot = this.geometry.find((s) => s.id === id);
-    // 量不到位置（藏在看不见的地方）时不做动画；点击照样立即切换
-    if (!slot || slot.w === 0) {
-      if (fromClick) this.io.choose(id);
-      return;
-    }
+    // 量不到位置（藏在看不见的地方）时不做动画
+    if (!slot || slot.w === 0) return;
     this.goal = id;
-    this.pending = fromClick ? id : null;
     this.tx = slot.x;
     this.tw = slot.w;
     if (!this.placed || this.reduce) {
@@ -302,7 +294,6 @@ class Sim {
       this.x = this.tx;
       this.w = this.tw;
       this.v = this.vw = 0;
-      if (this.pending) this.arrive();
       this.draw();
       return;
     }
@@ -329,7 +320,6 @@ class Sim {
 
   grab(px: number, t: number) {
     this.held = true;
-    this.pending = null;
     this.grabAt = { px, x: this.x };
     this.samples = [{ x: px, t }];
     this.kick();
@@ -373,12 +363,6 @@ class Sim {
     this.kick();
   }
 
-  private arrive() {
-    const id = this.pending;
-    this.pending = null;
-    if (id) this.io.choose(id);
-  }
-
   private kick() {
     if (this.raf) return;
     this.last = performance.now();
@@ -411,12 +395,6 @@ class Sim {
     const ax = -SPRING.k * (this.x - this.tx) - c * this.v;
     this.v += ax * dt;
     this.x += this.v * dt;
-    // 点击：滑块中心进入目标那一项的范围时就切换，不等它完全停稳
-    if (this.pending) {
-      const slot = this.geometry.find((s) => s.id === this.pending);
-      const mid = this.x + this.w / 2;
-      if (!slot || (mid >= slot.x && mid <= slot.x + slot.w)) this.arrive();
-    }
   }
 
   private draw() {

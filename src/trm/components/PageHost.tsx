@@ -10,13 +10,12 @@ import {
 import type { Nav } from "../lib/nav";
 
 /**
- * 离场层挂多久。**必须和 styles/components.css 里 `.page-leave-*` 的动画时长一致。**
+ * 侧栏换页（axis="y"）时离场层挂多久。**必须和 styles/tokens.css 的 `--page-out-ms` 一致。**
  *
- * 短了就是动画放到一半节点被拔掉，旧页「啪」一下消失；长了则是一个已经看不见
- * 的图层继续占着，白白多一层。这里曾经写死 300ms 而动画是 420ms，
- * 旧页在淡出到七成的时候被砍掉。
+ * 短了就是动画放到一半节点被拔掉；长了则是一个已经看不见的图层继续占着。
+ * 顶部页签换页（axis="x"）没有离场层：旧页当帧撤下，只有新页淡入。
  */
-const LEAVE_MS = 420;
+export const PAGE_OUT_MS = 100;
 
 const PageActiveCtx = createContext(true);
 
@@ -35,14 +34,17 @@ type Props<T extends string> = {
   nav: Nav<T>;
   page: T;
   children: (id: T) => ReactNode;
-  /** 换页方向的轴。顶部页签用 "x"（默认），侧栏用 "y"：导航竖着排，页面就上下推。 */
+  /**
+   * 换页方向的轴。顶部页签用 "x"（默认）：页签上的滑块已经表达方向，旧页直接撤下、新页淡入。
+   * 侧栏用 "y"：旧页先淡出，新页再从去向那一侧进来。两种都不让两页同时可见。
+   */
   axis?: "x" | "y";
 };
 
 /**
- * 按导航顺序做方向性换页：往右翻，新页从右边推进来。
+ * 按导航顺序做方向性换页：往后翻，新页从去向那一侧进来。
  *
- * 同时挂两层（离场页 + 入场页），所以 `children` 是个函数而不是节点 ——
+ * 侧栏换页会短暂同时挂两层（离场页 + 入场页），所以 `children` 是个函数而不是节点 ——
  * 它会被调用两次，各画各的那一页。
  */
 export function PageHost<T extends string>({ nav, page, children, axis = "x" }: Props<T>) {
@@ -67,15 +69,15 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x" }: 
     if (leaveTimer.current !== null) window.clearTimeout(leaveTimer.current);
     leaveTimer.current = null;
     const dir = nav.direction(phase.page, page);
-    if (dir === 0) {
-      setPhase({ page, leaving: null, dir: 0 });
+    if (dir === 0 || axis === "x") {
+      setPhase({ page, leaving: null, dir });
       return;
     }
     setPhase({ page, leaving: phase.page, dir });
     if (leaveTimer.current) window.clearTimeout(leaveTimer.current);
     leaveTimer.current = window.setTimeout(() => {
       setPhase((p) => ({ ...p, leaving: null }));
-    }, LEAVE_MS);
+    }, PAGE_OUT_MS);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- 只在页面 id 变化时跑
   }, [page, reduce]);
 

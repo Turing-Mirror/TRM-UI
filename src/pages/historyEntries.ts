@@ -19,6 +19,40 @@ export type HistoryEntry = {
 
 export const HISTORY: HistoryEntry[] = [
 {
+  "id": "page-crossfade-and-thumb-wait",
+  "date": "2026-11-11",
+  "old": {
+    "zh-CN": "换页时新旧两页同时淡入淡出 420ms；点击分段滑块后，滑块到达目标项上方才切换内容。",
+    "zh-TW": "換頁時新舊兩頁同時淡入淡出 420ms；點擊分段滑塊後，滑塊到達目標項上方才切換內容。",
+    "en-US": "Both pages cross-faded for 420ms on a page change; after a click on the segment control, content switched only when the thumb arrived.",
+    "ja-JP": "ページ切り替えでは新旧 2 ページが 420ms 同時にフェードしていた。セグメントをクリックすると、つまみが到着してから内容が切り替わっていた。",
+    "ko-KR": "페이지를 바꿀 때 두 페이지가 420ms 동안 함께 나타나고 사라졌다. 세그먼트를 클릭하면 슬라이더가 도착한 뒤에 내용이 바뀌었다.",
+    "fr-FR": "Les deux pages se fondaient ensemble pendant 420ms ; après un clic sur le sélecteur, le contenu ne changeait qu’à l’arrivée du curseur.",
+    "es-ES": "Las dos páginas se fundían a la vez durante 420ms; tras un clic en el selector, el contenido cambiaba solo cuando llegaba el deslizador.",
+    "ru-RU": "При смене страницы обе страницы 420ms растворялись одновременно; после щелчка по переключателю содержимое менялось только по прибытии ползунка."
+  },
+  "now": {
+    "zh-CN": "点击当帧切换内容，滑块同时弹过去。顶部页签换页时旧页当帧撤下，新页 200ms 淡入；侧栏换页时旧页 100ms 淡出后新页再进入。",
+    "zh-TW": "點擊當幀切換內容，滑塊同時彈過去。頂部頁籤換頁時舊頁當幀撤下，新頁 200ms 淡入；側欄換頁時舊頁 100ms 淡出後新頁再進入。",
+    "en-US": "A click switches content in the same frame while the thumb springs over. With top tabs the old page is removed at once and the new page fades in over 200ms; with a sidebar the old page fades out over 100ms before the new page enters.",
+    "ja-JP": "クリックと同じフレームで内容が切り替わり、つまみは同時に移動する。上部タブでは古いページをすぐに外し、新しいページが 200ms でフェードインする。サイドバーでは古いページが 100ms でフェードアウトしてから新しいページが入る。",
+    "ko-KR": "클릭한 프레임에 내용이 바뀌고 슬라이더는 동시에 이동한다. 상단 탭에서는 이전 페이지를 바로 내리고 새 페이지가 200ms 동안 나타난다. 사이드바에서는 이전 페이지가 100ms 동안 사라진 뒤 새 페이지가 들어온다.",
+    "fr-FR": "Un clic change le contenu dans la même image pendant que le curseur se déplace. Avec les onglets du haut, l’ancienne page est retirée aussitôt et la nouvelle apparaît en 200ms ; avec la barre latérale, l’ancienne s’estompe en 100ms avant l’entrée de la nouvelle.",
+    "es-ES": "Un clic cambia el contenido en el mismo fotograma mientras el deslizador se desplaza. Con las pestañas superiores la página anterior se retira al instante y la nueva aparece en 200ms; con la barra lateral la anterior se desvanece en 100ms antes de que entre la nueva.",
+    "ru-RU": "Щелчок меняет содержимое в том же кадре, ползунок движется одновременно. С верхними вкладками старая страница убирается сразу, новая появляется за 200ms; с боковой панелью старая гаснет за 100ms, затем входит новая."
+  },
+  "why": {
+    "zh-CN": "点击后要空等约 0.1 秒，换页中途两页文字叠在一起。",
+    "zh-TW": "點擊後要空等約 0.1 秒，換頁中途兩頁文字疊在一起。",
+    "en-US": "A click was followed by about 0.1s of waiting, and the text of two pages overlapped midway through a page change.",
+    "ja-JP": "クリック後に約 0.1 秒の待ちがあり、切り替えの途中で 2 ページの文字が重なっていた。",
+    "ko-KR": "클릭 뒤 약 0.1초를 기다려야 했고, 전환 도중 두 페이지의 글자가 겹쳤다.",
+    "fr-FR": "Un clic était suivi d’environ 0,1s d’attente, et les textes des deux pages se superposaient pendant le changement.",
+    "es-ES": "Tras un clic había que esperar unos 0,1s, y el texto de las dos páginas se superponía a mitad del cambio.",
+    "ru-RU": "После щелчка приходилось ждать около 0,1s, а в середине перехода текст двух страниц накладывался."
+  }
+},
+{
   "id": "workbench-paged-navigation",
   "date": "2026-11-07",
   "old": {

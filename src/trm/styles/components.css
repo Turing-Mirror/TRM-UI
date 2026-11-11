@@ -52,15 +52,18 @@ html[data-input="pointer"] :focus-visible {
 .seg-thumb[data-moving] { will-change: transform, width; }
 .seg-glass {
   background: var(--seg-thumb);
-  -webkit-backdrop-filter: blur(10px) saturate(1.5);
-  backdrop-filter: blur(10px) saturate(1.5);
   box-shadow:
     var(--glass),
     inset 0 1px 0.5px rgba(255, 255, 255, 0.55),
     inset 0 -1px 1px rgba(0, 0, 0, 0.04);
 }
 .seg-thumb[data-moving] .seg-glass { will-change: transform; }
-.seg-thumb[data-moving] .seg-lens { will-change: transform, left; }
+.seg-thumb[data-moving] .seg-lens { will-change: transform; }
+/* 轨道是纯色时模糊看不出来，只在设了背景图、轨道透出图片时才开。 */
+:root[data-wallpaper] .seg-glass {
+  -webkit-backdrop-filter: blur(10px) saturate(1.5);
+  backdrop-filter: blur(10px) saturate(1.5);
+}
 .btn-dots {
   width: 1.1em;
   height: 1em;
@@ -91,57 +94,38 @@ html[data-input="pointer"] :focus-visible {
     opacity: 0.45;
   }
 }
-@keyframes leaveL {
-  from {
-    opacity: 1;
-    transform: none;
-  }
-  to {
-    opacity: 0;
-    transform: translateX(-2.5%) scale(0.985);
-  }
-}
+/* 顶部页签换页（PageHost axis="x"）：旧页当帧撤下，只有新页淡入并顺着方向走一小步。
+   方向由页签上的滑块表达，两页文字不会叠在一起。 */
 @keyframes enterL {
   from {
     opacity: 0;
-    transform: translateX(6%);
+    transform: translateX(12px);
   }
   to {
     opacity: 1;
     transform: none;
-  }
-}
-@keyframes leaveR {
-  from {
-    opacity: 1;
-    transform: none;
-  }
-  to {
-    opacity: 0;
-    transform: translateX(2.5%) scale(0.985);
   }
 }
 @keyframes enterR {
   from {
     opacity: 0;
-    transform: translateX(-6%);
+    transform: translateX(-12px);
   }
   to {
     opacity: 1;
     transform: none;
   }
 }
-.page-leave-l {
-  animation: leaveL 0.42s var(--ease-nav) forwards;
-}
 .page-enter-l {
-  animation: enterL 0.42s var(--ease-nav);
-}
-.page-leave-r {
-  animation: leaveR 0.42s var(--ease-nav) forwards;
+  animation: enterL var(--page-in-ms) var(--ease) both;
 }
 .page-enter-r {
-  animation: enterR 0.42s var(--ease-nav);
+  animation: enterR var(--page-in-ms) var(--ease) both;
+}
+/* 自管换页的产品若仍挂着离场层，这一层直接不可见。 */
+.page-leave-l,
+.page-leave-r {
+  visibility: hidden;
 }
 @keyframes spotlight {
   0% {
@@ -494,29 +478,23 @@ option {
   }
 }
 
-/* 侧栏导航配 PageHost axis="y"：新旧页同时沿纵轴推移，与横向切页共用时长和曲线。
-   向下导航时旧页上移淡出，新页从下方进入；反向时镜像。无缩放、弹簧或延迟，
-   避免两层先后运动像弹出。离场 420ms 必须与 PageHost 的 LEAVE_MS 一致。 */
-@keyframes leaveU {
-  from { opacity: 1; transform: none; }
-  to { opacity: 0; transform: translateY(-2.5%); }
+/* 侧栏导航配 PageHost axis="y"：旧页先快速淡出，淡完新页才从去向那一侧进来，
+   任何时刻只看得到一页。离场时长 --page-out-ms 必须与 PageHost 的 PAGE_OUT_MS 一致。 */
+@keyframes leaveY {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 @keyframes enterU {
-  from { opacity: 0; transform: translateY(6%); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: none; }
-}
-@keyframes leaveD {
-  from { opacity: 1; transform: none; }
-  to { opacity: 0; transform: translateY(2.5%); }
 }
 @keyframes enterD {
-  from { opacity: 0; transform: translateY(-6%); }
+  from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: none; }
 }
-.page-leave-u { animation: leaveU 0.42s var(--ease-nav) forwards; }
-.page-leave-d { animation: leaveD 0.42s var(--ease-nav) forwards; }
-.page-enter-u { animation: enterU 0.42s var(--ease-nav) both; }
-.page-enter-d { animation: enterD 0.42s var(--ease-nav) both; }
+.page-leave-u, .page-leave-d { animation: leaveY var(--page-out-ms) var(--ease-out-quick) forwards; }
+.page-enter-u { animation: enterU var(--page-in-ms) var(--ease) var(--page-out-ms) both; }
+.page-enter-d { animation: enterD var(--page-in-ms) var(--ease) var(--page-out-ms) both; }
 /* 长期图层只给 WebKit（见文件末尾说明）；Chromium 动画结束后撤层，文字按原样重画。 */
 @supports (hanging-punctuation: first) {
   .page-leave-u, .page-enter-u, .page-leave-d, .page-enter-d { will-change: transform, opacity; }
