@@ -16,7 +16,7 @@ export function TransferProgress({ message, percent, speed, detail, elapsed }: T
       <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 text-[12px] text-[var(--meta)]">
         <span className="min-w-0 break-words">{message}</span>
         <span className="ml-auto flex shrink-0 items-center gap-2 tabular-nums">
-          {speed ? <span className="text-[var(--accent)]">{speed}</span> : null}
+          {speed ? <span className="text-[var(--accent-text)]">{speed}</span> : null}
           <span>{label}</span>
         </span>
       </div>

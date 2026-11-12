@@ -867,7 +867,7 @@ option {
   background: color-mix(in srgb, var(--ink) 5%, transparent);
 }
 .trm-workbench-item[aria-pressed="true"] { background: var(--accent-soft); }
-.trm-workbench-item[aria-pressed="true"] .trm-workbench-item-title { color: var(--accent); }
+.trm-workbench-item[aria-pressed="true"] .trm-workbench-item-title { color: var(--accent-text); }
 .trm-workbench-item:focus-visible, .trm-workbench-back:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: -2px;
@@ -1137,7 +1137,7 @@ option {
 .trm-confirm h2 { margin: 0; font-size: 15.5px; font-weight: 600; color: var(--ink); }
 .trm-confirm p { margin: 12px 0 0; font-size: 13px; color: var(--help); overflow-wrap: anywhere; }
 .trm-confirm-actions { margin-top: 24px; display: flex; justify-content: flex-end; gap: 8px; }
-.trm-confirm .trm-confirm-danger { color: var(--danger); }
+.trm-confirm .trm-confirm-danger { color: var(--danger-text); }
 
 /* 文档式详情（DocBody / DocSection）：行宽有上限，各节靠间距分开。 */
 /* 详情里的分节：和设置分组同一套样子，标题在上，内容放在分组底色的卡片里 */

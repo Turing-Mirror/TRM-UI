@@ -239,7 +239,7 @@ export function PopupSelect({
                     className={[
                       "mx-1 flex items-center gap-2 rounded-[6px] py-[6px] pr-3 text-[13px] whitespace-nowrap cursor-pointer",
                       o.indent ? "pl-6" : "pl-2.5",
-                      selected ? "text-[var(--accent)]" : "text-[var(--ink)]",
+                      selected ? "text-[var(--accent-text)]" : "text-[var(--ink)]",
                       i === active ? "bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]" : "",
                     ].join(" ")}
                   >

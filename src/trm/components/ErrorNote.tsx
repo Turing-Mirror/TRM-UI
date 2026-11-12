@@ -34,7 +34,7 @@ export function ErrorNote({ text, action }: { text: string; action?: { label: st
   const { head, detail, hasMore } = splitErrorText(text);
   return (
     <div className="mt-3">
-      <p className="m-0 text-[12.5px] text-[var(--danger)] break-words leading-relaxed select-text">{head}</p>
+      <p className="m-0 text-[12.5px] text-[var(--danger-text)] break-words leading-relaxed select-text">{head}</p>
       <div className="mt-2 flex items-center gap-2 flex-wrap">
         {action ? <Btn primary onClick={action.run}>{action.label}</Btn> : null}
         {hasMore ? <Btn onClick={() => setOpen(!open)}>{t(open ? "ui.errorNote.hide" : "ui.errorNote.show")}</Btn> : null}

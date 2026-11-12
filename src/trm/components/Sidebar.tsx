@@ -317,7 +317,7 @@ ${status}` : undefined}
         <span className="block text-[13px] text-[var(--ink)] truncate">{label}</span>
         {sub ? <span className="block text-[11.5px] text-[var(--meta)] truncate">{sub}</span> : null}
       </span>
-      <span className={`side-label flex-none text-[11.5px] tabular-nums ${failed ? "text-[var(--danger)]" : "text-[var(--meta)]"}`}>{status}</span>
+      <span className={`side-label flex-none text-[11.5px] tabular-nums ${failed ? "text-[var(--danger-text)]" : "text-[var(--meta)]"}`}>{status}</span>
       {failed ? null : progress !== undefined ? (
         <span aria-hidden className={`row-line ${collapsed ? "row-line-sm" : ""}`}>
           <i style={{ transform: `scaleX(${progress})` }} />

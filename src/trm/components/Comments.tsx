@@ -145,7 +145,7 @@ function Floor({ c, replies, ctx }: { c: CommentItem; replies: CommentItem[]; ct
           {/* 展开与收起回复：多出来的几条撑开、收拢，不是一下子冒出来或消失 */}
           <FlowList items={list} keyOf={(r) => r.id} itemClassName="pt-2.5" render={(r) => <Item c={r} ctx={ctx} small onReply={() => setReplying(r.author)} />} />
           {more > 0 ? (
-            <button type="button" onClick={() => setOpen(!open)} className={`mt-2 self-start h-7 -ml-2 px-2 inline-flex items-center gap-1 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[12.5px] text-[var(--accent)] transition-colors ${hoverAccent(look)}`}>
+            <button type="button" onClick={() => setOpen(!open)} className={`mt-2 self-start h-7 -ml-2 px-2 inline-flex items-center gap-1 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[12.5px] text-[var(--accent-text)] transition-colors ${hoverAccent(look)}`}>
               {open ? t("ui.comments.fold") : t("ui.comments.moreReplies", { n: more })}
               <Icon name="down" size={13} className={`transition-transform duration-300 ease-[var(--ease)] ${open ? "rotate-180" : ""}`} />
             </button>
@@ -193,7 +193,7 @@ function Item({ c, ctx, small = false, onReply }: { c: CommentItem; ctx: Ctx; sm
         </div>
         <div className={`mt-0.5 whitespace-pre-wrap break-words leading-relaxed select-text ${small ? "text-[13px]" : "text-[13.5px]"}`}>{c.text}</div>
         <div className="mt-1 -ml-2 flex items-center gap-0.5 text-[12px] text-[var(--meta)]">
-          <button type="button" aria-pressed={Boolean(c.liked)} onClick={() => ctx.onLike(c.id)} className={`${act} ${c.liked ? "!text-[var(--accent)]" : ""}`}>
+          <button type="button" aria-pressed={Boolean(c.liked)} onClick={() => ctx.onLike(c.id)} className={`${act} ${c.liked ? "!text-[var(--accent-text)]" : ""}`}>
             <Icon name="thumbUp" size={13} className={c.liked ? "pop-like" : ""} />
             {c.likes || t("ui.comments.like")}
           </button>
@@ -202,7 +202,7 @@ function Item({ c, ctx, small = false, onReply }: { c: CommentItem; ctx: Ctx; sm
             {t("ui.comments.reply")}
           </button>
           {c.mine && ctx.onDelete ? (
-            <button type="button" onClick={() => ctx.onDelete?.(c.id)} className={`${act} opacity-0 group-hover:opacity-100 focus-visible:opacity-100 hover:!text-[var(--danger)]`}>
+            <button type="button" onClick={() => ctx.onDelete?.(c.id)} className={`${act} opacity-0 group-hover:opacity-100 focus-visible:opacity-100 hover:!text-[var(--danger-text)]`}>
               {t("ui.comments.delete")}
             </button>
           ) : !c.mine && ctx.onReport ? (

@@ -202,7 +202,7 @@ export function HelpMark({ title }: { title: string }) {
           "text-[var(--meta)] text-[11px] leading-none font-medium",
           "cursor-help shadow-[inset_0_0_0_1px_var(--line)]",
           "transition-[color,box-shadow,transform] duration-200 ease-[var(--spring)]",
-          "hover:text-[var(--accent)] hover:shadow-[inset_0_0_0_1px_var(--accent)] hover:scale-110",
+          "hover:text-[var(--accent-text)] hover:shadow-[inset_0_0_0_1px_var(--accent)] hover:scale-110",
           "focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2",
         ].join(" ")}
       >

@@ -164,7 +164,7 @@ function StyleSample({ look }: { look: HoverStyle }) {
     <HoverStyleProvider value={look}>
       <Filters value={v} onChange={setV} options={VERDICTS.map((id) => ({ id, label: t(id === "all" ? "ui.comments.all" : id === "ok" ? "demo.inter.ok" : "demo.inter.issue") }))} />
       <div className="mt-2 -ml-2 flex items-center gap-0.5">
-        <button type="button" aria-pressed={liked} onClick={() => setLiked(!liked)} className={`${act} ${liked ? "!text-[var(--accent)]" : ""}`}>
+        <button type="button" aria-pressed={liked} onClick={() => setLiked(!liked)} className={`${act} ${liked ? "!text-[var(--accent-text)]" : ""}`}>
           <Icon name="thumbUp" size={13} className={liked ? "pop-like" : ""} />
           {liked ? 1 : t("ui.comments.like")}
         </button>

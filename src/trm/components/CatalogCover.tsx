@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from "react";
+import { useThumb } from "../lib/thumb";
 
 type CatalogCoverProps = {
   sources: readonly string[];
@@ -14,8 +15,11 @@ const badge = "absolute left-2.5 text-[11px] px-1.5 py-0.5 rounded-[4px] tabular
 function CoverImage({ sources, placeholder }: Pick<CatalogCoverProps, "sources" | "placeholder">) {
   const [index, setIndex] = useState(0);
   const src = sources[index];
+  // 大图先缩成缩略图；还在生成时不画，露出底色。
+  const shown = useThumb(src);
+  if (src && !shown) return null;
   return src ? (
-    <img key={src} src={src} alt="" loading="lazy" referrerPolicy="no-referrer" draggable={false}
+    <img key={src} src={shown} alt="" loading="lazy" referrerPolicy="no-referrer" draggable={false}
       onError={() => setIndex(current => current === index ? current + 1 : current)}
       className="absolute inset-0 h-full w-full object-contain" />
   ) : <span aria-hidden>{placeholder}</span>;

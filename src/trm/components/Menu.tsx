@@ -195,7 +195,7 @@ export function Menu({ anchor, items, onClose, side, leaving, trigger }: { ancho
             className={[
               "w-full flex items-center gap-2.5 h-8 px-2.5 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-left text-[13px] whitespace-nowrap",
               "enabled:hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)] disabled:opacity-40 disabled:cursor-default",
-              it.danger ? "text-[var(--danger)]" : "text-[var(--ink)]",
+              it.danger ? "text-[var(--danger-text)]" : "text-[var(--ink)]",
               sub?.id === it.id ? "bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]" : "",
             ].join(" ")}
           >

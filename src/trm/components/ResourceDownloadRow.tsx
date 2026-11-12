@@ -29,7 +29,7 @@ export function ResourceDownloadRow({
         <div className="min-w-0 flex-[1_1_10rem]">
           <div className="text-[14px] leading-snug">
             {title}
-            {recommended ? <span className="ml-1.5 text-[11px] font-medium text-[var(--accent)]">{t("ui.download.recommended")}</span> : null}
+            {recommended ? <span className="ml-1.5 text-[11px] font-medium text-[var(--accent-text)]">{t("ui.download.recommended")}</span> : null}
           </div>
           {description ? <div className="mt-1 text-[12.5px] leading-snug text-[var(--meta)]">{description}</div> : null}
           {detail ? <div className="mt-1 text-[12px] tabular-nums text-[var(--meta)]">{detail}</div> : null}

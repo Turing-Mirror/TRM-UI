@@ -126,4 +126,6 @@ export {
 export { ImageCropDialog, type ImageCropDialogProps } from "./components/ImageCropDialog";
 export { ResourceDownloadRow, type ResourceDownloadRowProps } from "./components/ResourceDownloadRow";
 export { CatalogCover } from "./components/CatalogCover";
+export { ThumbImage } from "./components/ThumbImage";
+export { THUMB_PX, useThumb, loadThumb, peekThumb, forgetThumb, thumbSupported } from "./lib/thumb";
 export { TransferProgress } from "./components/TransferProgress";

@@ -211,7 +211,7 @@ export function Btn({
         primary
           ? "bg-[var(--accent)] text-[var(--accent-ink)] font-semibold shadow-none enabled:hover:brightness-95"
           : on
-            ? "bg-transparent text-[var(--accent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--accent)_42%,transparent)]"
+            ? "bg-transparent text-[var(--accent-text)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--accent)_42%,transparent)]"
             : "bg-transparent text-[var(--ink-muted)] shadow-[inset_0_0_0_1px_var(--line)] enabled:hover:text-[var(--ink)] enabled:hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]",
         disabled || busy ? "disabled:cursor-default" : "",
         disabled && !busy && dimDisabled ? "disabled:opacity-40" : "",

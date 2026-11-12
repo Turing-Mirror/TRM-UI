@@ -11,10 +11,10 @@ import { hoverInk, useHoverStyle } from "../lib/hoverStyle";
 export type Tone = "ok" | "warn" | "muted" | "accent" | "danger";
 
 const TONE_TEXT: Record<Tone, string> = {
-  ok: "text-[var(--ok)]",
+  ok: "text-[var(--ok-text)]",
   warn: "text-[var(--warn-ink)]",
-  accent: "text-[var(--accent)]",
-  danger: "text-[var(--danger)]",
+  accent: "text-[var(--accent-text)]",
+  danger: "text-[var(--danger-text)]",
   muted: "text-[var(--meta)]",
 };
 
@@ -124,7 +124,7 @@ export function IconBtn({ icon, label, onClick, active = false, size = 18 }: { i
       className={[
         // 图标按钮没有底：悬停、选中都只改图标本身的颜色，见 src/pages/interactionRules.ts
         "w-8 h-8 grid place-items-center rounded-[var(--rs)] border-0 bg-transparent cursor-pointer transition-colors",
-        active ? "text-[var(--accent)]" : "text-[var(--ink-muted)] hover:text-[var(--ink)]",
+        active ? "text-[var(--accent-text)]" : "text-[var(--ink-muted)] hover:text-[var(--ink)]",
       ].join(" ")}
     >
       <Icon name={icon} size={size} />
@@ -226,7 +226,7 @@ export function Filters<T extends string>({ value, options, onChange }: { value:
             setShown(o.id);
             startTransition(() => onChange(o.id));
           }}
-          className={`relative h-7 px-2.5 inline-flex items-center gap-1.5 rounded-[var(--rs)] border-0 cursor-pointer text-[12.5px] bg-transparent transition-colors duration-200 ${o.id === shown ? (look === "plain" ? "text-[var(--accent)] font-medium" : "text-[var(--ink)] font-medium") : `text-[var(--ink-muted)] ${hoverInk(look)}`}`}
+          className={`relative h-7 px-2.5 inline-flex items-center gap-1.5 rounded-[var(--rs)] border-0 cursor-pointer text-[12.5px] bg-transparent transition-colors duration-200 ${o.id === shown ? (look === "plain" ? "text-[var(--accent-text)] font-medium" : "text-[var(--ink)] font-medium") : `text-[var(--ink-muted)] ${hoverInk(look)}`}`}
         >
           {o.label}
           {o.count !== undefined ? <span className="text-[11.5px] text-[var(--meta)] font-normal tabular-nums">{o.count}</span> : null}
@@ -302,7 +302,7 @@ export function Pager({ page, pages, onChange, showSinglePage = false, className
               type="button"
               aria-current={p === page ? "page" : undefined}
               onClick={() => onChange(p)}
-              className={`${btn} ${p === page ? (look === "plain" ? "text-[var(--accent)] font-medium" : "text-[var(--ink)] font-medium") : `text-[var(--ink-muted)] ${hover}`}`}
+              className={`${btn} ${p === page ? (look === "plain" ? "text-[var(--accent-text)] font-medium" : "text-[var(--ink)] font-medium") : `text-[var(--ink-muted)] ${hover}`}`}
             >
               {p}
             </button>

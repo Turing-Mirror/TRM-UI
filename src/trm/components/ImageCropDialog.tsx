@@ -531,7 +531,7 @@ export function ImageCropDialog({ name, pickImage, loadInitialImage, onClose, on
           )}
 
           {err ? (
-            <p role="alert" className="mt-3 mb-0 text-[12.5px] text-[var(--danger)] break-all">{err}</p>
+            <p role="alert" className="mt-3 mb-0 text-[12.5px] text-[var(--danger-text)] break-all">{err}</p>
           ) : null}
 
         </div>

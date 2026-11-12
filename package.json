@@ -14,7 +14,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "check:i18n": "node scripts/check_i18n.mjs",
-    "build": "eslint . && tsc && node scripts/check_i18n.mjs && vite build",
+    "check:design": "node scripts/design_check.mjs",
+    "build": "eslint . && tsc && node scripts/check_i18n.mjs && node scripts/design_check.mjs && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
@@ -54,8 +55,12 @@
     "./components.css": "./lib/styles/components.css",
     "./package.json": "./package.json"
   },
+  "bin": {
+    "trm-design-check": "scripts/design_check.mjs"
+  },
   "files": [
     "lib",
+    "scripts/design_check.mjs",
     "LICENSE"
   ],
   "sideEffects": [

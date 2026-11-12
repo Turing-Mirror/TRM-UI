@@ -79,7 +79,7 @@ export function SideItem({
       aria-pressed={on}
       className={[
         "relative w-full h-8 flex items-center gap-2 px-3 rounded-[var(--rs)] border-0 cursor-pointer text-[13px] text-left transition-colors duration-200",
-        on ? `bg-transparent font-medium ${look === "plain" ? "text-[var(--accent)]" : "text-[var(--ink)]"}` : `bg-transparent text-[var(--ink-muted)] ${hoverInk(look)}`,
+        on ? `bg-transparent font-medium ${look === "plain" ? "text-[var(--accent-text)]" : "text-[var(--ink)]"}` : `bg-transparent text-[var(--ink-muted)] ${hoverInk(look)}`,
       ].join(" ")}
     >
       {icon ? <Icon name={icon} size={15} className={on ? "text-[var(--accent)]" : "text-[var(--meta)]"} /> : null}
