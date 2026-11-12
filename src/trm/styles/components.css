@@ -1190,7 +1190,8 @@ option {
 .trm-chart-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
 .trm-chart figcaption { font-size: 14px; font-weight: 500; color: var(--ink); }
 .trm-chart-scroll { overflow-x: auto; }
-.trm-chart-plot { position: relative; }
+/* Keep tooltip overflow out of the chart's scrollable area. */
+.trm-chart-plot { position: relative; overflow: clip; }
 .trm-chart svg { display: block; width: 100%; font-size: 11.5px; font-variant-numeric: tabular-nums; }
 .trm-chart-grid line { stroke: var(--line); }
 .trm-chart text { fill: var(--meta); }
@@ -1207,6 +1208,7 @@ option {
   box-shadow: var(--pop-shadow);
   padding: 6px 10px;
   font-size: 11.5px;
+  width: max-content;
   max-width: 100%;
   overflow-wrap: anywhere;
 }
