@@ -42,9 +42,10 @@ export function peekThumb(src: string, px = THUMB_PX): string {
   return ready.get(memoKey(src, px)) ?? "";
 }
 
-/** 原图换过内容（例如用户改了封面）之后调用，下次显示时重新生成。 */
-export function forgetThumb(src: string): void {
-  for (const key of [...ready.keys()]) if (key.endsWith(`|${src}`)) ready.delete(key);
+/** 原图换过内容（例如用户改了封面）之后调用，下次显示时重新生成。不传地址时全部重来。 */
+export function forgetThumb(src?: string): void {
+  if (src === undefined) ready.clear();
+  else for (const key of [...ready.keys()]) if (key.endsWith(`|${src}`)) ready.delete(key);
 }
 
 /** 取缩略图地址。失败时返回原图地址。 */
