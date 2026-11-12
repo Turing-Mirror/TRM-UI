@@ -1,4 +1,5 @@
 import {
+  Activity,
   createContext,
   useContext,
   useEffect,
@@ -24,6 +25,18 @@ export function PageActive({ value, children }: { value: boolean; children: Reac
   return <PageActiveCtx.Provider value={value}>{children}</PageActiveCtx.Provider>;
 }
 
+/** 这一页被切走时执行一次。常驻页用它收起一次性的结果文字，回来时不再看到上次的提示。 */
+export function usePageLeave(fn: () => void): void {
+  const active = usePageActive();
+  const latest = useRef(fn);
+  useEffect(() => {
+    latest.current = fn;
+  });
+  useEffect(() => {
+    if (!active) latest.current();
+  }, [active]);
+}
+
 type Props<T extends string> = {
   /** 只用到方向：按导航顺序，往后为 1，往前为 -1。 */
   nav: Pick<Nav<T>, "direction">;
@@ -31,15 +44,24 @@ type Props<T extends string> = {
   children: (id: T) => ReactNode;
   /** 换页方向的轴。顶部页签用 "x"（默认），侧栏用 "y"：导航竖着排，页面就上下推。 */
   axis?: "x" | "y";
-  /** 离开后仍保持挂载的页：输入、筛选和滚动位置都留着，再来时不重新加载。 */
-  keep?: (id: T) => boolean;
+  /**
+   * 离开后仍保持挂载的页：输入、筛选和滚动位置都留着，再来时不重新搭建。
+   * - `true`：藏起来但照常运行，监听和轮询都不停。适合离开后还有事在进行的页。
+   * - `"paused"`：藏起来并停掉副作用，回来时重新执行一遍，数据照样刷新。适合其余的页。
+   */
+  keep?: (id: T) => boolean | "paused";
+  /** 空闲时提前搭好的页，第一次进入不再有搭建的停顿。只对 `keep` 认可的页有效；露面之前副作用不执行。 */
+  warm?: readonly T[];
   /** 某一页容器的附加类名。默认纵向滚动；不该滚动的页传 "overflow-hidden"。 */
   paneClassName?: (id: T) => string;
 };
 
 /** 胶片上的一页：slot 是它在胶片上的格子，相邻的页格子相差 1。 */
 type Layer<T> = { id: T; slot: number };
-type State<T> = { page: T; layers: Layer<T>[]; seq: number };
+type State<T> = { page: T; layers: Layer<T>[]; seq: number; seen: T[] };
+
+/** 提前搭页的间隔：一次只搭一页，让出时间给眼前的操作。 */
+const WARM_GAP_MS = 600;
 
 /**
  * 整页推移：新旧两页首尾相接，像一条胶片整体平移一个页面的距离，全程不透明、不缩放。
@@ -52,9 +74,9 @@ type State<T> = { page: T; layers: Layer<T>[]; seq: number };
  *
  * 同时可能挂着几页，所以 `children` 是个函数而不是节点 —— 它会被每一页各调用一次。
  */
-export function PageHost<T extends string>({ nav, page, children, axis = "x", keep, paneClassName }: Props<T>) {
+export function PageHost<T extends string>({ nav, page, children, axis = "x", keep, warm, paneClassName }: Props<T>) {
   const reduce = usePrefersReducedMotion();
-  const [st, setSt] = useState<State<T>>({ page, layers: [{ id: page, slot: 0 }], seq: 0 });
+  const [st, setSt] = useState<State<T>>({ page, layers: [{ id: page, slot: 0 }], seq: 0, seen: [page] });
   const [parked, setParked] = useState<T[]>([]);
   const strip = useRef<HTMLDivElement>(null);
   const running = useRef<Animation | null>(null);
@@ -64,16 +86,17 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
   if (st.page !== page) {
     const dir = reduce ? 0 : nav.direction(st.page, page);
     const from = st.layers.find((l) => l.id === st.page);
+    const seen = st.seen.includes(page) ? st.seen : [...st.seen, page];
     if (dir === 0 || !from) {
-      setSt({ page, layers: [{ id: page, slot: 0 }], seq: st.seq + 1 });
+      setSt({ page, layers: [{ id: page, slot: 0 }], seq: st.seq + 1, seen });
     } else {
       const slot = from.slot + dir;
       // 新页接在当前页的去向一侧。那一格若还留着更早的离场页，由新页顶替。
       const layers = st.layers.filter((l) => l.id !== page && l.slot !== slot);
-      setSt({ page, layers: [...layers, { id: page, slot }], seq: st.seq + 1 });
+      setSt({ page, layers: [...layers, { id: page, slot }], seq: st.seq + 1, seen });
     }
   } else if (reduce && st.layers.length > 1) {
-    setSt({ page, layers: [{ id: page, slot: 0 }], seq: st.seq + 1 });
+    setSt({ ...st, layers: [{ id: page, slot: 0 }], seq: st.seq + 1 });
   }
   // 常驻页一旦露过面就留在台上；之后不在胶片上时藏起来。
   const wanted = keep ? [...new Set([...parked, ...st.layers.map((l) => l.id)])].filter(keep) : [];
@@ -113,6 +136,22 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
   }, [st.seq, slot, moving]);
   useEffect(() => () => running.current?.cancel(), []);
 
+  // 提前搭页：停稳之后、浏览器空闲时，一次加一页到台下。
+  const next = moving || !keep ? undefined : warm?.find((id) => keep(id) && id !== st.page && !parked.includes(id));
+  useEffect(() => {
+    if (next === undefined) return;
+    let idle = 0;
+    const add = () => setParked((p) => (p.includes(next) ? p : [...p, next]));
+    const timer = window.setTimeout(() => {
+      if (typeof window.requestIdleCallback === "function") idle = window.requestIdleCallback(add, { timeout: WARM_GAP_MS * 4 });
+      else add();
+    }, WARM_GAP_MS);
+    return () => {
+      window.clearTimeout(timer);
+      if (idle) window.cancelIdleCallback(idle);
+    };
+  }, [next]);
+
   // 常驻页回来时回到离开时的滚动位置；藏着的时候排版若变短，浏览器会把位置收回去。
   const shown = useRef(page);
   useLayoutEffect(() => {
@@ -140,6 +179,8 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
         {ids.map((id) => {
           const at = onStrip.get(id);
           const active = id === st.page;
+          // 台下的页：停用副作用的，和还没露过面的，交给 Activity 藏起来。
+          const resting = at === undefined && (keep?.(id) === "paused" || !st.seen.includes(id));
           return (
             <div
               key={id}
@@ -153,7 +194,9 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
               className={`absolute ${paneClassName?.(id) ?? "overflow-y-auto"} ${at === undefined ? "invisible" : ""}`}
               style={place(axis, at ?? slot)}
             >
-              <PageActive value={active}>{children(id)}</PageActive>
+              <Activity mode={resting ? "hidden" : "visible"}>
+                <PageActive value={active}>{children(id)}</PageActive>
+              </Activity>
             </div>
           );
         })}

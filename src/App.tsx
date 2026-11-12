@@ -52,6 +52,10 @@ const nav = createNav([
 
 type PageId = (typeof nav.defs)[number]["id"];
 
+/** 每一页离开后都留着状态，并在空闲时提前搭好。 */
+const keepPage = () => "paused" as const;
+const warmPages = nav.defs.map((d) => d.id);
+
 const ICONS: Record<PageId, IconName> = {
   overview: "home",
   components: "sliders",
@@ -143,7 +147,7 @@ function Shell() {
         </Sidebar>
         <main className="page-workspace relative flex-1 min-w-0 flex flex-col">
           {ready ? (
-            <PageHost nav={nav} page={page} axis="y">
+            <PageHost nav={nav} page={page} axis="y" keep={keepPage} warm={warmPages}>
               {(id) => {
                 switch (id) {
                   case "overview":

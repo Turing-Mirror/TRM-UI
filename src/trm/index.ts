@@ -19,7 +19,7 @@ export { ConfirmDialog, type ConfirmDialogProps } from "./components/ConfirmDial
 export { RowGroup, Row, CenterPanel, type RowGroupProps, type RowProps, type CenterPanelProps } from "./components/rows";
 export { SegmentControl, type SegmentOption } from "./components/SegmentControl";
 export { Tooltip } from "./components/Tooltip";
-export { PageHost, PageActive, usePageActive } from "./components/PageHost";
+export { PageHost, PageActive, usePageActive, usePageLeave } from "./components/PageHost";
 export { TitleBar, WinBtn, type WindowControls } from "./components/TitleBar";
 export { ErrorBoundary } from "./components/ErrorBoundary";
 

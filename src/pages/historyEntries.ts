@@ -19,6 +19,40 @@ export type HistoryEntry = {
 
 export const HISTORY: HistoryEntry[] = [
 {
+  "id": "page-keep-and-warm",
+  "date": "2026-11-12",
+  "old": {
+    "zh-CN": "离开一页就整页卸下，再来时重新搭建，输入、筛选和滚动位置都不留；第一次进入内容多的页，推移开头会停顿一下。",
+    "zh-TW": "離開一頁就整頁卸下，再來時重新搭建，輸入、篩選和捲動位置都不留；第一次進入內容多的頁，推移開頭會停頓一下。",
+    "en-US": "Leaving a page unmounted it; coming back rebuilt it, losing input, filters and scroll position. The first visit to a heavy page stalled at the start of the slide.",
+    "ja-JP": "ページを離れると丸ごと外され、戻ると作り直されて、入力・絞り込み・スクロール位置が消えていた。重いページに初めて入ると、スライドの出だしが一瞬止まっていた。",
+    "ko-KR": "페이지를 떠나면 통째로 내려가고 돌아오면 다시 만들어져 입력, 필터, 스크롤 위치가 사라졌다. 내용이 많은 페이지에 처음 들어가면 이동이 시작될 때 잠깐 멈췄다.",
+    "fr-FR": "Quitter une page la démontait ; y revenir la reconstruisait, sans la saisie, les filtres ni la position de défilement. La première visite d’une page lourde marquait un arrêt au début du glissement.",
+    "es-ES": "Al salir de una página se desmontaba; al volver se reconstruía y se perdían lo escrito, los filtros y la posición de desplazamiento. La primera visita a una página pesada se detenía al empezar el desplazamiento.",
+    "ru-RU": "При уходе страница снималась целиком, при возврате собиралась заново: ввод, фильтры и положение прокрутки терялись. Первый вход на тяжёлую страницу давал заминку в начале сдвига."
+  },
+  "now": {
+    "zh-CN": "页面可以常驻：离开后状态留着，副作用停掉，回来时重新执行，数据照样刷新。空闲时提前搭好其余的页。",
+    "zh-TW": "頁面可以常駐：離開後狀態留著，副作用停掉，回來時重新執行，資料照樣重新整理。閒置時提前搭好其餘的頁。",
+    "en-US": "Pages can stay: state is kept after leaving, effects stop and run again on return, so data still refreshes. The other pages are built ahead while idle.",
+    "ja-JP": "ページを常駐にできる。離れても状態は残り、副作用は止まって戻ったときに再実行されるので、データは更新される。残りのページはアイドル時に先に組み立てる。",
+    "ko-KR": "페이지를 상주시킬 수 있다. 떠난 뒤에도 상태는 남고, 부수 효과는 멈췄다가 돌아오면 다시 실행되어 데이터가 새로 고쳐진다. 나머지 페이지는 한가할 때 미리 만든다.",
+    "fr-FR": "Les pages peuvent rester en place : l’état est conservé, les effets s’arrêtent puis reprennent au retour, les données se rafraîchissent donc. Les autres pages sont construites à l’avance pendant les temps morts.",
+    "es-ES": "Las páginas pueden permanecer: el estado se conserva, los efectos se detienen y se repiten al volver, así que los datos se actualizan. Las demás páginas se construyen por adelantado en los ratos libres.",
+    "ru-RU": "Страницы могут оставаться: состояние сохраняется, эффекты останавливаются и выполняются снова при возврате, поэтому данные обновляются. Остальные страницы собираются заранее в простое."
+  },
+  "why": {
+    "zh-CN": "重新搭建既丢状态又占用推移的第一帧。只停副作用不拆界面，两个问题一起解决，后台也不多耗资源。",
+    "zh-TW": "重新搭建既丟狀態又佔用推移的第一幀。只停副作用不拆介面，兩個問題一起解決，背景也不多耗資源。",
+    "en-US": "Rebuilding lost state and took the first frame of the slide. Stopping effects while keeping the interface solves both without extra background work.",
+    "ja-JP": "作り直しは状態を失い、スライドの最初のフレームも奪っていた。副作用だけ止めて画面を残せば両方が解決し、裏での負荷も増えない。",
+    "ko-KR": "다시 만들면 상태를 잃고 이동의 첫 프레임도 빼앗긴다. 화면은 두고 부수 효과만 멈추면 두 문제가 함께 풀리고 백그라운드 부담도 늘지 않는다.",
+    "fr-FR": "Reconstruire faisait perdre l’état et occupait la première image du glissement. Arrêter les effets en gardant l’interface règle les deux sans travail d’arrière-plan supplémentaire.",
+    "es-ES": "Reconstruir perdía el estado y ocupaba el primer fotograma del desplazamiento. Detener los efectos conservando la interfaz resuelve ambas cosas sin trabajo adicional en segundo plano.",
+    "ru-RU": "Пересборка теряла состояние и занимала первый кадр сдвига. Остановка эффектов при сохранённом интерфейсе решает обе проблемы без лишней фоновой работы."
+  }
+},
+{
   "id": "page-crossfade-and-thumb-wait",
   "date": "2026-11-11",
   "old": {

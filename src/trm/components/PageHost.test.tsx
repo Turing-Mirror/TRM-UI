@@ -13,7 +13,7 @@ function Page({ id }: { id: Id }) {
   useEffect(() => { mounted(id); return () => { removed(id); }; }, [id]);
   return <input aria-label={id} defaultValue={id} />;
 }
-const host = (axis: "x" | "y", page: Id, keep?: (id: Id) => boolean) => <PageHost nav={nav} page={page} axis={axis} keep={keep}>
+const host = (axis: "x" | "y", page: Id, keep?: (id: Id) => boolean | "paused", warm?: readonly Id[]) => <PageHost nav={nav} page={page} axis={axis} keep={keep} warm={warm}>
   {id => <Page id={id} />}
 </PageHost>;
 
@@ -136,6 +136,49 @@ describe.each(["x", "y"] as const)("PageHost axis=%s", axis => {
     expect(pane("a")).toBe(a);
     expect(a.scrollTop).toBe(130);
     expect(a.className).not.toContain("invisible");
+  });
+
+  it("pauses a kept page: its effects stop while hidden and run again on return, state stays", async () => {
+    stub = stubAnimate();
+    const keep = () => "paused" as const;
+    m = mount(host(axis, "a", keep));
+    const a = m.container.querySelector<HTMLInputElement>('input[aria-label="a"]')!;
+    a.value = "edited";
+    act(() => m.root.render(host(axis, "b", keep)));
+    expect(removed).not.toHaveBeenCalled();
+    await finish();
+    expect(removed.mock.calls).toEqual([["a"]]);
+    expect(m.container.querySelector('input[aria-label="a"]')).toBe(a);
+    expect(a.style.display).toBe("none");
+    act(() => m.root.render(host(axis, "a", keep)));
+    expect(m.container.querySelector('input[aria-label="a"]')).toBe(a);
+    expect(a.value).toBe("edited");
+    expect(a.style.display).toBe("");
+    expect(mounted.mock.calls).toEqual([["a"], ["b"], ["a"]]);
+  });
+
+  it("builds warm pages ahead while idle without running their effects", async () => {
+    vi.useFakeTimers();
+    try {
+      stub = stubAnimate();
+      const keep = (id: Id) => id === "c" ? true : "paused" as const;
+      m = mount(host(axis, "a", keep, ["a", "b", "c"]));
+      expect(m.container.querySelectorAll("input")).toHaveLength(1);
+      // 一次只搭一页。
+      await act(async () => { await vi.advanceTimersByTimeAsync(5000); });
+      expect(m.container.querySelectorAll("input")).toHaveLength(2);
+      await act(async () => { await vi.advanceTimersByTimeAsync(5000); });
+      expect(m.container.querySelectorAll("input")).toHaveLength(3);
+      expect(mounted.mock.calls).toEqual([["a"]]);
+      const c = m.container.querySelector<HTMLInputElement>('input[aria-label="c"]')!;
+      expect(c.style.display).toBe("none");
+      act(() => m.root.render(host(axis, "c", keep, ["a", "b", "c"])));
+      expect(m.container.querySelector('input[aria-label="c"]')).toBe(c);
+      expect(c.style.display).toBe("");
+      expect(mounted.mock.calls).toEqual([["a"], ["c"]]);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("100 switches leave only one mounted page", () => {
