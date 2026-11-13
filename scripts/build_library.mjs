@@ -48,10 +48,13 @@ await build({
   root,
   configFile: false,
   logLevel: "warn",
+  // 相对路径：字体文件就在样式表旁边的 fonts/ 里。
+  base: "./",
   plugins: [tailwindcss()],
   build: {
     outDir: "lib/styles",
     emptyOutDir: false,
+    assetsInlineLimit: 0,
     cssMinify: true,
     rollupOptions: {
       input: resolve(root, "scripts/compiled_entry.css"),
