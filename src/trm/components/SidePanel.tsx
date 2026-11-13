@@ -64,13 +64,13 @@ export function SidePanel({ panel, side, children, className = "", label, rest =
   const size = fill ? "100%" : panel.open ? panel.width : rest;
   const dim = vertical ? "height" : "width";
   return (
-    <div className={`relative flex-none ${vertical ? "w-full" : "h-full"}`} style={{ [dim]: size, transition: panel.dragging ? "none" : `${dim} 480ms var(--spring-settle)` }}>
+    <div className={`relative flex-none ${vertical ? "w-full" : "h-full"}`} style={{ [dim]: size, transition: panel.dragging ? "none" : `${dim} 420ms var(--spring-settle)` }}>
       <div className={`${vertical ? "w-full h-full" : "h-full"} overflow-hidden flex ${side === "right" ? "justify-end" : ""} ${vertical ? "items-start" : ""}`}>
         <div
           inert={!panel.open && !rest}
           aria-label={label}
           className={`${vertical ? "w-full" : "h-full"} flex-none ${className}`}
-          style={{ [dim]: fill ? "100%" : panel.width, opacity: panel.open || rest || fill ? 1 : 0, transition: "opacity 220ms var(--ease-soft)" }}
+          style={{ [dim]: fill ? "100%" : panel.width, opacity: panel.open || rest || fill ? 1 : 0, transition: "opacity 200ms var(--ease-soft)" }}
         >
           {children}
         </div>
@@ -84,7 +84,7 @@ export function SidePanel({ panel, side, children, className = "", label, rest =
           onPointerMove={move}
           onPointerUp={up}
           onPointerCancel={up}
-          className={`group absolute z-[2] touch-none ${vertical ? "left-0 right-0 h-3 -top-1.5 cursor-row-resize" : `top-0 bottom-0 w-3 cursor-col-resize ${side === "right" ? "-left-1.5" : "-right-1.5"}`}`}
+          className={`group absolute z-[1] touch-none ${vertical ? "left-0 right-0 h-3 -top-1.5 cursor-row-resize" : `top-0 bottom-0 w-3 cursor-col-resize ${side === "right" ? "-left-1.5" : "-right-1.5"}`}`}
         >
           <span className={`absolute transition-colors duration-200 ${vertical ? "left-2 right-2 top-1/2 h-px" : "top-2 bottom-2 left-1/2 w-px"} ${panel.dragging ? "bg-[var(--focus-line)]" : "bg-transparent group-hover:bg-[var(--line)]"}`} />
         </div>

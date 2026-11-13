@@ -10,6 +10,32 @@
     "ru-RU": "Русский"
   },
   "ui": {
+    "download": {
+      "recommended": "推奨",
+      "installed": "インストール済み",
+      "removing": "削除中…",
+      "remove": "削除",
+      "downloading": "ダウンロード中…",
+      "download": "ダウンロード"
+    },
+    "crop": {
+      "title": "カバーの変更と切り抜き",
+      "lead": "「{v0}」のカバーを切り抜きます。ホイールで拡大縮小、画像をドラッグして移動、選択範囲の端をドラッグして範囲を調整します。",
+      "pick": "画像を選択…",
+      "pickHint": "jpg、png、webp、bmp に対応しています。",
+      "repick": "別の画像を選ぶ",
+      "zoomIn": "拡大",
+      "zoomOut": "縮小",
+      "fit": "合わせる",
+      "zoom100": "100%",
+      "ratioLabel": "比率：",
+      "free": "自由",
+      "previewAfter": "切り抜き後",
+      "previewBefore": "元の画像",
+      "previewNote": "出力サイズ：{v0} px",
+      "save": "カバーを保存",
+      "badImage": "画像データが無効なため保存できませんでした"
+    },
     "chart": {
       "chart": "グラフ",
       "table": "表",
@@ -135,7 +161,8 @@
     "interaction": "インタラクション",
     "text": "文言",
     "settings": "設定",
-    "history": "履歴"
+    "history": "履歴",
+    "sharedCode": "共通コード"
   },
   "demo": {
     "workbench": {
@@ -306,6 +333,7 @@
     "type": {
       "sub": "本文の文字サイズは 15px、行の高さは 1.65 です。文字サイズは以下の段階だけを使います。",
       "roleBody": "本文",
+      "roleValue": "??",
       "roleHelp": "説明",
       "roleMeta": "補足",
       "weight": "ウェイト {v}"
@@ -619,6 +647,12 @@
       "panel": "中央パネル",
       "confirmKey": "キーを確認",
       "confirmed": "デモ用キーを確認しました。"
+    },
+    "sharedCode": {
+      "list": "Fabric シリーズ共通",
+      "count": "全 {n} 件",
+      "from": "インポート：{v}",
+      "none": "該当するモジュールはありません"
     }
   }
 }

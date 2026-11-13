@@ -61,36 +61,51 @@ export const MOTION_TERMS: MotionTerm[] = [
     desc: ITEM_SWITCH_RULE,
   },
   {
+    id: "page-switch",
+    code: "PageHost",
+    name: { "zh-CN": "换页", "zh-TW": "換頁", "en-US": "Page change", "ja-JP": "ページ切り替え", "ko-KR": "페이지 전환", "fr-FR": "Changement de page", "es-ES": "Cambio de página", "ru-RU": "Смена страницы" },
+    desc: {
+      "zh-CN": "整页导航时新旧两页首尾相接，整体平移一个页面的距离，全程不透明、不缩放，用时 420ms。顶部页签左右推，侧栏上下推。" +
+        "点击当帧开始；中途再点，从当前位置接着走，不从头重放。",
+      "zh-TW": "整頁導覽時新舊兩頁首尾相接，整體平移一個頁面的距離，全程不透明、不縮放，用時 420ms。頂部頁籤左右推，側欄上下推。" +
+        "點擊當幀開始；中途再點，從目前位置接著走，不從頭重播。",
+      "en-US": "During page navigation the old and new pages sit edge to edge and move together by one page, fully opaque and unscaled, " +
+        "in 420ms. Top tabs move sideways; a sidebar moves vertically. Motion starts in the frame of the click, and a click midway " +
+        "continues from the current position without restarting.",
+      "ja-JP": "ページ移動では新旧 2 ページが端と端を接して 1 ページ分いっしょに動きます。不透明のままで拡大縮小はなく、420ms です。" +
+        "上部タブは左右、サイドバーは上下に動きます。クリックと同じフレームで始まり、途中でクリックすると現在位置から続きます。",
+      "ko-KR": "페이지를 이동할 때 이전 페이지와 새 페이지가 맞닿은 채 한 페이지만큼 함께 움직입니다. 투명도와 크기는 바뀌지 않으며 420ms입니다. " +
+        "상단 탭은 좌우로, 사이드바는 상하로 움직입니다. 클릭한 프레임에 시작하고, 도중에 클릭하면 현재 위치에서 이어집니다.",
+      "fr-FR": "Pendant la navigation, l’ancienne et la nouvelle page sont bord à bord et se déplacent ensemble d’une page, " +
+        "opaques et sans zoom, en 420ms. Les onglets du haut déplacent à l’horizontale, la barre latérale à la verticale. " +
+        "Le mouvement commence dans l’image du clic ; un clic en cours de route continue depuis la position actuelle.",
+      "es-ES": "Durante la navegación, la página anterior y la nueva van borde con borde y se desplazan juntas una página, " +
+        "opacas y sin escala, en 420ms. Las pestañas superiores mueven en horizontal y la barra lateral en vertical. " +
+        "El movimiento empieza en el fotograma del clic; un clic a mitad continúa desde la posición actual.",
+      "ru-RU": "При навигации старая и новая страницы стоят вплотную и сдвигаются вместе на одну страницу, непрозрачно и без масштабирования, " +
+        "за 420ms. Верхние вкладки сдвигают по горизонтали, боковая панель по вертикали. Движение начинается в кадре щелчка; " +
+        "щелчок по ходу продолжает движение с текущего положения.",
+    },
+  },
+  {
     id: "push",
-    code: "Swap, Panes, PageHost",
+    code: "Swap, Panes",
     name: { "zh-CN": "推移", "zh-TW": "推移", "en-US": "Push", "ja-JP": "プッシュ", "ko-KR": "밀기", "fr-FR": "Poussée", "es-ES": "Empuje", "ru-RU": "Сдвиг" },
     desc: {
-      "zh-CN": "用于切换分栏、页面与步骤。新旧内容同时推移并淡入淡出，使用相同曲线与时长。横向前进从右侧进入，返回从左侧进入。" +
-        "侧栏向下导航时新页从下方进入，向上时反向；纵向切页为 420ms，无缩放、弹簧或延迟。",
-      "zh-TW": "用於切換分欄、頁面與步驟。新舊內容同時推移並淡入淡出，使用相同曲線與時長。橫向前進從右側進入，返回從左側進入。" +
-        "側欄向下導覽時新頁從下方進入，向上時反向；縱向切頁為 420ms，無縮放、彈簧或延遲。",
-      "en-US": "Used for tab, page and step changes. Both layers move and fade together with the same curve " +
-        "and duration. Forward horizontal navigation enters from the right; back enters from the left. " +
-        "Moving down the sidebar brings the new page from below; moving up reverses it. Vertical page " +
-        "switches take 420ms, with no scale, spring or delay.",
-      "ja-JP": "タブ、ページ、手順の切り替えに使います。新旧の内容は同じ曲線と時間で同時に移動し、フェードします。" +
-        "横方向では進むと右から、戻ると左から入ります。サイドバーを下へ進むと新しいページは下から入り、上へ戻ると逆になります。" +
-        "縦の切り替えは 420ms で、拡大縮小、ばね、遅延はありません。",
-      "ko-KR": "탭, 페이지, 단계 전환에 씁니다. 두 층이 같은 곡선과 시간으로 동시에 이동하며 나타나고 사라집니다. " +
-        "가로 이동은 앞으로 갈 때 오른쪽에서, 뒤로 갈 때 왼쪽에서 들어옵니다. 사이드바에서 아래로 이동하면 새 페이지가 " +
-        "아래에서 들어오며 위로 이동하면 반대입니다. 세로 전환은 420ms이며 크기 변화, 스프링, 지연이 없습니다.",
-      "fr-FR": "Pour les changements d’onglet, de page et d’étape, les deux couches se déplacent et " +
-        "s’estompent ensemble, avec la même courbe et la même durée. À l’horizontale, avancer fait entrer " +
-        "par la droite, revenir par la gauche. Descendre dans la barre latérale fait entrer la page " +
-        "par le bas ; monter inverse le sens. Le changement vertical dure 420ms, sans zoom, ressort ni délai.",
-      "es-ES": "Al cambiar de pestaña, página o paso, ambas capas se mueven y se funden a la vez, con la " +
-        "misma curva y duración. En horizontal, avanzar entra por la derecha y volver por la izquierda. " +
-        "Al bajar por la barra lateral, la página entra desde abajo; al subir, se invierte el sentido. " +
-        "El cambio vertical dura 420ms, sin escala, resorte ni retraso.",
-      "ru-RU": "При смене вкладки, страницы и шага оба слоя движутся и меняют прозрачность одновременно, " +
-        "с одной кривой и длительностью. По горизонтали движение вперёд вводит страницу справа, назад — " +
-        "слева. При переходе вниз по боковой панели новая страница входит снизу, вверх — наоборот. " +
-        "Вертикальный переход длится 420ms, без масштабирования, пружины и задержки.",
+      "zh-CN": "用于切换页内分栏与步骤。新旧内容同时推移并淡入淡出，使用相同曲线与时长。前进从右侧进入，返回从左侧进入。",
+      "zh-TW": "用於切換頁內分欄與步驟。新舊內容同時推移並淡入淡出，使用相同曲線與時長。前進從右側進入，返回從左側進入。",
+      "en-US": "Used for in-page tab and step changes. Both layers move and fade together with the same curve " +
+        "and duration. Forward enters from the right; back enters from the left.",
+      "ja-JP": "ページ内のタブと手順の切り替えに使います。新旧の内容は同じ曲線と時間で同時に移動し、フェードします。" +
+        "進むと右から、戻ると左から入ります。",
+      "ko-KR": "페이지 안의 탭과 단계 전환에 씁니다. 두 층이 같은 곡선과 시간으로 동시에 이동하며 나타나고 사라집니다. " +
+        "앞으로 갈 때 오른쪽에서, 뒤로 갈 때 왼쪽에서 들어옵니다.",
+      "fr-FR": "Pour les changements d’onglet et d’étape dans une page, les deux couches se déplacent et " +
+        "s’estompent ensemble, avec la même courbe et la même durée. Avancer fait entrer par la droite, revenir par la gauche.",
+      "es-ES": "Al cambiar de pestaña o de paso dentro de una página, ambas capas se mueven y se funden a la vez, con la " +
+        "misma curva y duración. Avanzar entra por la derecha y volver por la izquierda.",
+      "ru-RU": "При смене вкладки и шага внутри страницы оба слоя движутся и меняют прозрачность одновременно, " +
+        "с одной кривой и длительностью. Движение вперёд вводит содержимое справа, назад слева.",
     },
   },
   {

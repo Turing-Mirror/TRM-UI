@@ -86,11 +86,11 @@ function TitleRow({ title, back, meta, actions, lead }: Omit<TitleProps, "active
           </button>
         ) : null}
         {lead}
-        <h1 data-tauri-drag-region className="m-0 text-[17px] font-semibold tracking-tight truncate">
+        <h1 data-tauri-drag-region className="m-0 text-[16px] font-semibold tracking-tight truncate">
           {title}
         </h1>
         {meta ? (
-          <span data-tauri-drag-region className="min-w-0 flex items-center gap-2 text-[12px] text-[var(--meta)] truncate">
+          <span data-tauri-drag-region className="min-w-0 flex items-center gap-2 text-[12.5px] text-[var(--meta)] truncate">
             {meta}
           </span>
         ) : null}

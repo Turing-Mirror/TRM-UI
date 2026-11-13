@@ -122,14 +122,14 @@ export function ListEditPattern() {
               itemClassName="py-0.5"
               render={(e) => (
                 <button type="button" aria-pressed={sel === e.id} onClick={() => setSel(e.id)} onDoubleClick={() => setPlaying({ id: e.id, at: 0 })} className={`w-full flex items-center gap-3 px-2.5 py-2 rounded-[var(--rs)] border-0 cursor-pointer text-left transition-colors ${sel === e.id ? "bg-[var(--accent-soft)]" : "bg-transparent hover:bg-[color-mix(in_srgb,var(--ink)_5%,transparent)]"}`}>
-                  <span className="w-7 flex-none text-right tabular-nums text-[12px] text-[var(--meta)]">{e.no ?? ""}</span>
-                  <span className={`min-w-0 truncate text-[13px] ${sel === e.id ? "text-[var(--accent)] font-medium" : ""}`}>{t(e.key)}</span>
+                  <span className="w-7 flex-none text-right tabular-nums text-[12.5px] text-[var(--meta)]">{e.no ?? ""}</span>
+                  <span className={`min-w-0 truncate text-[13px] ${sel === e.id ? "text-[var(--accent-text)] font-medium" : ""}`}>{t(e.key)}</span>
                   {playing?.id === e.id ? (
                     <span aria-hidden className="flex items-end gap-[2px] h-3">
                       {[0, 1, 2].map((i) => <span key={i} className="eq-bar w-[2px] rounded-full bg-[var(--accent)]" style={{ animationDelay: `${i * 0.18}s` }} />)}
                     </span>
                   ) : null}
-                  <span className="ml-auto text-[11px] text-[var(--meta)] tabular-nums">{e.sec.toFixed(1)} s</span>
+                  <span className="ml-auto text-[11.5px] text-[var(--meta)] tabular-nums">{e.sec.toFixed(1)} s</span>
                 </button>
               )}
             />
@@ -143,7 +143,7 @@ export function ListEditPattern() {
                 <Roll value={t((cur ?? shownSel).key)} />
               </div>
               <Btn primary onClick={() => setPlaying({ id: (cur ?? shownSel).id, at: 0 })}>{t("demo.more.run")}</Btn>
-              <p className="m-0 text-[12px] text-[var(--help)] leading-relaxed">{t("demo.more.editNote")}</p>
+              <p className="m-0 text-[12.5px] text-[var(--help)] leading-relaxed">{t("demo.more.editNote")}</p>
             </div>
           ) : (
             <p className="m-0 py-2 text-[12.5px] text-[var(--meta)] leading-relaxed fade-in">{t("demo.more.editEmpty")}</p>
@@ -155,7 +155,7 @@ export function ListEditPattern() {
         <div className="flex-1 min-w-[120px] h-1 rounded-full bg-[var(--line)] overflow-hidden">
           <div className="h-full bg-[var(--accent)]" style={{ width: `${now && playing ? (playing.at / now.sec) * 100 : 0}%` }} />
         </div>
-        <div className="w-[180px] flex items-center gap-2 text-[12px] text-[var(--meta)]">
+        <div className="w-[180px] flex items-center gap-2 text-[12.5px] text-[var(--meta)]">
           <span className="flex-none">{t("demo.more.volume")}</span>
           <div className="flex-1"><Slider value={vol} min={0} max={100} step={1} onChange={setVol} /></div>
         </div>
@@ -243,13 +243,13 @@ export function StarterPattern() {
             <div key={x.id} className="rise bg-[var(--group)] rounded-[var(--r)] overflow-hidden" style={stagger(i)}>
               <div className="aspect-[16/9]" style={{ background: `linear-gradient(145deg, var(--art-${x.art}), var(--art-${(x.art % 6) + 1}))` }} />
               <div className="px-4 py-3">
-                <div className="text-[14px] font-semibold">{t(x.key)}</div>
+                <div className="text-[13px] font-semibold">{t(x.key)}</div>
                 <div className="mt-3 flex items-center gap-2">
                   {p === 100 ? (
                     <span className="text-[12.5px] text-[var(--ink-muted)]">{t("demo.more.installed")}</span>
                   ) : p !== undefined ? (
                     <>
-                      <div className="flex-1 h-1.5 rounded-full bg-[var(--line)] overflow-hidden"><div className="h-full bg-[var(--accent)] transition-[width] duration-150" style={{ width: `${p}%` }} /></div>
+                      <div className="flex-1 h-1.5 rounded-full bg-[var(--line)] overflow-hidden"><div className="h-full bg-[var(--accent)] transition-[width] duration-200" style={{ width: `${p}%` }} /></div>
                       <span className="text-[11.5px] text-[var(--meta)] tabular-nums w-9 text-right">{p}%</span>
                       <Btn onClick={() => setProg((s) => { const n = { ...s }; delete n[x.id]; return n; })}>{t("ui.common.cancel")}</Btn>
                     </>

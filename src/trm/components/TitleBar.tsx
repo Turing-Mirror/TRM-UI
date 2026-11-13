@@ -144,7 +144,7 @@ export function WinBtn({
       onClick={onClick}
       className={[
         "w-10 h-[34px] grid place-items-center text-xs rounded-md border-0 bg-transparent cursor-pointer",
-        "text-[var(--meta)] transition-[background,color] duration-150 ease-[var(--ease)]",
+        "text-[var(--meta)] transition-[background,color] duration-200 ease-[var(--ease)]",
         // 关闭按钮悬停变红，是 Windows 上所有人都认的约定。
         // 这一处红色不走 token：它属于系统语汇，不属于产品配色。
         danger

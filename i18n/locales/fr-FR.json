@@ -10,6 +10,32 @@
     "ru-RU": "Русский"
   },
   "ui": {
+    "download": {
+      "recommended": "Recommandé",
+      "installed": "Installé",
+      "removing": "Suppression…",
+      "remove": "Désinstaller",
+      "downloading": "Téléchargement…",
+      "download": "Télécharger"
+    },
+    "crop": {
+      "title": "Changer et rogner la couverture",
+      "lead": "Recadrer une couverture pour « {v0} ». Molette pour zoomer, faites glisser l'image pour la déplacer et les bords de la sélection pour la redimensionner.",
+      "pick": "Choisir une image…",
+      "pickHint": "Formats pris en charge : jpg, png, webp et bmp.",
+      "repick": "Choisir une autre image",
+      "zoomIn": "Zoom avant",
+      "zoomOut": "Zoom arrière",
+      "fit": "Ajuster",
+      "zoom100": "100 %",
+      "ratioLabel": "Proportions :",
+      "free": "Libre",
+      "previewAfter": "Après recadrage",
+      "previewBefore": "Original",
+      "previewNote": "Taille de sortie : {v0} px",
+      "save": "Enregistrer la couverture",
+      "badImage": "Données d'image invalides. Échec de l'enregistrement"
+    },
     "chart": {
       "chart": "Graphique",
       "table": "Tableau",
@@ -135,7 +161,8 @@
     "interaction": "Interaction",
     "text": "Textes",
     "settings": "Réglages",
-    "history": "Historique"
+    "history": "Historique",
+    "sharedCode": "Code partagé"
   },
   "demo": {
     "workbench": {
@@ -306,6 +333,7 @@
     "type": {
       "sub": "Le texte courant mesure 15 px avec un interligne de 1,65. Seules les tailles ci-dessous sont utilisées.",
       "roleBody": "Corps",
+      "roleValue": "Valeur",
       "roleHelp": "Aide",
       "roleMeta": "Méta",
       "weight": "Graisse {v}"
@@ -619,6 +647,12 @@
       "panel": "Panneau centré",
       "confirmKey": "Confirmer la clé",
       "confirmed": "Clé de démonstration confirmée."
+    },
+    "sharedCode": {
+      "list": "Commun aux produits Fabric",
+      "count": "{n} au total",
+      "from": "Import : {v}",
+      "none": "Aucun module correspondant"
     }
   }
 }

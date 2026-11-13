@@ -10,6 +10,32 @@
     "ru-RU": "Русский"
   },
   "ui": {
+    "download": {
+      "recommended": "추천",
+      "installed": "설치됨",
+      "removing": "삭제 중…",
+      "remove": "삭제",
+      "downloading": "다운로드 중…",
+      "download": "다운로드"
+    },
+    "crop": {
+      "title": "커버 변경 및 자르기",
+      "lead": "「{v0}」의 표지를 자릅니다. 휠로 확대·축소하고, 이미지를 끌어 이동하며, 선택 영역 가장자리를 끌어 범위를 조정합니다.",
+      "pick": "이미지 선택…",
+      "pickHint": "jpg, png, webp, bmp를 지원합니다.",
+      "repick": "다른 이미지 선택",
+      "zoomIn": "확대",
+      "zoomOut": "축소",
+      "fit": "맞춤",
+      "zoom100": "100%",
+      "ratioLabel": "비율:",
+      "free": "자유",
+      "previewAfter": "자른 뒤",
+      "previewBefore": "원본",
+      "previewNote": "출력 크기: {v0} px",
+      "save": "커버 저장",
+      "badImage": "이미지 데이터가 잘못되어 저장하지 못했습니다"
+    },
     "chart": {
       "chart": "차트",
       "table": "표",
@@ -135,7 +161,8 @@
     "interaction": "상호작용",
     "text": "문구",
     "settings": "설정",
-    "history": "기록"
+    "history": "기록",
+    "sharedCode": "공용 코드"
   },
   "demo": {
     "workbench": {
@@ -306,6 +333,7 @@
     "type": {
       "sub": "본문 글자 크기는 15px, 줄 높이는 1.65입니다. 글자 크기는 아래 단계만 씁니다.",
       "roleBody": "본문",
+      "roleValue": "??",
       "roleHelp": "설명",
       "roleMeta": "보조",
       "weight": "굵기 {v}"
@@ -619,6 +647,12 @@
       "panel": "가운데 패널",
       "confirmKey": "키 확인",
       "confirmed": "데모 키가 확인되었습니다."
+    },
+    "sharedCode": {
+      "list": "Fabric 시리즈 공용",
+      "count": "총 {n}개",
+      "from": "가져오기: {v}",
+      "none": "일치하는 모듈이 없습니다"
     }
   }
 }

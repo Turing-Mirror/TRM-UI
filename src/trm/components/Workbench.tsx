@@ -6,6 +6,7 @@ import { useI18n } from "../i18n";
 import { Icon } from "./Icon";
 import { Collapse, FlowList, FLOW_MS, Morph, Pane, Panes, Roll, stagger } from "./motion";
 import { WorkbenchBody } from "./WorkbenchBody";
+import { followScrollEnd } from "./followScrollEnd";
 
 const SelectionContext = createContext<{ selected: string | null; order: readonly string[] } | null>(null);
 
@@ -195,26 +196,7 @@ export function WorkbenchDetail({
     if (!el || scrollToEnd === undefined || pushBody) return;
     const instant = firstScroll.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     firstScroll.current = false;
-    const from = el.scrollTop;
-    const started = performance.now();
-    let frame = 0;
-    // Follow the moving end, rather than jumping after FlowList removes the old bubbles.
-    // Wheel/touch input cancels following so reading older messages remains under user control.
-    const follow = () => {
-      const progress = instant ? 1 : Math.min(1, (performance.now() - started) / FLOW_MS);
-      const end = Math.max(0, el.scrollHeight - el.clientHeight);
-      el.scrollTop = from + (end - from) * (1 - (1 - progress) ** 3);
-      if (progress < 1) frame = requestAnimationFrame(follow);
-    };
-    follow();
-    const cancel = () => cancelAnimationFrame(frame);
-    el.addEventListener("wheel", cancel, { passive: true });
-    el.addEventListener("touchstart", cancel, { passive: true });
-    return () => {
-      cancel();
-      el.removeEventListener("wheel", cancel);
-      el.removeEventListener("touchstart", cancel);
-    };
+    return followScrollEnd(el, instant ? 0 : FLOW_MS);
   }, [scrollToEnd, pushBody]);
   const footer = foot == null ? null
     : <footer className="trm-workbench-foot" data-mode={footMode}>{foot}</footer>;

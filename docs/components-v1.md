@@ -21,6 +21,16 @@ Tailwind v4 应用的样式入口：
 @import "trm-ui/styles.css";
 ```
 
+不用 Tailwind 的应用引入预编译样式表：
+
+```ts
+import "trm-ui/compiled.css";
+```
+
+`compiled.css` 包含共享变量、组件样式和组件包自己用到的工具类，引入后全部组件可以直接使用。两种入口只选一种。应用自己的页面样式由应用负责。
+
+两种入口都带简体中文字体 Noto Sans SC（SIL OFL 1.1），只在界面语言是简体中文时使用。分发产品时附带 `licenses/NotoSansSC-OFL.txt`。
+
 `styles.css` 包含共享变量和组件样式，并通过 `@source` 指向包内 JavaScript。消费方不需要扫描另一个本地仓库。也可以单独导入 `trm-ui/tokens.css` 或 `trm-ui/components.css`。React 和 React DOM 由消费方提供，避免两份 React。
 
 ## 产品接口
@@ -42,6 +52,30 @@ Tailwind v4 应用的样式入口：
 - `openWindow(params)` 把一个页面开成单独的窗口。桌面版由壳的 `open_window` 命令开窗，外观与主窗口相同，标签为 `win-1`、`win-2` 等；浏览器预览中打开浏览器窗口。关闭主窗口时整个程序退出。
 - 菜单与下拉挂在 body 上。悬停展开的侧栏这类区域要把从自己这里打开的浮层算作内部时，用 `PopoverOwner value={标识}` 包裹，再读取浮层的 `data-popover-owner`。
 - 产品自己管理页面时，用 `PageActive value={是否显示}` 包裹页面内容。`PageHost` 已自动提供。菜单、下拉与页标题读取 `usePageActive()`，页面被切走时浮层自动收起。
+- `PageHost keep` 让页面离开后保留输入、筛选和滚动位置。返回 `true` 的页照常运行；返回 `"paused"` 的页停掉副作用，回来时重新执行，数据照样刷新。`warm` 列出空闲时提前搭好的页，第一次进入没有搭建的停顿。常驻页用 `usePageLeave(fn)` 在被切走时清掉一次性的结果文字。只在页面初次进入时该做一次的事（例如按请求滚动到某一段）要自己记住已处理过的请求，因为 `"paused"` 的页每次回来都会重新执行副作用。
+
+## 图片与缩略图
+
+- `ThumbImage` 用于列表里的图片：原图最长边超过目标尺寸时先缩成缩略图再显示，缩略图存在本地数据库，下次直接读取。`px` 是缩略图最长边的像素数，默认 640。原图本来不大、环境不支持或生成失败时显示原图。
+- 没有封面图时用 `CoverPlaceholder`：名称首字压在预览色上。`name` 是名称，`seed` 决定底色，同名不同版本的条目传各自的 id。只要底色时用 `artOf(seed)`，只要首字时用 `artInitial(name)`。
+- `CatalogCover` 的 `placeholder` 传完整名称，`seed` 可选。
+- `CatalogCover` 已使用缩略图。自己写 `<img>` 时用 `useThumb(src, px)` 取地址，返回空串表示还在生成，先画占位。
+- 原图换了内容而地址不变时调用 `forgetThumb(src)`，不传地址时全部重新生成。
+
+## Fabric 系列共用代码
+
+几款 Fabric 产品里完全相同、又不是界面组件的代码放在 `src/trm/fabric/`，从单独的入口引入：
+
+```ts
+import { askConfirm, pickPath, splitErrorText } from "trm-ui/fabric";
+```
+
+这个入口不引用组件包，也不带样式。只收不依赖某一款产品自己的文案和接口的模块；清单在画廊的「共用代码」页，数据在 `src/pages/sharedModules.ts`，新增模块时一并登记。
+
+## 设计规范检查
+
+- `trm-design-check` 在源码里查规范之外的字号、圆角、时长、层叠数值和手写输入框。`design-baseline.json` 记下现有数量，检查只在数量增加时失败。`--update` 更新基线，`--list` 列出每一处。
+- 自定义有三种方式：覆盖变量（`var(--xxx)` 不在检查范围内）；在 `design-check.config.json` 里改 `allow`、`include` 或关掉某条规则；个别例外在该行或上一行写注释 `design-allow: 原因`。
 
 ## 构建与升级
 
@@ -303,3 +337,19 @@ Enter 与发送按钮调用 `onSend`；Shift + Enter 换行，输入法确认不
 推移动效通过 Web Animations 从当前绘制的透明度与位移继续。动画途中反向时不恢复到全亮。正常完成的方向、时长与前后淡入淡出节奏保持一致；减少动态效果时立即到位。取消旧动画时处理 `finished` 的正常拒绝，行为依据 [MDN 的 cancel 说明](https://developer.mozilla.org/en-US/docs/Web/API/Animation/cancel)。
 
 回归覆盖：隐藏后重新显示、持续修改高度、滚动范围收缩、当前透明度为 0.18 时返回，以及已有 DOM 和草稿留存。
+
+## 封面裁剪
+
+`ImageCropDialog` 提供封面选择、裁剪、预览和导出。调用方传入展示名称、`pickImage`、可选的 `loadInitialImage`，以及 `onSave` 和 `onClose`。图片回调返回可由浏览器读取的图片地址，选择取消时返回 `null`。`onSave` 收到 JPEG data URL。文件选择、写入和刷新模型清单由产品负责。
+
+默认选区为 4:3，可切换至 1:1 或自由比例。预览按帧绘制，点击保存时才编码完整 JPEG。弹窗沿用 TRM UI 的焦点和 Esc 行为。
+
+## 资源下载行
+
+`ResourceDownloadRow` 共用下载、卸载、已安装和进度的显示。传入资源名称、说明、大小等详情，以及安装状态和操作回调。下载、卸载、并发限制与错误恢复仍由产品负责。
+
+## 广场封面与安装进度
+
+`CatalogCover` 接收按优先级排列的图片地址，加载失败时尝试下一张。封面保留完整图片，发布标记、附加标记和下载进度由调用方提供。
+
+`TransferProgress` 显示当前步骤、速度、进度、已传输量和用时。调用方在没有可用比例时省略 `percent`，例如等待连接时。产品负责下载任务和重试提示。

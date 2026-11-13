@@ -17,7 +17,7 @@ import { Tooltip } from "./Tooltip";
 import { useMenu } from "./Menu";
 
 // Share the geometry so foot states keep the same icon anchor as navigation, including when collapsed.
-const SIDEBAR_ROW = "relative w-full flex-none flex items-center gap-3 h-9 px-[13px] rounded-[var(--rs)] border-0 cursor-pointer text-[13.5px] transition-colors overflow-hidden";
+const SIDEBAR_ROW = "relative w-full flex-none flex items-center gap-3 h-9 px-[13px] rounded-[var(--rs)] border-0 cursor-pointer text-[13px] transition-colors overflow-hidden";
 const SIDEBAR_HOVER = "bg-transparent hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]";
 const STATUS_TONE = {
   ok: "text-[var(--ok)]",
@@ -79,7 +79,7 @@ export function AppBar({
     <header data-tauri-drag-region className="flex-none h-[52px] flex items-center gap-3 pr-2" style={{ paddingLeft: inset }}>
       <div
         data-tauri-drag-region
-        className="flex items-center gap-2.5 flex-none select-none transition-[width] duration-[380ms] ease-[var(--ease-nav)]"
+        className="flex items-center gap-2.5 flex-none select-none transition-[width] duration-[420ms] ease-[var(--ease-nav)]"
         style={{ width: sidebarOpen ? SIDEBAR_W.open - inset - 6 : 150 }}
       >
         {typeof brand === "string" ? (
@@ -129,7 +129,7 @@ export function Sidebar({ collapsed, label, head, children, foot }: {
     <nav
       aria-label={label}
       data-collapsed={collapsed || undefined}
-      className="flex-none flex flex-col pb-3 transition-[width] duration-[380ms] ease-[var(--ease-nav)]"
+      className="flex-none flex flex-col pb-3 transition-[width] duration-[420ms] ease-[var(--ease-nav)]"
       style={{ width: collapsed ? SIDEBAR_W.collapsed : SIDEBAR_W.open }}
     >
       {head ? <div className="sidebar-head">{head}</div> : null}
@@ -260,7 +260,7 @@ export function SidebarHead({ label, collapsed = false, children }: { label: str
 
 export function SidebarHeadBtn({ icon, label, onClick }: { icon: IconName; label: string; onClick: () => void }) {
   return (
-    <button type="button" onClick={onClick} aria-label={label} title={label} className="w-6 h-6 grid place-items-center rounded-[6px] border-0 bg-transparent cursor-pointer text-[var(--meta)] hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]">
+    <button type="button" onClick={onClick} aria-label={label} title={label} className="w-6 h-6 grid place-items-center rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[var(--meta)] hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]">
       <Icon name={icon} size={14} />
     </button>
   );
@@ -317,7 +317,7 @@ ${status}` : undefined}
         <span className="block text-[13px] text-[var(--ink)] truncate">{label}</span>
         {sub ? <span className="block text-[11.5px] text-[var(--meta)] truncate">{sub}</span> : null}
       </span>
-      <span className={`side-label flex-none text-[11.5px] tabular-nums ${failed ? "text-[var(--danger)]" : "text-[var(--meta)]"}`}>{status}</span>
+      <span className={`side-label flex-none text-[11.5px] tabular-nums ${failed ? "text-[var(--danger-text)]" : "text-[var(--meta)]"}`}>{status}</span>
       {failed ? null : progress !== undefined ? (
         <span aria-hidden className={`row-line ${collapsed ? "row-line-sm" : ""}`}>
           <i style={{ transform: `scaleX(${progress})` }} />

@@ -99,12 +99,12 @@ export class ErrorBoundary extends Component<Props, State> {
           // var() 会取空，整屏就是黑字黑底。
           background: "var(--bg, #f4f6f8)",
           color: "var(--ink-muted, #5d6874)",
-          fontSize: 13.5,
+          fontSize: 13,
           lineHeight: 1.7,
         }}
       >
         <div style={{ maxWidth: 520 }}>
-          <div style={{ fontSize: 19, fontWeight: 600, color: "var(--ink, #1e242b)" }}>{t("ui.error.title")}</div>
+          <div style={{ fontSize: 16, fontWeight: 600, color: "var(--ink, #1e242b)" }}>{t("ui.error.title")}</div>
           <div style={{ marginTop: 8 }}>{t("ui.error.safe")}</div>
           <div style={{ marginTop: 22, display: "flex", flexWrap: "wrap", gap: 8 }}>
             <button type="button" onClick={this.retry} style={primary}>
@@ -127,7 +127,7 @@ export class ErrorBoundary extends Component<Props, State> {
             ) : null}
           </div>
           {this.props.onResetUi ? (
-            <div style={{ marginTop: 10, fontSize: 12, color: "var(--help, #8a949e)" }}>{t("ui.error.resetNote")}</div>
+            <div style={{ marginTop: 10, fontSize: 12.5, color: "var(--help, #8a949e)" }}>{t("ui.error.resetNote")}</div>
           ) : null}
           <details style={{ marginTop: 28 }}>
             <summary style={{ cursor: "pointer", fontSize: 12.5, color: "var(--help, #8a949e)" }}>{t("ui.error.details")}</summary>
@@ -139,7 +139,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 overflow: "auto",
                 whiteSpace: "pre-wrap",
                 wordBreak: "break-all",
-                fontSize: 12,
+                fontSize: 12.5,
                 color: "var(--meta, #8a949e)",
                 // 用户得能把这段选中复制走。
                 userSelect: "text",
@@ -162,13 +162,13 @@ const base: CSSProperties = {
   font: "inherit",
   fontSize: 13,
   padding: "7px 16px",
-  borderRadius: 8,
+  borderRadius: "var(--rs, 8px)",
   cursor: "pointer",
   border: 0,
 };
 const primary: CSSProperties = {
   ...base,
-  background: "var(--accent, #1289f0)",
+  background: "var(--accent-fill, #0b6fc7)",
   color: "var(--accent-ink, #ffffff)",
 };
 const secondary: CSSProperties = {

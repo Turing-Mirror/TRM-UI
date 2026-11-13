@@ -99,7 +99,7 @@ export function MenuPopup({
       role="menu"
       data-more-menu
       inert={leaving}
-      className={`${leaving ? "menu-out" : "menu-in"} fixed z-[90] min-w-[160px] py-1 rounded-[var(--rs)] bg-[var(--surface)] shadow-[0_8px_28px_rgba(0,0,0,0.18)] overflow-y-auto overflow-x-hidden overscroll-contain`}
+      className={`${leaving ? "menu-out" : "menu-in"} fixed z-[100] min-w-[160px] py-1 rounded-[var(--rs)] bg-[var(--surface)] shadow-[0_8px_28px_rgba(0,0,0,0.18)] overflow-y-auto overflow-x-hidden overscroll-contain`}
       style={{
         left: box?.left ?? anchor.right,
         top: box?.top ?? anchor.bottom + 6,
@@ -123,7 +123,7 @@ export function MenuPopup({
           className={[
             "block w-full text-left whitespace-nowrap border-0 bg-transparent px-3.5 py-2 text-[13px] cursor-pointer",
             it.danger
-              ? "text-[var(--danger)] hover:bg-[color-mix(in_srgb,var(--danger)_10%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--danger)_10%,transparent)]"
+              ? "text-[var(--danger-text)] hover:bg-[color-mix(in_srgb,var(--danger)_10%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--danger)_10%,transparent)]"
               : "text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_5%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--ink)_5%,transparent)]",
             it.disabled ? "opacity-50 cursor-default" : "",
           ].join(" ")}

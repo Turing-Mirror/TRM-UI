@@ -1,0 +1,10 @@
+/* 简体中文界面随程序带的字体：Noto Sans SC 可变字重版（SIL OFL 1.1）。
+   系统的微软雅黑只有常规和粗体，中等和半粗两档显示不出来；这套字体有完整的字重。
+   按字符范围切成小文件，用到哪些字加载哪些。只对简体中文生效，其余语言沿用系统字体。 */
+@import "@fontsource-variable/noto-sans-sc/wght.css";
+
+:root:lang(zh-CN) {
+  --ui:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC Variable",
+    "Microsoft YaHei UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}

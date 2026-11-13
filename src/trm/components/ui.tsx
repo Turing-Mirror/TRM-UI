@@ -120,7 +120,7 @@ export function Block({
         // 对齐会整颗往下掉一截，看起来比标题低半个字。
         <div className="flex items-center gap-[11px] mb-[15px] flex-wrap">
           {title ? (
-            <h3 className="text-[15.5px] font-semibold m-0 inline-flex items-center gap-1.5 leading-none">
+            <h3 className="text-[15px] font-semibold m-0 inline-flex items-center gap-1.5 leading-none">
               {collapsible ? (
                 <button type="button" onClick={toggle} aria-expanded={!collapsed} className="inline-flex items-center gap-1 bg-transparent border-0 p-0 font-semibold text-inherit cursor-pointer">
                   <Icon name="chevron" size={13} className={`text-[var(--meta)] transition-transform ${collapsed ? "" : "rotate-90"}`} />
@@ -209,9 +209,9 @@ export function Btn({
         "enabled:active:scale-[0.955] focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2",
         uw ? "min-w-[74px] text-center px-0 py-1.5" : "px-[13px] py-1.5",
         primary
-          ? "bg-[var(--accent)] text-[var(--accent-ink)] font-semibold shadow-none enabled:hover:brightness-95"
+          ? "bg-[var(--accent-fill)] text-[var(--accent-ink)] font-semibold shadow-none enabled:hover:brightness-95"
           : on
-            ? "bg-transparent text-[var(--accent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--accent)_42%,transparent)]"
+            ? "bg-transparent text-[var(--accent-text)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--accent)_42%,transparent)]"
             : "bg-transparent text-[var(--ink-muted)] shadow-[inset_0_0_0_1px_var(--line)] enabled:hover:text-[var(--ink)] enabled:hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]",
         disabled || busy ? "disabled:cursor-default" : "",
         disabled && !busy && dimDisabled ? "disabled:opacity-40" : "",
@@ -387,7 +387,7 @@ export function AccordionGroup({
               onClick={() => onToggle(item.id)}
               rightInteractive={false}
               right={
-                <span className="text-[13.5px] text-[var(--ink-muted)]">
+                <span className="text-[13px] text-[var(--ink-muted)]">
                   {expanded ? openLabel : closedLabel}
                 </span>
               }

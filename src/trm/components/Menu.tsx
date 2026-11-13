@@ -142,7 +142,7 @@ export function Popover({
       role="menu"
       inert={leaving}
       aria-label={label}
-      className={`fixed z-[70] p-1 bg-[var(--surface)] rounded-[calc(var(--rs)+4px)] shadow-[var(--pop-shadow)] ${pos ? (leaving ? "menu-out pointer-events-none" : pos.up ? "menu-in-up" : "menu-in") : "invisible"}`}
+      className={`fixed z-[100] p-1 bg-[var(--surface)] rounded-[calc(var(--rs)+4px)] shadow-[var(--pop-shadow)] ${pos ? (leaving ? "menu-out pointer-events-none" : pos.up ? "menu-in-up" : "menu-in") : "invisible"}`}
       style={{ left: pos?.left ?? 0, top: pos?.top ?? 0, minWidth: Math.min(window.innerWidth - EDGE * 2, Math.max(minWidth ?? 0, 180)), maxWidth: `calc(100vw - ${EDGE * 2}px)`, maxHeight: `calc(100vh - ${EDGE * 2}px)`, overflowY: "auto" }}
     >
       {children}
@@ -195,7 +195,7 @@ export function Menu({ anchor, items, onClose, side, leaving, trigger }: { ancho
             className={[
               "w-full flex items-center gap-2.5 h-8 px-2.5 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-left text-[13px] whitespace-nowrap",
               "enabled:hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)] disabled:opacity-40 disabled:cursor-default",
-              it.danger ? "text-[var(--danger)]" : "text-[var(--ink)]",
+              it.danger ? "text-[var(--danger-text)]" : "text-[var(--ink)]",
               sub?.id === it.id ? "bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]" : "",
             ].join(" ")}
           >
@@ -440,13 +440,13 @@ export function PromptDialog({
           value={name}
           onChange={(e) => setName(e.target.value)}
           onFocus={(e) => e.currentTarget.select()}
-          className="mt-4 w-full h-9 px-3 rounded-[var(--rs)] border-0 bg-transparent text-[13.5px] text-[var(--ink)] shadow-[inset_0_0_0_1px_var(--line)] outline-none focus:shadow-[inset_0_0_0_1px_var(--focus-line)] selectable"
+          className="mt-4 w-full h-9 px-3 rounded-[var(--rs)] border-0 bg-transparent text-[13px] text-[var(--ink)] shadow-[inset_0_0_0_1px_var(--line)] outline-none focus:shadow-[inset_0_0_0_1px_var(--focus-line)] selectable"
         />
         <div className="mt-5 flex justify-end gap-2">
           <button type="button" onClick={onClose} className="h-8 px-3.5 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[13px] text-[var(--ink-muted)] hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]">
             {t("ui.common.cancel")}
           </button>
-          <button type="submit" disabled={!name.trim()} className="h-8 px-3.5 rounded-[var(--rs)] border-0 cursor-pointer text-[13px] bg-[var(--accent)] text-[var(--accent-ink)] disabled:opacity-40 disabled:cursor-default">
+          <button type="submit" disabled={!name.trim()} className="h-8 px-3.5 rounded-[var(--rs)] border-0 cursor-pointer text-[13px] bg-[var(--accent-fill)] text-[var(--accent-ink)] disabled:opacity-40 disabled:cursor-default">
             {shownConfirm}
           </button>
         </div>

@@ -10,6 +10,32 @@
     "ru-RU": "Русский"
   },
   "ui": {
+    "download": {
+      "recommended": "推薦",
+      "installed": "已安裝",
+      "removing": "卸載中…",
+      "remove": "卸載",
+      "downloading": "下載中…",
+      "download": "下載"
+    },
+    "crop": {
+      "title": "更換封面並裁剪",
+      "lead": "為「{v0}」裁剪封面。滾輪縮放，拖動圖片平移，拖動選區邊緣調整範圍。",
+      "pick": "選擇圖片…",
+      "pickHint": "支援 jpg、png、webp、bmp。",
+      "repick": "換一張圖",
+      "zoomIn": "放大",
+      "zoomOut": "縮小",
+      "fit": "適應視窗",
+      "zoom100": "100%",
+      "ratioLabel": "比例：",
+      "free": "自由",
+      "previewAfter": "裁剪後",
+      "previewBefore": "原圖",
+      "previewNote": "輸出尺寸：{v0} px",
+      "save": "儲存封面",
+      "badImage": "圖片資料無效，儲存失敗"
+    },
     "chart": {
       "chart": "圖表",
       "table": "表格",
@@ -135,7 +161,8 @@
     "interaction": "互動",
     "text": "文案",
     "settings": "設定",
-    "history": "歷史"
+    "history": "歷史",
+    "sharedCode": "共用程式碼"
   },
   "demo": {
     "workbench": {
@@ -306,6 +333,7 @@
     "type": {
       "sub": "正文字號 15px，行高 1.65。字號只使用下列檔位。",
       "roleBody": "內文",
+      "roleValue": "??",
       "roleHelp": "說明",
       "roleMeta": "次要",
       "weight": "字重 {v}"
@@ -619,6 +647,12 @@
       "panel": "置中面板",
       "confirmKey": "確認金鑰",
       "confirmed": "示範金鑰已確認。"
+    },
+    "sharedCode": {
+      "list": "Fabric 系列共用",
+      "count": "共 {n} 個",
+      "from": "引入：{v}",
+      "none": "沒有找到相關的模組"
     }
   }
 }

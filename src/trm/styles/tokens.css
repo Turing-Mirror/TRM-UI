@@ -35,12 +35,18 @@
   --chip-warn-ink: #995000;
   --chip-accent-ink: #0868b8;
   --chip-danger-ink: #b13d2c;
-  --help: #8a949e;
-  --meta: #a3acb6;
+  /* 次要文字只有 --ink-muted 和 --help 两档颜色，在白底上都不低于 4.5 比 1。
+     --meta 与 --help 同色，层级靠字号区分：再浅一档就读不清了。 */
+  --help: #66717c;
+  --meta: var(--help);
   --hairline: rgba(30, 36, 43, 0.1);
   --line: rgba(30, 36, 43, 0.14);
   --accent: #1289f0;
+  /* 上面压文字的强调底色（主按钮）。浅色下比 --accent 深一档，白字对比度 5.1。 */
+  --accent-fill: #0b6fc7;
   --accent-ink: #ffffff;
+  /* 状态色分两个值：图标、线条和底色用本色，文字用深一档的 -text，白底上不低于 4.5 比 1。 */
+  --accent-text: #0b6fc7;
   --accent-soft: rgba(18, 137, 240, 0.1);
   --stage: #e8f4fd;
   --notify: #ff9500;
@@ -48,7 +54,7 @@
   --ui:
     -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei UI",
     "PingFang SC", "Microsoft YaHei", sans-serif;
-  /* 字号只有 25 / 15.5 / 15 / 14 / 13 / 12.5 / 11.5 七档，见「排版」页。
+  /* 字号只有 25 / 22 / 16 / 15 / 13 / 12.5 / 11.5 七档，见「排版」页。
      不要用 ch 限制中文行宽：ch 是「0」的字宽，12.5px 下只有半个汉字宽，
      按拉丁文定的 74ch 折成中文只剩 41 个字。数字成列时加 tabular-nums，
      否则数值变化时那一列会左右抖。 */
@@ -100,11 +106,13 @@
     --ink: #e4e9ef;
     --ink-muted: #a9b3be;
     --help: #828c96;
-    --meta: #6e7883;
+    --meta: var(--help);
     --hairline: rgba(232, 240, 248, 0.14);
     --line: rgba(232, 240, 248, 0.22);
     --accent: #4aa3f0;
+    --accent-fill: var(--accent);
     --accent-ink: #0f1319;
+    --accent-text: var(--accent);
     --chip-ok-ink: var(--ok);
     --chip-warn-ink: var(--warn-ink);
     --chip-accent-ink: #63b0f4;
@@ -144,11 +152,13 @@
   --ink: #e4e9ef;
   --ink-muted: #a9b3be;
   --help: #828c96;
-  --meta: #6e7883;
+  --meta: var(--help);
   --hairline: rgba(232, 240, 248, 0.14);
   --line: rgba(232, 240, 248, 0.22);
   --accent: #4aa3f0;
+  --accent-fill: var(--accent);
   --accent-ink: #0f1319;
+  --accent-text: var(--accent);
   --chip-ok-ink: var(--ok);
   --chip-warn-ink: var(--warn-ink);
   --chip-accent-ink: #63b0f4;
@@ -208,11 +218,13 @@
   --shell-gap: 8px;
   /* 状态色：成功、提醒、危险。 */
   --ok: #2f9e6a;
+  --ok-text: #1f7d51;
   --ok-soft: rgba(47, 158, 106, 0.12);
   /* 提醒用 macOS 的系统橙：图标、线条用 --warn，文字用深一档的 --warn-ink */
   --warn: #ff9500;
-  --warn-ink: #c96a00;
+  --warn-ink: #9a6200;
   --danger: #d0533f;
+  --danger-text: #b8432f;
   --danger-soft: rgba(208, 83, 63, 0.11);
   --scrim: rgba(20, 26, 34, 0.28);
   /* 输入框聚焦、控件悬停时的描边：比平时的描边深一档，不用强调色。
@@ -244,10 +256,12 @@
     --art-6: #243639;
     --art-ink: rgba(232, 240, 248, 0.4);
     --ok: #5cc493;
+    --ok-text: var(--ok);
     --ok-soft: rgba(92, 196, 147, 0.14);
     --warn: #ff9f0a;
     --warn-ink: #ffb340;
     --danger: #ec7b69;
+    --danger-text: var(--danger);
     --danger-soft: rgba(236, 123, 105, 0.14);
     --scrim: rgba(0, 0, 0, 0.5);
     --pop-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(232, 240, 248, 0.12);
@@ -265,10 +279,12 @@
   --art-6: #243639;
   --art-ink: rgba(232, 240, 248, 0.4);
   --ok: #5cc493;
+  --ok-text: var(--ok);
   --ok-soft: rgba(92, 196, 147, 0.14);
   --warn: #ff9f0a;
   --warn-ink: #ffb340;
   --danger: #ec7b69;
+  --danger-text: var(--danger);
   --danger-soft: rgba(236, 123, 105, 0.14);
   --scrim: rgba(0, 0, 0, 0.5);
   --pop-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(232, 240, 248, 0.12);

@@ -19,7 +19,7 @@ export { ConfirmDialog, type ConfirmDialogProps } from "./components/ConfirmDial
 export { RowGroup, Row, CenterPanel, type RowGroupProps, type RowProps, type CenterPanelProps } from "./components/rows";
 export { SegmentControl, type SegmentOption } from "./components/SegmentControl";
 export { Tooltip } from "./components/Tooltip";
-export { PageHost, PageActive, usePageActive } from "./components/PageHost";
+export { PageHost, PageActive, usePageActive, usePageLeave } from "./components/PageHost";
 export { TitleBar, WinBtn, type WindowControls } from "./components/TitleBar";
 export { ErrorBoundary } from "./components/ErrorBoundary";
 
@@ -123,3 +123,11 @@ export {
   Workbench, WorkbenchItem, WorkbenchDetail,
   type WorkbenchProps, type WorkbenchItemProps, type WorkbenchDetailProps,
 } from "./components/Workbench";
+export { ImageCropDialog, type ImageCropDialogProps } from "./components/ImageCropDialog";
+export { ResourceDownloadRow, type ResourceDownloadRowProps } from "./components/ResourceDownloadRow";
+export { CatalogCover } from "./components/CatalogCover";
+export { ThumbImage } from "./components/ThumbImage";
+export { CoverPlaceholder } from "./components/CoverPlaceholder";
+export { ART_COUNT, artOf, artInitial } from "./lib/art";
+export { THUMB_PX, useThumb, loadThumb, peekThumb, forgetThumb, thumbSupported } from "./lib/thumb";
+export { TransferProgress } from "./components/TransferProgress";

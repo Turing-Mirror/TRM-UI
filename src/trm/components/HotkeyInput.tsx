@@ -40,7 +40,7 @@ export function HotkeyInput({ value, onChange, label, disabled = false }: { valu
       className={[
         "min-w-[108px] h-8 px-3 rounded-[var(--rs)] border-0 cursor-pointer text-[12.5px] tabular-nums bg-transparent transition-[color,box-shadow] duration-200",
         recording
-          ? "text-[var(--accent)] shadow-[inset_0_0_0_1px_var(--accent)]"
+          ? "text-[var(--accent-text)] shadow-[inset_0_0_0_1px_var(--accent)]"
           : `${value ? "text-[var(--ink)]" : "text-[var(--meta)]"} shadow-[inset_0_0_0_1px_var(--line)] enabled:hover:shadow-[inset_0_0_0_1px_var(--focus-line)]`,
         "disabled:cursor-default",
       ].join(" ")}

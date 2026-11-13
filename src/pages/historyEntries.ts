@@ -19,6 +19,74 @@ export type HistoryEntry = {
 
 export const HISTORY: HistoryEntry[] = [
 {
+  "id": "page-keep-and-warm",
+  "date": "2026-11-12",
+  "old": {
+    "zh-CN": "离开一页就整页卸下，再来时重新搭建，输入、筛选和滚动位置都不留；第一次进入内容多的页，推移开头会停顿一下。",
+    "zh-TW": "離開一頁就整頁卸下，再來時重新搭建，輸入、篩選和捲動位置都不留；第一次進入內容多的頁，推移開頭會停頓一下。",
+    "en-US": "Leaving a page unmounted it; coming back rebuilt it, losing input, filters and scroll position. The first visit to a heavy page stalled at the start of the slide.",
+    "ja-JP": "ページを離れると丸ごと外され、戻ると作り直されて、入力・絞り込み・スクロール位置が消えていた。重いページに初めて入ると、スライドの出だしが一瞬止まっていた。",
+    "ko-KR": "페이지를 떠나면 통째로 내려가고 돌아오면 다시 만들어져 입력, 필터, 스크롤 위치가 사라졌다. 내용이 많은 페이지에 처음 들어가면 이동이 시작될 때 잠깐 멈췄다.",
+    "fr-FR": "Quitter une page la démontait ; y revenir la reconstruisait, sans la saisie, les filtres ni la position de défilement. La première visite d’une page lourde marquait un arrêt au début du glissement.",
+    "es-ES": "Al salir de una página se desmontaba; al volver se reconstruía y se perdían lo escrito, los filtros y la posición de desplazamiento. La primera visita a una página pesada se detenía al empezar el desplazamiento.",
+    "ru-RU": "При уходе страница снималась целиком, при возврате собиралась заново: ввод, фильтры и положение прокрутки терялись. Первый вход на тяжёлую страницу давал заминку в начале сдвига."
+  },
+  "now": {
+    "zh-CN": "页面可以常驻：离开后状态留着，副作用停掉，回来时重新执行，数据照样刷新。空闲时提前搭好其余的页。",
+    "zh-TW": "頁面可以常駐：離開後狀態留著，副作用停掉，回來時重新執行，資料照樣重新整理。閒置時提前搭好其餘的頁。",
+    "en-US": "Pages can stay: state is kept after leaving, effects stop and run again on return, so data still refreshes. The other pages are built ahead while idle.",
+    "ja-JP": "ページを常駐にできる。離れても状態は残り、副作用は止まって戻ったときに再実行されるので、データは更新される。残りのページはアイドル時に先に組み立てる。",
+    "ko-KR": "페이지를 상주시킬 수 있다. 떠난 뒤에도 상태는 남고, 부수 효과는 멈췄다가 돌아오면 다시 실행되어 데이터가 새로 고쳐진다. 나머지 페이지는 한가할 때 미리 만든다.",
+    "fr-FR": "Les pages peuvent rester en place : l’état est conservé, les effets s’arrêtent puis reprennent au retour, les données se rafraîchissent donc. Les autres pages sont construites à l’avance pendant les temps morts.",
+    "es-ES": "Las páginas pueden permanecer: el estado se conserva, los efectos se detienen y se repiten al volver, así que los datos se actualizan. Las demás páginas se construyen por adelantado en los ratos libres.",
+    "ru-RU": "Страницы могут оставаться: состояние сохраняется, эффекты останавливаются и выполняются снова при возврате, поэтому данные обновляются. Остальные страницы собираются заранее в простое."
+  },
+  "why": {
+    "zh-CN": "重新搭建既丢状态又占用推移的第一帧。只停副作用不拆界面，两个问题一起解决，后台也不多耗资源。",
+    "zh-TW": "重新搭建既丟狀態又佔用推移的第一幀。只停副作用不拆介面，兩個問題一起解決，背景也不多耗資源。",
+    "en-US": "Rebuilding lost state and took the first frame of the slide. Stopping effects while keeping the interface solves both without extra background work.",
+    "ja-JP": "作り直しは状態を失い、スライドの最初のフレームも奪っていた。副作用だけ止めて画面を残せば両方が解決し、裏での負荷も増えない。",
+    "ko-KR": "다시 만들면 상태를 잃고 이동의 첫 프레임도 빼앗긴다. 화면은 두고 부수 효과만 멈추면 두 문제가 함께 풀리고 백그라운드 부담도 늘지 않는다.",
+    "fr-FR": "Reconstruire faisait perdre l’état et occupait la première image du glissement. Arrêter les effets en gardant l’interface règle les deux sans travail d’arrière-plan supplémentaire.",
+    "es-ES": "Reconstruir perdía el estado y ocupaba el primer fotograma del desplazamiento. Detener los efectos conservando la interfaz resuelve ambas cosas sin trabajo adicional en segundo plano.",
+    "ru-RU": "Пересборка теряла состояние и занимала первый кадр сдвига. Остановка эффектов при сохранённом интерфейсе решает обе проблемы без лишней фоновой работы."
+  }
+},
+{
+  "id": "page-crossfade-and-thumb-wait",
+  "date": "2026-11-11",
+  "old": {
+    "zh-CN": "换页时新旧两页叠在一起淡入淡出，只移动很小一段；点击分段滑块后，滑块到达目标项上方才切换内容。",
+    "zh-TW": "換頁時新舊兩頁疊在一起淡入淡出，只移動很小一段；點擊分段滑塊後，滑塊到達目標項上方才切換內容。",
+    "en-US": "On a page change both pages cross-faded on top of each other with only a small move; after a click on the segment control, content switched only when the thumb arrived.",
+    "ja-JP": "ページ切り替えでは新旧 2 ページが重なってフェードし、わずかにしか動かなかった。セグメントをクリックすると、つまみが到着してから内容が切り替わっていた。",
+    "ko-KR": "페이지를 바꿀 때 두 페이지가 겹친 채 나타나고 사라지며 조금만 움직였다. 세그먼트를 클릭하면 슬라이더가 도착한 뒤에 내용이 바뀌었다.",
+    "fr-FR": "Les deux pages se fondaient l’une sur l’autre avec un très court déplacement ; après un clic sur le sélecteur, le contenu ne changeait qu’à l’arrivée du curseur.",
+    "es-ES": "Las dos páginas se fundían una sobre otra con un desplazamiento mínimo; tras un clic en el selector, el contenido cambiaba solo cuando llegaba el deslizador.",
+    "ru-RU": "При смене страницы обе страницы растворялись друг поверх друга с небольшим сдвигом; после щелчка по переключателю содержимое менялось только по прибытии ползунка."
+  },
+  "now": {
+    "zh-CN": "点击当帧开始。新旧两页首尾相接整页推移，全程不透明；中途再点，从当前位置接着走。",
+    "zh-TW": "點擊當幀開始。新舊兩頁首尾相接整頁推移，全程不透明；中途再點，從目前位置接著走。",
+    "en-US": "Motion starts in the frame of the click. The old and new pages move edge to edge as whole pages, fully opaque; a click midway continues from the current position.",
+    "ja-JP": "クリックと同じフレームで始まる。新旧 2 ページは端と端を接してページごと動き、不透明のまま。途中でクリックすると現在位置から続く。",
+    "ko-KR": "클릭한 프레임에 시작한다. 이전 페이지와 새 페이지가 맞닿은 채 통째로 움직이며 투명도는 바뀌지 않는다. 도중에 클릭하면 현재 위치에서 이어진다.",
+    "fr-FR": "Le mouvement commence dans l’image du clic. L’ancienne et la nouvelle page se déplacent bord à bord, entières et opaques ; un clic en cours de route continue depuis la position actuelle.",
+    "es-ES": "El movimiento empieza en el fotograma del clic. La página anterior y la nueva se desplazan enteras, borde con borde y opacas; un clic a mitad continúa desde la posición actual.",
+    "ru-RU": "Движение начинается в кадре щелчка. Старая и новая страницы сдвигаются целиком, вплотную и непрозрачно; щелчок по ходу продолжает движение с текущего положения."
+  },
+  "why": {
+    "zh-CN": "点击后要空等约 0.1 秒，换页中途两页文字叠在一起，连点时动画从头重放。",
+    "zh-TW": "點擊後要空等約 0.1 秒，換頁中途兩頁文字疊在一起，連點時動畫從頭重播。",
+    "en-US": "A click was followed by about 0.1s of waiting, the text of two pages overlapped midway, and repeated clicks restarted the animation.",
+    "ja-JP": "クリック後に約 0.1 秒の待ちがあり、途中で 2 ページの文字が重なり、連続クリックでアニメーションが最初からやり直されていた。",
+    "ko-KR": "클릭 뒤 약 0.1초를 기다려야 했고, 도중에 두 페이지의 글자가 겹쳤으며, 연속 클릭하면 애니메이션이 처음부터 다시 재생됐다.",
+    "fr-FR": "Un clic était suivi d’environ 0,1s d’attente, les textes des deux pages se superposaient, et des clics répétés relançaient l’animation.",
+    "es-ES": "Tras un clic había que esperar unos 0,1s, el texto de las dos páginas se superponía y los clics repetidos reiniciaban la animación.",
+    "ru-RU": "После щелчка приходилось ждать около 0,1s, текст двух страниц накладывался, а повторные щелчки запускали анимацию заново."
+  }
+},
+{
   "id": "workbench-paged-navigation",
   "date": "2026-11-07",
   "old": {

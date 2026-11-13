@@ -90,6 +90,24 @@ describe("SegmentControl 的指针收尾", () => {
     expect(glass.style.transform).toBe("none");
   });
 
+  it("动画帧复用排版测量，父页面重绘后会更新几何", () => {
+    const { root, rerender, changed } = setup();
+    const widths = vi.mocked(Object.getOwnPropertyDescriptor(HTMLElement.prototype, "offsetWidth")!.get!);
+    const offsets = vi.mocked(Object.getOwnPropertyDescriptor(HTMLElement.prototype, "offsetLeft")!.get!);
+    act(() => root.querySelectorAll("button")[1].click());
+    widths.mockClear();
+    offsets.mockClear();
+    finishFrames(3);
+    expect(widths).not.toHaveBeenCalled();
+    expect(offsets).not.toHaveBeenCalled();
+
+    widths.mockReturnValue(120);
+    rerender();
+    finishFrames();
+    expect(changed).toHaveBeenCalledExactlyOnceWith("b");
+    expect(root.querySelector<HTMLElement>(".seg-thumb")!.style.width).toBe("120px");
+  });
+
   it("拖动时失去 pointer capture 也会落定选择并结束动画循环", () => {
     const { root, changed } = setup();
     pointer(root, "pointerdown");
@@ -128,13 +146,13 @@ describe("SegmentControl 的指针收尾", () => {
     expect(frames.size).toBe(0);
   });
 
-  it("快速反向点击当前项会取消尚未完成的切换", () => {
+  it("快速反向点击会立即切回原项", () => {
     const { root, changed } = setup();
     const buttons = root.querySelectorAll("button");
     act(() => buttons[1].click());
     act(() => buttons[0].click());
     finishFrames();
-    expect(changed).not.toHaveBeenCalled();
+    expect(changed.mock.calls).toEqual([["b"], ["a"]]);
     expect(buttons[0].getAttribute("aria-pressed")).toBe("true");
     expect(frames.size).toBe(0);
   });
@@ -164,7 +182,7 @@ describe("SegmentControl 的指针收尾", () => {
     expect(frames.size).toBe(0);
   });
 
-  it("父页面重绘不取消尚未完成的选择", () => {
+  it("父页面重绘不打断滑块动画，也不重复切换", () => {
     const { root, changed, rerender } = setup();
     act(() => root.querySelectorAll("button")[1].click());
     finishFrames(2);
@@ -174,11 +192,14 @@ describe("SegmentControl 的指针收尾", () => {
     expect(frames.size).toBe(0);
   });
 
-  it("普通点击仍等滑块到达目标后才切换", () => {
+  it("点击当帧切换，不等滑块到达；再点当前项不重复通知", () => {
     const { root, changed } = setup();
-    act(() => root.querySelectorAll("button")[1].click());
-    expect(changed).not.toHaveBeenCalled();
-    finishFrames();
+    const buttons = root.querySelectorAll("button");
+    act(() => buttons[1].click());
+    expect(changed).toHaveBeenCalledExactlyOnceWith("b");
+    expect(buttons[1].getAttribute("aria-pressed")).toBe("true");
+    expect(frames.size).toBe(1);
+    act(() => buttons[1].click());
     finishFrames();
     expect(changed).toHaveBeenCalledExactlyOnceWith("b");
     expect(frames.size).toBe(0);

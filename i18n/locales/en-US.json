@@ -10,6 +10,32 @@
     "ru-RU": "Русский"
   },
   "ui": {
+    "download": {
+      "recommended": "Recommended",
+      "installed": "Installed",
+      "removing": "Removing…",
+      "remove": "Uninstall",
+      "downloading": "Downloading…",
+      "download": "Download"
+    },
+    "crop": {
+      "title": "Change and crop the cover",
+      "lead": "Crop a cover for “{v0}”. Scroll to zoom, drag the image to pan, and drag the selection edges to resize.",
+      "pick": "Choose an image…",
+      "pickHint": "Supports jpg, png, webp and bmp.",
+      "repick": "Pick another image",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "fit": "Fit",
+      "zoom100": "100%",
+      "ratioLabel": "Ratio:",
+      "free": "Free",
+      "previewAfter": "Cropped",
+      "previewBefore": "Original",
+      "previewNote": "Output size: {v0} px",
+      "save": "Save cover",
+      "badImage": "Invalid image data. Save failed"
+    },
     "chart": {
       "chart": "Chart",
       "table": "Table",
@@ -135,7 +161,8 @@
     "interaction": "Interaction",
     "text": "Copy",
     "settings": "Settings",
-    "history": "History"
+    "history": "History",
+    "sharedCode": "Shared code"
   },
   "demo": {
     "workbench": {
@@ -306,6 +333,7 @@
     "type": {
       "sub": "Body text is 15px with a line height of 1.65. Only the sizes below are used.",
       "roleBody": "Body",
+      "roleValue": "Value",
       "roleHelp": "Help",
       "roleMeta": "Meta",
       "weight": "Weight {v}"
@@ -619,6 +647,12 @@
       "panel": "Centered panel",
       "confirmKey": "Confirm key",
       "confirmed": "Demo key confirmed."
+    },
+    "sharedCode": {
+      "list": "Shared by Fabric products",
+      "count": "{n} in total",
+      "from": "Import: {v}",
+      "none": "No matching modules"
     }
   }
 }

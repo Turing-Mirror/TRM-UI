@@ -47,7 +47,7 @@ export function SideHead({ label, action }: { label: string; action?: { icon: Ic
     <div className="mt-5 first:mt-0 mb-1 pl-3 pr-1 h-6 flex items-center text-[11.5px] text-[var(--meta)]">
       <span className="flex-1">{label}</span>
       {action ? (
-        <button type="button" onClick={action.run} aria-label={action.label} title={action.label} className="w-6 h-6 grid place-items-center rounded-[6px] border-0 bg-transparent cursor-pointer text-[var(--meta)] hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]">
+        <button type="button" onClick={action.run} aria-label={action.label} title={action.label} className="w-6 h-6 grid place-items-center rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[var(--meta)] hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]">
           <Icon name={action.icon} size={14} />
         </button>
       ) : null}
@@ -79,7 +79,7 @@ export function SideItem({
       aria-pressed={on}
       className={[
         "relative w-full h-8 flex items-center gap-2 px-3 rounded-[var(--rs)] border-0 cursor-pointer text-[13px] text-left transition-colors duration-200",
-        on ? `bg-transparent font-medium ${look === "plain" ? "text-[var(--accent)]" : "text-[var(--ink)]"}` : `bg-transparent text-[var(--ink-muted)] ${hoverInk(look)}`,
+        on ? `bg-transparent font-medium ${look === "plain" ? "text-[var(--accent-text)]" : "text-[var(--ink)]"}` : `bg-transparent text-[var(--ink-muted)] ${hoverInk(look)}`,
       ].join(" ")}
     >
       {icon ? <Icon name={icon} size={15} className={on ? "text-[var(--accent)]" : "text-[var(--meta)]"} /> : null}

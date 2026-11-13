@@ -8,7 +8,7 @@ function Lines({ text }: { text: string }) {
     <>
       {text.split("\n").map((line, i) =>
         line.startsWith("<") ? (
-          <code key={i} className="block mt-1 text-[12px] font-mono break-all text-[var(--ink-muted)]">{line}</code>
+          <code key={i} className="block mt-1 text-[12.5px] font-mono break-all text-[var(--ink-muted)]">{line}</code>
         ) : (
           <span key={i} className="block">{line}</span>
         ),
@@ -27,13 +27,13 @@ function ExampleRow({ e, term }: { e: Example; term: string }) {
       <div className="grid gap-x-6 gap-y-2.5 min-[900px]:grid-cols-2">
         <div className="min-w-0">
           <div className="text-[11.5px] text-[var(--meta)] mb-1">{t("demo.text.wrong")}</div>
-          <div className="text-[13.5px] leading-relaxed text-[var(--ink-muted)]">
+          <div className="text-[13px] leading-relaxed text-[var(--ink-muted)]">
             <Lines text={pair[0]} />
           </div>
         </div>
         <div className="min-w-0">
           <div className="text-[11.5px] text-[var(--meta)] mb-1">{t("demo.text.right")}</div>
-          <div className="text-[13.5px] leading-relaxed">
+          <div className="text-[13px] leading-relaxed">
             <Lines text={pair[1]} />
           </div>
         </div>
@@ -55,7 +55,7 @@ export function RuleBlock({ rule, demo }: { rule: Rule; demo?: ReactNode }) {
       {demo}
       {rule.list?.length ? (
         <Group>
-          <ol className="list-decimal m-0 py-2 pl-5 flex flex-col gap-2.5 text-[13.5px] leading-relaxed">
+          <ol className="list-decimal m-0 py-2 pl-5 flex flex-col gap-2.5 text-[13px] leading-relaxed">
             {rule.list.map((item) => (
               <li key={item[locale]}>{item[locale]}</li>
             ))}

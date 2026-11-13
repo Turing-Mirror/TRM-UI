@@ -31,6 +31,7 @@ import { MotionPage } from "./pages/MotionPage";
 import { InteractionPage } from "./pages/InteractionPage";
 import { TextPage } from "./pages/TextPage";
 import { HistoryPage } from "./pages/HistoryPage";
+import { SharedCodePage } from "./pages/SharedCodePage";
 import { SettingsPage, type Look } from "./pages/SettingsPage";
 
 /**
@@ -46,11 +47,16 @@ const nav = createNav([
   { id: "type", labelKey: "nav.type" },
   { id: "color", labelKey: "nav.color" },
   { id: "motion", labelKey: "nav.motion" },
+  { id: "sharedCode", labelKey: "nav.sharedCode" },
   { id: "history", labelKey: "nav.history" },
   { id: "settings", labelKey: "nav.settings" },
 ] as const);
 
 type PageId = (typeof nav.defs)[number]["id"];
+
+/** 每一页离开后都留着状态，并在空闲时提前搭好。 */
+const keepPage = () => "paused" as const;
+const warmPages = nav.defs.map((d) => d.id);
 
 const ICONS: Record<PageId, IconName> = {
   overview: "home",
@@ -61,6 +67,7 @@ const ICONS: Record<PageId, IconName> = {
   type: "book",
   color: "brush",
   motion: "play",
+  sharedCode: "linked",
   history: "clock",
   settings: "settings",
 };
@@ -143,7 +150,7 @@ function Shell() {
         </Sidebar>
         <main className="page-workspace relative flex-1 min-w-0 flex flex-col">
           {ready ? (
-            <PageHost nav={nav} page={page} axis="y">
+            <PageHost nav={nav} page={page} axis="y" keep={keepPage} warm={warmPages}>
               {(id) => {
                 switch (id) {
                   case "overview":
@@ -162,6 +169,8 @@ function Shell() {
                     return <ColorPage />;
                   case "motion":
                     return <MotionPage />;
+                  case "sharedCode":
+                    return <SharedCodePage />;
                   case "history":
                     return <HistoryPage />;
                   case "settings":

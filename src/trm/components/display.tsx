@@ -11,10 +11,10 @@ import { hoverInk, useHoverStyle } from "../lib/hoverStyle";
 export type Tone = "ok" | "warn" | "muted" | "accent" | "danger";
 
 const TONE_TEXT: Record<Tone, string> = {
-  ok: "text-[var(--ok)]",
+  ok: "text-[var(--ok-text)]",
   warn: "text-[var(--warn-ink)]",
-  accent: "text-[var(--accent)]",
-  danger: "text-[var(--danger)]",
+  accent: "text-[var(--accent-text)]",
+  danger: "text-[var(--danger-text)]",
   muted: "text-[var(--meta)]",
 };
 
@@ -24,7 +24,7 @@ const TONE_TEXT: Record<Tone, string> = {
  */
 export function Tag({ tone = "muted", children, icon }: { tone?: Tone; children: ReactNode; icon?: IconName }) {
   return (
-    <span className={`inline-flex items-center gap-1 text-[12px] leading-none whitespace-nowrap ${TONE_TEXT[tone]}`}>
+    <span className={`inline-flex items-center gap-1 text-[12.5px] leading-none whitespace-nowrap ${TONE_TEXT[tone]}`}>
       {icon ? <Icon name={icon} size={12} stroke={1.9} /> : null}
       {children}
     </span>
@@ -38,7 +38,7 @@ export function Tag({ tone = "muted", children, icon }: { tone?: Tone; children:
 export function Meta({ children, className = "" }: { children: ReactNode[]; className?: string }) {
   const parts = children.filter((c) => c !== null && c !== undefined && c !== false && c !== "");
   return (
-    <span className={`inline-flex items-center gap-x-3 gap-y-0.5 flex-wrap text-[12px] text-[var(--meta)] ${className}`}>
+    <span className={`inline-flex items-center gap-x-3 gap-y-0.5 flex-wrap text-[12.5px] text-[var(--meta)] ${className}`}>
       {parts.map((c, i) => (
         <span key={i} className="inline-flex items-center">
           {c}
@@ -124,7 +124,7 @@ export function IconBtn({ icon, label, onClick, active = false, size = 18 }: { i
       className={[
         // 图标按钮没有底：悬停、选中都只改图标本身的颜色，见 src/pages/interactionRules.ts
         "w-8 h-8 grid place-items-center rounded-[var(--rs)] border-0 bg-transparent cursor-pointer transition-colors",
-        active ? "text-[var(--accent)]" : "text-[var(--ink-muted)] hover:text-[var(--ink)]",
+        active ? "text-[var(--accent-text)]" : "text-[var(--ink-muted)] hover:text-[var(--ink)]",
       ].join(" ")}
     >
       <Icon name={icon} size={size} />
@@ -184,7 +184,7 @@ export function Tabs<T extends string>({
               startTransition(() => onChange(o.id));
             }}
             className={[
-              "relative h-8 px-0 border-0 bg-transparent cursor-pointer text-[13.5px] transition-colors duration-200 whitespace-nowrap",
+              "relative h-8 px-0 border-0 bg-transparent cursor-pointer text-[13px] transition-colors duration-200 whitespace-nowrap",
               on ? "text-[var(--ink)] font-medium" : "text-[var(--ink-muted)] hover:text-[var(--ink)]",
             ].join(" ")}
           >
@@ -226,7 +226,7 @@ export function Filters<T extends string>({ value, options, onChange }: { value:
             setShown(o.id);
             startTransition(() => onChange(o.id));
           }}
-          className={`relative h-7 px-2.5 inline-flex items-center gap-1.5 rounded-[var(--rs)] border-0 cursor-pointer text-[12.5px] bg-transparent transition-colors duration-200 ${o.id === shown ? (look === "plain" ? "text-[var(--accent)] font-medium" : "text-[var(--ink)] font-medium") : `text-[var(--ink-muted)] ${hoverInk(look)}`}`}
+          className={`relative h-7 px-2.5 inline-flex items-center gap-1.5 rounded-[var(--rs)] border-0 cursor-pointer text-[12.5px] bg-transparent transition-colors duration-200 ${o.id === shown ? (look === "plain" ? "text-[var(--accent-text)] font-medium" : "text-[var(--ink)] font-medium") : `text-[var(--ink-muted)] ${hoverInk(look)}`}`}
         >
           {o.label}
           {o.count !== undefined ? <span className="text-[11.5px] text-[var(--meta)] font-normal tabular-nums">{o.count}</span> : null}
@@ -240,7 +240,13 @@ export function Filters<T extends string>({ value, options, onChange }: { value:
  * 翻页。默认隐藏单页；持续显示页码的列表可设置 showSinglePage。
  * 换页时当前页的标记滑过去；留下的页码滑到新位置，新出现的页码淡入，离开的页码原地淡出，整排不跳。
  */
-export function Pager({ page, pages, onChange, showSinglePage = false }: { page: number; pages: number; onChange: (p: number) => void; showSinglePage?: boolean }) {
+export function Pager({ page, pages, onChange, showSinglePage = false, className = "mt-[var(--pager-margin-top,2rem)]" }: {
+  page: number;
+  pages: number;
+  onChange: (p: number) => void;
+  showSinglePage?: boolean;
+  className?: string;
+}) {
   const { t } = useI18n();
   const look = useHoverStyle();
   const { box, pos, armed } = useSlider<HTMLDivElement>();
@@ -253,15 +259,17 @@ export function Pager({ page, pages, onChange, showSinglePage = false }: { page:
     const el = box.current;
     if (!el) return;
     const now = new Map<string, { x: number; label: string }>();
-    const easing = curve("--ease-nav");
     const quiet = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const previous = lefts.current;
+    const easing = !quiet && previous ? curve("--ease-nav") : undefined;
     el.querySelectorAll<HTMLElement>(":scope > [data-k]").forEach((node) => {
       const key = node.dataset.k ?? "";
-      now.set(key, { x: node.offsetLeft, label: node.textContent ?? "" });
-      const was = lefts.current?.get(key);
-      if (quiet || !lefts.current) return;
+      const x = node.offsetLeft;
+      now.set(key, { x, label: node.textContent ?? "" });
+      if (quiet || !previous || !node.animate) return;
+      const was = previous.get(key);
       if (!was) node.animate([{ opacity: 0, transform: "scale(0.86)" }, { opacity: 1, transform: "none" }], { duration: FLOW_MS, easing });
-      else if (was.x !== node.offsetLeft) node.animate([{ transform: `translate3d(${was.x - node.offsetLeft}px, 0, 0)` }, { transform: "none" }], { duration: FLOW_MS, easing });
+      else if (was.x !== x) node.animate([{ transform: `translate3d(${was.x - x}px, 0, 0)` }, { transform: "none" }], { duration: FLOW_MS, easing });
     });
     const gone = lefts.current ? [...lefts.current].filter(([k]) => !now.has(k)) : [];
     lefts.current = now;
@@ -276,7 +284,7 @@ export function Pager({ page, pages, onChange, showSinglePage = false }: { page:
   const btn = "relative h-8 min-w-8 px-2 grid place-items-center rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[13px] tabular-nums transition-colors disabled:opacity-30 disabled:cursor-default";
   const hover = hoverInk(look);
   return (
-    <nav aria-label={t("ui.pager.label")} className="mt-[var(--pager-margin-top,2rem)] flex items-center justify-center gap-1">
+    <nav aria-label={t("ui.pager.label")} className={`${className} flex items-center justify-center gap-1`}>
       <button type="button" aria-label={t("ui.pager.prev")} disabled={page <= 1} onClick={() => onChange(page - 1)} className={`${btn} text-[var(--ink-muted)] ${hover}`}>
         <Icon name="back" size={15} />
       </button>
@@ -294,7 +302,7 @@ export function Pager({ page, pages, onChange, showSinglePage = false }: { page:
               type="button"
               aria-current={p === page ? "page" : undefined}
               onClick={() => onChange(p)}
-              className={`${btn} ${p === page ? (look === "plain" ? "text-[var(--accent)] font-medium" : "text-[var(--ink)] font-medium") : `text-[var(--ink-muted)] ${hover}`}`}
+              className={`${btn} ${p === page ? (look === "plain" ? "text-[var(--accent-text)] font-medium" : "text-[var(--ink)] font-medium") : `text-[var(--ink-muted)] ${hover}`}`}
             >
               {p}
             </button>

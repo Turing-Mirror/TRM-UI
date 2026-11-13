@@ -1,5 +1,6 @@
 import { build } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 import { cp, readFile, readdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
@@ -30,8 +31,34 @@ await build({
     outDir: "lib",
     emptyOutDir: true,
     minify: false,
-    lib: { entry: resolve(root, "src/trm/index.ts"), formats: ["es"], fileName: () => "index.js" },
+    // 两个入口：组件包，以及 Fabric 系列共用的代码。后者不引用前者，各自成一个文件。
+    lib: {
+      entry: { index: resolve(root, "src/trm/index.ts"), fabric: resolve(root, "src/trm/fabric/index.ts") },
+      formats: ["es"],
+      fileName: (_format, name) => `${name}.js`,
+    },
     rollupOptions: { external: id => /^(react|react-dom|@tauri-apps\/api)(\/|$)/.test(id) },
   },
 });
 await cp(resolve(root, "src/trm/styles"), resolve(root, "lib/styles"), { recursive: true });
+
+// 预编译样式表：不用 Tailwind 的项目直接引入 trm-ui/compiled.css 就能用全部组件。
+// 里面是变量、组件样式，加上组件包自己用到的工具类。
+await build({
+  root,
+  configFile: false,
+  logLevel: "warn",
+  // 相对路径：字体文件就在样式表旁边的 fonts/ 里。
+  base: "./",
+  plugins: [tailwindcss()],
+  build: {
+    outDir: "lib/styles",
+    emptyOutDir: false,
+    assetsInlineLimit: 0,
+    cssMinify: true,
+    rollupOptions: {
+      input: resolve(root, "scripts/compiled_entry.css"),
+      output: { assetFileNames: info => (info.names?.[0] ?? info.name ?? "").endsWith(".css") ? "compiled.css" : "fonts/[name][extname]" },
+    },
+  },
+});

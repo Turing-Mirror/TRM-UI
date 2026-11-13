@@ -3,8 +3,8 @@ import { COLOR_ROLES } from "./colorRoles";
 
 const CORE = ["--shell-bg", "--bg", "--surface", "--rail", "--group", "--stage", "--page-bg", "--scrim"];
 const INK = ["--ink", "--ink-muted", "--help", "--meta", "--hairline", "--line", "--focus-line"];
-const ACCENT = ["--accent", "--accent-ink", "--accent-soft", "--knob", "--notify"];
-const STATE = ["--ok", "--ok-soft", "--warn", "--warn-ink", "--danger", "--danger-soft"];
+const ACCENT = ["--accent", "--accent-text", "--accent-ink", "--accent-soft", "--knob", "--notify"];
+const STATE = ["--ok", "--ok-text", "--ok-soft", "--warn", "--warn-ink", "--danger", "--danger-text", "--danger-soft"];
 const ART = ["--art-1", "--art-2", "--art-3", "--art-4", "--art-5", "--art-6"];
 
 /**

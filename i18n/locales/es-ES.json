@@ -10,6 +10,32 @@
     "ru-RU": "Русский"
   },
   "ui": {
+    "download": {
+      "recommended": "Recomendado",
+      "installed": "Instalado",
+      "removing": "Desinstalando…",
+      "remove": "Desinstalar",
+      "downloading": "Descargando…",
+      "download": "Descargar"
+    },
+    "crop": {
+      "title": "Cambiar y recortar la portada",
+      "lead": "Recorte una portada para «{v0}». Use la rueda para ampliar, arrastre la imagen para moverla y los bordes de la selección para cambiar su tamaño.",
+      "pick": "Elegir imagen…",
+      "pickHint": "Formatos compatibles: jpg, png, webp y bmp.",
+      "repick": "Elegir otra imagen",
+      "zoomIn": "Acercar",
+      "zoomOut": "Alejar",
+      "fit": "Ajustar",
+      "zoom100": "100%",
+      "ratioLabel": "Proporción:",
+      "free": "Libre",
+      "previewAfter": "Recortada",
+      "previewBefore": "Original",
+      "previewNote": "Tamaño de salida: {v0} px",
+      "save": "Guardar portada",
+      "badImage": "Datos de imagen no válidos; no se pudo guardar"
+    },
     "chart": {
       "chart": "Gráfico",
       "table": "Tabla",
@@ -135,7 +161,8 @@
     "interaction": "Interacción",
     "text": "Textos",
     "settings": "Ajustes",
-    "history": "Historial"
+    "history": "Historial",
+    "sharedCode": "Código compartido"
   },
   "demo": {
     "workbench": {
@@ -306,6 +333,7 @@
     "type": {
       "sub": "El texto principal mide 15 px con un interlineado de 1,65. Solo se usan los tamaños siguientes.",
       "roleBody": "Cuerpo",
+      "roleValue": "Valor",
       "roleHelp": "Ayuda",
       "roleMeta": "Meta",
       "weight": "Grosor {v}"
@@ -619,6 +647,12 @@
       "panel": "Panel centrado",
       "confirmKey": "Confirmar clave",
       "confirmed": "Clave de demostración confirmada."
+    },
+    "sharedCode": {
+      "list": "Común a los productos Fabric",
+      "count": "{n} en total",
+      "from": "Importación: {v}",
+      "none": "No hay módulos que coincidan"
     }
   }
 }

@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { FLOW_MS, FlowList, PushLayer } from "./motion";
 import { StaticMotionContext } from "./motionScope";
+import { followScrollEnd } from "./followScrollEnd";
 
 type Block = { key: string; node: ReactNode };
 type Body = { scope: string; blocks: Block[]; end?: string | number; seq: number; dir: -1 | 1 };
@@ -20,25 +21,7 @@ function BodyContent({ body, leaving, moving }: { body: Body; leaving: boolean; 
     if (!el || leaving || body.end === undefined) return;
     const instant = first.current || moving || reduced();
     first.current = false;
-    const from = el.scrollTop;
-    const start = performance.now();
-    let frame = 0;
-    const follow = () => {
-      const progress = instant ? 1 : Math.min(1, (performance.now() - start) / FLOW_MS);
-      const end = Math.max(0, el.scrollHeight - el.clientHeight);
-      el.scrollTop = from + (end - from) * (1 - (1 - progress) ** 3);
-      if (progress < 1) frame = requestAnimationFrame(follow);
-    };
-    // A fresh layer reaches its end before paint, not after its push has landed.
-    follow();
-    const cancel = () => cancelAnimationFrame(frame);
-    el.addEventListener("wheel", cancel, { passive: true });
-    el.addEventListener("touchstart", cancel, { passive: true });
-    return () => {
-      cancel();
-      el.removeEventListener("wheel", cancel);
-      el.removeEventListener("touchstart", cancel);
-    };
+    return followScrollEnd(el, instant ? 0 : FLOW_MS);
   }, [body.end, leaving, moving]);
   return <StaticMotionContext.Provider value={moving}>
     <div ref={scroll} className="trm-workbench-body" data-follow-end={body.end !== undefined || undefined}>
