@@ -107,13 +107,13 @@ export function Notices({ top = 62 }: { top?: number }) {
   if (!list.length) return null;
   return (
     // 整块区域不接鼠标，只有卡片本身接：卡片之间的空隙与下方的空白不挡住后面的页面
-    <div className="group/stack fixed right-4 z-[55] w-[344px] max-w-[calc(100vw-32px)] flex flex-col pointer-events-none" style={{ top }} aria-live="polite">
+    <div className="group/stack fixed right-4 z-[300] w-[344px] max-w-[calc(100vw-32px)] flex flex-col pointer-events-none" style={{ top }} aria-live="polite">
       {list.map((n) => (
         <Row key={n.id} n={n} onClose={() => dismiss(n.id)} />
       ))}
       {lasting > 1 ? (
         <div className="flex justify-end pt-1 opacity-0 group-hover/stack:opacity-100 transition-opacity pointer-events-auto">
-          <button type="button" onClick={clear} className="h-7 px-3 rounded-full border-0 cursor-pointer text-[12px] text-[var(--ink-muted)] hover:text-[var(--ink)] bg-[var(--surface)] shadow-[var(--pop-shadow)]">
+          <button type="button" onClick={clear} className="h-7 px-3 rounded-full border-0 cursor-pointer text-[12.5px] text-[var(--ink-muted)] hover:text-[var(--ink)] bg-[var(--surface)] shadow-[var(--pop-shadow)]">
             {t("ui.notice.clearAll")}
           </button>
         </div>
@@ -152,9 +152,9 @@ function Row({ n, onClose }: { n: Notice; onClose: () => void }) {
             }}
             className={`group relative notice-card pointer-events-auto ${n.leaving ? "notice-out pointer-events-none" : "notice-in"} ${tip ? "" : "cursor-pointer"}`}
           >
-            <div className={`flex items-start gap-3 rounded-[16px] bg-[var(--surface)] shadow-[var(--pop-shadow)] ${tip ? "px-3.5 py-3" : "p-3.5"}`}>
+            <div className={`flex items-start gap-3 rounded-[var(--r)] bg-[var(--surface)] shadow-[var(--pop-shadow)] ${tip ? "px-3.5 py-3" : "p-3.5"}`}>
               {icon ? (
-                <span className="w-8 h-8 flex-none grid place-items-center rounded-[9px] bg-[color-mix(in_srgb,var(--ink)_6%,transparent)] text-[var(--ink-muted)]">
+                <span className="w-8 h-8 flex-none grid place-items-center rounded-[var(--rs)] bg-[color-mix(in_srgb,var(--ink)_6%,transparent)] text-[var(--ink-muted)]">
                   <Icon name={icon} size={16} />
                 </span>
               ) : null}

@@ -24,7 +24,7 @@ const TONE_TEXT: Record<Tone, string> = {
  */
 export function Tag({ tone = "muted", children, icon }: { tone?: Tone; children: ReactNode; icon?: IconName }) {
   return (
-    <span className={`inline-flex items-center gap-1 text-[12px] leading-none whitespace-nowrap ${TONE_TEXT[tone]}`}>
+    <span className={`inline-flex items-center gap-1 text-[12.5px] leading-none whitespace-nowrap ${TONE_TEXT[tone]}`}>
       {icon ? <Icon name={icon} size={12} stroke={1.9} /> : null}
       {children}
     </span>
@@ -38,7 +38,7 @@ export function Tag({ tone = "muted", children, icon }: { tone?: Tone; children:
 export function Meta({ children, className = "" }: { children: ReactNode[]; className?: string }) {
   const parts = children.filter((c) => c !== null && c !== undefined && c !== false && c !== "");
   return (
-    <span className={`inline-flex items-center gap-x-3 gap-y-0.5 flex-wrap text-[12px] text-[var(--meta)] ${className}`}>
+    <span className={`inline-flex items-center gap-x-3 gap-y-0.5 flex-wrap text-[12.5px] text-[var(--meta)] ${className}`}>
       {parts.map((c, i) => (
         <span key={i} className="inline-flex items-center">
           {c}
@@ -184,7 +184,7 @@ export function Tabs<T extends string>({
               startTransition(() => onChange(o.id));
             }}
             className={[
-              "relative h-8 px-0 border-0 bg-transparent cursor-pointer text-[13.5px] transition-colors duration-200 whitespace-nowrap",
+              "relative h-8 px-0 border-0 bg-transparent cursor-pointer text-[13px] transition-colors duration-200 whitespace-nowrap",
               on ? "text-[var(--ink)] font-medium" : "text-[var(--ink-muted)] hover:text-[var(--ink)]",
             ].join(" ")}
           >

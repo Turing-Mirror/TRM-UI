@@ -27,12 +27,12 @@ export function ResourceDownloadRow({
     <div className="py-3.5">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <div className="min-w-0 flex-[1_1_10rem]">
-          <div className="text-[14px] leading-snug">
+          <div className="text-[13px] leading-snug">
             {title}
-            {recommended ? <span className="ml-1.5 text-[11px] font-medium text-[var(--accent-text)]">{t("ui.download.recommended")}</span> : null}
+            {recommended ? <span className="ml-1.5 text-[11.5px] font-medium text-[var(--accent-text)]">{t("ui.download.recommended")}</span> : null}
           </div>
           {description ? <div className="mt-1 text-[12.5px] leading-snug text-[var(--meta)]">{description}</div> : null}
-          {detail ? <div className="mt-1 text-[12px] tabular-nums text-[var(--meta)]">{detail}</div> : null}
+          {detail ? <div className="mt-1 text-[12.5px] tabular-nums text-[var(--meta)]">{detail}</div> : null}
         </div>
         <div className="ml-auto flex shrink-0 items-center gap-2">
           {installed ? <span className="px-1 text-[13px] text-[var(--ink-muted)]">{t("ui.download.installed")}</span> : null}
@@ -49,7 +49,7 @@ export function ResourceDownloadRow({
             className="h-1 w-full overflow-hidden rounded bg-[color-mix(in_srgb,var(--ink)_10%,transparent)]">
             <div className="h-full bg-[var(--accent)] transition-[width] duration-200" style={{ width: `${pct ?? 0}%` }} />
           </div>
-          <p className="m-0 mt-1.5 text-[12px] text-[var(--meta)]">
+          <p className="m-0 mt-1.5 text-[12.5px] text-[var(--meta)]">
             {progress.message} {pct !== undefined && pct > 0 ? `${pct}%` : ""}
           </p>
         </div>

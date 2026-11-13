@@ -39,18 +39,18 @@ export function Calendar({ value, onChange, marked = new Set(), now }: { value: 
   return (
     <div className="w-[280px] p-3 select-none">
       <div className="flex items-center gap-1 pl-2 pb-2">
-        <span className="text-[13.5px] font-medium flex-1">{title}</span>
+        <span className="text-[13px] font-medium flex-1">{title}</span>
         <button
           type="button"
           onClick={() => setMonth({ y: Number(today.slice(0, 4)), m: Number(today.slice(5, 7)) - 1 })}
-          className="h-7 px-2 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[12px] text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]"
+          className="h-7 px-2 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[12.5px] text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]"
         >
           {t("ui.cal.today")}
         </button>
         <NavBtn label={t("ui.cal.prev")} flip onClick={() => shift(-1)} />
         <NavBtn label={t("ui.cal.next")} onClick={() => shift(1)} />
       </div>
-      <div className="grid grid-cols-7 text-center text-[11px] text-[var(--meta)] pb-1">
+      <div className="grid grid-cols-7 text-center text-[11.5px] text-[var(--meta)] pb-1">
         {weekdays.map((w, i) => (
           <span key={i} className="h-6 leading-6">{w}</span>
         ))}

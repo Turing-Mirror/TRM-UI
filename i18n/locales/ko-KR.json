@@ -333,6 +333,7 @@
     "type": {
       "sub": "본문 글자 크기는 15px, 줄 높이는 1.65입니다. 글자 크기는 아래 단계만 씁니다.",
       "roleBody": "본문",
+      "roleValue": "??",
       "roleHelp": "설명",
       "roleMeta": "보조",
       "weight": "굵기 {v}"

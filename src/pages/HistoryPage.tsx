@@ -22,7 +22,7 @@ export function HistoryPage() {
             render={(e) => (
               <div className="py-4">
                 <div className="text-[11.5px] text-[var(--meta)] tabular-nums">{day.format(new Date(`${e.date}T00:00:00`))}</div>
-                <div className="mt-1 text-[14px] leading-snug">{e.old[locale]}</div>
+                <div className="mt-1 text-[13px] leading-snug">{e.old[locale]}</div>
                 <div className="mt-1.5 text-[13px] leading-relaxed text-[var(--ink-muted)]">{t("demo.history.now", { v: e.now[locale] })}</div>
                 <div className="mt-1 text-[12.5px] leading-relaxed text-[var(--help)]">{t("demo.history.why", { v: e.why[locale] })}</div>
               </div>

@@ -14,7 +14,7 @@ type CatalogCoverProps = {
   connecting?: boolean;
 };
 
-const badge = "absolute left-2.5 text-[11px] px-1.5 py-0.5 rounded-[4px] tabular-nums text-[var(--ink)] bg-[color-mix(in_srgb,var(--surface)_72%,transparent)] shadow-[inset_0_0_0_1px_var(--line)]";
+const badge = "absolute left-2.5 text-[11.5px] px-1.5 py-0.5 rounded-[4px] tabular-nums text-[var(--ink)] bg-[color-mix(in_srgb,var(--surface)_72%,transparent)] shadow-[inset_0_0_0_1px_var(--line)]";
 
 function CoverImage({ sources, placeholder, seed }: Pick<CatalogCoverProps, "sources" | "placeholder" | "seed">) {
   const [index, setIndex] = useState(0);
@@ -39,7 +39,7 @@ export function CatalogCover({ sources, placeholder, seed, release, detail, prog
       {detail ? <span className={`${badge} bottom-2.5`}>{detail}</span> : null}
       {progress !== undefined || connecting ? (
         <div aria-hidden className="absolute inset-x-0 bottom-0 h-[3px] bg-[color-mix(in_srgb,var(--ink)_16%,transparent)]">
-          <div className={`h-full bg-[var(--accent)] ${connecting ? "motion-safe:animate-pulse" : "motion-safe:transition-[width] duration-150"}`}
+          <div className={`h-full bg-[var(--accent)] ${connecting ? "motion-safe:animate-pulse" : "motion-safe:transition-[width] duration-200"}`}
             style={{ width: `${width > 0 ? Math.max(width, 0.5) : 0}%` }} />
         </div>
       ) : null}

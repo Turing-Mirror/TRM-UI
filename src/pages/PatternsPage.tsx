@@ -131,7 +131,7 @@ export function PatternsPage() {
                   <MoreBtn onOpen={(el) => menu.open(el, menuItems)} />
                 </span>
               </span>
-              <span className="mt-2 block text-[13.5px] font-medium">{t(c.key)}</span>
+              <span className="mt-2 block text-[13px] font-medium">{t(c.key)}</span>
               <Meta className="mt-0.5">{[t("demo.patterns.metaA"), t("demo.patterns.metaB")]}</Meta>
             </div>
           ))}
@@ -161,7 +161,7 @@ export function PatternsPage() {
       </Block>
 
       <Block title={t("demo.patterns.calendar")}>
-        <div className="inline-block rounded-[14px] bg-[var(--surface)] shadow-[var(--pop-shadow)]">
+        <div className="inline-block rounded-[var(--r)] bg-[var(--surface)] shadow-[var(--pop-shadow)]">
           <Calendar value={day} onChange={setDay} />
         </div>
       </Block>
@@ -203,7 +203,7 @@ export function PatternsPage() {
 
       <Modal open={modal} onClose={() => setModal(false)} width={420} label={t("demo.patterns.modal")}>
         <div className="p-6">
-          <div className="text-[17px] font-semibold">{t("demo.patterns.modal")}</div>
+          <div className="text-[16px] font-semibold">{t("demo.patterns.modal")}</div>
           <div className="mt-2 text-[13px] text-[var(--help)] leading-relaxed">{t("demo.patterns.modalText")}</div>
           <div className="mt-6 flex justify-end gap-2">
             <Btn onClick={() => setModal(false)}>{t("ui.common.cancel")}</Btn>
@@ -216,7 +216,7 @@ export function PatternsPage() {
           <div className="flex items-start gap-4">
             <Mark art={1} text="" glyph="image" size={52} />
             <div className="min-w-0 flex-1">
-              <div className="text-[18px] font-semibold">{t("demo.patterns.card1")}</div>
+              <div className="text-[16px] font-semibold">{t("demo.patterns.card1")}</div>
               <Meta className="mt-1">{[t("demo.patterns.metaA"), t("demo.patterns.metaB")]}</Meta>
             </div>
           </div>

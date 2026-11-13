@@ -99,7 +99,7 @@ export function MenuPopup({
       role="menu"
       data-more-menu
       inert={leaving}
-      className={`${leaving ? "menu-out" : "menu-in"} fixed z-[90] min-w-[160px] py-1 rounded-[var(--rs)] bg-[var(--surface)] shadow-[0_8px_28px_rgba(0,0,0,0.18)] overflow-y-auto overflow-x-hidden overscroll-contain`}
+      className={`${leaving ? "menu-out" : "menu-in"} fixed z-[100] min-w-[160px] py-1 rounded-[var(--rs)] bg-[var(--surface)] shadow-[0_8px_28px_rgba(0,0,0,0.18)] overflow-y-auto overflow-x-hidden overscroll-contain`}
       style={{
         left: box?.left ?? anchor.right,
         top: box?.top ?? anchor.bottom + 6,

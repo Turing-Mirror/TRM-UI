@@ -54,7 +54,7 @@
   --ui:
     -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei UI",
     "PingFang SC", "Microsoft YaHei", sans-serif;
-  /* 字号只有 25 / 15.5 / 15 / 14 / 13 / 12.5 / 11.5 七档，见「排版」页。
+  /* 字号只有 25 / 22 / 16 / 15 / 13 / 12.5 / 11.5 七档，见「排版」页。
      不要用 ch 限制中文行宽：ch 是「0」的字宽，12.5px 下只有半个汉字宽，
      按拉丁文定的 74ch 折成中文只剩 41 个字。数字成列时加 tabular-nums，
      否则数值变化时那一列会左右抖。 */

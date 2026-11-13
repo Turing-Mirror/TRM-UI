@@ -186,6 +186,7 @@ export function SegmentControl<T extends string>({ options, value, onChange, cla
         );
       })}
       {!compact && (
+        // design-allow: 滑块镜片必须高于本文件层级为一的按钮，保留局部内容的先后关系。
         <span ref={thumbRef} aria-hidden className="seg-thumb absolute top-[3px] bottom-[3px] left-0 z-[2] pointer-events-none" style={{ width: 0, opacity: 0 }}>
           <span ref={glassRef} className="seg-glass absolute inset-0 rounded-full">
             <span className="absolute inset-0 rounded-full overflow-hidden">

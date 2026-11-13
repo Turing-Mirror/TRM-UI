@@ -333,6 +333,7 @@
     "type": {
       "sub": "Body text is 15px with a line height of 1.65. Only the sizes below are used.",
       "roleBody": "Body",
+      "roleValue": "Value",
       "roleHelp": "Help",
       "roleMeta": "Meta",
       "weight": "Weight {v}"

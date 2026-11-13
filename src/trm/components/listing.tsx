@@ -47,7 +47,7 @@ export function SideHead({ label, action }: { label: string; action?: { icon: Ic
     <div className="mt-5 first:mt-0 mb-1 pl-3 pr-1 h-6 flex items-center text-[11.5px] text-[var(--meta)]">
       <span className="flex-1">{label}</span>
       {action ? (
-        <button type="button" onClick={action.run} aria-label={action.label} title={action.label} className="w-6 h-6 grid place-items-center rounded-[6px] border-0 bg-transparent cursor-pointer text-[var(--meta)] hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]">
+        <button type="button" onClick={action.run} aria-label={action.label} title={action.label} className="w-6 h-6 grid place-items-center rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[var(--meta)] hover:text-[var(--ink)] hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]">
           <Icon name={action.icon} size={14} />
         </button>
       ) : null}

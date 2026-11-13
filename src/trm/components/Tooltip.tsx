@@ -155,7 +155,7 @@ export function Tooltip({
                 "shadow-[0_8px_24px_-10px_rgba(0,0,0,.45),inset_0_0_0_1px_var(--hairline)]",
                 // 字号比正文的辅助文字大一档：这是用户特地凑过去看的东西，
                 // 不该比他不看的说明文字还小。
-                "text-[13.5px] leading-[1.65] text-[var(--ink)] whitespace-pre-line",
+                "text-[13px] leading-[1.65] text-[var(--ink)] whitespace-pre-line",
               ].join(" ")), leaving ? "tooltip-out" : "tooltip-in"].join(" ")}
               style={{
                 left: pos?.left ?? -9999,
@@ -199,7 +199,7 @@ export function HelpMark({ title }: { title: string }) {
           "relative shrink-0 align-middle",
           "w-[17px] h-[17px] p-0 border-0 bg-transparent rounded-full",
           "inline-flex items-center justify-center",
-          "text-[var(--meta)] text-[11px] leading-none font-medium",
+          "text-[var(--meta)] text-[11.5px] leading-none font-medium",
           "cursor-help shadow-[inset_0_0_0_1px_var(--line)]",
           "transition-[color,box-shadow,transform] duration-200 ease-[var(--spring)]",
           "hover:text-[var(--accent-text)] hover:shadow-[inset_0_0_0_1px_var(--accent)] hover:scale-110",

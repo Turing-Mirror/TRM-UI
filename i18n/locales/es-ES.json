@@ -333,6 +333,7 @@
     "type": {
       "sub": "El texto principal mide 15 px con un interlineado de 1,65. Solo se usan los tamaños siguientes.",
       "roleBody": "Cuerpo",
+      "roleValue": "Valor",
       "roleHelp": "Ayuda",
       "roleMeta": "Meta",
       "weight": "Grosor {v}"

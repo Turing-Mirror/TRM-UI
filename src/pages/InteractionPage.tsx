@@ -99,7 +99,7 @@ export function InteractionPage() {
               keyOf={(i) => String(i)}
               render={(i) => (
                 <div className="flex items-center gap-3 py-2.5 text-[13px]">
-                  <span className="w-7 h-7 rounded-[8px]" style={{ background: `var(--art-${i + 1})` }} />
+                  <span className="w-7 h-7 rounded-[var(--rs)]" style={{ background: `var(--art-${i + 1})` }} />
                   {t("demo.rules.item", { n: i + 1 })}
                 </div>
               )}
@@ -232,7 +232,7 @@ function Bubble() {
   const d = useSnapDrag({ size: 48, area, pos, onDrop: setPos });
   // 挂到页面最外层：放在换页动画的那一层里，fixed 会跟着那一层走
   return createPortal(
-    <div className="fixed inset-0 pointer-events-none z-[30]">
+    <div className="fixed inset-0 pointer-events-none z-[100]">
       <button
         type="button"
         {...d.handlers}

@@ -3,9 +3,10 @@ import { PagePad, PageHead, Block, Group, useI18n } from "../trm";
 /** 字号档位是定死的。要加一档先想清楚它和相邻两档的分工，别随手插中间值。 */
 const SCALE = [
   { px: 25, weight: 600, roleKey: "demo.overview.title", note: "PageHead" },
-  { px: 15.5, weight: 600, roleKey: "nav.components", note: "Block" },
+  { px: 22, weight: 600, roleKey: "demo.type.roleValue", note: "Stat" },
+  { px: 16, weight: 600, roleKey: "nav.components", note: "Block" },
   { px: 15, weight: 400, roleKey: "demo.type.roleBody", note: "body" },
-  { px: 14, weight: 400, roleKey: "demo.type.roleBody", note: "ListItem" },
+  { px: 13, weight: 400, roleKey: "demo.type.roleBody", note: "ListItem" },
   { px: 12.5, weight: 400, roleKey: "demo.type.roleHelp", note: "--help" },
   { px: 11.5, weight: 400, roleKey: "demo.type.roleMeta", note: "--meta" },
 ] as const;

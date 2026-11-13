@@ -27,8 +27,8 @@ const DEFAULTS = {
   baseline: "design-baseline.json",
   rules: { fontSize: true, radius: true, duration: true, zIndex: true, rawInput: true },
   allow: {
-    // 字号七档，外加现行规范里还在用的 14 和 15.5。
-    fontSize: [25, 22, 16, 15.5, 15, 14, 13, 12.5, 11.5],
+    // 字号七档。
+    fontSize: [25, 22, 16, 15, 13, 12.5, 11.5],
     // 圆角只有 --r 和 --rs 两档；这里列的是允许直接写的小圆角（角标、进度条）。
     radius: [0, 2, 3, 4, 999, 9999],
     // 时长四档。

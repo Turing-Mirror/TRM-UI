@@ -333,6 +333,7 @@
     "type": {
       "sub": "本文の文字サイズは 15px、行の高さは 1.65 です。文字サイズは以下の段階だけを使います。",
       "roleBody": "本文",
+      "roleValue": "??",
       "roleHelp": "説明",
       "roleMeta": "補足",
       "weight": "ウェイト {v}"

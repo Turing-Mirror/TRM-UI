@@ -159,7 +159,7 @@ function StyleSample({ look }: { look: HoverStyle }) {
   const { t } = useI18n();
   const [v, setV] = useState<(typeof VERDICTS)[number]>("all");
   const [liked, setLiked] = useState(false);
-  const act = `h-7 px-2 inline-flex items-center gap-1 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[12px] text-[var(--meta)] transition-colors ${hoverInk(look)}`;
+  const act = `h-7 px-2 inline-flex items-center gap-1 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[12.5px] text-[var(--meta)] transition-colors ${hoverInk(look)}`;
   return (
     <HoverStyleProvider value={look}>
       <Filters value={v} onChange={setV} options={VERDICTS.map((id) => ({ id, label: t(id === "all" ? "ui.comments.all" : id === "ok" ? "demo.inter.ok" : "demo.inter.issue") }))} />
@@ -191,7 +191,7 @@ function PanelSample({ keep }: { keep: boolean }) {
   const items = Array.from({ length: SIZES[f] }, (_, i) => i);
   const row = (i: number) => (
     <div className="flex items-center gap-2.5 py-2 px-1 text-[13px]">
-      <span className="w-6 h-6 rounded-[6px]" style={{ background: `var(--art-${i + 1})` }} />
+      <span className="w-6 h-6 rounded-[var(--rs)]" style={{ background: `var(--art-${i + 1})` }} />
       {t("demo.rules.item", { n: i + 1 })}
     </div>
   );
@@ -223,7 +223,7 @@ function PairedDemo() {
       wrong={
         <span className="relative inline-flex items-center gap-1.5 text-[13px]" onPointerEnter={() => setShown(true)} onPointerLeave={() => setShown(false)}>
           {t("demo.rules.tipLabel")}
-          <span className="w-[17px] h-[17px] rounded-full grid place-items-center text-[11px] text-[var(--meta)] shadow-[inset_0_0_0_1px_var(--line)] tooltip-in">?</span>
+          <span className="w-[17px] h-[17px] rounded-full grid place-items-center text-[11.5px] text-[var(--meta)] shadow-[inset_0_0_0_1px_var(--line)] tooltip-in">?</span>
           {shown ? <span className="absolute left-0 bottom-full mb-2 w-[240px] rounded-[var(--rs)] bg-[var(--surface)] px-3 py-2 text-[13px] shadow-[var(--pop-shadow)] tooltip-in">{t("demo.rules.tipText")}</span> : null}
         </span>
       }
@@ -283,7 +283,7 @@ function PagingDemo() {
   const pages = Math.ceil(TOTAL / PER);
   const row = (n: number) => (
     <div key={n} className="flex items-center gap-2.5 py-2 text-[13px]">
-      <span className="w-6 h-6 rounded-[6px]" style={{ background: `var(--art-${(n % 6) + 1})` }} />
+      <span className="w-6 h-6 rounded-[var(--rs)]" style={{ background: `var(--art-${(n % 6) + 1})` }} />
       {t("demo.rules.item", { n })}
     </div>
   );

@@ -54,7 +54,7 @@ function ConnectionSettingsDemo() {
   const [model, setModel] = useState(true);
   const [knowledge, setKnowledge] = useState(false);
   return <section>
-    <h3 className="mt-8 mb-0 text-[15.5px] font-semibold">{t("demo.connectionSettings.title")}</h3>
+    <h3 className="mt-8 mb-0 text-[15px] font-semibold">{t("demo.connectionSettings.title")}</h3>
     <RowGroup title={t("demo.connectionSettings.model")}>
       <Row title={t("demo.connectionSettings.enabled")} control={<Switch checked={model} onChange={setModel}
         label={t("demo.connectionSettings.model")} />} />
@@ -269,12 +269,12 @@ export function SettingsPage({ look, onLook, mouseNav, onMouseNav }: { look: Loo
                         <Row key={h.id} title={t(h.labelKey)} control={
                           <span className={`flex items-center gap-3 flex-wrap ${globalOn ? "" : "opacity-50"}`}>
                             {combos[h.id] !== h.combo ? (
-                              <button type="button" disabled={!globalOn} onClick={() => setCombo(h.id, h.combo)} className="h-7 px-2 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[12px] text-[var(--meta)] hover:text-[var(--ink)] disabled:cursor-default disabled:hover:text-[var(--meta)]">
+                              <button type="button" disabled={!globalOn} onClick={() => setCombo(h.id, h.combo)} className="h-7 px-2 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[12.5px] text-[var(--meta)] hover:text-[var(--ink)] disabled:cursor-default disabled:hover:text-[var(--meta)]">
                                 {t("demo.set.reset")}
                               </button>
                             ) : null}
                             {g === "main" ? (
-                              <label className={`flex items-center gap-1.5 text-[12px] text-[var(--meta)] select-none ${globalOn ? "cursor-pointer" : "cursor-default"}`} title={t("demo.set.globalTip")}>
+                              <label className={`flex items-center gap-1.5 text-[12.5px] text-[var(--meta)] select-none ${globalOn ? "cursor-pointer" : "cursor-default"}`} title={t("demo.set.globalTip")}>
                                 <input type="checkbox" disabled={!globalOn} checked={global[h.id] ?? false} onChange={(e) => setGlobal((x) => ({ ...x, [h.id]: e.target.checked }))} className="w-[13px] h-[13px]" />
                                 {t("demo.set.global")}
                               </label>
@@ -286,7 +286,7 @@ export function SettingsPage({ look, onLook, mouseNav, onMouseNav }: { look: Loo
                     </RowGroup>
                   );
                 })}
-            <p className="mt-3 mb-0 text-[12px] text-[var(--help)] leading-relaxed">{t("demo.set.keysHint")}</p>
+            <p className="mt-3 mb-0 text-[12.5px] text-[var(--help)] leading-relaxed">{t("demo.set.keysHint")}</p>
           </Block>
         )}
       </Swap>

@@ -120,7 +120,7 @@ export function Block({
         // 对齐会整颗往下掉一截，看起来比标题低半个字。
         <div className="flex items-center gap-[11px] mb-[15px] flex-wrap">
           {title ? (
-            <h3 className="text-[15.5px] font-semibold m-0 inline-flex items-center gap-1.5 leading-none">
+            <h3 className="text-[15px] font-semibold m-0 inline-flex items-center gap-1.5 leading-none">
               {collapsible ? (
                 <button type="button" onClick={toggle} aria-expanded={!collapsed} className="inline-flex items-center gap-1 bg-transparent border-0 p-0 font-semibold text-inherit cursor-pointer">
                   <Icon name="chevron" size={13} className={`text-[var(--meta)] transition-transform ${collapsed ? "" : "rotate-90"}`} />
@@ -387,7 +387,7 @@ export function AccordionGroup({
               onClick={() => onToggle(item.id)}
               rightInteractive={false}
               right={
-                <span className="text-[13.5px] text-[var(--ink-muted)]">
+                <span className="text-[13px] text-[var(--ink-muted)]">
                   {expanded ? openLabel : closedLabel}
                 </span>
               }

@@ -211,6 +211,7 @@ export function PopupSelect({
               role="listbox"
               aria-label={ariaLabel}
               className={[
+                // design-allow: 下拉面板挂在页面根节点，必须显示在所属弹窗及其提示之上。
                 "fixed z-[400] py-1 overflow-y-auto overflow-x-hidden",
                 "rounded-[var(--rs)] bg-[var(--surface)]",
                 "shadow-[0_10px_30px_-8px_rgba(0,0,0,.28),inset_0_0_0_1px_var(--hairline)]",
@@ -237,14 +238,14 @@ export function PopupSelect({
                     onPointerEnter={() => setActive(i)}
                     onClick={() => pick(o)}
                     className={[
-                      "mx-1 flex items-center gap-2 rounded-[6px] py-[6px] pr-3 text-[13px] whitespace-nowrap cursor-pointer",
+                      "mx-1 flex items-center gap-2 rounded-[var(--rs)] py-[6px] pr-3 text-[13px] whitespace-nowrap cursor-pointer",
                       o.indent ? "pl-6" : "pl-2.5",
                       selected ? "text-[var(--accent-text)]" : "text-[var(--ink)]",
                       i === active ? "bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]" : "",
                     ].join(" ")}
                   >
                     <span className="flex-1">{o.label.trim()}</span>
-                    <span aria-hidden className={`w-3 text-[11px] text-right ${selected ? "" : "invisible"}`}>
+                    <span aria-hidden className={`w-3 text-[11.5px] text-right ${selected ? "" : "invisible"}`}>
                       ✓
                     </span>
                   </div>

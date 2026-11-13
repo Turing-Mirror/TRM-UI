@@ -27,7 +27,7 @@ export function Ring({ segments, center, sub, size = 150 }: { segments: RingSegm
         </svg>
         <div className="absolute inset-0 grid place-items-center text-center">
           <div>
-            <div className="text-[18px] font-semibold tabular-nums">{center}</div>
+            <div className="text-[16px] font-semibold tabular-nums">{center}</div>
             {sub ? <div className="text-[11.5px] text-[var(--meta)]">{sub}</div> : null}
           </div>
         </div>

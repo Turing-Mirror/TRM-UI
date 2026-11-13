@@ -333,6 +333,7 @@
     "type": {
       "sub": "Le texte courant mesure 15 px avec un interligne de 1,65. Seules les tailles ci-dessous sont utilisées.",
       "roleBody": "Corps",
+      "roleValue": "Valeur",
       "roleHelp": "Aide",
       "roleMeta": "Méta",
       "weight": "Graisse {v}"

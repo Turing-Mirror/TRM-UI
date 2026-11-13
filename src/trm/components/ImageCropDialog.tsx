@@ -433,7 +433,7 @@ export function ImageCropDialog({ name, pickImage, loadInitialImage, onClose, on
         <div className="min-h-0 overflow-y-auto">
           {!img ? (
             <div className="flex flex-col items-start gap-3 py-8">
-              <span className="text-[12px] text-[var(--meta)]">{t("ui.crop.pickHint")}</span>
+              <span className="text-[12.5px] text-[var(--meta)]">{t("ui.crop.pickHint")}</span>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 min-[820px]:grid-cols-[minmax(0,1fr)_minmax(220px,300px)]">
@@ -494,7 +494,7 @@ export function ImageCropDialog({ name, pickImage, loadInitialImage, onClose, on
                     </Btn>
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-[12px] text-[var(--meta)]">
+                    <span className="text-[12.5px] text-[var(--meta)]">
                       {t("ui.crop.ratioLabel")}
                     </span>
                     {(["4:3", "1:1", "free"] as Ratio[]).map((r) => (
@@ -508,7 +508,7 @@ export function ImageCropDialog({ name, pickImage, loadInitialImage, onClose, on
 
               <div className="flex flex-col gap-3">
                 <div className="rounded-[var(--rs)] shadow-[inset_0_0_0_1px_var(--line)] p-2.5">
-                  <div className="text-[12px] text-[var(--meta)] mb-1.5">
+                  <div className="text-[12.5px] text-[var(--meta)] mb-1.5">
                     {t("ui.crop.previewAfter")}
                   </div>
                   <div className="aspect-[4/3] rounded-md overflow-hidden bg-[color-mix(in_srgb,var(--ink)_7%,transparent)]">
@@ -519,7 +519,7 @@ export function ImageCropDialog({ name, pickImage, loadInitialImage, onClose, on
                   ) : null}
                 </div>
                 <div className="rounded-[var(--rs)] shadow-[inset_0_0_0_1px_var(--line)] p-2.5">
-                  <div className="text-[12px] text-[var(--meta)] mb-1.5">
+                  <div className="text-[12.5px] text-[var(--meta)] mb-1.5">
                     {t("ui.crop.previewBefore")}
                   </div>
                   <div className="aspect-[4/3] rounded-md overflow-hidden bg-[color-mix(in_srgb,var(--ink)_7%,transparent)]">

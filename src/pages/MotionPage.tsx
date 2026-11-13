@@ -170,7 +170,7 @@ function Curves() {
             <button key={c.token} type="button" onClick={() => play(i)} className="w-full py-3.5 grid grid-cols-[minmax(0,1fr)_72px_minmax(160px,0.8fr)] items-center gap-5 border-0 bg-transparent cursor-pointer text-left text-[var(--ink)] max-[760px]:grid-cols-[minmax(0,1fr)_72px]">
               <span className="min-w-0">
                 <span className="block text-[13px] font-mono">{c.token}</span>
-                <span className="block mt-0.5 text-[11px] text-[var(--meta)] font-mono truncate" title={v}>
+                <span className="block mt-0.5 text-[11.5px] text-[var(--meta)] font-mono truncate" title={v}>
                   {v.length > 44 ? `${v.slice(0, 42)}…` : v}
                 </span>
                 <span className="block mt-1 text-[12.5px] text-[var(--help)] leading-relaxed">{t(c.noteKey)}</span>
@@ -191,7 +191,7 @@ function Curves() {
           );
         })}
       </Group>
-      <p className="m-0 mt-2 text-[12px] text-[var(--meta)]">{t("demo.motion.curvesHint")}</p>
+      <p className="m-0 mt-2 text-[12.5px] text-[var(--meta)]">{t("demo.motion.curvesHint")}</p>
     </Block>
   );
 }
@@ -269,9 +269,9 @@ function FlowDemo() {
           keyOf={(x) => x.id}
           render={(x) => (
             <div className="flex items-center gap-3 py-2.5 text-[13px]">
-              <span className="w-7 h-7 rounded-[8px]" style={{ background: `var(--art-${x.n})` }} />
+              <span className="w-7 h-7 rounded-[var(--rs)]" style={{ background: `var(--art-${x.n})` }} />
               {t("demo.rules.item", { n: x.n })}
-              <span className="ml-auto text-[12px] text-[var(--meta)] tabular-nums">{t("demo.motion.likes", { n: x.likes })}</span>
+              <span className="ml-auto text-[12.5px] text-[var(--meta)] tabular-nums">{t("demo.motion.likes", { n: x.likes })}</span>
             </div>
           )}
         />
@@ -336,7 +336,7 @@ function CollapseDemo() {
         expanded={open}
         onClick={() => setOpen((v) => !v)}
         rightInteractive={false}
-        right={<span className="text-[13.5px] text-[var(--ink-muted)]">{open ? "−" : "+"}</span>}
+        right={<span className="text-[13px] text-[var(--ink-muted)]">{open ? "−" : "+"}</span>}
       >
         {t("demo.list.item1Body")}
       </ListItem>
@@ -360,7 +360,7 @@ function GlassDemo() {
           { id: "d", label: t("demo.seg.d") },
         ]}
       />
-      <span className="text-[12px] text-[var(--meta)]">{t("demo.motion.glassHint")}</span>
+      <span className="text-[12.5px] text-[var(--meta)]">{t("demo.motion.glassHint")}</span>
     </div>
   );
 }
@@ -374,7 +374,7 @@ function RiseDemo() {
       <Btn onClick={() => setRound((r) => r + 1)}>{t("demo.motion.replay")}</Btn>
       <div key={round} className="mt-3 grid grid-cols-[repeat(auto-fill,minmax(90px,1fr))] gap-3">
         {Array.from({ length: 12 }, (_, i) => (
-          <div key={i} className="rise aspect-square rounded-[var(--r)] bg-[var(--group)] shadow-[inset_0_0_0_1px_var(--hairline)] grid place-items-center text-[12px] text-[var(--meta)] tabular-nums" style={stagger(i)}>
+          <div key={i} className="rise aspect-square rounded-[var(--r)] bg-[var(--group)] shadow-[inset_0_0_0_1px_var(--hairline)] grid place-items-center text-[12.5px] text-[var(--meta)] tabular-nums" style={stagger(i)}>
             {i + 1}
           </div>
         ))}
@@ -419,10 +419,10 @@ function FlightDemo() {
     <div ref={box} className="flex gap-4 h-[220px]">
       <div className="w-[96px] flex-none flex flex-col gap-3 justify-center">
         {order.slice(1).map((id) => (
-          <button key={id} type="button" data-win={id} onClick={() => pick(id)} aria-label={t("demo.motion.flightPick")} className="h-[56px] rounded-[8px] border-0 cursor-pointer shadow-[var(--glass)] transition-transform duration-300 hover:scale-[1.05]" style={tile(id)} />
+          <button key={id} type="button" data-win={id} onClick={() => pick(id)} aria-label={t("demo.motion.flightPick")} className="h-[56px] rounded-[var(--rs)] border-0 cursor-pointer shadow-[var(--glass)] transition-transform duration-300 hover:scale-[1.05]" style={tile(id)} />
         ))}
       </div>
-      <div key={order[0]} data-win={order[0]} className="flex-1 rounded-[14px] shadow-[var(--pop-shadow)]" style={tile(order[0])} />
+      <div key={order[0]} data-win={order[0]} className="flex-1 rounded-[var(--r)] shadow-[var(--pop-shadow)]" style={tile(order[0])} />
     </div>
   );
 }

@@ -47,6 +47,7 @@ function ModalBody({ onClose, children, width, label, leaving }: { onClose: () =
   const ref = useRef<HTMLDivElement>(null);
   useModalKeys(!leaving, ref, { onEscape: onClose });
   return (
+    // design-allow: 弹窗必须高于本文件的抽屉，统一为同一弹窗层会丢失原有先后关系。
     <div className={`fixed inset-0 z-40 grid place-items-center p-6 bg-[var(--scrim)] ${leaving ? "fade-out pointer-events-none" : "fade-in"}`} onPointerDown={onClose}>
       <div
         ref={ref}
@@ -72,6 +73,7 @@ export function Drawer({ open, onClose, children, label, width = 460 }: { open: 
   const { mounted, leaving } = usePresence(open);
   if (!mounted) return null;
   return createPortal(
+    // design-allow: 抽屉必须低于本文件的弹窗，统一为同一弹窗层会丢失原有先后关系。
     <div className={`fixed inset-0 z-30 bg-[var(--scrim)] ${leaving ? "fade-out pointer-events-none" : "fade-in"}`} onPointerDown={onClose}>
       <aside
         ref={ref}

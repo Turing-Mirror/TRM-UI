@@ -96,7 +96,7 @@ export function Comments({
             options={[{ id: "all", label: t("ui.comments.all"), count: tops.length }, ...verdicts.map((v) => ({ id: v.id, label: v.label, count: tops.filter((c) => c.verdict === v.id).length }))]}
           />
         ) : (
-          <span className="text-[13.5px] font-medium">{t("ui.comments.count", { n: items.length })}</span>
+          <span className="text-[13px] font-medium">{t("ui.comments.count", { n: items.length })}</span>
         )}
         <span className="ml-auto">
           <Filters
@@ -189,10 +189,10 @@ function Item({ c, ctx, small = false, onReply }: { c: CommentItem; ctx: Ctx; sm
               {t("ui.comments.replied")} <span className="text-[var(--ink-muted)]">{c.replyTo}</span>
             </span>
           ) : null}
-          <span className="text-[12px] text-[var(--meta)]">{ctx.ago(c.at)}</span>
+          <span className="text-[12.5px] text-[var(--meta)]">{ctx.ago(c.at)}</span>
         </div>
-        <div className={`mt-0.5 whitespace-pre-wrap break-words leading-relaxed select-text ${small ? "text-[13px]" : "text-[13.5px]"}`}>{c.text}</div>
-        <div className="mt-1 -ml-2 flex items-center gap-0.5 text-[12px] text-[var(--meta)]">
+        <div className={`mt-0.5 whitespace-pre-wrap break-words leading-relaxed select-text ${small ? "text-[13px]" : "text-[13px]"}`}>{c.text}</div>
+        <div className="mt-1 -ml-2 flex items-center gap-0.5 text-[12.5px] text-[var(--meta)]">
           <button type="button" aria-pressed={Boolean(c.liked)} onClick={() => ctx.onLike(c.id)} className={`${act} ${c.liked ? "!text-[var(--accent-text)]" : ""}`}>
             <Icon name="thumbUp" size={13} className={c.liked ? "pop-like" : ""} />
             {c.likes || t("ui.comments.like")}
@@ -273,7 +273,7 @@ function Composer({ ctx, parent, replyTo, placeholder, autoFocus = false, onDone
               }}
               placeholder={hint}
               aria-label={hint}
-              className="block w-full resize-none bg-transparent border-0 outline-none px-3.5 py-2 text-[13.5px] leading-[1.6] text-[var(--ink)] placeholder:text-[var(--meta)] select-text"
+              className="block w-full resize-none bg-transparent border-0 outline-none px-3.5 py-2 text-[13px] leading-[1.6] text-[var(--ink)] placeholder:text-[var(--meta)] select-text"
             />
           </div>
           {onDone ? <Btn onClick={onDone} className="h-[38px]">{t("ui.common.cancel")}</Btn> : null}

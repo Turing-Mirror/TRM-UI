@@ -78,7 +78,7 @@ export function Wizard({
             <button key={s.id} type="button" onClick={() => go(i)} aria-current={i === index ? "step" : undefined} className="group border-0 bg-transparent p-0 text-left cursor-pointer">
               <span className="block h-1 rounded-full overflow-hidden bg-[color-mix(in_srgb,var(--ink)_8%,transparent)]">
                 <span
-                  className="block h-full rounded-full bg-[var(--accent)] origin-left transition-transform duration-500 ease-[var(--ease)]"
+                  className="block h-full rounded-full bg-[var(--accent)] origin-left transition-transform duration-420 ease-[var(--ease)]"
                   style={{ transform: `scaleX(${s.done || i < index ? 1 : i === index ? 0.5 : 0})` }}
                 />
               </span>
@@ -119,7 +119,7 @@ function NoticeBody({ notice }: { notice: WizardNotice }) {
     <div className="p-7 wizard-step" style={{ "--dir": 1 } as CSSProperties}>
       <h2 className="text-[22px] font-semibold m-0">{notice.title}</h2>
       <div className="mt-5 flex gap-6 items-start max-[560px]:flex-col">
-        <div className="flex-1 min-w-0 text-[13.5px] text-[var(--ink)] leading-relaxed">{notice.body}</div>
+        <div className="flex-1 min-w-0 text-[13px] text-[var(--ink)] leading-relaxed">{notice.body}</div>
         {notice.aside ? <div className="flex-none">{notice.aside}</div> : null}
       </div>
       <div className="mt-7 flex items-center gap-2">
@@ -137,10 +137,10 @@ function NoticeBody({ notice }: { notice: WizardNotice }) {
 export function WizardPill({ label, detail, onOpen, onClose }: { label: string; detail?: string; onOpen: () => void; onClose: () => void }) {
   const { t } = useI18n();
   return (
-    <div className="wizard-pill fixed right-5 bottom-5 z-[40] flex items-center rounded-full bg-[var(--surface)] shadow-[var(--pop-shadow)]">
+    <div className="wizard-pill fixed right-5 bottom-5 z-[100] flex items-center rounded-full bg-[var(--surface)] shadow-[var(--pop-shadow)]">
       <button type="button" onClick={onOpen} className="h-10 pl-4 pr-2 border-0 bg-transparent cursor-pointer text-[13px] text-[var(--ink)]">
         {label}
-        {detail ? <span className="ml-2 text-[12px] text-[var(--meta)]">{detail}</span> : null}
+        {detail ? <span className="ml-2 text-[12.5px] text-[var(--meta)]">{detail}</span> : null}
       </button>
       <button type="button" onClick={onClose} aria-label={t("ui.wizard.close")} title={t("ui.wizard.close")} className="h-10 w-9 grid place-items-center border-0 bg-transparent cursor-pointer text-[var(--meta)] hover:text-[var(--ink)] rounded-full">
         ×

@@ -568,7 +568,7 @@ export function Toggle({
           ].join(" ")}
         >
           {checked ? (
-            <span className="text-[10px] leading-none text-[var(--accent-ink)]">✓</span>
+            <span className="text-[11.5px] leading-none text-[var(--accent-ink)]">✓</span>
           ) : null}
         </span> : null}
         <input
