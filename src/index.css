@@ -1,3 +1,4 @@
 @import "tailwindcss";
+@import "./trm/styles/font-zh.css";
 @import "./trm/styles/tokens.css";
 @import "./trm/styles/components.css";

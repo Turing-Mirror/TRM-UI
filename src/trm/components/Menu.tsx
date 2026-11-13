@@ -446,7 +446,7 @@ export function PromptDialog({
           <button type="button" onClick={onClose} className="h-8 px-3.5 rounded-[var(--rs)] border-0 bg-transparent cursor-pointer text-[13px] text-[var(--ink-muted)] hover:bg-[color-mix(in_srgb,var(--ink)_6%,transparent)]">
             {t("ui.common.cancel")}
           </button>
-          <button type="submit" disabled={!name.trim()} className="h-8 px-3.5 rounded-[var(--rs)] border-0 cursor-pointer text-[13px] bg-[var(--accent)] text-[var(--accent-ink)] disabled:opacity-40 disabled:cursor-default">
+          <button type="submit" disabled={!name.trim()} className="h-8 px-3.5 rounded-[var(--rs)] border-0 cursor-pointer text-[13px] bg-[var(--accent-fill)] text-[var(--accent-ink)] disabled:opacity-40 disabled:cursor-default">
             {shownConfirm}
           </button>
         </div>

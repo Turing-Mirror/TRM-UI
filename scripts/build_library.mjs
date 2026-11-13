@@ -55,7 +55,7 @@ await build({
     cssMinify: true,
     rollupOptions: {
       input: resolve(root, "scripts/compiled_entry.css"),
-      output: { assetFileNames: "compiled.css" },
+      output: { assetFileNames: info => (info.names?.[0] ?? info.name ?? "").endsWith(".css") ? "compiled.css" : "fonts/[name][extname]" },
     },
   },
 });

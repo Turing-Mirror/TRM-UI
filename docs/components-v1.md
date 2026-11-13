@@ -29,6 +29,8 @@ import "trm-ui/compiled.css";
 
 `compiled.css` 包含共享变量、组件样式和组件包自己用到的工具类，引入后全部组件可以直接使用。两种入口只选一种。应用自己的页面样式由应用负责。
 
+两种入口都带简体中文字体 Noto Sans SC（SIL OFL 1.1），只在界面语言是简体中文时使用。分发产品时附带 `licenses/NotoSansSC-OFL.txt`。
+
 `styles.css` 包含共享变量和组件样式，并通过 `@source` 指向包内 JavaScript。消费方不需要扫描另一个本地仓库。也可以单独导入 `trm-ui/tokens.css` 或 `trm-ui/components.css`。React 和 React DOM 由消费方提供，避免两份 React。
 
 ## 产品接口

@@ -168,7 +168,7 @@ const base: CSSProperties = {
 };
 const primary: CSSProperties = {
   ...base,
-  background: "var(--accent, #1289f0)",
+  background: "var(--accent-fill, #0b6fc7)",
   color: "var(--accent-ink, #ffffff)",
 };
 const secondary: CSSProperties = {

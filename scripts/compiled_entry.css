@@ -1,5 +1,6 @@
 /* 预编译样式表的入口：只收组件包自己用到的工具类，不扫画廊页面。 */
 @import "tailwindcss" source(none);
+@import "../src/trm/styles/font-zh.css";
 @import "../src/trm/styles/tokens.css";
 @import "../src/trm/styles/components.css";
 @source "../lib/index.js";

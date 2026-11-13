@@ -209,7 +209,7 @@ export function Btn({
         "enabled:active:scale-[0.955] focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2",
         uw ? "min-w-[74px] text-center px-0 py-1.5" : "px-[13px] py-1.5",
         primary
-          ? "bg-[var(--accent)] text-[var(--accent-ink)] font-semibold shadow-none enabled:hover:brightness-95"
+          ? "bg-[var(--accent-fill)] text-[var(--accent-ink)] font-semibold shadow-none enabled:hover:brightness-95"
           : on
             ? "bg-transparent text-[var(--accent-text)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--accent)_42%,transparent)]"
             : "bg-transparent text-[var(--ink-muted)] shadow-[inset_0_0_0_1px_var(--line)] enabled:hover:text-[var(--ink)] enabled:hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]",

@@ -42,6 +42,8 @@
   --hairline: rgba(30, 36, 43, 0.1);
   --line: rgba(30, 36, 43, 0.14);
   --accent: #1289f0;
+  /* 上面压文字的强调底色（主按钮）。浅色下比 --accent 深一档，白字对比度 5.1。 */
+  --accent-fill: #0b6fc7;
   --accent-ink: #ffffff;
   /* 状态色分两个值：图标、线条和底色用本色，文字用深一档的 -text，白底上不低于 4.5 比 1。 */
   --accent-text: #0b6fc7;
@@ -108,6 +110,7 @@
     --hairline: rgba(232, 240, 248, 0.14);
     --line: rgba(232, 240, 248, 0.22);
     --accent: #4aa3f0;
+    --accent-fill: var(--accent);
     --accent-ink: #0f1319;
     --accent-text: var(--accent);
     --chip-ok-ink: var(--ok);
@@ -153,6 +156,7 @@
   --hairline: rgba(232, 240, 248, 0.14);
   --line: rgba(232, 240, 248, 0.22);
   --accent: #4aa3f0;
+  --accent-fill: var(--accent);
   --accent-ink: #0f1319;
   --accent-text: var(--accent);
   --chip-ok-ink: var(--ok);

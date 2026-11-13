@@ -24,6 +24,7 @@
     "prepare": "npm run build:lib"
   },
   "dependencies": {
+    "@fontsource-variable/noto-sans-sc": "^5.3.1",
     "@tauri-apps/api": "^2"
   },
   "devDependencies": {
@@ -35,13 +36,13 @@
     "eslint": "^9.39.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "happy-dom": "^20.14.5",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "tailwindcss": "^4.3.3",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.65.0",
     "vite": "^7.0.4",
-    "vitest": "^4.1.11",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "vitest": "^4.1.11"
   },
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -58,6 +59,7 @@
     "./tokens.css": "./lib/styles/tokens.css",
     "./components.css": "./lib/styles/components.css",
     "./compiled.css": "./lib/styles/compiled.css",
+    "./font-zh.css": "./lib/styles/font-zh.css",
     "./package.json": "./package.json"
   },
   "bin": {
@@ -66,6 +68,7 @@
   "files": [
     "lib",
     "scripts/design_check.mjs",
+    "licenses",
     "LICENSE"
   ],
   "sideEffects": [

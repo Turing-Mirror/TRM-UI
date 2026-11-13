@@ -1012,7 +1012,7 @@ option {
 .trm-chat-composer-send {
   flex: none; display: grid; place-items: center;
   width: 48px; height: 48px; padding: 0; border: 0; border-radius: 50%; cursor: pointer;
-  background: var(--accent); color: var(--accent-ink);
+  background: var(--accent-fill); color: var(--accent-ink);
   transition: background-color var(--flow-ms) var(--ease), color var(--flow-ms) var(--ease);
 }
 .trm-chat-composer-send:disabled { cursor: default; }
