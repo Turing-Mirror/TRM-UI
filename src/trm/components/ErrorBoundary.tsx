@@ -162,7 +162,7 @@ const base: CSSProperties = {
   font: "inherit",
   fontSize: 13,
   padding: "7px 16px",
-  borderRadius: "var(--rs)",
+  borderRadius: "var(--rs, 8px)",
   cursor: "pointer",
   border: 0,
 };

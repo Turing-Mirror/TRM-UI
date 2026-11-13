@@ -137,7 +137,8 @@ function NoticeBody({ notice }: { notice: WizardNotice }) {
 export function WizardPill({ label, detail, onOpen, onClose }: { label: string; detail?: string; onOpen: () => void; onClose: () => void }) {
   const { t } = useI18n();
   return (
-    <div className="wizard-pill fixed right-5 bottom-5 z-[100] flex items-center rounded-full bg-[var(--surface)] shadow-[var(--pop-shadow)]">
+    // design-allow: 收起的向导要留在弹窗（40）之下，弹窗打开时不压在遮罩上面。
+    <div className="wizard-pill fixed right-5 bottom-5 z-40 flex items-center rounded-full bg-[var(--surface)] shadow-[var(--pop-shadow)]">
       <button type="button" onClick={onOpen} className="h-10 pl-4 pr-2 border-0 bg-transparent cursor-pointer text-[13px] text-[var(--ink)]">
         {label}
         {detail ? <span className="ml-2 text-[12.5px] text-[var(--meta)]">{detail}</span> : null}
