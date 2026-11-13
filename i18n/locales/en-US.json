@@ -161,7 +161,8 @@
     "interaction": "Interaction",
     "text": "Copy",
     "settings": "Settings",
-    "history": "History"
+    "history": "History",
+    "sharedCode": "Shared code"
   },
   "demo": {
     "workbench": {
@@ -645,6 +646,12 @@
       "panel": "Centered panel",
       "confirmKey": "Confirm key",
       "confirmed": "Demo key confirmed."
+    },
+    "sharedCode": {
+      "list": "Shared by Fabric products",
+      "count": "{n} in total",
+      "from": "Import: {v}",
+      "none": "No matching modules"
     }
   }
 }

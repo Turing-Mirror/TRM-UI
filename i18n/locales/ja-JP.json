@@ -161,7 +161,8 @@
     "interaction": "インタラクション",
     "text": "文言",
     "settings": "設定",
-    "history": "履歴"
+    "history": "履歴",
+    "sharedCode": "共通コード"
   },
   "demo": {
     "workbench": {
@@ -645,6 +646,12 @@
       "panel": "中央パネル",
       "confirmKey": "キーを確認",
       "confirmed": "デモ用キーを確認しました。"
+    },
+    "sharedCode": {
+      "list": "Fabric シリーズ共通",
+      "count": "全 {n} 件",
+      "from": "インポート：{v}",
+      "none": "該当するモジュールはありません"
     }
   }
 }

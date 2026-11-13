@@ -161,7 +161,8 @@
     "interaction": "互動",
     "text": "文案",
     "settings": "設定",
-    "history": "歷史"
+    "history": "歷史",
+    "sharedCode": "共用程式碼"
   },
   "demo": {
     "workbench": {
@@ -645,6 +646,12 @@
       "panel": "置中面板",
       "confirmKey": "確認金鑰",
       "confirmed": "示範金鑰已確認。"
+    },
+    "sharedCode": {
+      "list": "Fabric 系列共用",
+      "count": "共 {n} 個",
+      "from": "引入：{v}",
+      "none": "沒有找到相關的模組"
     }
   }
 }

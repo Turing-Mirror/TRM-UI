@@ -50,9 +50,14 @@
       "types": "./lib/index.d.ts",
       "import": "./lib/index.js"
     },
+    "./fabric": {
+      "types": "./lib/fabric/index.d.ts",
+      "import": "./lib/fabric.js"
+    },
     "./styles.css": "./lib/styles/index.css",
     "./tokens.css": "./lib/styles/tokens.css",
     "./components.css": "./lib/styles/components.css",
+    "./compiled.css": "./lib/styles/compiled.css",
     "./package.json": "./package.json"
   },
   "bin": {

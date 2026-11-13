@@ -161,7 +161,8 @@
     "interaction": "상호작용",
     "text": "문구",
     "settings": "설정",
-    "history": "기록"
+    "history": "기록",
+    "sharedCode": "공용 코드"
   },
   "demo": {
     "workbench": {
@@ -645,6 +646,12 @@
       "panel": "가운데 패널",
       "confirmKey": "키 확인",
       "confirmed": "데모 키가 확인되었습니다."
+    },
+    "sharedCode": {
+      "list": "Fabric 시리즈 공용",
+      "count": "총 {n}개",
+      "from": "가져오기: {v}",
+      "none": "일치하는 모듈이 없습니다"
     }
   }
 }

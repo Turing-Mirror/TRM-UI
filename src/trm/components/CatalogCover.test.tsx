@@ -15,7 +15,7 @@ it("tries the original cover after a stale cache entry fails, then resets when a
     expect(image()?.getAttribute("src")).toBe(remote);
     act(() => { image()?.dispatchEvent(new Event("error")); });
     expect(image()).toBeNull();
-    expect(view.container.textContent).toBe("Example");
+    expect(view.container.textContent).toBe("E");
     act(() => view.root.render(cover("/new-cache.png")));
     expect(image()?.getAttribute("src")).toBe("/new-cache.png");
   } finally {

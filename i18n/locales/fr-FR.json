@@ -161,7 +161,8 @@
     "interaction": "Interaction",
     "text": "Textes",
     "settings": "Réglages",
-    "history": "Historique"
+    "history": "Historique",
+    "sharedCode": "Code partagé"
   },
   "demo": {
     "workbench": {
@@ -645,6 +646,12 @@
       "panel": "Panneau centré",
       "confirmKey": "Confirmer la clé",
       "confirmed": "Clé de démonstration confirmée."
+    },
+    "sharedCode": {
+      "list": "Commun aux produits Fabric",
+      "count": "{n} au total",
+      "from": "Import : {v}",
+      "none": "Aucun module correspondant"
     }
   }
 }

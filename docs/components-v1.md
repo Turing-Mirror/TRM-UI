@@ -21,6 +21,14 @@ Tailwind v4 应用的样式入口：
 @import "trm-ui/styles.css";
 ```
 
+不用 Tailwind 的应用引入预编译样式表：
+
+```ts
+import "trm-ui/compiled.css";
+```
+
+`compiled.css` 包含共享变量、组件样式和组件包自己用到的工具类，引入后全部组件可以直接使用。两种入口只选一种。应用自己的页面样式由应用负责。
+
 `styles.css` 包含共享变量和组件样式，并通过 `@source` 指向包内 JavaScript。消费方不需要扫描另一个本地仓库。也可以单独导入 `trm-ui/tokens.css` 或 `trm-ui/components.css`。React 和 React DOM 由消费方提供，避免两份 React。
 
 ## 产品接口
@@ -47,8 +55,20 @@ Tailwind v4 应用的样式入口：
 ## 图片与缩略图
 
 - `ThumbImage` 用于列表里的图片：原图最长边超过目标尺寸时先缩成缩略图再显示，缩略图存在本地数据库，下次直接读取。`px` 是缩略图最长边的像素数，默认 640。原图本来不大、环境不支持或生成失败时显示原图。
+- 没有封面图时用 `CoverPlaceholder`：名称首字压在预览色上。`name` 是名称，`seed` 决定底色，同名不同版本的条目传各自的 id。只要底色时用 `artOf(seed)`，只要首字时用 `artInitial(name)`。
+- `CatalogCover` 的 `placeholder` 传完整名称，`seed` 可选。
 - `CatalogCover` 已使用缩略图。自己写 `<img>` 时用 `useThumb(src, px)` 取地址，返回空串表示还在生成，先画占位。
 - 原图换了内容而地址不变时调用 `forgetThumb(src)`，不传地址时全部重新生成。
+
+## Fabric 系列共用代码
+
+几款 Fabric 产品里完全相同、又不是界面组件的代码放在 `src/trm/fabric/`，从单独的入口引入：
+
+```ts
+import { askConfirm, pickPath, splitErrorText } from "trm-ui/fabric";
+```
+
+这个入口不引用组件包，也不带样式。只收不依赖某一款产品自己的文案和接口的模块；清单在画廊的「共用代码」页，数据在 `src/pages/sharedModules.ts`，新增模块时一并登记。
 
 ## 设计规范检查
 

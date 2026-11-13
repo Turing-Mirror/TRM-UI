@@ -31,6 +31,7 @@ import { MotionPage } from "./pages/MotionPage";
 import { InteractionPage } from "./pages/InteractionPage";
 import { TextPage } from "./pages/TextPage";
 import { HistoryPage } from "./pages/HistoryPage";
+import { SharedCodePage } from "./pages/SharedCodePage";
 import { SettingsPage, type Look } from "./pages/SettingsPage";
 
 /**
@@ -46,6 +47,7 @@ const nav = createNav([
   { id: "type", labelKey: "nav.type" },
   { id: "color", labelKey: "nav.color" },
   { id: "motion", labelKey: "nav.motion" },
+  { id: "sharedCode", labelKey: "nav.sharedCode" },
   { id: "history", labelKey: "nav.history" },
   { id: "settings", labelKey: "nav.settings" },
 ] as const);
@@ -65,6 +67,7 @@ const ICONS: Record<PageId, IconName> = {
   type: "book",
   color: "brush",
   motion: "play",
+  sharedCode: "linked",
   history: "clock",
   settings: "settings",
 };
@@ -166,6 +169,8 @@ function Shell() {
                     return <ColorPage />;
                   case "motion":
                     return <MotionPage />;
+                  case "sharedCode":
+                    return <SharedCodePage />;
                   case "history":
                     return <HistoryPage />;
                   case "settings":
