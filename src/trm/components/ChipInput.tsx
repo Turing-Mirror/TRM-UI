@@ -30,6 +30,7 @@ export function ChipInput({
         <Chip key={chip} disabled={disabled}
           onRemove={() => onChange(value.filter((_, i) => i !== index))}>{chip}</Chip>
       ))}
+      {/* design-allow: 统一标签输入组件的内部原生输入。 */}
       <input
         aria-label={label}
         disabled={disabled}

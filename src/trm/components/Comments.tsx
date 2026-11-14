@@ -255,6 +255,7 @@ function Composer({ ctx, parent, replyTo, placeholder, autoFocus = false, onDone
       <div className="flex-1 min-w-0">
         <div className="flex items-end gap-2">
           <div className="flex-1 min-w-0 rounded-[var(--r)] shadow-[inset_0_0_0_1px_var(--line)] focus-within:shadow-[inset_0_0_0_1px_var(--focus-line)] transition-shadow">
+            {/* design-allow: 评论区多行输入组件的内部实现。 */}
             <textarea
               ref={area}
               value={text}

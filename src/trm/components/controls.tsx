@@ -96,6 +96,7 @@ export function Select({
   // 注明发生了什么，比装作没设过要诚实。
   const missing = Boolean(value) && !options.some((o) => o.id === value);
   return (
+    // design-allow: 统一原生下拉选择组件的内部实现。
     <select
       aria-label={ariaLabel}
       value={value}
@@ -334,6 +335,7 @@ export function RangeBar({
         ].join(" ")}
         style={{ left: knobX, width: KNOB_W, ...glide }}
       />
+      {/* design-allow: 滑块组件内部的透明原生滑块输入。 */}
       <input
         type="range"
         min={min}
@@ -427,6 +429,7 @@ export function SliderValue({ value, min, max, step, onChange, format, ariaLabel
       onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); begin(); } }}>
       {shown}
     </span>
+    {/* design-allow: 滑块数值编辑框组件的内部实现。 */}
     {editing ? <input ref={input} type="text" inputMode="decimal" value={draft} disabled={disabled}
       aria-label={ariaLabel ?? t("ui.range.value")}
       className="trm-slider-value-input"
@@ -509,6 +512,7 @@ export function Switch({ checked, onChange, label, text, disabled = false, busy 
 }) {
   const control = (
     <span className="trm-switch" data-busy={busy || undefined}>
+      {/* design-allow: 开关组件内部的原生开关输入。 */}
       <input
         type="checkbox"
         role="switch"
@@ -571,6 +575,7 @@ export function Toggle({
             <span className="text-[11.5px] leading-none text-[var(--accent-ink)]">✓</span>
           ) : null}
         </span> : null}
+        {/* design-allow: 勾选框组件内部的原生复选框输入。 */}
         <input
           type="checkbox"
           className={appearance === "custom" ? "sr-only" : undefined}

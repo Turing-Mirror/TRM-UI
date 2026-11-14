@@ -434,6 +434,7 @@ export function PromptDialog({
         }}
       >
         <div className="text-[15px] font-semibold">{shownTitle}</div>
+        {/* design-allow: 统一输入弹窗组件的内部输入框。 */}
         <input
           autoFocus
           aria-label={shownTitle}

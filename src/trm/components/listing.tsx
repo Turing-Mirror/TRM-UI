@@ -95,6 +95,7 @@ export function SearchBox({ value, onChange, full = false }: { value: string; on
   return (
     <div className={`flex-1 ${full ? "w-full" : "max-w-[320px]"} h-8 flex items-center gap-2 px-2.5 rounded-[var(--rs)] bg-[color-mix(in_srgb,var(--ink)_5%,transparent)]`}>
       <Icon name="search" size={15} className="text-[var(--meta)]" />
+      {/* design-allow: 统一搜索框组件的内部原生输入。 */}
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}

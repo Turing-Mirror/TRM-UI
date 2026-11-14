@@ -38,6 +38,7 @@ export function ComposerInput({ value, ref, maxHeight = 200, minHeight = 0, onHe
     observer.observe(el);
     return () => observer.disconnect();
   }, [value, maxHeight, minHeight]);
+  // design-allow: 统一自动伸缩多行输入组件的内部实现。
   return <textarea {...props} ref={(el) => {
     area.current = el;
     if (typeof ref === "function") return ref(el);

@@ -172,6 +172,7 @@ export function SettingsPage({ look, onLook, mouseNav, onMouseNav }: { look: Loo
                   <span className="text-[12.5px] text-[var(--meta)] max-w-[160px] truncate">{look.wallpaper ? t("demo.set.wallpaperSet") : t("demo.set.none")}</span>
                   <Btn onClick={() => file.current?.click()}>{t("demo.set.pick")}</Btn>
                   {look.wallpaper ? <Btn onClick={() => onLook({ ...look, wallpaper: "" })}>{t("demo.set.clear")}</Btn> : null}
+                  {/* design-allow: 隐藏的文件选择输入，只用于触发系统选择框。 */}
                   <input
                     ref={file}
                     type="file"

@@ -13,6 +13,7 @@ export type TextAreaProps = Omit<ComponentPropsWithRef<"textarea">, "value" | "d
 
 export function TextInput({ onChange, invalid, type = "text", className = "", ...props }: TextInputProps) {
   return (
+    // design-allow: 统一单行输入框组件的内部实现。
     <input
       {...props}
       type={type}
@@ -25,6 +26,7 @@ export function TextInput({ onChange, invalid, type = "text", className = "", ..
 
 export function TextArea({ onChange, invalid, rows = 3, className = "", ...props }: TextAreaProps) {
   return (
+    // design-allow: 统一多行输入框组件的内部实现。
     <textarea
       {...props}
       rows={rows}
