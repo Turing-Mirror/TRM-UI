@@ -310,6 +310,9 @@
     "field": {
       "name": "Nombre visible",
       "nameTip": "Nombre que se muestra en la interfaz.",
+      "compact": "Campo compacto",
+      "bare": "Campo sin borde",
+      "fit": "Campo de ancho ajustado",
       "device": "Dispositivo de salida",
       "deviceDesc": "Un dispositivo guardado que no está disponible se marca como no disponible.",
       "volume": "Volumen",

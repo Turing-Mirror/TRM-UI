@@ -983,7 +983,6 @@ option {
 /* These inputs keep the settings field geometry so products can replace local copies in place. */
 .trm-input {
   box-sizing: border-box;
-  width: 100%;
   min-width: 0;
   padding: 8px 14px;
   border: 0;
@@ -996,11 +995,16 @@ option {
   font-size: 13px;
   user-select: text;
 }
+.trm-input:not([data-fit]) { width: 100%; }
+.trm-input[data-look="compact"] { padding: 7px 9px; box-shadow: inset 0 0 0 1px var(--hairline); }
+.trm-input[data-look="bare"] { padding: 0; box-shadow: none; }
 .trm-input:focus { box-shadow: inset 0 0 0 1px var(--accent); }
+.trm-input[data-look="bare"]:focus { box-shadow: none; }
 .trm-input[aria-invalid="true"] { box-shadow: inset 0 0 0 1px var(--danger); }
 .trm-input:disabled, .trm-chip-input[data-disabled] { opacity: 0.5; cursor: default; }
 .trm-input::placeholder, .trm-chip-input input::placeholder { color: var(--meta); }
 .trm-textarea { resize: vertical; }
+.trm-textarea[data-resize="none"] { resize: none; }
 .trm-chat-composer { display: flex; flex-direction: column; gap: 8px; width: 100%; min-width: 0; }
 .trm-chat-composer-row { display: flex; align-items: flex-end; gap: 8px; }
 .trm-chat-composer-field {

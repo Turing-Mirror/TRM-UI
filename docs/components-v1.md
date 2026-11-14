@@ -114,8 +114,8 @@ npm pack
 
 | 导出 | 参数 |
 | --- | --- |
-| `TextInput` / `TextInputProps` | `value: string`、`onChange(string)`、`invalid?`、原生输入属性；`type` 支持 text、password、number。 |
-| `TextArea` / `TextAreaProps` | `value: string`、`onChange(string)`、`invalid?`、原生 textarea 属性；默认 3 行。 |
+| `TextInput` / `TextInputProps` | `value: string`、`onChange(string)`、`invalid?`、`look?: "field" \| "compact" \| "bare"`（默认 `"field"`）、`fit?: boolean`（默认 `false`）、原生输入属性；`type` 支持 text、password、number、search。 |
+| `TextArea` / `TextAreaProps` | `value: string`、`onChange(string)`、`invalid?`、`look?: "field" \| "compact" \| "bare"`（默认 `"field"`）、`fit?: boolean`（默认 `false`）、`resize?: "vertical" \| "none"`（默认 `"vertical"`）、原生 textarea 属性；默认 3 行。 |
 | `ChipInput` / `ChipInputProps` | `value: string[]`、`onChange`、`label`、`disabled?`、`placeholder?`、`separators?`；默认中英文逗号。 |
 | `Chip` / `ChipProps` | `children: string`；可选 `icon: IconName`、`tone: Tone`、`onRemove`、`disabled`。 |
 | `DataTable<T>` / `DataTableProps<T>` | `rows`、`columns`、`keyOf`、`label`、`onRowClick?`。 |

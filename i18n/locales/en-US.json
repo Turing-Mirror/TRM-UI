@@ -310,6 +310,9 @@
     "field": {
       "name": "Display name",
       "nameTip": "The name shown in the interface.",
+      "compact": "Compact input",
+      "bare": "Borderless input",
+      "fit": "Content-width input",
       "device": "Output device",
       "deviceDesc": "A saved device that is currently unavailable is marked as unavailable.",
       "volume": "Volume",

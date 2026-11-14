@@ -310,6 +310,9 @@
     "field": {
       "name": "Nom affiché",
       "nameTip": "Nom affiché dans l'interface.",
+      "compact": "Champ compact",
+      "bare": "Champ sans bordure",
+      "fit": "Champ à largeur ajustée",
       "device": "Périphérique de sortie",
       "deviceDesc": "Un appareil enregistré mais indisponible est signalé comme indisponible.",
       "volume": "Volume",

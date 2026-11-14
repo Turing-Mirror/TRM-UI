@@ -59,6 +59,9 @@ export function ComponentsPage() {
   }, []);
   const [on, setOn] = useState(true);
   const [name, setName] = useState("device-01");
+  const [compactName, setCompactName] = useState("44.1 kHz");
+  const [fitName, setFitName] = useState("120");
+  const [bareName, setBareName] = useState("item-01");
   const [volume, setVolume] = useState(60);
   const [autostart, setAutostart] = useState(false);
   const [seg, setSeg] = useState<"a" | "b" | "c">("a");
@@ -116,6 +119,44 @@ export function ComponentsPage() {
                   aria-label={t("demo.field.name")}
                   className="max-w-[340px]"
                 />
+              }
+            />
+            <Field
+              label={t("demo.field.compact")}
+              control={
+                <TextInput
+                  look="compact"
+                  value={compactName}
+                  onChange={setCompactName}
+                  aria-label={t("demo.field.compact")}
+                  className="max-w-[340px]"
+                />
+              }
+            />
+            <Field
+              label={t("demo.field.fit")}
+              control={
+                <TextInput
+                  look="compact"
+                  fit
+                  value={fitName}
+                  onChange={setFitName}
+                  aria-label={t("demo.field.fit")}
+                  className="w-28"
+                />
+              }
+            />
+            <Field
+              label={t("demo.field.bare")}
+              control={
+                <div className="max-w-[340px] px-3 py-2 rounded-[var(--rs)] bg-[var(--surface)] shadow-[inset_0_0_0_1px_var(--hairline)]">
+                  <TextInput
+                    look="bare"
+                    value={bareName}
+                    onChange={setBareName}
+                    aria-label={t("demo.field.bare")}
+                  />
+                </div>
               }
             />
             <Field
