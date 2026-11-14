@@ -317,7 +317,12 @@
       "deviceDesc": "저장되었지만 지금 사용할 수 없는 장치는 사용 불가로 표시됩니다.",
       "volume": "볼륨",
       "volumeNote": "숫자를 두 번 클릭하여 직접 입력합니다. Enter를 누르거나 다른 곳으로 이동하면 적용되고 Esc를 누르면 취소됩니다.",
-      "enable": "시스템 시작 시 실행"
+      "enable": "시스템 시작 시 실행",
+      "toggleInline": "인라인 옵션",
+      "toggleCompact": "여러 줄로 바뀔 때 첫 줄에 맞추는 간결한 옵션",
+      "checkNative": "기본 체크박스 스타일",
+      "searchFit": "고정 너비 검색",
+      "searchFitPlaceholder": "현재 목록 필터링"
     },
     "list": {
       "meta": "2026년 8월",

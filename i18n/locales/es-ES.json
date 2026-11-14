@@ -317,7 +317,12 @@
       "deviceDesc": "Un dispositivo guardado que no está disponible se marca como no disponible.",
       "volume": "Volumen",
       "volumeNote": "Haz doble clic en el número para escribir un valor. Pulsa Intro o sal del campo para aplicar, o Esc para cancelar.",
-      "enable": "Iniciar con el sistema"
+      "enable": "Iniciar con el sistema",
+      "toggleInline": "Opción en línea",
+      "toggleCompact": "Opción compacta alineada con la primera línea",
+      "checkNative": "Casilla nativa",
+      "searchFit": "Búsqueda de ancho fijo",
+      "searchFitPlaceholder": "Filtrar lista actual"
     },
     "list": {
       "meta": "Agosto de 2026",

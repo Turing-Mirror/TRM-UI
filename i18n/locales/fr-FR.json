@@ -317,7 +317,12 @@
       "deviceDesc": "Un appareil enregistré mais indisponible est signalé comme indisponible.",
       "volume": "Volume",
       "volumeNote": "Double-cliquez sur le nombre pour saisir une valeur. Entrée ou quitter le champ valide la saisie ; Échap annule.",
-      "enable": "Démarrer avec le système"
+      "enable": "Démarrer avec le système",
+      "toggleInline": "Option en ligne",
+      "toggleCompact": "Option compacte alignée sur la première ligne",
+      "checkNative": "Case native",
+      "searchFit": "Recherche à largeur fixe",
+      "searchFitPlaceholder": "Filtrer la liste"
     },
     "list": {
       "meta": "Août 2026",

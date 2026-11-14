@@ -8,7 +8,7 @@
  */
 
 export { PagePad, PageHead, Block, Group, Btn, ListItem, HelpMark } from "./components/ui";
-export { Field, Select, RangeBar, Slider, SliderValue, type SliderValueProps, Toggle, Switch } from "./components/controls";
+export { Field, Select, RangeBar, Slider, SliderValue, type SliderValueProps, Toggle, type ToggleProps, Switch } from "./components/controls";
 export { TextInput, TextArea, type TextInputProps, type TextAreaProps } from "./components/inputs";
 export { ChipInput, type ChipInputProps } from "./components/ChipInput";
 export { Chip, type ChipProps } from "./components/Chip";
@@ -82,7 +82,7 @@ export { NoticeProvider, useNotify, Notices, NOTICE_OUT_MS, type Notice, type No
 export {
   AppBar, Sidebar, SidebarBrand, SidebarItem, SidebarSwitch, SidebarStatus, type SidebarStatusProps, SidebarHead, SidebarHeadBtn, ActivityRow, SIDEBAR_W,
 } from "./components/Sidebar";
-export { Side, SideHead, SideItem, SearchBox, MoreBtn, afterDrag } from "./components/listing";
+export { Side, SideHead, SideItem, SearchBox, type SearchBoxProps, MoreBtn, afterDrag } from "./components/listing";
 export { Panes, Pane, Swap, Morph, FlowList, Roll, Collapse, usePaneOn, useDir, useSlider, sliderStyle, stagger, curve, FLOW_MS, SWAP_OUT_MS } from "./components/motion";
 export { HoverStyleProvider, useHoverStyle, hoverInk, hoverAccent, type HoverStyle } from "./lib/hoverStyle";
 export { useModalKeys } from "./hooks/useModalKeys";

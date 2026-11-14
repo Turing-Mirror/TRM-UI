@@ -1194,3 +1194,59 @@ option {
   outline: none;
   box-shadow: 0 0 0 1px var(--accent);
 }
+
+/* Toggle 与无法直接换成 Toggle 的原生复选框共用同一套自绘外观。 */
+.trm-check {
+  appearance: none;
+  flex: none;
+  display: inline-grid;
+  place-content: center;
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  border-radius: 4px;
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--line);
+  vertical-align: middle;
+  cursor: pointer;
+  transition:
+    background-color 200ms var(--ease),
+    box-shadow 200ms var(--ease);
+}
+.trm-check[data-align="start"] {
+  margin-top: 2px;
+}
+.trm-check::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  background: var(--accent-ink);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.6 5.3 4 7.6 8.4 2.6' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  transform: scale(0);
+  transition: transform 200ms var(--spring);
+}
+.trm-check:checked {
+  background: var(--accent);
+  box-shadow: none;
+}
+.trm-check:checked::before {
+  transform: scale(1);
+}
+.trm-check:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.trm-check:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trm-check,
+  .trm-check::before {
+    transition: none;
+  }
+}

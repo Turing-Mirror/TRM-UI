@@ -317,7 +317,12 @@
       "deviceDesc": "A saved device that is currently unavailable is marked as unavailable.",
       "volume": "Volume",
       "volumeNote": "Double-click the number to type a value. Press Enter or leave the field to apply, or Esc to cancel.",
-      "enable": "Start with the system"
+      "enable": "Start with the system",
+      "toggleInline": "Inline option",
+      "toggleCompact": "Compact option aligned to the first line when wrapped",
+      "checkNative": "Native checkbox style",
+      "searchFit": "Fixed-width search",
+      "searchFitPlaceholder": "Filter current list"
     },
     "list": {
       "meta": "August 2026",

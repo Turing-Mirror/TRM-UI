@@ -89,17 +89,37 @@ export function SideItem({
   );
 }
 
-/** full：占满所在容器的宽度，用在列表头这类要和标题、标签、行对齐左右边的地方。 */
-export function SearchBox({ value, onChange, full = false }: { value: string; onChange: (v: string) => void; full?: boolean }) {
+export interface SearchBoxProps {
+  value: string;
+  onChange: (v: string) => void;
+  full?: boolean;
+  fit?: boolean;
+  placeholder?: string;
+  ariaLabel?: string;
+  className?: string;
+}
+
+/** full：占满所在容器的宽度，用在列表头这类要和标题、标签、行对齐左右边的地方。fit：不撑宽，由内容或 className 定宽。 */
+export function SearchBox({
+  value,
+  onChange,
+  full = false,
+  fit = false,
+  placeholder,
+  ariaLabel,
+  className = "",
+}: SearchBoxProps) {
   const { t } = useI18n();
+  const widthClass = fit ? "" : full ? "flex-1 w-full" : "flex-1 max-w-[320px]";
   return (
-    <div className={`flex-1 ${full ? "w-full" : "max-w-[320px]"} h-8 flex items-center gap-2 px-2.5 rounded-[var(--rs)] bg-[color-mix(in_srgb,var(--ink)_5%,transparent)]`}>
+    <div className={[widthClass, "h-8 flex items-center gap-2 px-2.5 rounded-[var(--rs)] bg-[color-mix(in_srgb,var(--ink)_5%,transparent)]", className].filter(Boolean).join(" ")}>
       <Icon name="search" size={15} className="text-[var(--meta)]" />
       {/* design-allow: 统一搜索框组件的内部原生输入。 */}
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={t("ui.common.search")}
+        placeholder={placeholder ?? t("ui.common.search")}
+        aria-label={ariaLabel}
         className="flex-1 min-w-0 bg-transparent border-0 outline-none text-[13px] text-[var(--ink)] placeholder:text-[var(--meta)] selectable"
       />
       {value ? (

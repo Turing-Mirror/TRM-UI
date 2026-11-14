@@ -317,7 +317,12 @@
       "deviceDesc": "已儲存但當前不可用的裝置標註為不可用。",
       "volume": "音量",
       "volumeNote": "按兩下數字可直接輸入，按 Enter 或移開焦點確認，按 Esc 取消。",
-      "enable": "開機自動啟動"
+      "enable": "開機自動啟動",
+      "toggleInline": "行內選項",
+      "toggleCompact": "緊湊選項，文字換行時勾選框與首行對齊",
+      "checkNative": "原生核取方塊樣式",
+      "searchFit": "定寬搜尋框",
+      "searchFitPlaceholder": "篩選目前清單"
     },
     "list": {
       "meta": "2026 年 8 月",

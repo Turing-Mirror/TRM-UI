@@ -537,54 +537,67 @@ export function Switch({ checked, onChange, label, text, disabled = false, busy 
   );
 }
 
+export interface ToggleProps {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  label: string;
+  tip?: string;
+  tipPosition?: "start" | "end";
+  look?: "default" | "inline" | "compact";
+  align?: "center" | "start";
+  className?: string;
+  disabled?: boolean;
+  appearance?: "custom" | "native";
+}
+
 export function Toggle({
   checked,
   onChange,
   label,
   tip,
+  tipPosition = "start",
+  look = "default",
+  align = "center",
+  className = "",
   disabled = false,
   appearance = "custom",
-}: {
-  checked: boolean;
-  onChange: (v: boolean) => void;
-  label: string;
-  tip?: string;
-  disabled?: boolean;
-  appearance?: "custom" | "native";
-}) {
+}: ToggleProps) {
+  const alignClass = align === "start" ? "items-start" : "items-center";
+  const gapClass = look === "default" ? "gap-[11px]" : "gap-2";
+  const labelClass =
+    look === "compact"
+      ? "text-[12.5px] text-[var(--ink-muted)]"
+      : look === "inline"
+        ? "text-[13px]"
+        : "text-sm";
+  const inputClass =
+    appearance === "custom"
+      ? "trm-check"
+      : align === "start"
+        ? "mt-0.5"
+        : undefined;
+  const helpNode = tip ? <HelpMark title={tip} /> : null;
+
   return (
     // 问号不能待在 <label> 里：button 也是 labelable 元素，排在复选框前面
     // 时它就成了这个 label 的 labeled control —— 悬停/按压整行都会把
     // :hover/:active 转发到问号上（误触发动效），点文字被转发给问号吞掉
     // （设置不切）。问号挪出去，label 的关联才只属于复选框。
-    <div className="flex items-center gap-[11px]">
-      {tip ? <HelpMark title={tip} /> : null}
-      <label className={`flex items-center gap-[11px] select-none ${disabled ? "cursor-default" : "cursor-pointer"}`}>
-        {/* 纯视觉的框：点击由 label 转发给真正的 input，不再自己切一次 —
-            否则 label 激活会再点一下 input，一次点击切两回。 */}
-        {appearance === "custom" ? <span
-          aria-hidden="true"
-          className={[
-            "w-[15px] h-[15px] rounded grid place-items-center flex-none transition-colors",
-            checked
-              ? "bg-[var(--accent)]"
-              : "shadow-[inset_0_0_0_1px_var(--line)]",
-          ].join(" ")}
-        >
-          {checked ? (
-            <span className="text-[11.5px] leading-none text-[var(--accent-ink)]">✓</span>
-          ) : null}
-        </span> : null}
+    <div className={["flex", alignClass, gapClass, className].filter(Boolean).join(" ")}>
+      {tipPosition === "start" ? helpNode : null}
+      <label className={`flex ${alignClass} ${gapClass} select-none ${disabled ? "cursor-default" : "cursor-pointer"}`}>
         {/* design-allow: 勾选框组件内部的原生复选框输入。 */}
         <input
           type="checkbox"
-          className={appearance === "custom" ? "sr-only" : undefined}
+          className={inputClass}
+          data-align={appearance === "custom" && align === "start" ? "start" : undefined}
           checked={checked}
           disabled={disabled}
           onChange={(e) => onChange(e.target.checked)}
         />
-        <span className="text-sm">{label}</span>
+        <span className={labelClass}>{label}</span>
       </label>
+      {tipPosition === "end" ? helpNode : null}
     </div>
   );
 }

@@ -115,6 +115,7 @@ npm pack
 | 导出 | 参数 |
 | --- | --- |
 | `TextInput` / `TextInputProps` | `value: string`、`onChange(string)`、`invalid?`、`look?: "field" \| "compact" \| "bare"`（默认 `"field"`）、`fit?: boolean`（默认 `false`）、原生输入属性；`type` 支持 text、password、number、search。 |
+| `SearchBox` / `SearchBoxProps` | `value: string`、`onChange(string)`、`full?: boolean`、`fit?: boolean`（默认 `false`）、`placeholder?`、`ariaLabel?`、`className?`。 |
 | `TextArea` / `TextAreaProps` | `value: string`、`onChange(string)`、`invalid?`、`look?: "field" \| "compact" \| "bare"`（默认 `"field"`）、`fit?: boolean`（默认 `false`）、`resize?: "vertical" \| "none"`（默认 `"vertical"`）、原生 textarea 属性；默认 3 行。 |
 | `ChipInput` / `ChipInputProps` | `value: string[]`、`onChange`、`label`、`disabled?`、`placeholder?`、`separators?`；默认中英文逗号。 |
 | `Chip` / `ChipProps` | `children: string`；可选 `icon: IconName`、`tone: Tone`、`onRemove`、`disabled`。 |
@@ -174,10 +175,12 @@ npm pack
 | `Sidebar` | `collapsed`、`label`、`children`、`head?: ReactNode`、`foot?: ReactNode`。 |
 | `SidebarBrand` | `brand: ReactNode`、`collapsed: boolean`、`onToggle: () => void`。 |
 | `Switch` | `checked: boolean`、`onChange: (value: boolean) => void`、`label: string`、`disabled?: boolean`。 |
+| `Toggle` / `ToggleProps` | `checked: boolean`、`onChange: (value: boolean) => void`、`label: string`、`tip?`、`tipPosition?: "start" \| "end"`、`look?: "default" \| "inline" \| "compact"`、`align?: "center" \| "start"`、`className?`、`disabled?`、`appearance?: "custom" \| "native"`。 |
 
 `Sidebar.head` 与 `foot` 固定，导航内容单独滚动。`SidebarBrand` 高 52px，收起时只显示居中的开关。
 `Switch.label` 仅作为无障碍名称，使用原生复选框的 Space 行为，提供焦点环并遵循减少动态效果设置。
-`Toggle` 保留原有的可见标签接口。
+`Toggle` 默认使用 `appearance="custom"` 渲染 `.trm-check` 自绘勾选框（`look` 默认 `"default"`、`tipPosition` 默认 `"start"`、`align` 默认 `"center"`）。无法改用 `Toggle` 的表格单元格或独立勾选框，可直接在原生 `<input type="checkbox" className="trm-check" />` 上挂载 `.trm-check`，共用 15px 尺寸、`4px` 圆角、`--line` 内描边、`--accent` 选中态与 `--accent-ink` 对勾、`200ms` 过渡及禁用/焦点环样式。
+`SearchBox` 固定使用 32px 柔和底色外观；默认横向伸展（`max-w-[320px]`，`full` 时 `w-full`），传入 `fit` 时不占剩余宽度，由内容或 `className` 定宽；传入 `placeholder` 或 `ariaLabel` 时覆盖默认值。
 
 浏览器页面使用如下结构；父容器需有确定高度。操作传入已有的 `PageHead.actions`，状态放入 `foot`。
 

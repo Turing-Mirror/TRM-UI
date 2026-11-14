@@ -317,7 +317,12 @@
       "deviceDesc": "保存済みで現在使えないデバイスには「使用不可」と表示します。",
       "volume": "音量",
       "volumeNote": "数値をダブルクリックして直接入力します。Enter またはフォーカスを外して確定し、Esc で取り消します。",
-      "enable": "起動時に開始"
+      "enable": "起動時に開始",
+      "toggleInline": "インライン選択肢",
+      "toggleCompact": "複数行に折り返したとき先頭行に揃える項目",
+      "checkNative": "ネイティブチェックボックス",
+      "searchFit": "固定幅の検索",
+      "searchFitPlaceholder": "一覧を絞り込む"
     },
     "list": {
       "meta": "2026 年 8 月",

@@ -11,6 +11,7 @@ import {
   Select,
   Slider,
   Toggle,
+  SearchBox,
   SegmentControl,
   TextInput,
   TextArea,
@@ -64,6 +65,10 @@ export function ComponentsPage() {
   const [bareName, setBareName] = useState("item-01");
   const [volume, setVolume] = useState(60);
   const [autostart, setAutostart] = useState(false);
+  const [inlineOpt, setInlineOpt] = useState(true);
+  const [compactOpt, setCompactOpt] = useState(false);
+  const [nativeCheck, setNativeCheck] = useState(true);
+  const [searchFitQuery, setSearchFitQuery] = useState("");
   const [seg, setSeg] = useState<"a" | "b" | "c">("a");
   const [expanded, setExpanded] = useState(false);
   const [notes, setNotes] = useState("");
@@ -195,6 +200,41 @@ export function ComponentsPage() {
               onChange={setAutostart}
               label={t("demo.field.enable")}
               tip={t("demo.field.nameTip")}
+            />
+            <Toggle
+              look="inline"
+              tipPosition="end"
+              checked={inlineOpt}
+              onChange={setInlineOpt}
+              label={t("demo.field.toggleInline")}
+              tip={t("demo.field.nameTip")}
+            />
+            <Toggle
+              look="compact"
+              align="start"
+              className="max-w-[260px]"
+              checked={compactOpt}
+              onChange={setCompactOpt}
+              label={t("demo.field.toggleCompact")}
+            />
+            <Field
+              label={t("demo.field.checkNative")}
+              control={
+                <input type="checkbox" className="trm-check" checked={nativeCheck} onChange={(e) => setNativeCheck(e.target.checked)} aria-label={t("demo.field.checkNative")} />
+              }
+            />
+            <Field
+              label={t("demo.field.searchFit")}
+              control={
+                <SearchBox
+                  fit
+                  value={searchFitQuery}
+                  onChange={setSearchFitQuery}
+                  placeholder={t("demo.field.searchFitPlaceholder")}
+                  ariaLabel={t("demo.field.searchFit")}
+                  className="w-60"
+                />
+              }
             />
           </div>
         </Group>

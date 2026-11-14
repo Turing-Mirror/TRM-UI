@@ -317,7 +317,12 @@
       "deviceDesc": "已保存但当前不可用的设备标注为不可用。",
       "volume": "音量",
       "volumeNote": "双击数字可直接输入，按 Enter 或移开焦点确认，按 Esc 取消。",
-      "enable": "开机自启"
+      "enable": "开机自启",
+      "toggleInline": "行内选项",
+      "toggleCompact": "紧凑选项，文字换行时勾选框与首行对齐",
+      "checkNative": "原生复选框样式",
+      "searchFit": "定宽搜索框",
+      "searchFitPlaceholder": "筛选当前列表"
     },
     "list": {
       "meta": "2026 年 8 月",
