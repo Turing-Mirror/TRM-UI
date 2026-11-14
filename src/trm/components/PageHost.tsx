@@ -174,8 +174,8 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
   }, [mounted]);
 
   return (
-    <div className="relative flex-1 overflow-hidden">
-      <div ref={strip} className="absolute inset-0">
+    <div className="relative flex-1 overflow-clip">
+      <div ref={strip} className={`absolute inset-0 ${st.seq ? "flow-quiet" : ""}`} style={moving ? { willChange: "transform" } : undefined}>
         {ids.map((id) => {
           const at = onStrip.get(id);
           const active = id === st.page;
@@ -192,7 +192,11 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
               inert={!active}
               aria-hidden={!active || undefined}
               className={`absolute ${paneClassName?.(id) ?? "overflow-y-auto"} ${at === undefined ? "invisible" : ""}`}
-              style={place(axis, at ?? slot)}
+              style={{
+                ...place(axis, at ?? slot),
+                contain: "layout style paint",
+                ...(moving && at !== undefined ? { willChange: "transform" } : null),
+              }}
             >
               <Activity mode={resting ? "hidden" : "visible"}>
                 <PageActive value={active}>{children(id)}</PageActive>
