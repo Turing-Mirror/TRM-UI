@@ -303,6 +303,8 @@
       "quick": "快速操作",
       "normal": "普通",
       "primary": "主按钮",
+      "text": "文字按钮",
+      "danger": "危险按钮",
       "on": "已选中",
       "busy": "处理中",
       "disabled": "不可用"

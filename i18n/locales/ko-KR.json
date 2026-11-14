@@ -303,6 +303,8 @@
       "quick": "빠른 작업",
       "normal": "기본",
       "primary": "기본 동작",
+      "text": "텍스트",
+      "danger": "위험",
       "on": "선택됨",
       "busy": "처리 중",
       "disabled": "비활성"

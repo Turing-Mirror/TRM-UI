@@ -225,6 +225,7 @@
   --warn-ink: #9a6200;
   --danger: #d0533f;
   --danger-text: #b8432f;
+  --danger-fill: #b8432f;
   --danger-soft: rgba(208, 83, 63, 0.11);
   --scrim: rgba(20, 26, 34, 0.28);
   /* 输入框聚焦、控件悬停时的描边：比平时的描边深一档，不用强调色。
@@ -262,6 +263,7 @@
     --warn-ink: #ffb340;
     --danger: #ec7b69;
     --danger-text: var(--danger);
+    --danger-fill: var(--danger);
     --danger-soft: rgba(236, 123, 105, 0.14);
     --scrim: rgba(0, 0, 0, 0.5);
     --pop-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(232, 240, 248, 0.12);
@@ -285,6 +287,7 @@
   --warn-ink: #ffb340;
   --danger: #ec7b69;
   --danger-text: var(--danger);
+  --danger-fill: var(--danger);
   --danger-soft: rgba(236, 123, 105, 0.14);
   --scrim: rgba(0, 0, 0, 0.5);
   --pop-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(232, 240, 248, 0.12);

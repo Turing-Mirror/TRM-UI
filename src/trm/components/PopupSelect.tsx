@@ -14,6 +14,7 @@ export type SelectOption = {
 
 /** 默认的外框：一圈细线，聚焦或展开时换成强调色。工具窗口里的表单用 box 传自己那一套。 */
 const BOX =
+  // design-allow: 与 1px inset 描边凑整以对齐同高表单控件。
   "border-0 px-3.5 py-[7px] rounded-[var(--rs)] shadow-[inset_0_0_0_1px_var(--line)] focus-visible:shadow-[inset_0_0_0_1px_var(--accent)] data-[open]:shadow-[inset_0_0_0_1px_var(--accent)]";
 
 /** 工具窗口表单里的外框，和同一行的输入框一样用细边框。 */

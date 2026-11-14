@@ -31,6 +31,14 @@ it("blocks cancel, backdrop, Escape and repeated confirmation while busy", () =>
   expect(close).toHaveBeenCalledTimes(3);
 });
 
+it("uses Btn danger styling for dangerous confirmations without legacy class", () => {
+  view = mount(<ConfirmDialog open title="Delete item?" text="Cannot undo." confirm="Delete" danger
+    busy={false} onClose={() => {}} onConfirm={() => {}} />);
+  const buttons = document.querySelectorAll('[role="dialog"] button');
+  expect(buttons[1].className).not.toContain("trm-confirm-danger");
+  expect(buttons[1].className).toContain("text-[var(--danger-text)]");
+});
+
 it("retains the message during exit and stops accepting actions", () => {
   vi.useFakeTimers();
   const close = vi.fn();

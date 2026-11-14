@@ -93,6 +93,8 @@ export function ComponentsPage() {
           <div className="py-4 flex items-center gap-2.5 flex-wrap">
             <Btn>{t("demo.btn.normal")}</Btn>
             <Btn primary>{t("demo.btn.primary")}</Btn>
+            <Btn text>{t("demo.btn.text")}</Btn>
+            <Btn danger>{t("demo.btn.danger")}</Btn>
             <Btn on={on} onClick={() => setOn((v) => !v)}>
               {t("demo.btn.on")}
             </Btn>

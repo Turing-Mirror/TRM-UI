@@ -56,7 +56,7 @@ it("Toggle uses .trm-check and default layout props by default", () => {
   const children = Array.from(root.children);
 
   expect(root.className).toContain("items-center");
-  expect(root.className).toContain("gap-[11px]");
+  expect(root.className).toContain("gap-3");
   expect(children[0].querySelector("button")).not.toBeNull();
   expect(children[1]).toBe(label);
   expect(input.className).toBe("trm-check");

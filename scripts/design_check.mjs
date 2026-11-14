@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 设计规范检查：在源码里找规范之外的字号、圆角、时长、层叠数值和手写输入框。
+ * 设计规范检查：在源码里找规范之外的字号、圆角、时长、层叠、奇数像素间距和手写输入框。
  *
  *   trm-design-check            检查，数量超过基线时失败
  *   trm-design-check --update   把当前数量写成新的基线
@@ -25,7 +25,7 @@ const DEFAULTS = {
   exclude: ["node_modules", "dist", "lib", "frontend", ".test.", "/test/", "/i18n/"],
   extensions: [".tsx", ".ts", ".css"],
   baseline: "design-baseline.json",
-  rules: { fontSize: true, radius: true, duration: true, zIndex: true, rawInput: true },
+  rules: { fontSize: true, radius: true, duration: true, zIndex: true, spacing: true, rawInput: true },
   allow: {
     // 字号七档。
     fontSize: [25, 22, 16, 15, 13, 12.5, 11.5],
@@ -88,6 +88,22 @@ const RULES = {
     patterns: [/\bz-\[(\d+)\]/g, /\bz-(\d+)\b/g, /\bz-index:\s*(\d+)/g],
     ok: (v) => allowed.zIndex.has(v),
   },
+  spacing: {
+    label: "间距",
+    hint: "用 4 的倍数或偶数像素间距",
+    extract(line) {
+      const out = [];
+      const tw = /\b(?:p[trblxyse]?|m[trblxyse]?|gap(?:-[xy])?|space-[xy])-\[(\d+(?:\.\d+)?)px\]/g;
+      for (const m of line.matchAll(tw)) out.push(Number(m[1]));
+      const css = /(?:^|[;{\s])(?:(?:padding|margin)(?:-(?:top|right|bottom|left|inline(?:-start|-end)?|block(?:-start|-end)?))?|(?:row-|column-)?gap)\s*:\s*([^;}{]+)/g;
+      for (const m of line.matchAll(css)) {
+        const value = m[1].replace(/\/\*.*?\*\//g, "");
+        for (const px of value.matchAll(/(\d+(?:\.\d+)?)px/g)) out.push(Number(px[1]));
+      }
+      return out;
+    },
+    ok: (v) => !Number.isInteger(v) || v % 2 === 0,
+  },
   rawInput: {
     label: "手写输入框",
     hint: "用 TRM UI 的输入组件",
@@ -125,14 +141,18 @@ for (const file of files) {
     for (const [id, rule] of Object.entries(RULES)) {
       if (!config.rules[id]) continue;
       if (id === "rawInput" && isCss) continue;
-      for (const pattern of rule.patterns) {
-        pattern.lastIndex = 0;
-        let m;
-        while ((m = pattern.exec(line))) {
-          const value = rule.numeric === false ? m[1] : Number(m[1]);
-          if (rule.numeric !== false && rule.ok(value)) continue;
-          found.push({ rule: id, file: path.relative(cwd, file).split(path.sep).join("/"), line: i + 1, value });
-        }
+      const values = rule.extract
+        ? rule.extract(line)
+        : rule.patterns.flatMap((pattern) => {
+            pattern.lastIndex = 0;
+            const hit = [];
+            let m;
+            while ((m = pattern.exec(line))) hit.push(rule.numeric === false ? m[1] : Number(m[1]));
+            return hit;
+          });
+      for (const value of values) {
+        if (rule.numeric !== false && rule.ok(value)) continue;
+        found.push({ rule: id, file: path.relative(cwd, file).split(path.sep).join("/"), line: i + 1, value });
       }
     }
   });

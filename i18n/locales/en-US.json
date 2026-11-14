@@ -303,6 +303,8 @@
       "quick": "Quick action",
       "normal": "Default",
       "primary": "Primary",
+      "text": "Text",
+      "danger": "Danger",
       "on": "Selected",
       "busy": "Processing",
       "disabled": "Disabled"

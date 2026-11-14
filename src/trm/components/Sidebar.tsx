@@ -17,6 +17,7 @@ import { Tooltip } from "./Tooltip";
 import { useMenu } from "./Menu";
 
 // Share the geometry so foot states keep the same icon anchor as navigation, including when collapsed.
+// design-allow: 收起侧栏宽 64px 内 18px 图标水平居中的几何留白（(64-20-18)/2=13px）。
 const SIDEBAR_ROW = "relative w-full flex-none flex items-center gap-3 h-9 px-[13px] rounded-[var(--rs)] border-0 cursor-pointer text-[13px] transition-colors overflow-hidden";
 const SIDEBAR_HOVER = "bg-transparent hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]";
 const STATUS_TONE = {

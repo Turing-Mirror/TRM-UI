@@ -505,6 +505,7 @@ option {
 .msg-in { animation: msg-in 0.34s var(--ease) both; }
 
 /* 正在处理：三个点依次起伏。 */
+/* design-allow: 5px 打字加载圆点的紧密排列间距。 */
 .typing { display: inline-flex; gap: 3px; }
 .typing i {
   width: 5px;
@@ -947,7 +948,7 @@ option {
 .trm-page-read { max-inline-size: var(--page-w-read); }
 .trm-page-wide { max-inline-size: var(--page-w-wide); }
 .trm-row-group { margin-block-start: 30px; min-inline-size: 0; }
-.trm-row-heading { display: flex; align-items: center; gap: 11px; flex-wrap: wrap; margin-block-end: 15px; }
+.trm-row-heading { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-block-end: 16px; }
 .trm-row-heading h3 { margin: 0; font-size: 15px; font-weight: 600; }
 .trm-row-heading p { margin: 6px 0 0; font-size: 12.5px; color: var(--meta); }
 .trm-row-action { margin-inline-start: auto; display: flex; gap: 8px; flex-wrap: wrap; }
@@ -996,6 +997,7 @@ option {
   user-select: text;
 }
 .trm-input:not([data-fit]) { width: 100%; }
+/* design-allow: 6+1、8+1 凑 1px 内描边，保持紧凑输入框原有视觉高度。 */
 .trm-input[data-look="compact"] { padding: 7px 9px; box-shadow: inset 0 0 0 1px var(--hairline); }
 .trm-input[data-look="bare"] { padding: 0; box-shadow: none; }
 .trm-input:focus { box-shadow: inset 0 0 0 1px var(--accent); }
@@ -1150,7 +1152,6 @@ option {
 .trm-confirm h2 { margin: 0; font-size: 15px; font-weight: 600; color: var(--ink); }
 .trm-confirm p { margin: 12px 0 0; font-size: 13px; color: var(--help); overflow-wrap: anywhere; }
 .trm-confirm-actions { margin-top: 24px; display: flex; justify-content: flex-end; gap: 8px; }
-.trm-confirm .trm-confirm-danger { color: var(--danger-text); }
 
 /* 文档式详情（DocBody / DocSection）：行宽有上限，各节靠间距分开。 */
 /* 详情里的分节：和设置分组同一套样子，标题在上，内容放在分组底色的卡片里 */

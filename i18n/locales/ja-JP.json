@@ -303,6 +303,8 @@
       "quick": "短い操作",
       "normal": "通常",
       "primary": "主ボタン",
+      "text": "テキスト",
+      "danger": "危険",
       "on": "選択中",
       "busy": "処理中",
       "disabled": "無効"

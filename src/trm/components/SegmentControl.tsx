@@ -133,6 +133,7 @@ export function SegmentControl<T extends string>({ options, value, onChange, cla
       className={[
         // inline-flex + w-fit：块级的 flex 容器会撑满父元素，于是字变短之后
         // 药丸还是原来那么长（四个字的标签，条子却按八个字的宽度画）。
+        // design-allow: 分段控制器滑道与透镜 3px 内嵌几何对齐，需与 top-[3px]/top-[-3px] 保持一致。
         "seg relative inline-flex w-fit p-[3px] rounded-full select-none touch-pan-y",
         "bg-[color-mix(in_srgb,var(--ink)_5%,transparent)]",
         className,
@@ -190,6 +191,7 @@ export function SegmentControl<T extends string>({ options, value, onChange, cla
         <span ref={thumbRef} aria-hidden className="seg-thumb absolute top-[3px] bottom-[3px] left-0 z-[2] pointer-events-none" style={{ width: 0, opacity: 0 }}>
           <span ref={glassRef} className="seg-glass absolute inset-0 rounded-full">
             <span className="absolute inset-0 rounded-full overflow-hidden">
+              {/* design-allow: 透镜层 3px 内边距需与外层滑道 p-[3px] 对齐。 */}
               <span ref={lensRef} className="seg-lens absolute top-[-3px] left-0 flex p-[3px] text-[var(--ink)]">
                 {options.map((opt) => (
                   <span key={opt.id} className="flex-none">

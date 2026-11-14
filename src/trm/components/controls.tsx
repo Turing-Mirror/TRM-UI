@@ -29,7 +29,7 @@ export function Field({
     return (
       <div>
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-[9px] text-sm leading-none">
+          <div className="flex items-center gap-2 text-sm leading-none">
             <span className="leading-normal">{label}</span>
             {tip ? <HelpMark title={tip} /> : null}
           </div>
@@ -40,12 +40,12 @@ export function Field({
             界面上一个字都没变，看着就像按钮坏了。少画一个 prop 不会报错，
             所以这种漏洞只能靠不留死角来防。 */}
         {desc ? (
-          <div className="text-[12.5px] text-[var(--help)] mt-[7px] leading-relaxed">
+          <div className="text-[12.5px] text-[var(--help)] mt-2 leading-relaxed">
             {desc}
           </div>
         ) : null}
         {note ? (
-          <div className="text-xs text-[var(--help)] mt-[9px] leading-[1.75] whitespace-pre-line">
+          <div className="text-xs text-[var(--help)] mt-2 leading-[1.75] whitespace-pre-line">
             {note}
           </div>
         ) : null}
@@ -54,18 +54,18 @@ export function Field({
   }
   return (
     <div>
-      <div className="flex items-center gap-[9px] text-sm mb-[9px] leading-none">
+      <div className="flex items-center gap-2 text-sm mb-2 leading-none">
         <span className="leading-normal">{label}</span>
         {tip ? <HelpMark title={tip} /> : null}
       </div>
       {desc ? (
-        <div className="text-[12.5px] text-[var(--help)] -mt-1 mb-[9px] leading-relaxed">
+        <div className="text-[12.5px] text-[var(--help)] -mt-1 mb-2 leading-relaxed">
           {desc}
         </div>
       ) : null}
       {control}
       {note ? (
-        <div className="text-xs text-[var(--help)] mt-[9px] leading-[1.75] whitespace-pre-line">
+        <div className="text-xs text-[var(--help)] mt-2 leading-[1.75] whitespace-pre-line">
           {note}
         </div>
       ) : null}
@@ -105,6 +105,7 @@ export function Select({
       style={width ? { minWidth: width } : undefined}
       className={[
         "text-[13px] text-[var(--ink)] bg-transparent appearance-none cursor-pointer",
+        // design-allow: 与 1px inset 描边凑整以对齐同高输入框。
         "px-3.5 py-[7px] rounded-[var(--rs)] shadow-[inset_0_0_0_1px_var(--line)]",
         "outline-none focus:shadow-[inset_0_0_0_1px_var(--accent)] disabled:opacity-50 disabled:cursor-default",
         full ? "w-full" : "",
@@ -471,7 +472,7 @@ export function Slider({
   disabled?: boolean;
 }) {
   return (
-    <div className="flex items-center gap-[15px] w-full">
+    <div className="flex items-center gap-4 w-full">
       {/* 条子占满整行，不设上限：一格数值分到的像素最多，最好精调，看着也
           大方。右边只留数值那一列。设了上限的话，宽窗口下条子缩在左半边，
           右边空一大片，反而显得小家子气。 */}
@@ -563,7 +564,7 @@ export function Toggle({
   appearance = "custom",
 }: ToggleProps) {
   const alignClass = align === "start" ? "items-start" : "items-center";
-  const gapClass = look === "default" ? "gap-[11px]" : "gap-2";
+  const gapClass = look === "default" ? "gap-3" : "gap-2";
   const labelClass =
     look === "compact"
       ? "text-[12.5px] text-[var(--ink-muted)]"

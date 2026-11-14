@@ -114,6 +114,7 @@ npm pack
 
 | 导出 | 参数 |
 | --- | --- |
+| `Btn` | `children`、`primary?`、`text?`、`danger?`、`on?`、`uw?`、`disabled?`、`busy?`、`dimDisabled?`、`noWrap?`、`onClick?`、`className?`、`ariaLabel?`。 |
 | `TextInput` / `TextInputProps` | `value: string`、`onChange(string)`、`invalid?`、`look?: "field" \| "compact" \| "bare"`（默认 `"field"`）、`fit?: boolean`（默认 `false`）、原生输入属性；`type` 支持 text、password、number、search。 |
 | `SearchBox` / `SearchBoxProps` | `value: string`、`onChange(string)`、`full?: boolean`、`fit?: boolean`（默认 `false`）、`placeholder?`、`ariaLabel?`、`className?`。 |
 | `TextArea` / `TextAreaProps` | `value: string`、`onChange(string)`、`invalid?`、`look?: "field" \| "compact" \| "bare"`（默认 `"field"`）、`fit?: boolean`（默认 `false`）、`resize?: "vertical" \| "none"`（默认 `"vertical"`）、原生 textarea 属性；默认 3 行。 |
@@ -149,8 +150,9 @@ npm pack
 `DataTable` 自带分组底色、圆角与横向滚动，行回调支持点击、Enter 和空格；单元格内的控件独立响应。
 `BarChart` 用于非负单序列数据，负值按零高度显示；`formatLabel` 接收标签字符串，`describe` 接收数据项。
 `showTableToggle` 默认关闭，启用后提供图表与表格切换。密集序列保留 2px 柱间距并横向滚动。
-`ConfirmDialog` 复用 `Modal` 和 `Btn`；忙碌时取消、遮罩与 Escape 均不关闭，确认操作不重复触发。
+`ConfirmDialog` 复用 `Modal` 和 `Btn`；`danger` 为真时确认按钮使用 `Btn danger`；忙碌时取消、遮罩与 Escape 均不关闭，确认操作不重复触发。
 `PromptDialog` 仍用于输入名称，两者不混用。配套样式随 `trm-ui/styles.css` 提供。
+`Btn` 默认带 1px 内描边；`text` 为真时省略描边与底色，用于次要和重复出现的操作；`danger` 为真时使用危险文字与描边，配合 `primary` 使用危险实心底色，配合 `text` 使用危险文字按钮；按下缩放为 `0.97`。
 
 ## 页面宽度与设置行
 

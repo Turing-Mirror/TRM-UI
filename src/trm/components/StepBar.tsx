@@ -4,6 +4,7 @@
  */
 export function StepBar({ index, count, label, width = 132 }: { index: number; count: number; label?: string; width?: number }) {
   return (
+    // design-allow: 132px 分步进度条段间窄缝。
     <div className="flex gap-[3px]" style={{ width }} role="progressbar" aria-valuemin={1} aria-valuemax={count} aria-valuenow={index + 1} aria-valuetext={label}>
       {Array.from({ length: count }, (_, i) => (
         <span key={i} className="relative flex-1 h-1 rounded-sm overflow-hidden bg-[color-mix(in_srgb,var(--ink)_10%,transparent)]">

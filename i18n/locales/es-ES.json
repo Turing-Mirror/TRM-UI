@@ -303,6 +303,8 @@
       "quick": "Acción rápida",
       "normal": "Normal",
       "primary": "Principal",
+      "text": "Texto",
+      "danger": "Peligro",
       "on": "Seleccionado",
       "busy": "Procesando",
       "disabled": "Deshabilitado"

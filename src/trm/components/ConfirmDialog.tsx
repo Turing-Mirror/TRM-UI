@@ -26,9 +26,9 @@ export function ConfirmDialog({ open, title, text, confirm, danger = false, busy
         <div className="trm-confirm-actions">
           <Btn disabled={busy} onClick={close}>{t("ui.common.cancel")}</Btn>
           <Btn
+            danger={shown.danger}
             busy={busy}
             onClick={() => { if (open && !busy) onConfirm(); }}
-            className={shown.danger ? "trm-confirm-danger" : ""}
           >
             {shown.confirm}
           </Btn>

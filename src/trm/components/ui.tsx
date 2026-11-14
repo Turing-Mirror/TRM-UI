@@ -118,7 +118,7 @@ export function Block({
       {(title || note || extra || action) && (
         // items-center（不是 baseline）：标题旁的小问号是 17px 的圆，按基线
         // 对齐会整颗往下掉一截，看起来比标题低半个字。
-        <div className="flex items-center gap-[11px] mb-[15px] flex-wrap">
+        <div className="flex items-center gap-3 mb-4 flex-wrap">
           {title ? (
             <h3 className="text-[15px] font-semibold m-0 inline-flex items-center gap-1.5 leading-none">
               {collapsible ? (
@@ -157,9 +157,31 @@ export function Group({ children }: { children: ReactNode }) {
   );
 }
 
+function btnLookClass(primary: boolean, text: boolean, danger: boolean, on: boolean) {
+  if (primary) {
+    return danger
+      ? "bg-[var(--danger-fill)] text-[var(--accent-ink)] font-semibold shadow-none enabled:hover:brightness-95"
+      : "bg-[var(--accent-fill)] text-[var(--accent-ink)] font-semibold shadow-none enabled:hover:brightness-95";
+  }
+  if (text) {
+    return danger
+      ? "bg-transparent text-[var(--danger-text)] shadow-none enabled:hover:bg-[color-mix(in_srgb,var(--danger)_8%,transparent)]"
+      : "bg-transparent text-[var(--ink-muted)] shadow-none enabled:hover:text-[var(--ink)] enabled:hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]";
+  }
+  if (danger) {
+    return "bg-transparent text-[var(--danger-text)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--danger)_42%,transparent)] enabled:hover:bg-[color-mix(in_srgb,var(--danger)_8%,transparent)]";
+  }
+  if (on) {
+    return "bg-transparent text-[var(--accent-text)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--accent)_42%,transparent)]";
+  }
+  return "bg-transparent text-[var(--ink-muted)] shadow-[inset_0_0_0_1px_var(--line)] enabled:hover:text-[var(--ink)] enabled:hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]";
+}
+
 export function Btn({
   children,
   primary = false,
+  text = false,
+  danger = false,
   on = false,
   uw = false,
   disabled = false,
@@ -173,6 +195,10 @@ export function Btn({
   children: ReactNode;
   /** 主按钮：实心强调色。一屏最多一个。 */
   primary?: boolean;
+  /** 文字按钮：无描边与底色，用于次要和重复出现的操作。 */
+  text?: boolean;
+  /** 危险操作：用于删除和卸载。 */
+  danger?: boolean;
   /** 已选中态：描边 + 强调色文字。 */
   on?: boolean;
   /** 等宽。用于「使用 / 使用中」这种切换后字数会变的按钮，避免按一下宽度跳一下。 */
@@ -206,13 +232,10 @@ export function Btn({
         "transition-[transform,background,color,box-shadow] duration-200 ease-[var(--ease)]",
         // 交互态一律写 enabled: 不写 disabled: 反向覆盖：前者在禁用下根本不匹配，
         // 后者要跟 Tailwind 的变体排序赌先后，赌输就是禁用按钮按下照样缩放。
-        "enabled:active:scale-[0.955] focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2",
+        "enabled:active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2",
+        // design-allow: 无物理边框按钮按内边距凑 1px 描边高度与宽度对齐。
         uw ? "min-w-[74px] text-center px-0 py-1.5" : "px-[13px] py-1.5",
-        primary
-          ? "bg-[var(--accent-fill)] text-[var(--accent-ink)] font-semibold shadow-none enabled:hover:brightness-95"
-          : on
-            ? "bg-transparent text-[var(--accent-text)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--accent)_42%,transparent)]"
-            : "bg-transparent text-[var(--ink-muted)] shadow-[inset_0_0_0_1px_var(--line)] enabled:hover:text-[var(--ink)] enabled:hover:bg-[color-mix(in_srgb,var(--ink)_4%,transparent)]",
+        btnLookClass(primary, text, danger, on),
         disabled || busy ? "disabled:cursor-default" : "",
         disabled && !busy && dimDisabled ? "disabled:opacity-40" : "",
         className,
@@ -424,6 +447,7 @@ export function Warn({
       <svg
         aria-hidden
         viewBox="0 0 16 16"
+        // design-allow: 14px 图标在 12.5px leading-relaxed 首行内的垂直居中微调。
         className="w-[14px] h-[14px] flex-none mt-[3px] text-[var(--notify)]"
       >
         <path
