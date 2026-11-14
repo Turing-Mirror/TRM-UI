@@ -188,7 +188,7 @@ describe.each(["x", "y"] as const)("PageHost axis=%s", axis => {
     expect(mounted.mock.calls.length - removed.mock.calls.length).toBe(1);
   });
 
-  it("pauses WAAPI at commit and calls play on the next animation frame", async () => {
+  it("pauses WAAPI at commit only when waking a resting page", async () => {
     const original = HTMLElement.prototype.animate;
     const pause = vi.fn();
     const play = vi.fn();
@@ -206,14 +206,24 @@ describe.each(["x", "y"] as const)("PageHost axis=%s", axis => {
       return frames.length;
     });
     vi.stubGlobal("cancelAnimationFrame", vi.fn());
+    const keep = () => true;
     try {
-      m = mount(host(axis, "a"));
-      act(() => m.root.render(host(axis, "b")));
+      m = mount(host(axis, "a", keep));
+      // 首次进入尚未挂载的 b：先 pause，等本帧排版提交后再从下一帧开播。
+      act(() => m.root.render(host(axis, "b", keep)));
       expect(pause).toHaveBeenCalledTimes(1);
       expect(play).not.toHaveBeenCalled();
       expect(frames).toHaveLength(1);
       frames[0](16);
       expect(play).toHaveBeenCalledTimes(1);
+      await act(async () => { resolveFinished(); await Promise.resolve(); });
+
+      // 回到已常驻渲染的 a（keep=true，非 resting）：直接开播，不多等一帧。
+      pause.mockClear();
+      play.mockClear();
+      act(() => m.root.render(host(axis, "a", keep)));
+      expect(pause).not.toHaveBeenCalled();
+      expect(frames).toHaveLength(1);
       await act(async () => { resolveFinished(); await Promise.resolve(); });
     } finally {
       vi.unstubAllGlobals();

@@ -1,6 +1,7 @@
 import {
   Activity,
   createContext,
+  memo,
   useContext,
   useEffect,
   useLayoutEffect,
@@ -82,6 +83,8 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
   const running = useRef<Animation | null>(null);
   const panes = useRef(new Map<T, HTMLDivElement>());
   const scrolls = useRef(new Map<T, number>());
+  const mountedIds = useRef(new Set<T>());
+  const restingIds = useRef(new Set<T>());
 
   if (st.page !== page) {
     const dir = reduce ? 0 : nav.direction(st.page, page);
@@ -143,9 +146,11 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
     );
     running.current = animation;
     animation.finished.then(() => { if (running.current === animation) settle(); }, () => undefined);
-    // Safari 在新页首次显形并提交合成层前就会让 WAAPI 时钟开始走，第一帧常直接跳过 ease-nav 前段。
-    // 先停在起点等本帧排版/图层提交，再从下一帧 VSync 播放，保证整段曲线从 0% 起走。
+    // 只有从隐藏状态（Activity display:none 或首次挂载）唤醒的新页，Safari 才需要较长排版/提交；
+    // 已在台下保持渲染的常驻页直接开播，避免每次切页白等一帧才开始响应。
+    const wokeFromRest = !mountedIds.current.has(st.page) || restingIds.current.has(st.page);
     if (
+      wokeFromRest &&
       typeof animation.pause === "function" &&
       typeof animation.play === "function" &&
       typeof requestAnimationFrame === "function" &&
@@ -184,6 +189,18 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
   // 按 id 排序，节点先后永远不变：换格子时 React 不挪节点，滚动位置不会被重置。
   const ids = [...new Set([...onStrip.keys(), ...parked])].sort();
   const mounted = ids.join("\n");
+  const restingEntries = ids.map((id) => [
+    id,
+    onStrip.get(id) === undefined && (keep?.(id) === "paused" || !st.seen.includes(id)),
+  ] as const);
+  useLayoutEffect(() => {
+    mountedIds.current = new Set(ids);
+    const nextResting = new Set<T>();
+    for (const [id, isResting] of restingEntries) {
+      if (isResting) nextResting.add(id);
+    }
+    restingIds.current = nextResting;
+  });
   useEffect(() => {
     // 已卸下的页不留滚动位置，下次来从头看。
     const alive = new Set(mounted.split("\n"));
@@ -217,7 +234,7 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
               }}
             >
               <Activity mode={resting ? "hidden" : "visible"}>
-                <PageActive value={active}>{children(id)}</PageActive>
+                <PaneBody active={active} node={children(id)} />
               </Activity>
             </div>
           );
@@ -226,6 +243,10 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
     </div>
   );
 }
+
+const PaneBody = memo(function PaneBody({ active, node }: { active: boolean; node: ReactNode }) {
+  return <PageActive value={active}>{node}</PageActive>;
+});
 
 function shift(axis: "x" | "y", slots: number): string {
   return axis === "y" ? `translate3d(0, ${slots * 100}%, 0)` : `translate3d(${slots * 100}%, 0, 0)`;

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AppBar,
   Sidebar,
@@ -123,6 +123,35 @@ function Shell() {
   // 它会把「UI 从哪儿来的、处理了几个资源请求、404 了几次」写进日志。
   useEffect(markReady, []);
 
+  // 缓存未变动页面的节点引用，切页时配合 PageHost 的 memo 跳过后台十来页的整棵重绘。
+  const overviewPage = useMemo(() => <OverviewPage theme={theme} onTheme={setTheme} />, [theme]);
+  const settingsPage = useMemo(
+    () => <SettingsPage look={look} onLook={setLook} mouseNav={mouseNav} onMouseNav={setMouseNav} />,
+    [look, mouseNav],
+  );
+  const staticPages = useMemo(
+    () => ({
+      components: <ComponentsPage />,
+      patterns: <PatternsPage />,
+      interaction: <InteractionPage />,
+      text: <TextPage />,
+      type: <TypePage />,
+      color: <ColorPage />,
+      motion: <MotionPage />,
+      sharedCode: <SharedCodePage />,
+      history: <HistoryPage />,
+    }),
+    [],
+  );
+  const renderPage = useCallback(
+    (id: PageId) => {
+      if (id === "overview") return overviewPage;
+      if (id === "settings") return settingsPage;
+      return staticPages[id];
+    },
+    [overviewPage, settingsPage, staticPages],
+  );
+
   return (
     <HoverStyleProvider value={look.hover}>
     <div className="page-shell h-full flex flex-col">
@@ -151,32 +180,7 @@ function Shell() {
         <main className="page-workspace relative flex-1 min-w-0 flex flex-col">
           {ready ? (
             <PageHost nav={nav} page={page} axis="y" keep={keepPage} warm={warmPages}>
-              {(id) => {
-                switch (id) {
-                  case "overview":
-                    return <OverviewPage theme={theme} onTheme={setTheme} />;
-                  case "components":
-                    return <ComponentsPage />;
-                  case "patterns":
-                    return <PatternsPage />;
-                  case "interaction":
-                    return <InteractionPage />;
-                  case "text":
-                    return <TextPage />;
-                  case "type":
-                    return <TypePage />;
-                  case "color":
-                    return <ColorPage />;
-                  case "motion":
-                    return <MotionPage />;
-                  case "sharedCode":
-                    return <SharedCodePage />;
-                  case "history":
-                    return <HistoryPage />;
-                  case "settings":
-                    return <SettingsPage look={look} onLook={setLook} mouseNav={mouseNav} onMouseNav={setMouseNav} />;
-                }
-              }}
+              {renderPage}
             </PageHost>
           ) : null}
         </main>
