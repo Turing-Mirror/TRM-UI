@@ -32,7 +32,7 @@ afterEach(() => { view?.unmount(); sheet.remove(); vi.restoreAllMocks(); vi.useR
 const order = ["z", "a", ""];
 
 it.each(["count", "refresh", "search"])("aligns title, filters and row content for the %s head", variant => {
-  const options = [{ id: "all", label: "All" }, { id: "pending", label: "Pending" }];
+  const options = [{ id: "all", label: "All" }, { id: "pending", label: "Pending", count: 0 }];
   view = mount(<div style={{ "--workbench-list-content-inset": "16px", "--workbench-row-inset": "8px",
     "--workbench-row-padding": "8px" } as React.CSSProperties}>
     <Workbench selected={null} order={[]} onBack={() => {}} detail={null}
@@ -41,7 +41,7 @@ it.each(["count", "refresh", "search"])("aligns title, filters and row content f
           {variant === "count" ? <span>12</span> : variant === "refresh" ? <button>Refresh</button> : null}
         </div>
         {variant === "search" ? <div className="trm-workbench-search"><SearchBox value="" onChange={() => {}} /></div> : null}
-        <div className="trm-workbench-filters"><Filters value="all" options={options} onChange={() => {}} /></div>
+        <div className="trm-workbench-filters"><Filters value="pending" options={options} onChange={() => {}} /></div>
         <div className="trm-workbench-filters"><Tabs value="all" options={options} onChange={() => {}} /></div>
       </>}
       list={<WorkbenchItem title="One" selected={false} onClick={() => {}} />}
@@ -55,11 +55,14 @@ it.each(["count", "refresh", "search"])("aligns title, filters and row content f
   expect(parseFloat(row.marginInline) + parseFloat(row.paddingLeft)).toBe(inset);
   for (const group of head.querySelectorAll(".trm-workbench-filters")) {
     expect(parseFloat(getComputedStyle(group).paddingLeft) || 0).toBe(0);
-    expect(parseFloat(getComputedStyle(group.querySelector("button")!).paddingInline)).toBe(0);
     const indicator = group.querySelector<HTMLElement>(".slider")!;
     expect(indicator.parentElement).toBe(group.firstElementChild);
     expect(indicator.style.transform).toContain("0px");
   }
+  const pendingFilter = head.querySelector('[role="radio"][aria-checked="true"]')!;
+  expect(pendingFilter.textContent).toBe("Pending0");
+  expect(getComputedStyle(pendingFilter).paddingInline).toBe(""); // Keep the Filters component's utility padding.
+  expect(parseFloat(getComputedStyle(head.querySelector('[role="tab"]')!).paddingInline)).toBe(0);
   if (variant === "search") expect(getComputedStyle(head.querySelector(".trm-workbench-search")!).paddingInline).toBe("");
   const foot = view.container.querySelector(".trm-workbench-pager")!;
   expect(foot.parentElement?.className).toBe("trm-workbench-list");

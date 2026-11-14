@@ -215,7 +215,7 @@ npm pack
 `listWidth` 接受像素数值或 CSS 长度，覆盖默认变量。
 工作台在给定高度内保留等量上下留白 `--workbench-space`（16px），列表底部不贴窗口边缘。
 列表标题和筛选放在 `listHead`，与列表共用分组底色；原有 `list` 内的标题、筛选组合仍可使用。
-标题、筛选和搜索统一使用 `--workbench-list-content-inset`（默认 16px），等于行外侧内缩加行内留白。数量和刷新操作放在同一标题行右侧；搜索使用 `.trm-workbench-search`。筛选文字与指示器不越过内容左边缘。
+标题、筛选和搜索统一使用 `--workbench-list-content-inset`（默认 16px），等于行外侧内缩加行内留白。数量和刷新操作放在同一标题行右侧；搜索使用 `.trm-workbench-search`。`Filters` 保留按钮的水平内边距，让底色完整包住文字和计数。`Tabs` 的文字与下划线对齐内容左边缘。
 `pager` 接受现有 `<Pager page={page} pages={pages} onChange={setPage} />`，固定在列表卡片底部，位于滚动列表之外，不随列表推移。
 详情保留页面底色，不增加卡片。标题、正文、提示和底部横向占满详情，统一使用 `--workbench-padding`（16px）。
 原有 `.trm-workbench-read` 类继续保留，但不再限宽和居中。阅读宽度上限只加在单独的段落或字段上，靠起始边对齐；

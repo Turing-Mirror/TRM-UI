@@ -788,8 +788,7 @@ option {
 /* Counts, refresh actions and search share the same content edge; nested heading padding must not add another inset. */
 .trm-workbench-list-head .trm-workbench-heading { padding-left: 0; padding-right: 0; }
 .trm-workbench-search { padding-block-end: 12px; min-width: 0; }
-.trm-workbench-filters > [role="radiogroup"] { gap: 12px; }
-.trm-workbench-filters :is([role="radio"], [role="tab"]) { padding-inline: 0; }
+.trm-workbench-filters [role="tab"] { padding-inline: 0; }
 .trm-workbench-pager { flex: none; padding: 12px var(--workbench-list-content-inset); --pager-margin-top: 0px; }
 .trm-workbench-main {
   display: flex; flex: 1; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden;
