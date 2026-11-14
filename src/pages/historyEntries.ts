@@ -110,14 +110,14 @@ export const HISTORY: HistoryEntry[] = [
     "ru-RU": "Заголовки и строки имеют общий край. Все детали сдвигают только всё тело по порядку списка. Pager закреплён внизу карточки; страницы движутся горизонтально и возвращаются вверх."
   },
   "why": {
-    "zh-CN": "所有者要求统一对齐、简化详情切换，并用页码替代工作队列的无限追加。",
-    "zh-TW": "所有者要求統一對齊、簡化詳情切換，並用頁碼取代工作佇列的無限追加。",
-    "en-US": "The owner requested consistent alignment, simpler detail switches and numbered pages instead of endless work queues.",
-    "ja-JP": "所有者が整列の統一、詳細切替の簡素化、作業キューの無限追加からページ番号への変更を指定した。",
-    "ko-KR": "소유자가 정렬 통일, 상세 전환 단순화, 작업 대기열의 무한 추가 대신 페이지 번호를 요청했다.",
-    "fr-FR": "Le propriétaire demande un alignement commun, des transitions simples et des pages numérotées plutôt que des files infinies.",
-    "es-ES": "El propietario pidió alineación uniforme, cambios simples y páginas numeradas en vez de colas infinitas.",
-    "ru-RU": "Владелец запросил единое выравнивание, простую смену деталей и номера страниц вместо бесконечных очередей."
+    "zh-CN": "需要统一对齐、简化详情切换，并用页码替代工作队列的无限追加。",
+    "zh-TW": "需要統一對齊、簡化詳情切換，並用頁碼取代工作佇列的無限追加。",
+    "en-US": "Alignment had to be unified, detail switches simplified, and endless work queues replaced with numbered pages.",
+    "ja-JP": "整列の統一、詳細切替の簡素化、作業キューの無限追加からページ番号への変更が必要になったため。",
+    "ko-KR": "정렬 통일, 상세 전환 단순화, 작업 대기열의 무한 추가를 페이지 번호로 바꾸어야 했기 때문이다.",
+    "fr-FR": "Il fallait unifier l'alignement, simplifier les transitions de détail et remplacer les files infinies par des pages numérotées.",
+    "es-ES": "Era necesario unificar la alineación, simplificar los cambios de detalle y sustituir las colas infinitas por páginas numeradas.",
+    "ru-RU": "Требовалось унифицировать выравнивание, упростить смену деталей и заменить бесконечные очереди номерами страниц."
   }
 },
 {
@@ -144,14 +144,14 @@ export const HISTORY: HistoryEntry[] = [
     "ru-RU": "Кнопка стоит снаружи справа, имеет высоту 48px как однострочное поле, выровнена по низу с промежутком 8px. Состояние по центру, действия справа; Btn и отправка используют задержку 300мс без изменения ширины."
   },
   "why": {
-    "zh-CN": "所有者要求发送按钮放在输入框外，并将处理状态居中；短请求的瞬时忙碌图标会产生闪烁。",
-    "zh-TW": "所有者要求傳送按鈕放在輸入框外，並將處理狀態置中；短請求的瞬時忙碌圖示會產生閃爍。",
-    "en-US": "The owner requested an external send button and centered handling state; transient spinners on quick requests read as flicker.",
-    "ja-JP": "所有者が外側の送信ボタンと中央の状態表示を指定した。短い処理の一瞬の回転表示はちらつきに見える。",
-    "ko-KR": "소유자가 입력창 밖의 전송 버튼과 중앙 상태 표시를 요청했다. 짧은 요청의 순간적인 회전 표시는 깜박임으로 보인다.",
-    "fr-FR": "Le propriétaire demande un bouton externe et un état centré ; les indicateurs fugitifs des requêtes rapides ressemblent à un clignotement.",
-    "es-ES": "El propietario pidió el botón fuera y el estado centrado; los indicadores fugaces de solicitudes rápidas parecen parpadeos.",
-    "ru-RU": "Владелец запросил внешнюю кнопку и состояние по центру; мгновенные спиннеры коротких запросов воспринимаются как мерцание."
+    "zh-CN": "需要将发送按钮移到输入框外并居中显示处理状态，同时避免短请求的瞬时忙碌图标闪烁。",
+    "zh-TW": "需要將傳送按鈕移到輸入框外並置中顯示處理狀態，同時避免短請求的瞬時忙碌圖示閃爍。",
+    "en-US": "The send button had to move outside the input with a centered handling state, avoiding spinner flicker on quick requests.",
+    "ja-JP": "送信ボタンを入力欄の外に出して状態表示を中央に置き、短い処理での一瞬のスピナーのちらつきをなくすため。",
+    "ko-KR": "전송 버튼을 입력창 바깥에 두고 상태 표시를 중앙에 맞추며, 짧은 요청에서의 순간적인 스피너 깜박임을 없애기 위해서다.",
+    "fr-FR": "Il fallait placer le bouton d'envoi hors du champ, centrer l'état de traitement et éviter le clignotement de l'indicateur sur les requêtes rapides.",
+    "es-ES": "Era necesario sacar el botón de envío fuera del campo, centrar el estado de respuesta y evitar el parpadeo en solicitudes rápidas.",
+    "ru-RU": "Требовалось вынести кнопку отправки за пределы поля, центрировать состояние обработки и убрать мерцание индикатора на быстрых запросах."
   }
 },
 {

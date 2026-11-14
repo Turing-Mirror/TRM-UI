@@ -333,7 +333,7 @@
     "type": {
       "sub": "正文字號 15px，行高 1.65。字號只使用下列檔位。",
       "roleBody": "內文",
-      "roleValue": "??",
+      "roleValue": "數值",
       "roleHelp": "說明",
       "roleMeta": "次要",
       "weight": "字重 {v}"
