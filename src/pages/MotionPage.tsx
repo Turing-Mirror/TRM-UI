@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   PagePad,
   PageHead,
@@ -148,8 +148,13 @@ export function MotionPage() {
 function Curves() {
   const { t } = useI18n();
   const dots = useRef<(HTMLSpanElement | null)[]>([]);
-  const [values, setValues] = useState<string[]>([]);
-  useLayoutEffect(() => setValues(CURVES.map((c) => curveOf(c.token))), []);
+  const sampled = useMemo(
+    () => CURVES.map((c) => {
+      const value = typeof document === "undefined" ? "" : curveOf(c.token);
+      return { value, pts: sample(value) };
+    }),
+    [],
+  );
   const play = (only?: number) => {
     dots.current.forEach((el, i) => {
       if (!el || (only !== undefined && only !== i)) return;
@@ -161,8 +166,7 @@ function Curves() {
     <Block title={t("demo.motion.curves")} action={<Btn primary onClick={() => play()}>{t("demo.motion.playAll")}</Btn>}>
       <Group>
         {CURVES.map((c, i) => {
-          const v = values[i] ?? "";
-          const pts = sample(v);
+          const { value: v, pts } = sampled[i];
           const lo = Math.min(0, ...pts);
           const hi = Math.max(1, ...pts);
           const path = pts.map((y, k) => `${k ? "L" : "M"}${((k / (pts.length - 1)) * 64).toFixed(1)},${(40 - ((y - lo) / (hi - lo)) * 36).toFixed(1)}`).join(" ");

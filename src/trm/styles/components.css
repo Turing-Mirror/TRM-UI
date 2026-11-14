@@ -155,7 +155,13 @@ html[data-input="pointer"] :focus-visible {
   margin-block-end: var(--shell-gap);
   border-radius: var(--r);
   background: var(--workspace-bg);
-  overflow: hidden;
+  overflow: clip;
+  isolation: isolate;
+}
+[data-page-resting] *,
+[data-page-resting] *::before,
+[data-page-resting] *::after {
+  animation-play-state: paused;
 }
 .page-workspace-detached { margin-inline-start: var(--shell-gap); }
 /* 网页没有标题栏或内嵌窗口边框；父级提供确定高度，内容独立滚动。 */
@@ -597,7 +603,7 @@ option {
    阴影画在最上面一层，盖得住卡片里的图。 */
 .sink { transition: transform 0.36s var(--ease-nav); }
 @supports (hanging-punctuation: first) {
-  .sink { transform: translateZ(0); will-change: transform; }
+  .group:is(:hover, :focus-visible, :active) .sink { transform: translateZ(0); will-change: transform; }
 }
 .sink::after {
   content: "";

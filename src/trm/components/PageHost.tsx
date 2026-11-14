@@ -1,6 +1,7 @@
 import {
   Activity,
   createContext,
+  memo,
   useContext,
   useEffect,
   useLayoutEffect,
@@ -82,6 +83,8 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
   const running = useRef<Animation | null>(null);
   const panes = useRef(new Map<T, HTMLDivElement>());
   const scrolls = useRef(new Map<T, number>());
+  const mountedIds = useRef(new Set<T>());
+  const restingIds = useRef(new Set<T>());
 
   if (st.page !== page) {
     const dir = reduce ? 0 : nav.direction(st.page, page);
@@ -104,6 +107,17 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
 
   const slot = st.layers.find((l) => l.id === st.page)?.slot ?? 0;
   const moving = st.layers.length > 1;
+
+  // 常驻页回来时回到离开时的滚动位置；必须在启动胶片动画前恢复，免得写入 scrollTop 在动画开始后触发二次排版。
+  const shown = useRef(page);
+  useLayoutEffect(() => {
+    const left = panes.current.get(shown.current);
+    if (left && shown.current !== st.page) scrolls.current.set(shown.current, left.scrollTop);
+    shown.current = st.page;
+    const el = panes.current.get(st.page);
+    const saved = scrolls.current.get(st.page);
+    if (el && saved !== undefined && el.scrollTop !== saved) el.scrollTop = saved;
+  }, [st.page]);
 
   useLayoutEffect(() => {
     const el = strip.current;
@@ -132,6 +146,25 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
     );
     running.current = animation;
     animation.finished.then(() => { if (running.current === animation) settle(); }, () => undefined);
+    // 只有从隐藏状态（Activity display:none 或首次挂载）唤醒的新页，Safari 才需要较长排版/提交；
+    // 已在台下保持渲染的常驻页直接开播，避免每次切页白等一帧才开始响应。
+    const wokeFromRest = !mountedIds.current.has(st.page) || restingIds.current.has(st.page);
+    if (
+      wokeFromRest &&
+      typeof animation.pause === "function" &&
+      typeof animation.play === "function" &&
+      typeof requestAnimationFrame === "function" &&
+      (typeof document === "undefined" || !document.hidden)
+    ) {
+      animation.pause();
+      let raf = requestAnimationFrame(() => {
+        raf = 0;
+        if (running.current === animation) animation.play();
+      });
+      return () => {
+        if (raf) cancelAnimationFrame(raf);
+      };
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- 换页和停稳各跑一次
   }, [st.seq, slot, moving]);
   useEffect(() => () => running.current?.cancel(), []);
@@ -152,21 +185,22 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
     };
   }, [next]);
 
-  // 常驻页回来时回到离开时的滚动位置；藏着的时候排版若变短，浏览器会把位置收回去。
-  const shown = useRef(page);
-  useLayoutEffect(() => {
-    const left = panes.current.get(shown.current);
-    if (left && shown.current !== st.page) scrolls.current.set(shown.current, left.scrollTop);
-    shown.current = st.page;
-    const el = panes.current.get(st.page);
-    const saved = scrolls.current.get(st.page);
-    if (el && saved !== undefined && el.scrollTop !== saved) el.scrollTop = saved;
-  }, [st.page]);
-
   const onStrip = new Map(st.layers.map((l) => [l.id, l.slot]));
   // 按 id 排序，节点先后永远不变：换格子时 React 不挪节点，滚动位置不会被重置。
   const ids = [...new Set([...onStrip.keys(), ...parked])].sort();
   const mounted = ids.join("\n");
+  const restingEntries = ids.map((id) => [
+    id,
+    onStrip.get(id) === undefined && (keep?.(id) === "paused" || !st.seen.includes(id)),
+  ] as const);
+  useLayoutEffect(() => {
+    mountedIds.current = new Set(ids);
+    const nextResting = new Set<T>();
+    for (const [id, isResting] of restingEntries) {
+      if (isResting) nextResting.add(id);
+    }
+    restingIds.current = nextResting;
+  });
   useEffect(() => {
     // 已卸下的页不留滚动位置，下次来从头看。
     const alive = new Set(mounted.split("\n"));
@@ -174,8 +208,8 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
   }, [mounted]);
 
   return (
-    <div className="relative flex-1 overflow-hidden">
-      <div ref={strip} className="absolute inset-0">
+    <div className="relative flex-1 overflow-clip">
+      <div ref={strip} className={`absolute inset-0 ${st.seq ? "flow-quiet" : ""}`} style={moving ? { willChange: "transform" } : undefined}>
         {ids.map((id) => {
           const at = onStrip.get(id);
           const active = id === st.page;
@@ -189,13 +223,18 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
                 else panes.current.delete(id);
               }}
               data-page-scroll={active ? "" : undefined}
+              data-page-resting={at === undefined ? "" : undefined}
               inert={!active}
               aria-hidden={!active || undefined}
               className={`absolute ${paneClassName?.(id) ?? "overflow-y-auto"} ${at === undefined ? "invisible" : ""}`}
-              style={place(axis, at ?? slot)}
+              style={{
+                ...place(axis, at ?? slot),
+                contain: "layout style paint",
+                ...(moving && at !== undefined ? { willChange: "transform" } : null),
+              }}
             >
               <Activity mode={resting ? "hidden" : "visible"}>
-                <PageActive value={active}>{children(id)}</PageActive>
+                <PaneBody active={active} node={children(id)} />
               </Activity>
             </div>
           );
@@ -204,6 +243,10 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
     </div>
   );
 }
+
+const PaneBody = memo(function PaneBody({ active, node }: { active: boolean; node: ReactNode }) {
+  return <PageActive value={active}>{node}</PageActive>;
+});
 
 function shift(axis: "x" | "y", slots: number): string {
   return axis === "y" ? `translate3d(0, ${slots * 100}%, 0)` : `translate3d(${slots * 100}%, 0, 0)`;
