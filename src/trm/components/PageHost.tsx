@@ -105,6 +105,17 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
   const slot = st.layers.find((l) => l.id === st.page)?.slot ?? 0;
   const moving = st.layers.length > 1;
 
+  // 常驻页回来时回到离开时的滚动位置；必须在启动胶片动画前恢复，免得写入 scrollTop 在动画开始后触发二次排版。
+  const shown = useRef(page);
+  useLayoutEffect(() => {
+    const left = panes.current.get(shown.current);
+    if (left && shown.current !== st.page) scrolls.current.set(shown.current, left.scrollTop);
+    shown.current = st.page;
+    const el = panes.current.get(st.page);
+    const saved = scrolls.current.get(st.page);
+    if (el && saved !== undefined && el.scrollTop !== saved) el.scrollTop = saved;
+  }, [st.page]);
+
   useLayoutEffect(() => {
     const el = strip.current;
     if (!el) return;
@@ -132,6 +143,23 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
     );
     running.current = animation;
     animation.finished.then(() => { if (running.current === animation) settle(); }, () => undefined);
+    // Safari 在新页首次显形并提交合成层前就会让 WAAPI 时钟开始走，第一帧常直接跳过 ease-nav 前段。
+    // 先停在起点等本帧排版/图层提交，再从下一帧 VSync 播放，保证整段曲线从 0% 起走。
+    if (
+      typeof animation.pause === "function" &&
+      typeof animation.play === "function" &&
+      typeof requestAnimationFrame === "function" &&
+      (typeof document === "undefined" || !document.hidden)
+    ) {
+      animation.pause();
+      let raf = requestAnimationFrame(() => {
+        raf = 0;
+        if (running.current === animation) animation.play();
+      });
+      return () => {
+        if (raf) cancelAnimationFrame(raf);
+      };
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- 换页和停稳各跑一次
   }, [st.seq, slot, moving]);
   useEffect(() => () => running.current?.cancel(), []);
@@ -151,17 +179,6 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
       if (idle) window.cancelIdleCallback(idle);
     };
   }, [next]);
-
-  // 常驻页回来时回到离开时的滚动位置；藏着的时候排版若变短，浏览器会把位置收回去。
-  const shown = useRef(page);
-  useLayoutEffect(() => {
-    const left = panes.current.get(shown.current);
-    if (left && shown.current !== st.page) scrolls.current.set(shown.current, left.scrollTop);
-    shown.current = st.page;
-    const el = panes.current.get(st.page);
-    const saved = scrolls.current.get(st.page);
-    if (el && saved !== undefined && el.scrollTop !== saved) el.scrollTop = saved;
-  }, [st.page]);
 
   const onStrip = new Map(st.layers.map((l) => [l.id, l.slot]));
   // 按 id 排序，节点先后永远不变：换格子时 React 不挪节点，滚动位置不会被重置。
@@ -189,6 +206,7 @@ export function PageHost<T extends string>({ nav, page, children, axis = "x", ke
                 else panes.current.delete(id);
               }}
               data-page-scroll={active ? "" : undefined}
+              data-page-resting={at === undefined ? "" : undefined}
               inert={!active}
               aria-hidden={!active || undefined}
               className={`absolute ${paneClassName?.(id) ?? "overflow-y-auto"} ${at === undefined ? "invisible" : ""}`}
