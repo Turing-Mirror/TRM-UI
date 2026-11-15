@@ -6,16 +6,18 @@
 import type { ReactNode } from "react";
 import { usePresence } from "./overlay";
 
-export function Nudge({ open, title, children, actions }: { open: boolean; title: string; children: ReactNode; actions: ReactNode }) {
+export function Nudge({ open, title, children, actions }: { open: boolean; title: string; children?: ReactNode; actions: ReactNode }) {
   const { mounted, leaving } = usePresence(open, 180);
   if (!mounted) return null;
+  // 没有说明时只剩一句标题：标题与按钮居中对齐，不在下面留一行空白。
+  const hasBody = children != null && children !== false && children !== "";
   return (
     <div className={`grid grid-rows-[1fr] ${leaving ? "nudge-out" : "nudge-in"}`}>
       <div className={leaving ? "min-h-0 overflow-hidden" : "min-h-0"}>
-        <div className="rounded-[var(--r)] bg-[var(--surface)] px-4 py-3 shadow-[var(--glass),0_0_0_1px_var(--hairline)] flex items-start gap-3 flex-wrap">
+        <div className={`rounded-[var(--r)] bg-[var(--surface)] px-4 py-3 shadow-[var(--glass),0_0_0_1px_var(--hairline)] flex ${hasBody ? "items-start" : "items-center"} gap-3 flex-wrap`}>
           <div className="min-w-0 flex-1">
-            <div className="text-sm font-semibold mb-1">{title}</div>
-            <div className="text-[12.5px] text-[var(--help)] leading-relaxed">{children}</div>
+            <div className={`text-sm font-semibold${hasBody ? " mb-1" : ""}`}>{title}</div>
+            {hasBody ? <div className="text-[12.5px] text-[var(--help)] leading-relaxed">{children}</div> : null}
           </div>
           <div className="flex gap-2 items-center flex-wrap">{actions}</div>
         </div>
