@@ -66,6 +66,36 @@ describe("SegmentControl 的指针收尾", () => {
     }
   }
 
+  it.each([
+    ["a", 3],
+    ["b", 103],
+  ] as const)("隐藏时挂载，显示后绘制选中项 %s", (selected, x) => {
+    const widths = vi.mocked(Object.getOwnPropertyDescriptor(HTMLElement.prototype, "offsetWidth")!.get!);
+    widths.mockReturnValue(0);
+    let resize: ResizeObserverCallback | undefined;
+    vi.stubGlobal("ResizeObserver", class {
+      constructor(callback: ResizeObserverCallback) { resize = callback; }
+      observe() {}
+      disconnect() {}
+    });
+
+    const options = [{ id: "a", label: "甲" }, { id: "b", label: "乙" }] as const;
+    const onChange = vi.fn();
+    const view = (value: "a" | "b") => <SegmentControl options={[...options]} value={value} onChange={onChange} />;
+    mounted = mount(view("a"));
+    const thumb = mounted.container.querySelector<HTMLElement>(".seg-thumb")!;
+    expect(thumb.style.opacity).toBe("0");
+    act(() => mounted!.root.render(view(selected)));
+
+    widths.mockReturnValue(100);
+    act(() => resize!([], {} as ResizeObserver));
+    expect(thumb.style.opacity).toBe("1");
+    expect(thumb.style.width).toBe("100px");
+    expect(thumb.style.transform).toBe(`translateX(${x}px)`);
+    expect(frames.size).toBe(0);
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
   it.each(["pointerup", "pointercancel"])("按下后直接移出控件，在外部 %s 后结束动画循环", (ending) => {
     const { root, changed } = setup();
     pointer(root, "pointerdown");

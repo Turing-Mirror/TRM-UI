@@ -285,11 +285,12 @@ class Sim {
 
   /** 弹向某一项。 */
   target(id: string) {
-    this.geometry = this.io.slots();
-    const slot = this.geometry.find((s) => s.id === id);
-    // 量不到位置（藏在看不见的地方）时不做动画
-    if (!slot || slot.w === 0) return;
+    // 隐藏时也记住选中项。重新显示后，尺寸监听会按这一项绘制滑块。
     this.goal = id;
+    const geometry = this.io.slots();
+    const slot = geometry.find((s) => s.id === id);
+    if (!slot || slot.w === 0) return;
+    this.geometry = geometry;
     this.tx = slot.x;
     this.tw = slot.w;
     if (!this.placed || this.reduce) {
@@ -307,14 +308,16 @@ class Sim {
   settle(force = false) {
     // A commit or resize can change the layout. Animation frames reuse this
     // snapshot so painting the thumb never forces a layout read on the next frame.
-    this.geometry = this.io.slots();
-    if (!this.goal) return;
-    const slot = this.geometry.find((s) => s.id === this.goal);
-    if (!slot) return;
-    if (slot.x === this.tx && slot.w === this.tw && !force) return;
+    if (this.goal === null) return;
+    const geometry = this.io.slots();
+    const slot = geometry.find((s) => s.id === this.goal);
+    if (!slot || slot.w === 0) return;
+    this.geometry = geometry;
+    if (this.placed && slot.x === this.tx && slot.w === this.tw && !force) return;
     this.tx = slot.x;
     this.tw = slot.w;
     if (!this.raf && !this.held) {
+      this.placed = true;
       this.x = this.tx;
       this.w = this.tw;
       this.draw();
