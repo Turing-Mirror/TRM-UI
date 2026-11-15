@@ -210,7 +210,7 @@ npm pack
 | Workbench 可选参数 | `listHead`、`pager`、`listWidth`、`narrowAt`、`empty`、`className`。 |
 | `WorkbenchItem` / `WorkbenchItemProps` | `title`、`selected`、`onClick`；可选 `meta`、`preview`、`tag`、`avatar`。 |
 | `WorkbenchDetail` / `WorkbenchDetailProps` | `title`、`children`。 |
-| WorkbenchDetail 可选参数 | `titleText`、`sub`、`actions`、`notice`、`foot`、`footMode`、`scrollToEnd`。 |
+| WorkbenchDetail 可选参数 | `titleText`、`sub`、`actions`、`notice`、`foot`、`footMode`、`scrollToEnd`、`pending`。 |
 | `ChatComposer` / `ChatComposerProps` | `value`、`onChange`、`onSend`、`placeholder`、`sendLabel`。 |
 | ChatComposer 可选参数 | `ariaLabel`、`disabled`、`sending`、`maxHeight`、`state`、`className`。 |
 | `ChatState` / `ChatStateProps` | `label`；可选 `tone: "assistant" \| "human"`、`icon`、`action`。 |
@@ -245,6 +245,8 @@ npm pack
 推移期间正文内部（包括嵌套 FlowList）直接显示常驻内容，取消子元素的入场与淡入淡出，不叠加逐块或逐条气泡伸缩；推移完成后，同一条目追加仍逐条展开。消息使用包含会话 ID 的稳定 key。提示位于固定正文上方，操作、ChatState 与 composer 不参与正文推移。
 首次显示标题和字段时可依次浮现；后续切换移除 rise，只沿列表方向全程不透明地竖向滚字。同项更新保留标签滚字，不触发正文推移或标题入场。空态与详情直接替换，维持无重叠行为。
 减少动态效果时，滚字、折叠、消息增删及自动滚动立即完成。
+
+正文需要先请求数据时传 `pending`：加载期间为 true，数据到齐的那次更新把它置为 false，到齐的内容原地一次淡入，不逐块展开，聊天直接定位到末尾；之后的增删仍由 `FlowList` 逐条展开。
 
 聊天可设置 `scrollToEnd={conversationId + ":" + messageCount}`。首次挂载在绘制前定位末尾；
 切换条目时新层在绘制前定位末尾，入场后不再跳转；同一条目令牌变化后在 `FLOW_MS` 内跟随正在伸缩的消息末尾。

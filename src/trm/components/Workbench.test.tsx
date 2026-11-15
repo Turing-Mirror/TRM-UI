@@ -593,3 +593,19 @@ it("honors reduced motion without launching JavaScript push animations", () => {
   expect(animate).not.toHaveBeenCalled();
   expect(view.container.querySelector(".trm-workbench-detail")?.textContent).toContain("Body a");
 });
+
+it("shows content that arrives after loading settled in place, then unfolds later additions", () => {
+  const body = (pending: boolean, messages: string[]) => <Workbench selected="a" order={["a"]} onBack={() => {}}
+    list={null} detail={<WorkbenchDetail title="a" pending={pending} scrollToEnd={`a:${messages.length}`}>
+      {pending ? <p key="loading">Loading</p> : null}
+      {messages.map(text => <p key={text}>{text}</p>)}
+    </WorkbenchDetail>} />;
+  view = mount(body(true, []));
+  act(() => view.root.render(body(false, ["first", "second"])));
+  // Arrived together: no block is entering or leaving, and the loading line is gone at once.
+  expect(view.container.querySelector('[data-phase="enter"]')).toBeNull();
+  expect(view.container.querySelector('[data-phase="leave"]')).toBeNull();
+  expect([...view.container.querySelectorAll(".trm-workbench-body-current p")].map(node => node.textContent)).toEqual(["first", "second"]);
+  act(() => view.root.render(body(false, ["first", "second", "reply"])));
+  expect(view.container.querySelector('[data-phase="enter"] p')?.textContent).toBe("reply");
+});

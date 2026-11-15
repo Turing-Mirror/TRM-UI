@@ -156,6 +156,11 @@ export type WorkbenchDetailProps = {
   footMode?: "inline" | "pinned";
   /** Change this token to follow the content end during a conversation switch or append. */
   scrollToEnd?: string | number;
+  /**
+   * The body is still loading. The update that clears it shows the arrived content in place
+   * with one fade, instead of unfolding block by block.
+   */
+  pending?: boolean;
 };
 
 function field(node: ReactNode) {
@@ -163,7 +168,7 @@ function field(node: ReactNode) {
 }
 
 export function WorkbenchDetail({
-  title, titleText, sub, actions, notice, children, foot, footMode = "inline", scrollToEnd,
+  title, titleText, sub, actions, notice, children, foot, footMode = "inline", scrollToEnd, pending,
 }: WorkbenchDetailProps) {
   const id = useId();
   const selection = useContext(SelectionContext);
@@ -217,7 +222,7 @@ export function WorkbenchDetail({
       <Collapse open={notice != null && notice !== false} className="trm-workbench-notice trm-workbench-body-notice">
         <div className="trm-workbench-notice-content">{notice}</div>
       </Collapse>
-      <WorkbenchBody scope={selection.selected!} order={selection.order} blocks={blocks} end={scrollToEnd} />
+      <WorkbenchBody scope={selection.selected!} order={selection.order} blocks={blocks} end={scrollToEnd} pending={pending} />
       {footMode === "inline" ? footer : null}
     </> : <div ref={body} className="trm-workbench-body" data-follow-end={scrollToEnd !== undefined || undefined}>
       {/* FlowList already morphs keyed changes; a second height transition would lag behind the scroll end. */}
