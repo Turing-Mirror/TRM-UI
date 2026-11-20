@@ -16,7 +16,9 @@
       "removing": "卸載中…",
       "remove": "卸載",
       "downloading": "下載中…",
-      "download": "下載"
+      "download": "下載",
+      "background": "背景下載",
+      "expand": "展開下載視窗"
     },
     "crop": {
       "title": "更換封面並裁剪",

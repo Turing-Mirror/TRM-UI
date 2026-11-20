@@ -16,7 +16,9 @@
       "removing": "Suppression…",
       "remove": "Désinstaller",
       "downloading": "Téléchargement…",
-      "download": "Télécharger"
+      "download": "Télécharger",
+      "background": "Télécharger en arrière-plan",
+      "expand": "Ouvrir la fenêtre de téléchargement"
     },
     "crop": {
       "title": "Changer et rogner la couverture",

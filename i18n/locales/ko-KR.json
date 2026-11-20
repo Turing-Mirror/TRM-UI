@@ -16,7 +16,9 @@
       "removing": "삭제 중…",
       "remove": "삭제",
       "downloading": "다운로드 중…",
-      "download": "다운로드"
+      "download": "다운로드",
+      "background": "백그라운드에서 다운로드",
+      "expand": "다운로드 창 열기"
     },
     "crop": {
       "title": "커버 변경 및 자르기",

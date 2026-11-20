@@ -16,7 +16,9 @@
       "removing": "Removing…",
       "remove": "Uninstall",
       "downloading": "Downloading…",
-      "download": "Download"
+      "download": "Download",
+      "background": "Download in background",
+      "expand": "Open download window"
     },
     "crop": {
       "title": "Change and crop the cover",

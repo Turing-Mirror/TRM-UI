@@ -16,7 +16,9 @@
       "removing": "削除中…",
       "remove": "削除",
       "downloading": "ダウンロード中…",
-      "download": "ダウンロード"
+      "download": "ダウンロード",
+      "background": "バックグラウンドでダウンロード",
+      "expand": "ダウンロード画面を開く"
     },
     "crop": {
       "title": "カバーの変更と切り抜き",

@@ -16,7 +16,9 @@
       "removing": "Desinstalando…",
       "remove": "Desinstalar",
       "downloading": "Descargando…",
-      "download": "Descargar"
+      "download": "Descargar",
+      "background": "Descargar en segundo plano",
+      "expand": "Abrir ventana de descarga"
     },
     "crop": {
       "title": "Cambiar y recortar la portada",

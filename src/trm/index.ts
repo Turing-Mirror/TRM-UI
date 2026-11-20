@@ -131,3 +131,10 @@ export { CoverPlaceholder } from "./components/CoverPlaceholder";
 export { ART_COUNT, artOf, artInitial } from "./lib/art";
 export { THUMB_PX, useThumb, loadThumb, peekThumb, forgetThumb, thumbSupported } from "./lib/thumb";
 export { TransferProgress } from "./components/TransferProgress";
+export {
+  ProgressOrb,
+  DockableModal,
+  type ProgressOrbProps,
+  type DockableModalProps,
+  type OrbAttention,
+} from "./components/DownloadOrb";

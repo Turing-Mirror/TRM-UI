@@ -1252,3 +1252,69 @@ option {
     transition: none;
   }
 }
+
+/* 后台下载小球与可收起弹窗之间的变形过渡，参考全局气泡写法，曲线走 --ease-nav、时长对齐 --flow-ms。 */
+.trm-dock-morph {
+  contain: layout paint;
+  transition:
+    left var(--flow-ms) var(--ease-nav),
+    top var(--flow-ms) var(--ease-nav),
+    width var(--flow-ms) var(--ease-nav),
+    height var(--flow-ms) var(--ease-nav),
+    border-radius var(--flow-ms) var(--ease-nav),
+    box-shadow 200ms var(--ease);
+}
+.trm-dock-scrim {
+  transition: opacity var(--out-ms) var(--ease-soft);
+}
+@keyframes trm-dock-face-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes trm-dock-face-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+.trm-dock-face-in {
+  animation: trm-dock-face-in 200ms var(--ease-soft) 200ms both;
+}
+.trm-dock-face-out {
+  animation: trm-dock-face-out 200ms var(--ease-soft) both;
+}
+@keyframes trm-orb-in {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes trm-orb-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: scale(0.8); }
+}
+.trm-orb-in {
+  animation: trm-orb-in 300ms var(--ease) both;
+}
+.trm-orb-out {
+  animation: trm-orb-out var(--out-ms) var(--ease-soft) both;
+}
+.trm-orb {
+  transition:
+    left var(--flow-ms) var(--ease-nav),
+    top var(--flow-ms) var(--ease-nav),
+    box-shadow 200ms var(--ease);
+}
+.trm-orb[data-dragging] {
+  transition: none;
+  cursor: grabbing;
+}
+.trm-orb:hover {
+  box-shadow: var(--glass), 0 0 0 1px var(--focus-line);
+}
+.trm-orb-arc {
+  transition: stroke-dashoffset var(--flow-ms) var(--ease);
+}
+@keyframes trm-orb-spin {
+  to { transform: rotate(360deg); }
+}
+.trm-orb-spin {
+  transform-origin: center;
+  animation: trm-orb-spin 1.2s linear infinite;
+}
