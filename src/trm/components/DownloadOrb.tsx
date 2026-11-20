@@ -41,11 +41,13 @@ function clampArea(el: HTMLElement | null, contained: boolean): { w: number; h: 
   return { w: window.innerWidth, h: window.innerHeight };
 }
 
-function defaultOrbRect(area: { w: number; h: number }, slot: number, pos?: SnapPos): Box {
+function defaultOrbRect(area: { w: number; h: number }, slot: number, baseBottom: number, pos?: SnapPos): Box {
   const left = pos
     ? (pos.side === "left" ? ORB_MARGIN + slot * ORB_STEP : Math.max(ORB_MARGIN, area.w - ORB_MARGIN - ORB_SIZE - slot * ORB_STEP))
     : ORB_MARGIN + slot * ORB_STEP;
-  const bottom = pos ? Math.min(Math.max(ORB_MARGIN, pos.bottom), Math.max(ORB_MARGIN, area.h - ORB_SIZE - ORB_MARGIN)) : ORB_MARGIN;
+  const bottom = pos
+    ? Math.min(Math.max(baseBottom, pos.bottom), Math.max(baseBottom, area.h - ORB_SIZE - ORB_MARGIN))
+    : baseBottom;
   return {
     left: Math.min(left, Math.max(ORB_MARGIN, area.w - ORB_SIZE - ORB_MARGIN)),
     top: Math.max(ORB_MARGIN, area.h - bottom - ORB_SIZE),
@@ -164,39 +166,45 @@ function useHostArea(active: boolean, hostRef: React.RefObject<HTMLDivElement | 
 function useCornerOrb({
   area,
   slot,
+  baseBottom,
   draggable,
 }: {
   area: { w: number; h: number };
   slot: number;
+  baseBottom: number;
   draggable: boolean;
 }) {
-  const [pos, setPos] = useState<SnapPos>({ side: "left", bottom: ORB_MARGIN });
+  const [pos, setPos] = useState<SnapPos>({ side: "left", bottom: baseBottom });
   const usableW = Math.max(ORB_SIZE, area.w - ORB_MARGIN * 2);
   const usableH = Math.max(ORB_SIZE, area.h);
+  const minBottom = Math.min(baseBottom, Math.max(ORB_MARGIN, usableH - ORB_SIZE - ORB_MARGIN));
+  const maxBottom = Math.max(minBottom, usableH - ORB_SIZE - ORB_MARGIN);
+  const clampBottom = (v: number) => Math.min(Math.max(minBottom, v), maxBottom);
   const snap = useSnapDrag({
     size: ORB_SIZE,
     area: { w: usableW, h: usableH },
     pos: {
       side: pos.side,
-      bottom: Math.min(Math.max(ORB_MARGIN, pos.bottom), Math.max(ORB_MARGIN, usableH - ORB_SIZE - ORB_MARGIN)),
+      bottom: clampBottom(pos.bottom),
     },
     onDrop: (next) =>
       setPos({
         side: next.side,
-        bottom: Math.min(Math.max(ORB_MARGIN, next.bottom), Math.max(ORB_MARGIN, usableH - ORB_SIZE - ORB_MARGIN)),
+        bottom: clampBottom(next.bottom),
       }),
   });
 
   const hasArea = area.w > 0 && area.h > 0;
+  const restRect = defaultOrbRect(area, slot, minBottom, pos);
   const rawLeft = hasArea
-    ? ORB_MARGIN + (pos.side === "left" ? slot * ORB_STEP : -slot * ORB_STEP) + (draggable ? snap.at.x : defaultOrbRect(area, slot, pos).left - ORB_MARGIN)
+    ? ORB_MARGIN + (pos.side === "left" ? slot * ORB_STEP : -slot * ORB_STEP) + (draggable ? snap.at.x : restRect.left - ORB_MARGIN)
     : ORB_MARGIN + slot * ORB_STEP;
   const clampedLeft = hasArea ? Math.min(Math.max(ORB_MARGIN, rawLeft), Math.max(ORB_MARGIN, area.w - ORB_SIZE - ORB_MARGIN)) : ORB_MARGIN + slot * ORB_STEP;
   const style: CSSProperties = hasArea
-    ? { left: clampedLeft, top: draggable ? snap.at.y : defaultOrbRect(area, slot, pos).top }
-    : { left: clampedLeft, bottom: ORB_MARGIN };
+    ? { left: clampedLeft, top: draggable ? snap.at.y : restRect.top }
+    : { left: clampedLeft, bottom: minBottom };
 
-  return { pos, snap, style };
+  return { pos, minBottom, snap, style };
 }
 
 function CornerOrbButton({
@@ -271,6 +279,7 @@ export type ProgressOrbProps = {
   contained?: boolean;
   z?: number;
   slot?: number;
+  bottom?: number;
   draggable?: boolean;
 };
 
@@ -287,12 +296,13 @@ export function ProgressOrb({
   contained = true,
   z = 50,
   slot = 0,
+  bottom = ORB_MARGIN,
   draggable = true,
 }: ProgressOrbProps) {
   const { mounted, leaving } = usePresence(open);
   const hostRef = useRef<HTMLDivElement>(null);
   const area = useHostArea(mounted, hostRef, contained);
-  const orb = useCornerOrb({ area, slot, draggable });
+  const orb = useCornerOrb({ area, slot, baseBottom: bottom, draggable });
 
   if (!mounted) return null;
 
@@ -336,6 +346,7 @@ export type DockableModalProps = {
   attention?: OrbAttention;
   tooltip?: string;
   slot?: number;
+  bottom?: number;
   draggable?: boolean;
   children: ReactNode;
 };
@@ -361,6 +372,7 @@ export function DockableModal({
   attention = "idle",
   tooltip,
   slot = 0,
+  bottom = ORB_MARGIN,
   draggable = true,
   children,
 }: DockableModalProps) {
@@ -379,7 +391,7 @@ export function DockableModal({
   const timerRef = useRef<number | null>(null);
 
   const area = useHostArea(mounted, hostRef, contained);
-  const orb = useCornerOrb({ area, slot, draggable });
+  const orb = useCornerOrb({ area, slot, baseBottom: bottom, draggable });
 
   const clearTimer = useCallback(() => {
     if (timerRef.current !== null) {
@@ -435,7 +447,7 @@ export function DockableModal({
         height: cardRect.height,
         radius: CARD_RADIUS,
       };
-      const toBox = defaultOrbRect(curArea, slot, orb.pos);
+      const toBox = defaultOrbRect(curArea, slot, orb.minBottom, orb.pos);
       clearTimer();
       setMode("docking");
       setMorphActive(false);
@@ -492,7 +504,7 @@ export function DockableModal({
       setMode("open");
     }, FLOW_MS + 40);
     return () => window.cancelAnimationFrame(raf);
-  }, [open, minimized, contained, slot, orb.pos, maxWidth, clearTimer]);
+  }, [open, minimized, contained, slot, orb.minBottom, orb.pos, maxWidth, clearTimer]);
 
   if (!mounted) return null;
 
